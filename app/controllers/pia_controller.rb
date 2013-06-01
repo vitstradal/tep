@@ -1,0 +1,2 @@
+class PiaController < ApplicationController
+end

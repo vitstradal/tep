@@ -1,0 +1,41 @@
+
+---
+zalozeni gitu:
+
+git
+
+$ cd /home/www/rails/
+$ mkdir /home/www/git/pia.git 
+
+$ git init --bare /home/www/git/pia.git 
+$ git clone  file:///home/www/git/pia.git ; cd pia/
+$ git add .gitignore 
+$ git push origin  master
+$ git status
+
+--
+tutorial k cancan:
+http://www.phase2technology.com/blog/authentication-permissions-and-roles-in-rails-with-devise-cancan-and-role-model/
+--
+jak nainstalovat devise:
+https://github.com/plataformatec/devise#getting-started
+
+
+
+---
+jak se stalo ze chodi rvm rake gem:
+~/.bashrc
+
+export rvm_bin_path=/usr/local/rvm/bin
+export rvm_path=/usr/local/rvm
+export rvm_prefix=/usr/local
+export rvm_version='1.20.13 (stable)'
+export MY_RUBY_HOME=/usr/local/rvm/rubies/ruby-1.9.3-p392
+export GEM_HOME=/usr/local/rvm/gems/ruby-1.9.3-p392
+export GEM_PATH=/usr/local/rvm/gems/ruby-1.9.3-p392:/usr/local/rvm/gems/ruby-1.9.3-p392@global
+export IRBRC=/usr/local/rvm/rubies/ruby-1.9.3-p392/.irbrc
+
+export PATH="/usr/local/rvm/gems/ruby-1.9.3-p392/bin:/usr/local/rvm/gems/ruby-1.9.3-p392@global/bin:/usr/local/rvm/rubies/ruby-1.9.3-p392/bin:/usr/local/rvm/bin:$PATH:/bin:/usr/local/rvm/bin"
+
+
+
