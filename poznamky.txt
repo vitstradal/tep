@@ -1,4 +1,38 @@
+---
 
+--
+rake reset:
+lib/tasks/reset.rake:
+task :restart do |t|
+        sh "touch tmp/restart.txt"
+end
+--
+cd /home/www/html/provedouci/rails
+ln -s /home/www/rails/pia/public pia
+
+
+do /etc/apache2/sites-enabled/pikomat
+pridat na odpovidajici misto:
+        RackBaseURI /provedouci/rails/pia
+
+--
+do pia controlleru (app/controlles/pia_controller.rb)
+pridane index a hello
+
+v conf/routes.rb odkomentovat
+  /:controller(/:action(/:id(.:format))) 
+---
+instalace devise:
+(devise i cancan role_model je v  Gemfile, a je bundle install')
+
+$ rails dbdb
+
+$ rake db:migrate
+---
+vytvoreni apliakce
+$ rails generate new pia
+$ cd pia
+$ rails generate controllor pia
 ---
 zalozeni gitu:
 
@@ -16,6 +50,15 @@ $ git status
 --
 tutorial k cancan:
 http://www.phase2technology.com/blog/authentication-permissions-and-roles-in-rails-with-devise-cancan-and-role-model/
+
+rails generate devise:install
+rails generate devise User
+
+$ vi app/models/ability.rb
+$ vi app/models/user.rb
+...
+$ rake db:migrate RAILS_ENV=production
+
 --
 jak nainstalovat devise:
 https://github.com/plataformatec/devise#getting-started

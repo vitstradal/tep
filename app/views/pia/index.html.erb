@@ -1,0 +1,10 @@
+views/hello/hello
+AHOOOJ 3
+
+signed in: <%= user_signed_in? %>
+% if user_signed_in?  
+
+  email: < %= current_user.email % >
+% else
+  no one logged in.
+% end
