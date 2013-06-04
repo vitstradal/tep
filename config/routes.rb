@@ -15,6 +15,13 @@ Pia::Application.routes.draw do
   # Sample resource route (maps HTTP verbs to controller actions automatically):
   #   resources :products
 
+  #resources  :sosna_problems
+  get  '/sosna/problem(/:id)'    => 'sosna#problem',       :as => :sosna_problem
+  get  '/sosna/problems'         => 'sosna#problems'
+  post '/sosna/problem_save'     => 'sosna#problem_save', :as => :sosna_problem_save
+  get  '/sosna/solutions'        => 'sosna#solutions',    :as => :sosna_solutions
+  post '/sosna/solution_save'    => 'sosna#solution_save',:as => :sosna_solution_save
+
   # Sample resource route with options:
   #   resources :products do
   #     member do

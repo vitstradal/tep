@@ -10,7 +10,32 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20130601181617) do
+ActiveRecord::Schema.define(:version => 2) do
+
+  create_table "sosna_applicants", :force => true do |t|
+    t.text     "name"
+    t.text     "address"
+    t.integer  "user_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "sosna_problems", :force => true do |t|
+    t.string  "title"
+    t.integer "year"
+    t.integer "round"
+    t.integer "problem_no"
+  end
+
+  create_table "sosna_solutions", :force => true do |t|
+    t.string   "filename"
+    t.string   "orig_filename"
+    t.integer  "score"
+    t.integer  "sosna_problem_id"
+    t.integer  "sosna_applicant_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "users", :force => true do |t|
     t.string   "email",                                 :default => "", :null => false
