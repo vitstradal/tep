@@ -1,0 +1,9 @@
+
+<% form_for @problem, :url => {:controller => :sosna, :action => :problem_save }  do |f| %> 
+  <%= f.hidden_field :id if @problem.id %></br>
+  year: <%= f.text_field :year %><br/>
+  roud: <%= f.text_field :round %><br/>
+  prob: <%= f.text_field :problem_no %><br/>
+  <%= f.submit %>
+<% end %>
+
