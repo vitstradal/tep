@@ -3,25 +3,72 @@
 <head>
   <title>Pia</title>
   <%= stylesheet_link_tag :all %>
+  <%= stylesheet_link_tag 'bootstrap/css/bootstrap.ccs'  %>
   <%= javascript_include_tag :defaults %>
   <%= csrf_meta_tag %>
 </head>
 <body>
 
+
+    <div class="navbar navbar-inverse">
+      <div class="navbar-inner">
+        <div class="container-fluid">
+          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="brand" href="#">Pia desideria</a>
+          <div class="nav-collapse collapse">
+                <% if user_signed_in?  %>
+                  <p class="navbar-text pull-right">
+                     <a href="#" class="navbar-link"><%= current_user.email %></a>
+                  </p>
+                <% else %>
+                  anonymous 
+                <% end %>
+<%#            <ul class="nav">
+              <li class="active"><a href="#">Home</a></li>
+              <li><a href="#about">About</a></li>
+              <li><a href="#contact">Contact</a></li>
+            </ul>
+%>
+          </div><!--/.nav-collapse -->
+        </div>
+      </div>
+    </div>
+
+
+
+
 <div style="background-color:gray" class="">
-<% if user_signed_in?  %>
-  email: <%= current_user.email %> |
-  <%= link_to  'Logout out', :destroy_user_session %> |
-  <%= link_to  'Change password', :edit_user_registration %> |
-  <%= link_to  'Your Solutions', :sosna_solutions %> |
-<% else %>
-  anonymous |
-  <%= link_to  'Login', :new_user_session  %> |
-  <%= link_to  'Register', :new_user_registration  %> |
-<% end %>
 </div>
 
+    <div class="container-fluid">
+      <div class="row-fluid">
+        <div class="span2">
+          <div class="well sidebar-nav">
+            <ul class="nav nav-list">
+
+              <% if user_signed_in?  %>
+                  <li><%= link_to  'Your Solutions', :sosna_solutions %></li>
+                  <li><%= link_to  'Problems', :sosna_problems %></li>
+                  <li><%= link_to  'Change password', :edit_user_registration %></li>
+                  <li><%= link_to  'Logout out', :destroy_user_session %></li>
+              <% else %>
+                  <li><%= link_to  'Login', :new_user_session  %></li>
+                  <li><%= link_to  'Register', :new_user_registration  %></li>
+              <% end %>
+              <li class="nav-header">Sidebar</li>
+              <li><a href="#">Link</a></li>
+            </ul>
+          </div><!--/.well -->
+        </div><!--/span-->
+        <div class="span9">
 <%= yield %>
+     </div>
+   </div>
+</div>
 
 </body>
 </html>

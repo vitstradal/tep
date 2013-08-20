@@ -2,7 +2,7 @@
 
 Problems year <%= @year %>, round <%= @round %>: 
 
-<table>
+<table class="table table-bordered">
   <tr> 
    <th>id</td>
    <th>year</td>
@@ -17,10 +17,10 @@ Problems year <%= @year %>, round <%= @round %>:
     <td><%= p.round %></td>
     <td><%= p.problem_no%> </td>
     <td><span title="<%= @solutions[p.id].filename %>"><%= @solutions[p.id].orig_filename %></span> </td>
-    <td>  <%= form_for  @solutions[p.id], :html => {:multipart => true}, :url => :sosna_solution_save do |f|  %>
+    <td>  <%= form_for  @solutions[p.id], :html => {:class=> 'form-inline', :multipart => true}, :url => :sosna_solution_save do |f|  %>
           <%= f.hidden_field :id %></br>
-          <%= f.file_field :solution_file  %>
-          <%= f.submit %>
+          <%= f.file_field :solution_file , :class => 'input-small'  %>
+          <%= f.submit :class => 'btn' %>
           <% end %>
          </td>
 
