@@ -22,6 +22,9 @@ Pia::Application.routes.draw do
   get  '/sosna/solutions'        => 'sosna#solutions',    :as => :sosna_solutions
   post '/sosna/solution_save'    => 'sosna#solution_save',:as => :sosna_solution_save
 
+  get  '/users'        => 'pia#users',   :as => :users_list
+  post '/user/:id'     => 'pia#user_edit',    :as => :user_edit
+
   # Sample resource route with options:
   #   resources :products do
   #     member do

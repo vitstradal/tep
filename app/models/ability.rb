@@ -10,6 +10,10 @@ class Ability
     else
         can :read, :all
     end
+
+    if user.org?
+        can :sosna_manage
+    end
     
     # The first argument to `can` is the action you are giving the user 
     # permission to do.

@@ -1,0 +1,21 @@
+<h1>Users</h1>
+<table class="table table-bordered">
+<tr>
+        <th>Id</th>
+        <th>Email</th>
+        <th>Roles</th>
+        <th>Action</th>
+</tr>
+<% @users.each do |user|  %>
+<tr>
+
+   <td>
+          <%= form_for user, :url => {:action => :user_edit, :id=> user.id }  do |f| %><% end %>
+          <%= user.id %> </td>
+   <td> <%= user.email %> </td>
+   <td> <%= user.roles.to_a.join(',') %> </td>
+   <td> <button type="submit">save</button></td>
+</tr>
+<% end %>
+</table>
+

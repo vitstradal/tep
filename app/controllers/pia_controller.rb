@@ -5,4 +5,7 @@ class PiaController < ApplicationController
   def hello
     render
   end
+  def users
+    @users = User.all
+  end
 end

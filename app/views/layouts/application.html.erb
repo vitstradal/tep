@@ -23,9 +23,13 @@
                 <% if user_signed_in?  %>
                   <p class="navbar-text pull-right">
                      <a href="#" class="navbar-link"><%= current_user.email %></a>
+                     <%= link_to  'Logout', :destroy_user_session %>
                   </p>
                 <% else %>
-                  anonymous 
+                  <p class="navbar-text pull-right">
+                     <%= link_to  'Login', :new_user_session  %>
+                     <%= link_to  'Register', :new_user_registration  %>
+                  </p>
                 <% end %>
 <%#            <ul class="nav">
               <li class="active"><a href="#">Home</a></li>
@@ -54,13 +58,19 @@
                   <li><%= link_to  'Your Solutions', :sosna_solutions %></li>
                   <li><%= link_to  'Problems', :sosna_problems %></li>
                   <li><%= link_to  'Change password', :edit_user_registration %></li>
-                  <li><%= link_to  'Logout out', :destroy_user_session %></li>
               <% else %>
-                  <li><%= link_to  'Login', :new_user_session  %></li>
-                  <li><%= link_to  'Register', :new_user_registration  %></li>
               <% end %>
-              <li class="nav-header">Sidebar</li>
-              <li><a href="#">Link</a></li>
+              <% if current_user && current_user.has_role?(:org) %>
+                <li class="nav-header">Org</li>
+                <li><%= link_to 'Uživatelé', :users_list  %></li>
+                <li><%= link_to 'Řešení řešitelů', '#' %></li>
+              <% end %>
+              <li class="nav-header">Odkazy</li>
+              <li><%= link_to 'Pikomat', 'http://pikomat.mff.cuni.cz/' %></li>
+              <li><%= link_to 'Přihláška', '#'  %></li>
+              <li><%= link_to 'Archiv', '#' %></li>
+              <li><%= link_to 'Tábory', '#' %></li>
+              <li><%= link_to 'O nás', '#'  %></li>
             </ul>
           </div><!--/.well -->
         </div><!--/span-->

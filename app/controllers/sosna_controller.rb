@@ -1,7 +1,7 @@
 class SosnaController < ApplicationController
 
   def index
-    if user_signed_in? 
+    if user_signed_in?
       @applicant = SosnaApplicant.where({:user_id => current_user.id})
       if @applicant
          @problems = SosnaProblem.where({:year => 2013, :round => 1})
@@ -15,14 +15,13 @@ class SosnaController < ApplicationController
 
   def problem
     id = params[:id]
-    if id 
+    if id
       @problem = SosnaProblem.find(id)
     else
       @problem = SosnaProblem.new
     end
     logger.fatal "id #{@problem.id}"
-  end 
-
+  end
 
   def problem_save
     p = params[:sosna_problem]
@@ -88,6 +87,9 @@ class SosnaController < ApplicationController
                                             })
       end
     end
+  end
+
+  def new_applicant
   end
 
   def id_problem_hash(arr)
