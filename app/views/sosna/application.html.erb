@@ -1,0 +1,148 @@
+
+<h1>Přihláška do Pikomatu</h1>
+
+<%= form_for :applicant, :html => {:class=>'form-horizontal'} do |f| %>
+<div class="control-group">
+  <label class="control-label" for="applicant_name">Jméno a Příjmení</label>
+  <div class="controls">
+          <%= f.text_field :name %>
+          <%= f.text_field :last_name %>
+  </div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="applicant_email">Email</label>
+  <div class="controls"><%= f.text_field :email %></div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="applicant_street">Ulice a č.p</label>
+  <div class="controls">
+          <%= f.text_field :street %>
+          <%= f.text_field :house_num, :class=>'input-mini'%>
+  </div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="applicant_psc">PSČ a Město</label>
+  <div class="controls">
+          <%= f.text_field :psc, :class=>'input-mini'%>
+          <%= f.text_field :city %>
+  </div>
+</div>
+<hr>
+<div class="control-group">
+  <label class="control-label" for="school">Škola</label>
+  <div class="controls">
+       <%= select_tag :school,
+               options_for_select(
+                       @schools.map{ |s| [s.name, s.id] } << ['Jiná', :jina],
+                       :jina)
+         %>
+  </div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="school_nazev">Ulice a č.p</label>
+  <div class="controls">
+          <%= text_field :school, :street %>
+          <%= text_field :school, :house_num, :class=>'input-mini'%>
+  </div>
+</div>
+<div class="control-group">
+  <label class="control-label" for="_nazev">PSČ a Město</label>
+  <div class="controls">
+          <%= f.text_field :nazev, :class=>'input-mini'%>
+          <%= f.text_field :nazev %>
+  </div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="applicant_where_to_send">Koresponenci zasílejte</label>
+  <div class="controls">
+       <%= select_tag "credit_card",
+               options_for_select([['domů', 'home'],
+                                   ['do školy', 'school']],
+                                   'home')
+         %>
+  </div>
+</div>
+
+<hr>
+
+<div class="control-group">
+  <label class="control-label" for="_nazev">Rok maturity</label>
+  <div class="controls">
+     <%= f.text_field :graduation_year, :class=>'input-mini' %>
+     Třída
+     <%= f.text_field :grade, :class=>'input-mini' %>
+  </div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="_nazev">Datum narození</label>
+  <div class="controls">
+     <%= f.text_field :birth %>
+  </div>
+</div>
+
+
+
+<div class="control-group">
+  <label class="control-label" for="_nazev">Pohlaví</label>
+
+  <div class="controls">
+    <label class="radio inline">
+      <%= f.radio_button :sex, :male , :checked=> true %> řešitel
+    </label>
+    <label class="radio inline">
+      <%= f.radio_button :sex, :female %> řešitelka
+    </label>
+  </div>
+</div>
+
+<hr>
+
+<div class="control-group">
+  <div class="controls">
+     <label class="checkbox" for="_chnazev"> <%= check_box :souhlasim , :yes %> Souhlasím se <a href="#souhlas">zpracováním osobních údajů</a></label>
+  </div>
+</div>
+
+
+
+
+<div class="control-group">
+  <div class="controls"><%= f.submit :class=>'btn btn-primary', :value=>'Přihlásit se do Pikomatu' %></div>
+</div>
+
+
+<a name="souhlas"></a>
+<h3>Souhlas se zpracovnáním osobních údajů</h3>
+
+<p>
+Vaše osobní údaje, které nám v přilhlášce do soutěže poskytujete,
+požívají ochrany podle zákona č. 101/2000 Sb., o ochraně osobních
+údajů. Podle tohoto zákona je potřebné, abyste poskytli souhlas se
+zpracováváním svých osobních údajů. Správcem osobních údajů je
+Univerzita Karlova v Praze, Matematicko-fyzikální fakulta,
+OVVP/organizátoři soutěže Pikomat MFF UK, Ke Karlovu 3, 121 16 Praha
+2. Podle zákona nejste povinni tyto osobní údaje poskytnout. Správce
+je povinen jednou za kalendářní rok bezplatně, jinak za přiměřenou
+úhradu vám na základě písemné žádosti poskytnout informace o osobních
+údajích o vás zpracovávaných.
+Souhlasím se zpracováváním osobních údajů v rozsahu uvedeném v tomto
+formuláři, zpracovatelem: Univerzita Karlova v Praze,
+Matematicko-fyzikální fakulta, na období do konce roku 2014 za účelem:
+
+<ul>
+<li>zasílání materiálů korespondenční soutěže Pikomat MFF UK</li>
+<li>informování o dalších akcích MFF a vysokoškolském studiu</li>
+</ul>
+</p>
+
+
+
+
+<% end %>
+<%= debug @schools.map{ |s| [s.name, s.id] } << ['Jiná', :jina] %>

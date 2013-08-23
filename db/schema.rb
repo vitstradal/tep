@@ -14,8 +14,18 @@ ActiveRecord::Schema.define(:version => 2) do
 
   create_table "sosna_applicants", :force => true do |t|
     t.text     "name"
-    t.text     "address"
+    t.text     "last_name"
+    t.text     "sex"
+    t.text     "birth"
+    t.text     "class"
+    t.text     "finish_year"
+    t.text     "email"
+    t.text     "street"
+    t.text     "house_num"
+    t.text     "city"
+    t.text     "psc"
     t.integer  "user_id"
+    t.integer  "sosna_school_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -25,6 +35,15 @@ ActiveRecord::Schema.define(:version => 2) do
     t.integer "year"
     t.integer "round"
     t.integer "problem_no"
+  end
+
+  create_table "sosna_schools", :force => true do |t|
+    t.text "name"
+    t.text "short"
+    t.text "street"
+    t.text "house_num"
+    t.text "city"
+    t.text "psc"
   end
 
   create_table "sosna_solutions", :force => true do |t|

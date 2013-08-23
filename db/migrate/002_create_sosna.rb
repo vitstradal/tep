@@ -17,20 +17,41 @@ class CreateSosna < ActiveRecord::Migration
       t.timestamps
     end
 
-    create_table :sosna_school do |t|
+    create_table :sosna_schools do |t|
+
       t.text :name
       t.text :short
-      t.text :address
+
+      t.text :street
+      t.text :house_num
+      t.text :city
+      t.text :psc
+
     end
 
     create_table :sosna_applicants do |t|
+
       t.text :name
       t.text :last_name
-      t.text :birth
-      t.text :class
+
       t.text :sex
+      t.text :birth
+
+      t.text :where_to_send
+      t.text :graduation_year
+      t.text :school_grade
+
+      t.text :class
       t.text :finish_year
-      t.text :address
+
+      t.text :email
+
+      t.text :street
+      t.text :house_num
+      t.text :city
+      t.text :psc
+
+
       t.belongs_to :user
       t.belongs_to :sosna_school
       t.timestamps

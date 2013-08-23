@@ -9,6 +9,17 @@ class SosnaController < ApplicationController
     end
   end
 
+  def schools
+    @schools = SosnaSchool.all
+  end
+
+  def application
+    @schools = SosnaSchool.all
+  end
+
+  def application_save
+  end
+
   def problems
     @problems = SosnaProblem.all
   end

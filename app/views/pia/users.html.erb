@@ -13,7 +13,11 @@
           <%= form_for user, :url => {:action => :user_edit, :id=> user.id }  do |f| %><% end %>
           <%= user.id %> </td>
    <td> <%= user.email %> </td>
-   <td> <%= user.roles.to_a.join(',') %> </td>
+   <td> <%= user.roles.to_a.join(',') %>
+    (<% User.valid_roles.each do |r| %>
+     <%= (user.has_role? r) ? "-#{r}" : "+#{r}"  %>,
+    <% end %>)
+   </td>
    <td> <button type="submit">save</button></td>
 </tr>
 <% end %>

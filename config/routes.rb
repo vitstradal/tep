@@ -18,9 +18,12 @@ Pia::Application.routes.draw do
   #resources  :sosna_problems
   get  '/sosna/problem(/:id)'    => 'sosna#problem',       :as => :sosna_problem
   get  '/sosna/problems'         => 'sosna#problems'
-  post '/sosna/problem_save'     => 'sosna#problem_save', :as => :sosna_problem_save
-  get  '/sosna/solutions'        => 'sosna#solutions',    :as => :sosna_solutions
-  post '/sosna/solution_save'    => 'sosna#solution_save',:as => :sosna_solution_save
+  post '/sosna/problem_save'     => 'sosna#problem_save',  :as => :sosna_problem_save
+  get  '/sosna/solutions'        => 'sosna#solutions',     :as => :sosna_solutions
+  get  '/sosna/schools'          => 'sosna#schools',       :as => :sosna_schools
+  post '/sosna/solution_save'    => 'sosna#solution_save', :as => :sosna_solution_save
+  get  '/sosna/application'      => 'sosna#application',   :as => :sosna_application
+  post '/sosna/application'      => 'sosna#application_submit',   :as => :sosna_application_submit
 
   get  '/users'        => 'pia#users',   :as => :users_list
   post '/user/:id'     => 'pia#user_edit',    :as => :user_edit
