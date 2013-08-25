@@ -16,4 +16,7 @@ schools = SosnaSchool.create([
           },
         ]);
 
+#schools = Users.create([
+#        ]);
+#
 

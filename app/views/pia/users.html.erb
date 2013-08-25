@@ -4,21 +4,24 @@
         <th>Id</th>
         <th>Email</th>
         <th>Roles</th>
-        <th>Action</th>
 </tr>
 <% @users.each do |user|  %>
 <tr>
 
    <td>
-          <%= form_for user, :url => {:action => :user_edit, :id=> user.id }  do |f| %><% end %>
           <%= user.id %> </td>
    <td> <%= user.email %> </td>
-   <td> <%= user.roles.to_a.join(',') %>
-    (<% User.valid_roles.each do |r| %>
-     <%= (user.has_role? r) ? "-#{r}" : "+#{r}"  %>,
-    <% end %>)
+   <td>
+        <%= form_for user,  :url => {:action => :role_change}, :html => {:class => 'form-inline' } do |f| %>
+            <%= user.roles.to_a.join(',') %>
+            <%= f.hidden_field :id %>
+            <%= select_tag :role, 
+               options_for_select( User.valid_roles.reverse.map { |r| (user.has_role? r) ? "-#{r}" : "+#{r}" }),
+               :class => 'input-small'
+               %>
+            <%= f.submit value: '!'%>
+        <% end %>
    </td>
-   <td> <button type="submit">save</button></td>
 </tr>
 <% end %>
 </table>

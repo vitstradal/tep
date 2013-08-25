@@ -1,7 +1,7 @@
 
 <h1>Přihláška do Pikomatu</h1>
 
-<%= form_for :applicant, :html => {:class=>'form-horizontal'} do |f| %>
+<%= form_for @applicant, :url => { :action => :application_submit },  :html => {:class=>'form-horizontal'} do |f| %>
 <div class="control-group">
   <label class="control-label" for="applicant_name">Jméno a Příjmení</label>
   <div class="controls">
@@ -16,7 +16,7 @@
 </div>
 
 <div class="control-group">
-  <label class="control-label" for="applicant_street">Ulice a č.p</label>
+  <label class="control-label" for="applicant_street">Ulice a č.p.</label>
   <div class="controls">
           <%= f.text_field :street %>
           <%= f.text_field :house_num, :class=>'input-mini'%>
@@ -34,33 +34,41 @@
 <div class="control-group">
   <label class="control-label" for="school">Škola</label>
   <div class="controls">
-       <%= select_tag :school,
+       <%= select :school, :id,
                options_for_select(
-                       @schools.map{ |s| [s.name, s.id] } << ['Jiná', :jina],
-                       :jina)
+                       [['Vyber školu', :none]] +
+                       @schools.map{ |s| [s.name, s.id] } <<
+                       ['Jiná škola', :jina],
+                       @school.id.nil? ? :none 
+                                      : @school.id < 0  ? :jina
+                                                        : @school.id
+                                                      
+                       )
          %>
   </div>
 </div>
 
+<div id='school_div'>
 <div class="control-group">
-  <label class="control-label" for="school_nazev">Ulice a č.p</label>
+  <label class="control-label" for="school_nazev">Ulice a č.p.</label>
   <div class="controls">
-          <%= text_field :school, :street %>
-          <%= text_field :school, :house_num, :class=>'input-mini'%>
+          <%= text_field :sosna_school, :street, :value =>  @school.street || '' %>
+          <%= text_field :sosna_school, :house_num, :value =>  @school.house_num, :class=>'input-mini'%>
   </div>
 </div>
 <div class="control-group">
   <label class="control-label" for="_nazev">PSČ a Město</label>
   <div class="controls">
-          <%= f.text_field :nazev, :class=>'input-mini'%>
-          <%= f.text_field :nazev %>
+          <%= text_field :sosna_school, :psc, :value => @school.psc, :class=>'input-mini'%>
+          <%= text_field :sosna_school, :city, :value => @school.city %>
   </div>
+</div>
 </div>
 
 <div class="control-group">
   <label class="control-label" for="applicant_where_to_send">Koresponenci zasílejte</label>
   <div class="controls">
-       <%= select_tag "credit_card",
+       <%= f.select_tag "where_to_send",
                options_for_select([['domů', 'home'],
                                    ['do školy', 'school']],
                                    'home')
@@ -73,7 +81,7 @@
 <div class="control-group">
   <label class="control-label" for="_nazev">Rok maturity</label>
   <div class="controls">
-     <%= f.text_field :graduation_year, :class=>'input-mini' %>
+     <%= f.text_field :finish_year, :class=>'input-mini' %>
      Třída
      <%= f.text_field :grade, :class=>'input-mini' %>
   </div>
@@ -116,7 +124,9 @@
   <div class="controls"><%= f.submit :class=>'btn btn-primary', :value=>'Přihlásit se do Pikomatu' %></div>
 </div>
 
+<% end %>
 
+<hr>
 <a name="souhlas"></a>
 <h3>Souhlas se zpracovnáním osobních údajů</h3>
 
@@ -141,8 +151,8 @@ Matematicko-fyzikální fakulta, na období do konce roku 2014 za účelem:
 </ul>
 </p>
 
-
-
-
-<% end %>
-<%= debug @schools.map{ |s| [s.name, s.id] } << ['Jiná', :jina] %>
+<hr>
+<pre>
+<%= debug @school.id %>
+<%= debug @school %>
+<%= debug @applicant %>

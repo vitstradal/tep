@@ -34,15 +34,13 @@ class CreateSosna < ActiveRecord::Migration
       t.text :name
       t.text :last_name
 
-      t.text :sex
+      t.text :sex, :default=> 'male'
       t.text :birth
 
-      t.text :where_to_send
-      t.text :graduation_year
-      t.text :school_grade
+      t.text :where_to_send,  default: 'home'
 
-      t.text :class
-      t.text :finish_year
+      t.text :grade,       default: '111'
+      t.text :finish_year, default: '2000'
 
       t.text :email
 
@@ -50,7 +48,6 @@ class CreateSosna < ActiveRecord::Migration
       t.text :house_num
       t.text :city
       t.text :psc
-
 
       t.belongs_to :user
       t.belongs_to :sosna_school
