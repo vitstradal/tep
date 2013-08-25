@@ -60,15 +60,16 @@
             <ul class="nav nav-list">
 
               <% if user_signed_in?  %>
-                  <li><%= link_to  'Your Solutions', :sosna_solutions %></li>
-                  <li><%= link_to  'Problems', :sosna_problems %></li>
-                  <li><%= link_to  'Change password', :edit_user_registration %></li>
+                <li class="nav-header">Uživatel</li>
+                  <li><%= link_to  'Tvá řešení', :sosna_solutions %></li>
+                  <li><%= link_to  'Změna hesla', :edit_user_registration %></li>
               <% else %>
               <% end %>
               <% if current_user && current_user.has_role?(:org) %>
                 <li class="nav-header">Org</li>
                 <li><%= link_to 'Uživatelé', :users_list  %></li>
                 <li><%= link_to 'Řešení řešitelů', '#' %></li>
+                <li><%= link_to 'Příklady', :sosna_problems %></li>
               <% end %>
               <li class="nav-header">Odkazy</li>
               <li><%= link_to 'Pikomat', 'http://pikomat.mff.cuni.cz/' %></li>

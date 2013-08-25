@@ -31,6 +31,13 @@ ActiveRecord::Schema.define(:version => 2) do
     t.datetime "updated_at"
   end
 
+  create_table "sosna_configs", :force => true do |t|
+    t.string "key"
+    t.string "value"
+  end
+
+  add_index "sosna_configs", ["key"], :name => "index_sosna_configs_on_key", :unique => true
+
   create_table "sosna_problems", :force => true do |t|
     t.string  "title"
     t.integer "year"

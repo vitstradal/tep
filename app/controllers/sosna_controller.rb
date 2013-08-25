@@ -15,6 +15,7 @@ class SosnaController < ApplicationController
   end
 
   def application
+    _load_config
     @schools = SosnaSchool.all
     @school = flash[:school] || SosnaSchool.new
     @applicant = flash[:applicant] || SosnaApplicant.new(name: 'ahoj')
@@ -95,8 +96,8 @@ class SosnaController < ApplicationController
     solution.save
 
     redirect_to :sosna_solutions
-
   end
+
   def solutions
     # fixme: from db
     @year = 2013
@@ -126,13 +127,33 @@ class SosnaController < ApplicationController
     end
   end
 
-  def new_applicant
-  end
-
   def id_problem_hash(arr)
     ret = {}
     arr.each { |item|  ret[item.sosna_problem_id] = item }
     #logger.fatal "hash:" + ret.inspect
     return ret
+  end
+
+  def get_config
+    _load_config
+  end
+
+  def _load_config
+    @config  =  {annual_set:20, year: 2001, round: 1}
+    SosnaConfig.all.each {|c| @config[c.key.to_sym] =  c.value}
+  end
+  def config_save
+    config = params[:config]
+    config.each_pair do |k,v|
+        cfg = SosnaConfig.where(:key =>  k).first
+        if cfg.nil?
+          SosnaConfig.create :key => k, :value => v
+        else 
+          cfg.value = v
+          cfg.save
+        end
+                
+    end
+    redirect_to :sosna_config
   end
 end

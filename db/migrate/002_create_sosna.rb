@@ -1,6 +1,11 @@
 class CreateSosna < ActiveRecord::Migration
   def self.up
 
+    create_table :sosna_configs do |t|
+      t.string :key
+      t.string :value
+    end
+    add_index :sosna_configs, :key, unique: true
     create_table :sosna_problems do |t|
       t.string :title
       t.integer :year

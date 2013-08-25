@@ -25,6 +25,8 @@ Pia::Application.routes.draw do
   get  '/sosna/application'       => 'sosna#application',       :as => :sosna_application
   get  '/sosna/application/tnx'   => 'sosna#application_tnx',   :as => :sosna_application_tnx
   post '/sosna/application/submit'=> 'sosna#application_submit',:as => :sosna_application_submit
+  get  '/sosna/config'            => 'sosna#get_config',        :as => :sosna_config
+  post '/sosna/config/save'       => 'sosna#config_save',       :as => :sosna_config_save
 
   get  '/users'                   => 'pia#users',               :as => :users_list
   post '/user/:id'                => 'pia#user_edit',           :as => :user_edit
