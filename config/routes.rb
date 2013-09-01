@@ -12,25 +12,39 @@ Pia::Application.routes.draw do
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
   # This route can be invoked with purchase_url(:id => product.id)
 
-  # Sample resource route (maps HTTP verbs to controller actions automatically):
-  #   resources :products
+  # anon:
+  get  '/sosna/application'        => 'sosna_applicant#new',         :as => :sosna_applicant_new
+  get  '/sosna/application/tnx'    => 'sosna_applicant#create_tnx',  :as => :sosna_applicant_create_tnx
+  post '/sosna/application/new'    => 'sosna_applicant#create',      :as => :sosna_applicant_anon_create
 
-  #resources  :sosna_problems
-  get  '/sosna/problem(/:id)'     => 'sosna#problem',           :as => :sosna_problem
-  get  '/sosna/problems'          => 'sosna#problems'
-  post '/sosna/problem_save'      => 'sosna#problem_save',      :as => :sosna_problem_save
-  get  '/sosna/solutions'         => 'sosna#solutions',         :as => :sosna_solutions
-  get  '/sosna/schools'           => 'sosna#schools',           :as => :sosna_schools
-  post '/sosna/solution_save'     => 'sosna#solution_save',     :as => :sosna_solution_save
-  get  '/sosna/application'       => 'sosna#application',       :as => :sosna_application
-  get  '/sosna/application/tnx'   => 'sosna#application_tnx',   :as => :sosna_application_tnx
-  post '/sosna/application/submit'=> 'sosna#application_submit',:as => :sosna_application_submit
-  get  '/sosna/config'            => 'sosna#get_config',        :as => :sosna_config
-  post '/sosna/config/save'       => 'sosna#config_save',       :as => :sosna_config_save
+  # user:
+  get  '/sosna/solutions'          => 'sosna_solution#user_index',   :as => :sosna_user_solutions
+  post '/sosna/solution/update'    => 'sosna_solution#user_upload',  :as => :sosna_user_solution_update
+  put  '/sosna/solution/update'    => 'sosna_solution#user_upload',  :as => :sosna_user_solution_update
 
-  get  '/users'                   => 'pia#users',               :as => :users_list
-  post '/user/:id'                => 'pia#user_edit',           :as => :user_edit
-  post '/user/:id/role'           => 'pia#role_change',         :as => :user_role_change
+  # org:
+  get  '/sosna/orgsolutions'       => 'sosna_solution#index',        :as => :sosna_org_solutions
+  get  '/sosna/orgsolution(/:id)'  => 'sosna_solution#show',         :as => :sosna_org_solution
+  post '/sosna/orgsolution/update' => 'sosna_solution#update',       :as => :sosna_org_solution_update
+
+  get  '/sosna/problems'           => 'sosna_problem#index',         :as => :sosna_problems
+  get  '/sosna/problem(/:id)'      => 'sosna_problem#show',          :as => :sosna_problem
+  post '/sosna/problem/update'     => 'sosna_problem#update',        :as => :sosna_problem_update
+  put  '/sosna/problem/update'     => 'sosna_problem#update',        :as => :sosna_problem_update
+
+  get  '/sosna/applicants'         => 'sosna_applicant#index',       :as => :sosna_applicants
+  post '/sosna/applicant(/:id)'    => 'sosna_applicant#show',        :as => :sosna_applicant
+  post '/sosna/applicant/update'   => 'sosna_applicant#update',      :as => :sosna_applicant_update
+
+  get  '/sosna/schools'            => 'sosna_school#index',          :as => :sosna_schools
+  post '/sosna/school/update'      => 'sosna_school#update',         :as => :sosna_school_update
+
+  get  '/sosna/config'             => 'sosna_config#index',          :as => :sosna_configs
+  post '/sosna/config/update'      => 'sosna_config#updateall',      :as => :sosna_config_updateall
+
+  # pia
+  get  '/users'                   => 'pia#users',                    :as => :users_list
+  put  '/user/role'               => 'pia#user_role_change',         :as => :user_role_change
 
   # Sample resource route with options:
   #   resources :products do
@@ -70,8 +84,4 @@ Pia::Application.routes.draw do
   root :to => "pia#index"
 
   # See how all your routes lay out with "rake routes"
-
-  # This is a legacy wild controller route that's not recommended for RESTful applications.
-  # Note: This route will make all actions in every controller accessible via GET requests.
-  match ':controller(/:action(/:id(.:format)))'
 end

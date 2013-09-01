@@ -8,7 +8,7 @@
  </tr> 
 <% @problems.each do |p| %>
   <tr>
-    <td><%= link_to p.id, :controller => :sosna, :action => :problem, :id => p.id %></a><td>
+    <td><%= link_to p.id, :controller => :sosna_problem, :action => :show, :id => p.id %></a><td>
     <td><%= p.year %><td>
     <td><%= p.round %><td>
     <td><%= p.problem_no%> <td>

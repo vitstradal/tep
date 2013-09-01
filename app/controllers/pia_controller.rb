@@ -1,5 +1,20 @@
 require 'pp'
 class PiaController < ApplicationController
+
+  before_filter do
+    case action_name.to_sym
+
+     when :index 
+             authorize! :anon, :pia
+
+     when :users, :user_role_change
+             authorize! :admin, :pia
+
+     else
+       authorize! nil, nil
+    end
+  end
+
   def index
     render
   end
@@ -10,7 +25,7 @@ class PiaController < ApplicationController
     @users = User.all
   end
 
-  def role_change
+  def user_role_change
     user = User.find params[:user][:id];
     add, role  = params[:role].split //, 2
 
@@ -28,6 +43,5 @@ class PiaController < ApplicationController
       print 'no role', role
     end
     redirect_to :users_list
-    
   end
 end

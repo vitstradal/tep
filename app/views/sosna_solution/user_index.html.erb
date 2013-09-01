@@ -1,23 +1,22 @@
 
 
-Problems year <%= @year %>, round <%= @round %>: 
+<h1>Příklady <%= @config[:annual_set] %>. ročníku, serie <%= @config[:round] %></h1>
 
 <table class="table table-bordered">
   <tr> 
-   <th>id</td>
-   <th>year</td>
-   <th>round</td>
-   <th>problem_no</td>
-   <th>filename</td>
+   <th>Příklad</td>
+   <th>Soubor</td>
+   <th>Nahrát</td>
  </tr> 
 <% @problems.each do |p| %>
   <tr>
-    <td><%= link_to p.id, :controller => :sosna, :action => :problem, :id => p.id %></a><td>
-    <td><%= p.year %></td>
+<!--    <td><%= link_to p.id, :action => :show, :id => p.id %></a><td>
+    <td><%= p.year %></td> 
     <td><%= p.round %></td>
     <td><%= p.problem_no%> </td>
+-->
     <td><span title="<%= @solutions[p.id].filename %>"><%= @solutions[p.id].orig_filename %></span> </td>
-    <td>  <%= form_for  @solutions[p.id], :html => {:class=> 'form-inline', :multipart => true}, :url => :sosna_solution_save do |f|  %>
+    <td>  <%= form_for  @solutions[p.id], :html => {:class=> 'form-inline', :multipart => true}, :url => :sosna_user_solution_update do |f|  %>
           <%= f.hidden_field :id %></br>
           <%= f.file_field :solution_file , :class => 'input-small'  %>
           <%= f.submit :class => 'btn' %>

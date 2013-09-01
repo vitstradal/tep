@@ -1,7 +1,7 @@
 
 <h3>Sosna config</h3>
 
-<%= form_for :config, :url => {:action => :config_save}, :html =>  {:class => 'form-horizontal'}  do |f| %>
+<%= form_for :config, :url => {:action => :updateall}, :html =>  {:class => 'form-horizontal'}  do |f| %>
 
   <% @config.each do |key,val|  %>
    <div class="control-group">

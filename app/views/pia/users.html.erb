@@ -12,7 +12,7 @@
           <%= user.id %> </td>
    <td> <%= user.email %> </td>
    <td>
-        <%= form_for user,  :url => {:action => :role_change}, :html => {:class => 'form-inline' } do |f| %>
+        <%= form_for user,  :url => {:action => :user_role_change}, :html => {:class => 'form-inline' } do |f| %>
             <%= user.roles.to_a.join(',') %>
             <%= f.hidden_field :id %>
             <%= select_tag :role, 
