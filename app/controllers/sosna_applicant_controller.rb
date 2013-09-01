@@ -1,8 +1,7 @@
 class SosnaApplicantController < SosnaController
 
   def index
-      SosnaApplicant.huu
-      @applicants = SosnaApplicant.find(id)
+      @applicants = SosnaApplicant.all
   end
 
   def new
@@ -31,7 +30,7 @@ class SosnaApplicantController < SosnaController
         flash[:errors] = applicant.errors
         flash[:applicant] = applicant
         flash[:school] = school
-        return redirect_to :sosna_application
+        return redirect_to :action => :new
     end
 
     user = User.find_by_email applicant.email

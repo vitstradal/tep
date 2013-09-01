@@ -40,7 +40,7 @@ ActiveRecord::Schema.define(:version => 2) do
 
   create_table "sosna_problems", :force => true do |t|
     t.string  "title"
-    t.integer "year"
+    t.integer "annual"
     t.integer "round"
     t.integer "problem_no"
   end

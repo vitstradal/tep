@@ -1,19 +1,19 @@
 
 <table class="table table-bordered">
-  <tr> 
-   <th>id<td>
-   <th>year<td>
-   <th>round<td>
-   <th>problem_no<td>
- </tr> 
+  <tr>
+   <th>Id</th>
+   <th>Ročník</th>
+   <th>Serie</th>
+   <th>Úloha</th>
+ </tr>
 <% @problems.each do |p| %>
   <tr>
-    <td><%= link_to p.id, :controller => :sosna_problem, :action => :show, :id => p.id %></a><td>
-    <td><%= p.year %><td>
-    <td><%= p.round %><td>
-    <td><%= p.problem_no%> <td>
+    <td><%= link_to p.id, :controller => :sosna_problem, :action => :show, :id => p.id %></a></td>
+    <td><%= p.annual %></td>
+    <td><%= p.round %></td>
+    <td><%= p.problem_no%> </td>
   </tr>
 <% end %>
 </table>
 
-<%= link_to 'New Problem', :sosna_problem %>
+<%= link_to 'Nová úloha', :sosna_problem %>

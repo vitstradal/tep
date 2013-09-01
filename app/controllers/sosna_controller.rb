@@ -11,7 +11,7 @@ class SosnaController < ApplicationController
 
 
   def load_config
-    @config  =  {annual_set:20, year: 2001, round: 1}
+    @config  =  {annual:20, round: 1}
     SosnaConfig.all.each {|c| @config[c.key.to_sym] =  c.value}
   end
 end

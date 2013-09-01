@@ -11,10 +11,10 @@
 <% @problems.each do |p| %>
   <tr>
 <!--    <td><%= link_to p.id, :action => :show, :id => p.id %></a><td>
-    <td><%= p.year %></td> 
+    <td><%= p.annual %></td> 
     <td><%= p.round %></td>
-    <td><%= p.problem_no%> </td>
 -->
+    <td><%= p.problem_no%> </td>
     <td><span title="<%= @solutions[p.id].filename %>"><%= @solutions[p.id].orig_filename %></span> </td>
     <td>  <%= form_for  @solutions[p.id], :html => {:class=> 'form-inline', :multipart => true}, :url => :sosna_user_solution_update do |f|  %>
           <%= f.hidden_field :id %></br>

@@ -1,13 +1,14 @@
 # encoding: utf-8
+require 'pp'
 
 class SosnaSolutionController < SosnaController
 
   def index
-      @solutions = SosnaSolutions.all
+      @solutions = SosnaSolution.all
   end
 
   def show
-      @solution = SosnaSolutions.find param[:id]
+      @solution = SosnaSolution.find param[:id]
   end
 
   def user_upload
@@ -19,10 +20,12 @@ class SosnaSolutionController < SosnaController
     # find solution
     solution = SosnaSolution.find(solution_id) or raise RuntimeError, "bad solution id: #{solution_id}"
     problem, applicant  = solution.sosna_problem, solution.sosna_applicant
+    pp problem
+    pp applicant
 
     # save file
-    filename = "public/uploads/solution-y%04i-r%02i-p%i-a%i-%s.ext"  %
-                  [ problem.year, problem.round, problem.problem_no,
+    filename = "public/uploads/solution-a%02i-r%02i-p%i-a%i-%s.ext"  %
+                  [ problem.annual, problem.round, problem.problem_no,
                     applicant.id, applicant.name ]
     File.open(filename, 'wb') {  |f| f.write(solution_file.read) }
 
@@ -41,7 +44,7 @@ class SosnaSolutionController < SosnaController
 
     die if current_user.nil?
 
-    @problems  = SosnaProblem.where(:year=>@year, :round=>@round)
+    @problems  = SosnaProblem.where(:annual=>@config[:annual], :round=>@config[:round])
 
     @applicant = SosnaApplicant.where(:user_id => current_user.id).first
     if ! @applicant

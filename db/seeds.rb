@@ -14,8 +14,10 @@ schools = SosnaSchool.create([
           { :name => '2zakladni', :short => '2zs', 
             :street => 'narodni', :house_num => 2, :city => 'Brno', :psc => "11111",
           },
-        ]);
+        ])
 
+#users = User.create([
+#        ])
 #schools = Users.create([
 #        ]);
 #

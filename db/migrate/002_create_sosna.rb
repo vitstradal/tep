@@ -8,7 +8,7 @@ class CreateSosna < ActiveRecord::Migration
     add_index :sosna_configs, :key, unique: true
     create_table :sosna_problems do |t|
       t.string :title
-      t.integer :year
+      t.integer :annual # ročník
       t.integer :round
       t.integer :problem_no
     end
