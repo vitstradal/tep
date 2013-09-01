@@ -1,0 +1,2 @@
+class SosnaSchoolController < ApplicationController
+end

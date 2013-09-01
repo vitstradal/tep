@@ -1,0 +1,2 @@
+module SosnaConfigHelper
+end
