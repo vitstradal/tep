@@ -14,5 +14,6 @@ seed-devel:
 
 t:
 	rake test
+r: restart
 server:
 	script/rails server
