@@ -7,6 +7,14 @@ class SosnaSolutionController < SosnaController
       @solutions = SosnaSolution.all
   end
 
+  def download
+    # XXX auth!
+    solution = SosnaSolution.find id = params[:id]
+    #dir = '/home/vitas/vs/pia/'
+    #send_file dir + solution.filename, :type =>  "application/pdf"
+    send_file solution.filename, :type =>  "application/pdf"
+  end
+
   def show
       @solution = SosnaSolution.find param[:id]
   end
@@ -15,7 +23,13 @@ class SosnaSolutionController < SosnaController
     solution_file = params[:sosna_solution][:solution_file]
     solution_id  = params[:sosna_solution][:id]
 
-    return redirect_to :sosna_solutions if solution_file.nil?
+    return redirect_to :sosna_user_solutions if solution_file.nil?
+
+    print "content type:", solution_file.content_type
+    if solution_file.original_filename !~ /\.pdf$/
+      flash[:errors] = {:pozor => 'pouze soubory ve formátu .pdf'}
+      return redirect_to :action => :user_index
+    end
 
     # find solution
     solution = SosnaSolution.find(solution_id) or raise RuntimeError, "bad solution id: #{solution_id}"

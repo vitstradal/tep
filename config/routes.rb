@@ -21,6 +21,7 @@ Pia::Application.routes.draw do
   get  '/sosna/solutions'          => 'sosna_solution#user_index',   :as => :sosna_user_solutions
   post '/sosna/solution/update'    => 'sosna_solution#user_upload',  :as => :sosna_user_solution_update
   put  '/sosna/solution/update'    => 'sosna_solution#user_upload',  :as => :sosna_user_solution_update
+  get  '/sosna/solution/:id/down'  => 'sosna_solution#download',     :as => :sosna_user_solution_down
 
   # org:
   get  '/sosna/orgsolutions'       => 'sosna_solution#index',        :as => :sosna_org_solutions

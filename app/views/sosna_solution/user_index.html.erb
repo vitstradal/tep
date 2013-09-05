@@ -1,6 +1,6 @@
 
 
-<h1>Příklady <%= @config[:annual_set] %>. ročníku, serie <%= @config[:round] %></h1>
+<h1>Příklady <%= @config[:annual] %>. ročníku, serie <%= @config[:round] %></h1>
 
 <table class="table table-bordered">
   <tr> 
@@ -15,11 +15,14 @@
     <td><%= p.round %></td>
 -->
     <td><%= p.problem_no%> </td>
-    <td><span title="<%= @solutions[p.id].filename %>"><%= @solutions[p.id].orig_filename %></span> </td>
+    <td>
+      <%# FIXME:   @solutions[p.id] orig_name to title %>
+      <%= link_to @solutions[p.id].orig_filename, :action => :download, :id => p.id %>
+    </td>
     <td>  <%= form_for  @solutions[p.id], :html => {:class=> 'form-inline', :multipart => true}, :url => :sosna_user_solution_update do |f|  %>
-          <%= f.hidden_field :id %></br>
-          <%= f.file_field :solution_file , :class => 'input-small'  %>
-          <%= f.submit :class => 'btn' %>
+          <%= f.hidden_field :id %>
+          <%= f.file_field :solution_file , :class => 'input-small', :accept => '*.pdf'  %>
+          <%= f.submit :class => 'btn', :value => 'Nahraj řešení ' %>
           <% end %>
          </td>
 

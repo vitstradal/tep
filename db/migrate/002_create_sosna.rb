@@ -46,6 +46,7 @@ class CreateSosna < ActiveRecord::Migration
 
       t.text :grade,       default: '111'
       t.text :finish_year, default: '2000'
+      t.text :annual
 
       t.text :email
 
