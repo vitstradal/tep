@@ -12,19 +12,22 @@ class Ability
 
     if user.user?
       can :index, SosnaSolution
-      can :user_upload, SosnaSolution
+      can :upload, SosnaSolution
       can :download, SosnaSolution
     end
 
     if user.org?
       can :index, SosnaSolution
       can :show, SosnaSolution
+      can :download, SosnaSolution
+      can :download_org, SosnaSolution
+      can :upload, SosnaSolution
+      can :upload_org, SosnaSolution
       can :update, SosnaSolution
 
       can :index, SosnaProblem
       can :show, SosnaProblem
       can :update, SosnaProblem
-      can :downall, SosnaProblem
 
       can :index, SosnaSolver
       can :show, SosnaSolver
@@ -39,8 +42,8 @@ class Ability
 
     # pia
     if user.admin?
-      can :anon, :pia
-      can :anon, :sosna
+      can :users, User
+      can :user_role_change, User
     end
     # https://github.com/ryanb/cancan/wiki/Defining-Abilities
   end

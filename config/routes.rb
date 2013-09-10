@@ -21,9 +21,9 @@ Pia::Application.routes.draw do
 
   # user:
   get  '/sosna/solutions'          => 'sosna_solution#user_index',   :as => :sosna_user_solutions
-  post '/sosna/solution/update'    => 'sosna_solution#user_upload',  :as => :sosna_user_solution_update
-  put  '/sosna/solution/update'    => 'sosna_solution#user_upload',  :as => :sosna_user_solution_update
-  get  '/sosna/solution/:id/down'  => 'sosna_solution#download',     :as => :sosna_user_solution_down
+  post '/sosna/solution/upload'    => 'sosna_solution#upload',       :as => :sosna_solution_upload
+  put  '/sosna/solution/upload'    => 'sosna_solution#upload',       :as => :sosna_solution_upload
+  get  '/sosna/solution/:id/down'  => 'sosna_solution#download',     :as => :sosna_solution_download
 
   # org:
   get  '/sosna/orgsolutions'       => 'sosna_solution#index',        :as => :sosna_org_solutions
@@ -47,8 +47,8 @@ Pia::Application.routes.draw do
   post '/sosna/config/update'      => 'sosna_config#updateall',      :as => :sosna_config_updateall
 
   # pia
-  get  '/users'                   => 'pia#users',                    :as => :users_list
-  put  '/user/role'               => 'pia#user_role_change',         :as => :user_role_change
+  get  '/users'                   => 'user#users',                    :as => :users_list
+  put  '/user/role'               => 'user#user_role_change',         :as => :user_role_change
 
   # Sample resource route with options:
   #   resources :products do

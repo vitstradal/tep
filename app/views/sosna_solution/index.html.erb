@@ -2,22 +2,28 @@
 
 <table class="table table-bordered">
   <tr> 
-   <th>Úloha</td>
+   <th>Id</td>
+   <th>Se</td>
+   <th>Úl</td>
    <th>Soubor</td>
+   <th>Řešitel</td>
    <th>Orig</td>
    <th>Body</td>
  </tr> 
-<% @solutions.each do |s| %>
+<% @solutions.each do |sol| %>
   <tr>
-    <td><%= link_to s.id, :action => :show, :id => s.id %></a><t/d>
+    <td><%= link_to sol.id, :action => :show, :id => sol.id %></a><t/d>
+    <td><%= sol.sosna_problem.round %></td>
+    <td><%= sol.sosna_problem.problem_no %></td>
     <td>
-      <% if s.filename  %>
-         <%= link_to s.filename , :action => :download, :id => s.id %></td> 
+      <% if sol.filename  %>
+         <%= link_to sol.filename , {:action => :download, :id => sol.id}, {:title => sol.orig_filename} %></td> 
       <% else %>
          <i>žádný soubor</i>
       <% end %>
-    <td><%= s.orig_filename %></td>
-    <td><%= s.score || '-'%> </td>
+    <td><%= sol.sosna_solver.full_name%></td>
+    <td><%= sol.orig_filename %></td>
+    <td><%= sol.score || '-'%> </td>
   </tr>
 <% end %>
 </table>

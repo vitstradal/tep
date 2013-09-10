@@ -6,17 +6,19 @@ require 'tempfile'
 
 class SosnaSolutionController < SosnaController
 
-  UPLOAD_DIR = "public/uploads"
+  UPLOAD_DIR = "public/uploads/"
   def index
       @solutions = SosnaSolution.all
   end
 
   def download
-    # XXX auth!
+
     solution = SosnaSolution.find id = params[:id]
-    #dir = '/home/vitas/vs/pia/'
-    #send_file dir + solution.filename, :type =>  "application/pdf"
-    send_file solution.filename, :type => 'application/pdf'
+    if ! solution.owner? current_user
+      authorize! :download_org, SosnaSolution
+    end
+
+    send_file UPLOAD_DIR + solution.filename, :type => 'application/pdf'
   end
 
   def show
@@ -37,14 +39,14 @@ class SosnaSolutionController < SosnaController
       solutions.each do |solution|
         filename = solution.filename
         next if filename.nil?
-        zipfile.add('reseni/' + File.basename(filename),  filename)
+        zipfile.add('reseni/' + File.basename(filename),  UPLOAD_DIR + filename)
       end
     end
     send_file zip_file_name, :filename => 'reseni.zip', :type => "application/zip"
     zip_file.unlink
   end
 
-  def user_upload
+  def upload
     solution_file = params[:sosna_solution][:solution_file]
     solution_id  = params[:sosna_solution][:id]
 
@@ -58,15 +60,20 @@ class SosnaSolutionController < SosnaController
 
     # find solution
     solution = SosnaSolution.find(solution_id) or raise RuntimeError, "bad solution id: #{solution_id}"
+
+    if !solution.owner? current_user
+        authorize! :upload_org, SosnaSolution
+    end
+
     problem, solver  = solution.sosna_problem, solution.sosna_solver
     pp problem
     pp solver
 
     # save file
-    filename = UPLOAD_DIR + "/solution-roc%02i-se%02i-ul%i-rel%i-%s-%s.pdf"  %
+    filename = 'reseni-roc%02i-se%02i-ul%i-rel%i-%s-%s.pdf'  %
                   [ problem.annual, problem.round, problem.problem_no,
                     solver.id, solver.name, solver.last_name ]
-    File.open(filename, 'wb') {  |f| f.write(solution_file.read) }
+    File.open(UPLOAD_DIR + filename, 'wb') {  |f| f.write(solution_file.read) }
 
 
     # update solution

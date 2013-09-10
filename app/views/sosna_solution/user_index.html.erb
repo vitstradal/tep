@@ -1,6 +1,6 @@
 
 
-<h1>Úlohy <%= @config[:annual] %>. ročníku, serie <%= @config[:round] %></h1>
+<h1>Úlohy <%= @config[:annual] %>. ročníku, série <%= @config[:round] %></h1>
 
 <table class="table table-bordered">
   <tr> 
@@ -10,20 +10,16 @@
  </tr> 
 <% @problems.each do |p| %>
   <tr>
-<!--    <td><%= link_to p.id, :action => :show, :id => p.id %></a><td>
-    <td><%= p.annual %></td> 
-    <td><%= p.round %></td>
--->
     <td><%= p.problem_no%> </td>
     <td>
       <%# FIXME:   @solutions[p.id] orig_name to title %>
       <% if @solutions[p.id].orig_filename  %>
-        <%= link_to @solutions[p.id].orig_filename, :action => :download, :id => p.id %>
+        <%= link_to @solutions[p.id].orig_filename, :action => :download, :id => @solutions[p.id].id %>
       <% else %>
         <i>zatím žádné řešení</i>
       <% end %>
     </td>
-    <td>  <%= form_for  @solutions[p.id], :html => {:class=> 'form-inline', :multipart => true}, :url => :sosna_user_solution_update do |f|  %>
+    <td>  <%= form_for  @solutions[p.id], :html => {:class=> 'form-inline', :multipart => true}, :url => :sosna_solution_upload do |f|  %>
           <%= f.hidden_field :id %>
           <%= f.file_field :solution_file , :class => 'input-small', :accept => '*.pdf'  %>
           <%= f.submit :class => 'btn', :value => 'Nahraj řešení ' %>
