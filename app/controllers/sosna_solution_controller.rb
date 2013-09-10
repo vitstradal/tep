@@ -2,6 +2,7 @@
 require 'pp'
 #require 'rubygems'
 require 'zip'
+require 'tempfile'
 
 class SosnaSolutionController < SosnaController
 
@@ -24,21 +25,23 @@ class SosnaSolutionController < SosnaController
 
   def downall
     solutions = SosnaSolution.all
-    zip_file_name = UPLOAD_DIR + '/solutions-all.zip' 
-    print "downall\n"
 
+    zip_file = Tempfile.new(['solution', 'zip'], UPLOAD_DIR)
+    zip_file_name = zip_file.path
+    zip_file.unlink
+
+    # Zip::File.open potrebuej aby zip_file_naem (neexistovalo
+    # jinak si zacne myslet, ze zip chci otevrit a ne prepsat
+    # naopak Tempfile nedokaze jen vymyslet jmeno a neotevirat
     Zip::File.open(zip_file_name, Zip::File::CREATE) do |zipfile|
       solutions.each do |solution|
-        # Two arguments:
-        # - The name of the file as it will appear in the archive
-        # - The original file, including the path to find it
         filename = solution.filename
-        print pp(solution)
-        next if filename.nil? 
-        zipfile.add('reseni/' + filename,  filename)
+        next if filename.nil?
+        zipfile.add('reseni/' + File.basename(filename),  filename)
       end
     end
-    send_file zip_file_name, :type => "application/zip"
+    send_file zip_file_name, :filename => 'reseni.zip', :type => "application/zip"
+    zip_file.unlink
   end
 
   def user_upload
@@ -60,7 +63,7 @@ class SosnaSolutionController < SosnaController
     pp solver
 
     # save file
-    filename = UPLOAD_DIR + "/solution-roc%02i-ser%02i-ul%i-sol%i-%s-%s.pdf"  %
+    filename = UPLOAD_DIR + "/solution-roc%02i-se%02i-ul%i-rel%i-%s-%s.pdf"  %
                   [ problem.annual, problem.round, problem.problem_no,
                     solver.id, solver.name, solver.last_name ]
     File.open(filename, 'wb') {  |f| f.write(solution_file.read) }
