@@ -16,9 +16,9 @@ schools = SosnaSchool.create([
           },
         ])
 
-#users = User.create([
-#        ])
-#schools = Users.create([
-#        ]);
-#
+users = User.create([
+             {:email => "adm@pikomat.mff.cuni.cz", :roles => [:admin, :org, :user],  :password => "adm je pes"},
+             {:email => "usr@pikomat.mff.cuni.cz", :roles => [:user],                :password => "usr je pes"},
+             {:email => "org@pikomat.mff.cuni.cz", :roles => [:org, :user],          :password => "org je pes"},
+        ])
 
