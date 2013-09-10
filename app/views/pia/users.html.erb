@@ -1,0 +1,28 @@
+<h1>Users</h1>
+<table class="table table-bordered">
+<tr>
+        <th>Id</th>
+        <th>Email</th>
+        <th>Roles</th>
+</tr>
+<% @users.each do |user|  %>
+<tr>
+
+   <td>
+          <%= user.id %> </td>
+   <td> <%= user.email %> </td>
+   <td>
+        <%= form_for user,  :url => {:action => :user_role_change}, :html => {:class => 'form-inline' } do |f| %>
+            <%= user.roles.to_a.join(',') %>
+            <%= f.hidden_field :id %>
+            <%= select_tag :role, 
+               options_for_select( User.valid_roles.reverse.map { |r| (user.has_role? r) ? "-#{r}" : "+#{r}" }),
+               :class => 'input-small'
+               %>
+            <%= f.submit value: '!'%>
+        <% end %>
+   </td>
+</tr>
+<% end %>
+</table>
+
