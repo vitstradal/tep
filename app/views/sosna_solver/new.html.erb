@@ -2,7 +2,7 @@
 <h1>Přihláška do <%= @config[:annual] %>. ročníku Pikomatu</h1>
 
 <% is_new  = true %>
-<%= render 'form', :locals => { :is_new => true } %>
+<%= render :partial => 'form', :locals => { :is_edit => false } %>
 
 <hr>
 <a name="souhlas"></a>
@@ -28,9 +28,3 @@ Matematicko-fyzikální fakulta, na období do konce roku 2014 za účelem:
 <li>informování o dalších akcích MFF a vysokoškolském studiu</li>
 </ul>
 </p>
-
-<hr>
-<pre>
-<%= debug @school.id %>
-<%= debug @school %>
-<%= debug @solver %>

@@ -63,8 +63,8 @@ class SosnaSolverController < SosnaController
       solver = SosnaSolver.find(sr[:id])
       solver.update_attributes(sr)
     else
-      solver = SosnaSolver.create(srp)
+      solver = SosnaSolver.create(sr)
     end
-    redirect_to :show
+    redirect_to :action =>  :show , :id => solver.id
   end
 end
