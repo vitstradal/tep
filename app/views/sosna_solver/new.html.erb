@@ -1,0 +1,36 @@
+
+<h1>Přihláška do <%= @config[:annual] %>. ročníku Pikomatu</h1>
+
+<% is_new  = true %>
+<%= render 'form', :locals => { :is_new => true } %>
+
+<hr>
+<a name="souhlas"></a>
+<h3>Souhlas se zpracovnáním osobních údajů</h3>
+
+<p>
+Vaše osobní údaje, které nám v přilhlášce do soutěže poskytujete,
+požívají ochrany podle zákona č. 101/2000 Sb., o ochraně osobních
+údajů. Podle tohoto zákona je potřebné, abyste poskytli souhlas se
+zpracováváním svých osobních údajů. Správcem osobních údajů je
+Univerzita Karlova v Praze, Matematicko-fyzikální fakulta,
+OVVP/organizátoři soutěže Pikomat MFF UK, Ke Karlovu 3, 121 16 Praha
+2. Podle zákona nejste povinni tyto osobní údaje poskytnout. Správce
+je povinen jednou za kalendářní rok bezplatně, jinak za přiměřenou
+úhradu vám na základě písemné žádosti poskytnout informace o osobních
+údajích o vás zpracovávaných.
+Souhlasím se zpracováváním osobních údajů v rozsahu uvedeném v tomto
+formuláři, zpracovatelem: Univerzita Karlova v Praze,
+Matematicko-fyzikální fakulta, na období do konce roku 2014 za účelem:
+
+<ul>
+<li>zasílání materiálů korespondenční soutěže Pikomat MFF UK</li>
+<li>informování o dalších akcích MFF a vysokoškolském studiu</li>
+</ul>
+</p>
+
+<hr>
+<pre>
+<%= debug @school.id %>
+<%= debug @school %>
+<%= debug @solver %>

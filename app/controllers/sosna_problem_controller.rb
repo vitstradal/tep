@@ -1,7 +1,5 @@
 class SosnaProblemController < ApplicationController
 
-  before_filter { authorize! :org, :sosna }
-
   def index
       @problems = SosnaProblem.all
   end

@@ -12,25 +12,6 @@
 
 ActiveRecord::Schema.define(:version => 2) do
 
-  create_table "sosna_applicants", :force => true do |t|
-    t.text     "name"
-    t.text     "last_name"
-    t.text     "sex",             :default => "male"
-    t.text     "birth"
-    t.text     "where_to_send",   :default => "home"
-    t.text     "grade",           :default => "111"
-    t.text     "finish_year",     :default => "2000"
-    t.text     "email"
-    t.text     "street"
-    t.text     "house_num"
-    t.text     "city"
-    t.text     "psc"
-    t.integer  "user_id"
-    t.integer  "sosna_school_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
-
   create_table "sosna_configs", :force => true do |t|
     t.string "key"
     t.string "value"
@@ -59,7 +40,27 @@ ActiveRecord::Schema.define(:version => 2) do
     t.string   "orig_filename"
     t.integer  "score"
     t.integer  "sosna_problem_id"
-    t.integer  "sosna_applicant_id"
+    t.integer  "sosna_solver_id"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "sosna_solvers", :force => true do |t|
+    t.text     "name"
+    t.text     "last_name"
+    t.text     "sex",             :default => "male"
+    t.text     "birth"
+    t.text     "where_to_send",   :default => "home"
+    t.text     "grade",           :default => "111"
+    t.text     "finish_year",     :default => "2000"
+    t.text     "annual"
+    t.text     "email"
+    t.text     "street"
+    t.text     "house_num"
+    t.text     "city"
+    t.text     "psc"
+    t.integer  "user_id"
+    t.integer  "sosna_school_id"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

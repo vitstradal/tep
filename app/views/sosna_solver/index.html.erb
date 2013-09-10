@@ -1,0 +1,20 @@
+<h1>Seznam řešitelů</h1>
+
+<table class="table table-bordered">
+  <tr>
+   <th>Id</th>
+   <th>Jméno</th>
+   <th>P</th>
+   <th>Ročník</th>
+   <th>Adresa</th>
+ </tr>
+<% @solvers.each do |s| %>
+  <tr>
+    <td><%= link_to s.id, :action => :show, :id => s.id %></a></td>
+    <td><%= s.name %> <%= s.last_name %></td>
+    <td><%= s.sex %></td>
+    <td><%= s.grade %> </td>
+    <td><%= s.address %> </td>
+  </tr>
+<% end %>
+</table>

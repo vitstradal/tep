@@ -1,26 +1,8 @@
 require 'pp'
 class PiaController < ApplicationController
 
-  before_filter do
-    case action_name.to_sym
+  def index; end
 
-     when :index 
-             authorize! :anon, :pia
-
-     when :users, :user_role_change
-             authorize! :admin, :pia
-
-     else
-       authorize! nil, nil
-    end
-  end
-
-  def index
-    render
-  end
-  def hello
-    render
-  end
   def users
     @users = User.all
   end

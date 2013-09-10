@@ -17,7 +17,11 @@
     <td><%= p.problem_no%> </td>
     <td>
       <%# FIXME:   @solutions[p.id] orig_name to title %>
-      <%= link_to @solutions[p.id].orig_filename, :action => :download, :id => p.id %>
+      <% if @solutions[p.id].orig_filename  %>
+        <%= link_to @solutions[p.id].orig_filename, :action => :download, :id => p.id %>
+      <% else %>
+        <i>zatím žádné řešení</i>
+      <% end %>
     </td>
     <td>  <%= form_for  @solutions[p.id], :html => {:class=> 'form-inline', :multipart => true}, :url => :sosna_user_solution_update do |f|  %>
           <%= f.hidden_field :id %>

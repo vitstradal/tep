@@ -1,1 +1,23 @@
-<h1>TODO: sosna solution</h1>
+<h1>Řešení úloh r<%=@annual%>s<%=@round%></h1>
+
+<table class="table table-bordered">
+  <tr> 
+   <th>Úloha</td>
+   <th>Soubor</td>
+   <th>Orig</td>
+   <th>Body</td>
+ </tr> 
+<% @solutions.each do |s| %>
+  <tr>
+    <td><%= link_to s.id, :action => :show, :id => s.id %></a><t/d>
+    <td>
+      <% if s.filename  %>
+         <%= link_to s.filename , :action => :download, :id => s.id %></td> 
+      <% else %>
+         <i>žádný soubor</i>
+      <% end %>
+    <td><%= s.orig_filename %></td>
+    <td><%= s.score || '-'%> </td>
+  </tr>
+<% end %>
+</table>

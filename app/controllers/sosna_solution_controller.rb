@@ -33,14 +33,14 @@ class SosnaSolutionController < SosnaController
 
     # find solution
     solution = SosnaSolution.find(solution_id) or raise RuntimeError, "bad solution id: #{solution_id}"
-    problem, applicant  = solution.sosna_problem, solution.sosna_applicant
+    problem, solver  = solution.sosna_problem, solution.sosna_solver
     pp problem
-    pp applicant
+    pp solver
 
     # save file
-    filename = "public/uploads/solution-a%02i-r%02i-p%i-a%i-%s.ext"  %
+    filename = "public/uploads/solution-roc%02i-ser%02i-ul%i-sol%i-%s-%s.pdf"  %
                   [ problem.annual, problem.round, problem.problem_no,
-                    applicant.id, applicant.name ]
+                    solver.id, solver.name, solver.last_name ]
     File.open(filename, 'wb') {  |f| f.write(solution_file.read) }
 
 
@@ -60,15 +60,15 @@ class SosnaSolutionController < SosnaController
 
     @problems  = SosnaProblem.where(:annual=>@config[:annual], :round=>@config[:round])
 
-    @applicant = SosnaApplicant.where(:user_id => current_user.id).first
-    if ! @applicant
+    @solver = SosnaSolver.where(:user_id => current_user.id).first
+    if ! @solver
        flash[:errors] = {:pozor => 'zatím nejsi řešitelem, nejprve vyplň přihlašku!'}
-       return redirect_to :controller => :sosna_applicant , :action => :new
+       return redirect_to :controller => :sosna_solver , :action => :new
     end
 
     problem_ids = @problems.map { |p| p.id }
     @solutions = id_problem_hash(SosnaSolution.find(:all,  :conditions => {
-                                          :sosna_applicant_id => @applicant.id,
+                                          :sosna_solver_id => @solver.id,
                                           :sosna_problem_id => problem_ids,
                                          }))
 
@@ -77,7 +77,7 @@ class SosnaSolutionController < SosnaController
       #logger.fatal "fatal2:" + @solutions.inspect
       if ! (@solutions.has_key?(p.id))
         @solutions[p.id] = SosnaSolution.create({
-                                            :sosna_applicant_id => @applicant.id,
+                                            :sosna_solver_id => @solver.id,
                                             :sosna_problem_id => p.id,
                                             })
       end

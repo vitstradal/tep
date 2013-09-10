@@ -12,10 +12,12 @@ Pia::Application.routes.draw do
   #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
   # This route can be invoked with purchase_url(:id => product.id)
 
+  # přidání akcí je třeba přidat i práva v app/models/ability.rb
+
   # anon:
-  get  '/sosna/application'        => 'sosna_applicant#new',         :as => :sosna_applicant_new
-  get  '/sosna/application/tnx'    => 'sosna_applicant#create_tnx',  :as => :sosna_applicant_create_tnx
-  post '/sosna/application/new'    => 'sosna_applicant#create',      :as => :sosna_applicant_anon_create
+  get  '/sosna/solver/new'         => 'sosna_solver#new',         :as => :sosna_solver_new
+  post '/sosna/solver/create'      => 'sosna_solver#create',      :as => :sosna_solver_anon_create
+  get  '/sosna/solver/tnx'         => 'sosna_solver#create_tnx',  :as => :sosna_solver_create_tnx
 
   # user:
   get  '/sosna/solutions'          => 'sosna_solution#user_index',   :as => :sosna_user_solutions
@@ -33,9 +35,9 @@ Pia::Application.routes.draw do
   post '/sosna/problem/update'     => 'sosna_problem#update',        :as => :sosna_problem_update
   put  '/sosna/problem/update'     => 'sosna_problem#update',        :as => :sosna_problem_update
 
-  get  '/sosna/applicants'         => 'sosna_applicant#index',       :as => :sosna_applicants
-  post '/sosna/applicant(/:id)'    => 'sosna_applicant#show',        :as => :sosna_applicant
-  post '/sosna/applicant/update'   => 'sosna_applicant#update',      :as => :sosna_applicant_update
+  get  '/sosna/solvers'         => 'sosna_solver#index',       :as => :sosna_solvers
+  get  '/sosna/solver(/:id)'    => 'sosna_solver#show',        :as => :sosna_solver
+  post '/sosna/solver/update'   => 'sosna_solver#update',      :as => :sosna_solver_update
 
   get  '/sosna/schools'            => 'sosna_school#index',          :as => :sosna_schools
   post '/sosna/school/update'      => 'sosna_school#update',         :as => :sosna_school_update

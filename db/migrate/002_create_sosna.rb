@@ -18,7 +18,7 @@ class CreateSosna < ActiveRecord::Migration
       t.string  :orig_filename
       t.integer :score
       t.belongs_to :sosna_problem
-      t.belongs_to :sosna_applicant
+      t.belongs_to :sosna_solver
       t.timestamps
     end
 
@@ -34,7 +34,7 @@ class CreateSosna < ActiveRecord::Migration
 
     end
 
-    create_table :sosna_applicants do |t|
+    create_table :sosna_solvers do |t|
 
       t.text :name
       t.text :last_name
@@ -64,7 +64,7 @@ class CreateSosna < ActiveRecord::Migration
   def self.down
     drop_table :sosna_solutions
     drop_table :sosna_problems
-    drop_table :sosna_applicants
+    drop_table :sosna_solvers
     drop_table :sosna_schools
   end
 end
