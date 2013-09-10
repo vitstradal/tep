@@ -24,6 +24,7 @@ class Ability
       can :index, SosnaProblem
       can :show, SosnaProblem
       can :update, SosnaProblem
+      can :downall, SosnaProblem
 
       can :index, SosnaSolver
       can :show, SosnaSolver

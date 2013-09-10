@@ -1,8 +1,11 @@
 # encoding: utf-8
 require 'pp'
+#require 'rubygems'
+require 'zip'
 
 class SosnaSolutionController < SosnaController
 
+  UPLOAD_DIR = "public/uploads"
   def index
       @solutions = SosnaSolution.all
   end
@@ -12,11 +15,30 @@ class SosnaSolutionController < SosnaController
     solution = SosnaSolution.find id = params[:id]
     #dir = '/home/vitas/vs/pia/'
     #send_file dir + solution.filename, :type =>  "application/pdf"
-    send_file solution.filename, :type =>  "application/pdf"
+    send_file solution.filename, :type => 'application/pdf'
   end
 
   def show
-      @solution = SosnaSolution.find param[:id]
+      @solution = SosnaSolution.find params[:id]
+  end
+
+  def downall
+    solutions = SosnaSolution.all
+    zip_file_name = UPLOAD_DIR + '/solutions-all.zip' 
+    print "downall\n"
+
+    Zip::File.open(zip_file_name, Zip::File::CREATE) do |zipfile|
+      solutions.each do |solution|
+        # Two arguments:
+        # - The name of the file as it will appear in the archive
+        # - The original file, including the path to find it
+        filename = solution.filename
+        print pp(solution)
+        next if filename.nil? 
+        zipfile.add('reseni/' + filename,  filename)
+      end
+    end
+    send_file zip_file_name, :type => "application/zip"
   end
 
   def user_upload
@@ -38,7 +60,7 @@ class SosnaSolutionController < SosnaController
     pp solver
 
     # save file
-    filename = "public/uploads/solution-roc%02i-ser%02i-ul%i-sol%i-%s-%s.pdf"  %
+    filename = UPLOAD_DIR + "/solution-roc%02i-ser%02i-ul%i-sol%i-%s-%s.pdf"  %
                   [ problem.annual, problem.round, problem.problem_no,
                     solver.id, solver.name, solver.last_name ]
     File.open(filename, 'wb') {  |f| f.write(solution_file.read) }
