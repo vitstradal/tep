@@ -1,7 +1,5 @@
 require 'pp'
-class UserController < ApplicationController
-
-  authorize_resource
+class PiaController < ApplicationController
 
   def index; end
 

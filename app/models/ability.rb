@@ -6,6 +6,8 @@ class Ability
     user ||= User.new # guest user (not logged in)
 
     # anon
+    # can :index, User
+
     can :new, SosnaSolver
     can :create, SosnaSolver
     can :create_tnx, SosnaSolver
@@ -41,10 +43,10 @@ class Ability
     end
 
     # pia
-    if user.admin?
-      can :users, User
-      can :user_role_change, User
-    end
+    #if user.admin?
+    #  can :users, User
+    #  can :user_role_change, User
+    #end
     # https://github.com/ryanb/cancan/wiki/Defining-Abilities
   end
 end

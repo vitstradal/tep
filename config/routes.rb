@@ -1,19 +1,8 @@
 Pia::Application.routes.draw do
   devise_for :users
 
-  # The priority is based upon order of creation:
-  # first created -> highest priority.
-
-  # Sample of regular route:
-  #   match 'products/:id' => 'catalog#view'
-  # Keep in mind you can assign values other than :controller and :action
-
-  # Sample of named route:
-  #   match 'products/:id/purchase' => 'catalog#purchase', :as => :purchase
-  # This route can be invoked with purchase_url(:id => product.id)
 
   # přidání akcí je třeba přidat i práva v app/models/ability.rb
-
   # anon:
   get  '/sosna/solver/new'         => 'sosna_solver#new',         :as => :sosna_solver_new
   post '/sosna/solver/create'      => 'sosna_solver#create',      :as => :sosna_solver_anon_create
@@ -48,41 +37,9 @@ Pia::Application.routes.draw do
   post '/sosna/config/update'      => 'sosna_config#updateall',      :as => :sosna_config_updateall
 
   # pia
-  get  '/users'                   => 'user#users',                    :as => :users_list
-  put  '/user/role'               => 'user#user_role_change',         :as => :user_role_change
+  get  '/users'                   => 'pia#users',                    :as => :users_list
+  put  '/user/role'               => 'pia#user_role_change',         :as => :user_role_change
 
-  # Sample resource route with options:
-  #   resources :products do
-  #     member do
-  #       get 'short'
-  #       post 'toggle'
-  #     end
-  #
-  #     collection do
-  #       get 'sold'
-  #     end
-  #   end
-
-  # Sample resource route with sub-resources:
-  #   resources :products do
-  #     resources :comments, :sales
-  #     resource :seller
-  #   end
-
-  # Sample resource route with more complex sub-resources
-  #   resources :products do
-  #     resources :comments
-  #     resources :sales do
-  #       get 'recent', :on => :collection
-  #     end
-  #   end
-
-  # Sample resource route within a namespace:
-  #   namespace :admin do
-  #     # Directs /admin/products/* to Admin::ProductsController
-  #     # (app/controllers/admin/products_controller.rb)
-  #     resources :products
-  #   end
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
