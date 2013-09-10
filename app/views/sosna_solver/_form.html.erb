@@ -1,0 +1,126 @@
+
+<%= is_new ? "true" : "false" %>
+<%= form_for @solver, :url => { :action => :create },  :html => {:class=>'form-horizontal'} do |f| %>
+<div class="control-group">
+  <label class="control-label" for="solver_name">Jméno a Příjmení</label>
+  <div class="controls">
+          <%= f.text_field :name %>
+          <%= f.text_field :last_name %>
+  </div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="solver_email">Email</label>
+  <div class="controls"><%= f.text_field :email %></div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="solver_street">Ulice a č.p.</label>
+  <div class="controls">
+          <%= f.text_field :street %>
+          <%= f.text_field :house_num, :class=>'input-mini'%>
+  </div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="solver_psc">PSČ a Město</label>
+  <div class="controls">
+          <%= f.text_field :psc, :class=>'input-mini'%>
+          <%= f.text_field :city %>
+  </div>
+</div>
+<hr>
+<div class="control-group">
+  <label class="control-label" for="school">Škola</label>
+  <div class="controls">
+       <%= select :school, :id,
+               options_for_select(
+                       [['Vyber školu', :none]] +
+                       @schools.map{ |s| [s.name, s.id] } <<
+                       ['Jiná škola', :jina],
+                       @school.id.nil? ? :none 
+                                      : @school.id < 0  ? :jina
+                                                        : @school.id
+                                                      
+                       )
+         %>
+  </div>
+</div>
+
+<div id='school_div'>
+<div class="control-group">
+  <label class="control-label" for="school_nazev">Ulice a č.p.</label>
+  <div class="controls">
+          <%= text_field :sosna_school, :street, :value =>  @school.street || '' %>
+          <%= text_field :sosna_school, :house_num, :value =>  @school.house_num, :class=>'input-mini'%>
+  </div>
+</div>
+<div class="control-group">
+  <label class="control-label" for="_nazev">PSČ a Město</label>
+  <div class="controls">
+          <%= text_field :sosna_school, :psc, :value => @school.psc, :class=>'input-mini'%>
+          <%= text_field :sosna_school, :city, :value => @school.city %>
+  </div>
+</div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="solver_where_to_send">Koresponenci zasílejte</label>
+  <div class="controls">
+       <%= select_tag "where_to_send",
+               options_for_select([['domů', 'home'],
+                                   ['do školy', 'school']],
+                                   'home')
+         %>
+  </div>
+</div>
+
+<hr>
+
+<div class="control-group">
+  <label class="control-label" for="_nazev">Rok maturity</label>
+  <div class="controls">
+     <%= f.text_field :finish_year, :class=>'input-mini' %>
+     Třída
+     <%= f.text_field :grade, :class=>'input-mini' %>
+  </div>
+</div>
+
+<div class="control-group">
+  <label class="control-label" for="_nazev">Datum narození</label>
+  <div class="controls">
+     <%= f.text_field :birth %>
+  </div>
+</div>
+
+
+
+<div class="control-group">
+  <label class="control-label" for="_nazev">Pohlaví</label>
+
+  <div class="controls">
+    <label class="radio inline">
+      <%= f.radio_button :sex, :male , :checked=> true %> řešitel
+    </label>
+    <label class="radio inline">
+      <%= f.radio_button :sex, :female %> řešitelka
+    </label>
+  </div>
+</div>
+
+<hr>
+
+<div class="control-group">
+  <div class="controls">
+     <label class="checkbox" for="_chnazev"> <%= check_box :souhlasim , :yes %> Souhlasím se <a href="#souhlas">zpracováním osobních údajů</a></label>
+  </div>
+</div>
+
+
+
+
+<div class="control-group">
+  <div class="controls"><%= f.submit :class=>'btn btn-primary', :value=>'Přihlásit se do Pikomatu' %></div>
+</div>
+
+<% end %>
