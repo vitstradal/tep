@@ -13,7 +13,7 @@ class Ability
     can :create_tnx, SosnaSolver
 
     if user.user?
-      can :index, SosnaSolution
+      can :user_index, SosnaSolution
       can :upload, SosnaSolution
       can :download, SosnaSolution
     end
@@ -26,6 +26,7 @@ class Ability
       can :upload, SosnaSolution
       can :upload_org, SosnaSolution
       can :update, SosnaSolution
+      can :downall, SosnaSolution
 
       can :index, SosnaProblem
       can :show, SosnaProblem
