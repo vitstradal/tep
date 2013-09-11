@@ -28,7 +28,7 @@ class SosnaSolutionController < SosnaController
   def downall
     solutions = SosnaSolution.all
 
-    zip_file = Tempfile.new(['solution', 'zip'], UPLOAD_DIR)
+    zip_file = Tempfile.new(['solution', '.zip'], UPLOAD_DIR)
     zip_file_name = zip_file.path
     zip_file.unlink
 
@@ -43,7 +43,7 @@ class SosnaSolutionController < SosnaController
       end
     end
     send_file zip_file_name, :filename => 'reseni.zip', :type => "application/zip"
-    zip_file.unlink
+    File.delete zip_file_name 
   end
 
   def upload
