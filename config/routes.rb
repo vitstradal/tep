@@ -15,8 +15,8 @@ Pia::Application.routes.draw do
   get  '/sosna/solution/:id/down'  => 'sosna_solution#download',     :as => :sosna_solution_download
 
   # org:
-  get  '/sosna/solutions/org'      => 'sosna_solution#index',        :as => :sosna_solutions_org
-  get  '/sosna/solutions(/:roc(/:se(/:ul)))'=> 'sosna_solution#index',:as => :sosna_solutions_org_2
+  #get  '/sosna/solutions/org'      => 'sosna_solution#index',        :as => :sosna_solutions_org
+  get  '/sosna/solutions(/:roc(/:se(/:ul)))'=> 'sosna_solution#index',:as => :sosna_solutions_org
   post '/sosna/solution/update'    => 'sosna_solution#update',       :as => :sosna_solution_update
   get  '/sosna/solution/downall'   => 'sosna_solution#downall',      :as => :sosna_solution_update
   get  '/sosna/solution(/:id)'     => 'sosna_solution#show',         :as => :sosna_solution
@@ -35,7 +35,7 @@ Pia::Application.routes.draw do
   post '/sosna/school/update'      => 'sosna_school#update',         :as => :sosna_school_update
 
   get  '/sosna/config'             => 'sosna_config#index',          :as => :sosna_configs
-  post '/sosna/config/update'      => 'sosna_config#updateall',      :as => :sosna_config_updateall
+  post '/sosna/config/update'      => 'sosna_config#update',         :as => :sosna_config_update
 
   # pia
   get  '/users'                   => 'pia#users',                    :as => :users_list

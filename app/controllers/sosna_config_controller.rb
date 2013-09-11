@@ -4,7 +4,7 @@ class SosnaConfigController < SosnaController
     load_config
   end
 
-  def updateall
+  def update
     config = params[:config]
     config.each_pair do |k,v|
         cfg = SosnaConfig.where(:key =>  k).first

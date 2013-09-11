@@ -15,6 +15,7 @@ class SosnaSolverController < SosnaController
   #def new_tnx end
 
   def create
+    load_config
     school_id =  params[:school].delete :id
 
     begin
@@ -26,6 +27,7 @@ class SosnaSolverController < SosnaController
 
     solver = SosnaSolver.new(params[:sosna_solver])
     solver.sosna_school = school
+    solver.annual = @annual
     print pp solver
     if solver.invalid?
         flash[:errors] = solver.errors

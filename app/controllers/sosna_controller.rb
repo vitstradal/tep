@@ -5,8 +5,9 @@ class SosnaController < ApplicationController
 
   before_filter do 
     load_config
-    params[:round] ||= @round
-    params[:annual] ||= @annual
+    params[:se] ||= @round
+    params[:roc] ||= @annual
+    #params[:ul]
   end
   
   def id_problem_hash(arr)

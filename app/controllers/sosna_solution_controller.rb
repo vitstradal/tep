@@ -8,7 +8,15 @@ class SosnaSolutionController < SosnaController
 
   UPLOAD_DIR = "public/uploads/"
   def index
-      @solutions = SosnaSolution.all
+    @solutions = _solutions_from_roc_se_ul
+
+    if !@problem_no.nil?
+      @problems = _problems_roc_se(@annual, @round)
+    elsif !@round.nil?
+      @rounds = _rounds_roc(@annual)
+    else 
+      @annuals = _annuals
+    end
   end
 
   def download
@@ -26,7 +34,7 @@ class SosnaSolutionController < SosnaController
   end
 
   def downall
-    solutions = SosnaSolution.all
+    solutions = _solutions_from_roc_se_ul
 
     zip_file = Tempfile.new(['solution', '.zip'], UPLOAD_DIR)
     zip_file_name = zip_file.path
@@ -115,4 +123,42 @@ class SosnaSolutionController < SosnaController
       end
     end
   end
+
+  def _params_roc_se_ul
+    roc, se, ul = params[:roc],  params[:se], params[:ul]
+    load_config
+
+    if roc.nil? && se.nil? 
+        roc  = @annual 
+        se  = @round 
+    end
+
+    @round = se
+    @problem_no = ul 
+
+    return roc, se, ul
+  end
+
+  def _solutions_from_roc_se_ul
+    roc, se, ul = _params_roc_se_ul
+    if ul
+      return SosnaSolution.joins(:sosna_problem).where(:sosna_problems => {:annual => roc, :round => se, :problem_no => ul}).all
+    else
+      return SosnaSolution.joins(:sosna_problem).where(:sosna_problems => {:annual => roc, :round => se}).all
+    end
+  end
+
+  def _problems_roc_se(roc, se) 
+      return SosnaProblem.where({:annual => roc, :round => se}).all
+  end
+
+  def _rounds_roc(roc) 
+    return [1,2,3,4,5]
+  end
+
+  def _annuals
+    return [28, 29, 30]
+  end
+
+
 end

@@ -1,4 +1,4 @@
-<h1>Řešení úloh r<%=@annual%>s<%=@round%></h1>
+<h1>Řešení úloh roc<%=@annual%>se<%=@round%><%if @problem_no%>ul<%=@problem_no%><%end%></h1>
 
 <table class="table table-bordered">
   <tr> 
@@ -28,5 +28,12 @@
 <% end %>
 </table>
 
-<%= link_to 'Stáhnout všechna řešení v jednom .zip', { :action => :downall } , {:class=> 'btn btn-primary'} %>
+<%= link_to 'Stáhnout všechna řešení v jednom .zip',
+            { :action => :downall, :roc => @annual, :se => @round, :ul => @problem_no },
+            {:class=> 'btn btn-primary'} %>
 
+
+<hr>
+annuals: <%= debug @annuals %>
+rounds: <%= debug @rounds %>
+problems: <%= debug @problems %>

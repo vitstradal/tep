@@ -7,10 +7,10 @@ class CreateSosna < ActiveRecord::Migration
     end
     add_index :sosna_configs, :key, unique: true
     create_table :sosna_problems do |t|
-      t.string :title
-      t.integer :annual # ročník
-      t.integer :round
-      t.integer :problem_no
+      t.string  :title
+      t.integer :annual     # ročník
+      t.integer :round      # serie
+      t.integer :problem_no # uloha
     end
 
     create_table :sosna_solutions do |t|
