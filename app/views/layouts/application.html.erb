@@ -61,7 +61,7 @@
 
               <% if user_signed_in?  %>
                 <li class="nav-header">Uživatel</li>
-                  <li><%= link_to  'Tvé řešení', :sosna_user_solutions %></li>
+                  <li><%= link_to  'Tvé řešení', :sosna_solutions_user %></li>
                   <li><%= link_to  'Změna hesla', :edit_user_registration %></li>
               <% else %>
               <% end %>
@@ -69,7 +69,7 @@
                 <li class="nav-header">Org</li>
                 <li><%= link_to 'Uživatelé', :users_list  %></li>
                 <li><%= link_to 'Řešitelé', :sosna_solvers %></li>
-                <li><%= link_to 'Řešení řešitelů', :sosna_org_solutions %></li>
+                <li><%= link_to 'Řešení řešitelů', :sosna_solutions_org %></li>
                 <li><%= link_to 'Úlohy', :sosna_problems %></li>
                 <li><%= link_to 'Konfigurace', :sosna_configs  %></li>
               <% end %>
