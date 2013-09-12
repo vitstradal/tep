@@ -31,6 +31,7 @@ class Ability
       can :index, SosnaProblem
       can :show, SosnaProblem
       can :update, SosnaProblem
+      can :new_round, SosnaProblem
 
       can :index, SosnaSolver
       can :show, SosnaSolver

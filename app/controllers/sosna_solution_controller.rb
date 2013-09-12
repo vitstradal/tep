@@ -10,27 +10,27 @@ class SosnaSolutionController < SosnaController
   def index
 
     @solutions = _solutions_from_roc_se_ul
-    path = [ {name: "Ročník #{@annual}", url: {roc: @annual}} ]
+    path = [ _annual_link(@annual) ]
 
-    if @round
-      path.push({name: "Série #{@round}", url: {roc: @annual, se: @round}})
-    end
-    dir =[]
+    dir = nil
 
     if @problem_no
-      path.push({name: "Úloha #{@problem_no}", url: {roc: @annual, se: @round, ul: @problem_no}})
-
+      # in level problem
+      path.push(_round_link(@annual, @round))
+      path.push(_problem_link(@annual, @round, @problem_no))
+      path[-1][:sub] = _problems_roc_se(@annual, @round)
     elsif @round
-      dir = _problems_roc_se(@annual, @round).map do |ul|
-                        {name: "Úloha #{ul.id}", url: {roc: @annual, se: @round, ul: ul.id}}
-      end
+      # in level round
+      path.push(_round_link(@annual, @round))
+      path[-1][:sub] = _rounds_roc(@annual)
+
+      dir = _problems_roc_se(@annual, @round)
     else
+      # in level annual
       @annuals = _annuals
-      dir = _rounds_roc(@annual).map do |se|
-                        {name: "Série #{se}", url: {roc: @annual, se: se}}
-      end
+      dir = _rounds_roc(@annual)
     end
-    @breadcrumb = [ path, dir ]
+    @breadcrumb = dir.nil? ? [path] : [ path, dir ]
   end
 
   def download
@@ -108,7 +108,7 @@ class SosnaSolutionController < SosnaController
 
   def user_index
     # fixme: from db
-    load_config
+    #load_config
 
     die if current_user.nil?
 
@@ -147,6 +147,7 @@ class SosnaSolutionController < SosnaController
         se  = @round
     end
 
+    @annual = roc
     @round = se
     @problem_no = ul 
 
@@ -162,21 +163,50 @@ class SosnaSolutionController < SosnaController
     end
   end
 
-  def _problems_roc_se(roc, se) 
-      return SosnaProblem.where({:annual => roc, :round => se}).all
+  def _problems_roc_se(roc, se)
+      return SosnaProblem.where({:annual => roc, :round => se})
+                         .all
+                         .map do |ul|
+                              _problem_link(@annual, @round, ul.problem_no)
+                         end
+
   end
 
-  def _rounds_roc(roc) 
-    return [1,2,3,4,5]
+  def _rounds_roc(roc)
+    return SosnaProblem.select('round')
+                       .where({annual: roc})
+                       .group('round')
+                       .order('round')
+                       .all
+                       .map do |ul|
+                          _round_link(@annual, ul.round)
+                       end
+
+  end
+
+  def _annual_link(annual)
+     {name: "Ročník #{annual}", url: {roc:@annual}}
+  end
+
+  def _problem_link(annual, round, problem_no)
+      {name: "Úloha #{problem_no}", url: {roc: annual, se: round, ul: problem_no}}
+  end
+
+  def _round_link(annual, round)
+     {name: "Série #{round}", url: {roc: annual, se: round}}
   end
 
   def _annuals
-    return [
-            [30, [1,2,3,4, 5, 6]],
-            [29, [1,2,3,4, 5]],
-            [28, [1,2,3,4, 11]],
-           ]
+
+    return SosnaProblem.select('annual')
+                       .group('annual')
+                       .order('annual desc')
+                       .all
+                       .each do |a|
+                            a[:rounds] = _rounds_roc(a.annual)
+                       end
   end
+
 
 
 

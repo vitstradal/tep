@@ -6,6 +6,7 @@ class CreateSosna < ActiveRecord::Migration
       t.string :value
     end
     add_index :sosna_configs, :key, unique: true
+
     create_table :sosna_problems do |t|
       t.string  :title
       t.integer :annual     # ročník

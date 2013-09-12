@@ -6,12 +6,10 @@
  <h1>Řešení úloh po ročnících</h1>
    <% @annuals.each do |annual| %>
     <ul class="breadcrumb">
-      <li><%= link_to "Ročník #{annual[0]}",  { roc: annual[0] }  %><span class="divider">&gt;</span></li>
-        <% annual[1].each do |round| %>
-          <li><%= link_to "Série #{round}",  { roc: annual[0], se: round }  %>
-            <% if annual[1].last != round %>
+      <li><%= link_to "Ročník #{annual.annual}",  { roc: annual.annual }  %><span class="divider">&gt;</span></li>
+        <% annual.rounds.each do |round| %>
+          <li><%= link_to "Série #{round[:name]}",  round[:url]  %>
                <span class="divider">,</span></li>
-            <% end %>
         <% end %>
       </li>
     </ul>
@@ -55,8 +53,8 @@
 
 </table>
 
-<%= link_to 'Stáhnout všechna řešení v jednom .zip',
+<%= link_to 'Stáhnout tato řešení v jednom .zip',
             { :action => :downall, :roc => @annual, :se => @round, :ul => @problem_no },
-            {:class=> 'btn btn-primary'} %>
+            { :class=> 'btn btn-primary'} %>
 
 <% end # annuals %>

@@ -5,6 +5,7 @@
    <th>Ročník</th>
    <th>Serie</th>
    <th>Úloha</th>
+   <th>Název</th>
  </tr>
 <% @problems.each do |p| %>
   <tr>
@@ -12,8 +13,16 @@
     <td><%= p.annual %></td>
     <td><%= p.round %></td>
     <td><%= p.problem_no%> </td>
+    <td><%= p.title%> </td>
   </tr>
 <% end %>
 </table>
 
 <%= link_to 'Nová úloha', :sosna_problem %>
+
+<%= form_tag :sosna_problem_new_round do %>
+Ročník: <%= text_field_tag :annual , @annual %>
+Série: <%= text_field_tag :round , @round.to_i + 1 %>
+Počet úloh: <%= text_field_tag :count , 6 %>
+<%= submit_tag 'Vytvoř' %>
+<% end %>

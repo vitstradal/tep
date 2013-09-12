@@ -1,9 +1,17 @@
 
+<h1>Úloha č. <%= @problem.problem_no %> - editace</h1>
+
+<%= link_to '<předchozí', { :id =>  @problem.id - 1 } %>
+<%= link_to 'další>', { :id =>  @problem.id + 1 } %>
+
+
 <% form_for @problem, :url => {:action => :update }  do |f| %> 
   <%= f.hidden_field :id if @problem.id %></br>
   Ročník: <%= f.text_field :annual %><br/>
   Série: <%= f.text_field :round %><br/>
   Úloha: <%= f.text_field :problem_no %><br/>
-  <%= f.submit %>
+  Název: <%= f.text_field :title %><br/>
+  <%= f.submit 'Uložit'%>
+  <%= f.submit 'Uložit a další' %>
 <% end %>
 

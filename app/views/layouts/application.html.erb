@@ -9,6 +9,7 @@
   <%= stylesheet_link_tag 'andulka/stylesheet.css' %>
   <%= stylesheet_link_tag 'pia.css' %>
   <%= javascript_include_tag 'jquery-1.10.2.js' %>
+  <%= javascript_include_tag 'bootstrap.js' %>
   <%= javascript_include_tag :defaults %>
   <%= csrf_meta_tag %>
 </head>
@@ -91,7 +92,24 @@
                         when 1 then [',', '|']
                         else [',', '|']
                         end -%>
-         <li><%= link_to crumb[:name],  crumb[:url] %>
+         <li <% if crumb[:sub] %>class="active"<% end  %>>
+            <% if crumb[:sub] %>
+               <span class="dropdown">
+               <%#= link_to   '#', :class => 'dropdown-toggle', 'data-target'=>'#', 'data-toggle'=> "dropdown", :role=>"button"  do %>
+               <span class='dropdown-toggle' data-target="#" data-toggle="dropdown" role="button"  >
+                 <%= crumb[:name] %>
+                 </span>
+               <%# end # link_to %>
+               <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
+                 <% crumb[:sub].each do |sub| %>
+                   <li role="presentation"><%= link_to sub[:name], sub[:url] %></li>
+                  <%# <li role="presentation"><a role="menuitem" tabindex="-1" href="http://gxxxle.com">Action 1</a></li> %>
+                 <% end %>
+               </ul>
+               </span>
+            <% else %>
+               <%= link_to crumb[:name],  crumb[:url] %>
+            <% end %>
             <% if bread.last != crumb %>
                         <span class="divider"><%= msep %></span>
             <% elsif @breadcrumb.last != bread %>
