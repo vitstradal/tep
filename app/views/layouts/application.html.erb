@@ -18,11 +18,6 @@
     <div class="navbar navbar-inverse">
       <div class="navbar-inner">
         <div class="container-fluid">
-          <button type="button" class="btn btn-navbar" data-toggle="collapse" data-target=".nav-collapse">
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
           <a class="brand" href="#">Pia desideria</a>
           <div class="nav-collapse collapse">
                 <% if user_signed_in?  %>
@@ -36,12 +31,6 @@
                      <%= link_to  'Registrace', :new_user_registration  %>
                   </p>
                 <% end %>
-<%#            <ul class="nav">
-              <li class="active"><a href="#">Home</a></li>
-              <li><a href="#about">About</a></li>
-              <li><a href="#contact">Contact</a></li>
-            </ul>
-%>
           </div><!--/.nav-collapse -->
         </div>
       </div>
@@ -91,6 +80,27 @@
     <strong><%= key.capitalize %></strong> <%=msg %>
     </div>
   <% end %>
+<% end %>
+
+<% if @breadcrumb %>
+<ul class="breadcrumb">
+   <% @breadcrumb.each_with_index do |bread, bread_idx| %>
+     <% bread.each do |crumb, crumb_idx| %>
+        <% msep, esep = case bread_idx
+                        when 0 then ['/', '>']
+                        when 1 then [',', '|']
+                        else [',', '|']
+                        end -%>
+         <li><%= link_to crumb[:name],  crumb[:url] %>
+            <% if bread.last != crumb %>
+                        <span class="divider"><%= msep %></span>
+            <% elsif @breadcrumb.last != bread %>
+                        <span class="divider"><%= esep %></span>
+            <% end %>
+         </li>
+     <% end %>
+   <% end %>
+</ul>
 <% end %>
 
 <%= yield %>

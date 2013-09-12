@@ -1,23 +1,45 @@
-<h1>Řešení úloh roc<%=@annual%>se<%=@round%><%if @problem_no%>ul<%=@problem_no%><%end%></h1>
+
+
+
+<%#### seznam  ročníků -%>
+<% if @annuals %>
+ <h1>Řešení úloh po ročnících</h1>
+   <% @annuals.each do |annual| %>
+    <ul class="breadcrumb">
+      <li><%= link_to "Ročník #{annual[0]}",  { roc: annual[0] }  %><span class="divider">&gt;</span></li>
+        <% annual[1].each do |round| %>
+          <li><%= link_to "Série #{round}",  { roc: annual[0], se: round }  %>
+            <% if annual[1].last != round %>
+               <span class="divider">,</span></li>
+            <% end %>
+        <% end %>
+      </li>
+    </ul>
+   <% end %>
+<% else %>
+
+<%#### tabulka řešení -%>
+
+<h1>Řešení úloh, ročník <%=@annual%>, série <%=@round%><%if @problem_no%>, úloha <%=@problem_no%><%end%></h1>
 
 <table class="table table-bordered">
-  <tr> 
-   <th>Id</td>
-   <th>Se</td>
-   <th>Úl</td>
-   <th>Soubor</td>
-   <th>Řešitel</td>
-   <th>Orig</td>
-   <th>Body</td>
- </tr> 
+  <tr>
+   <th>Id</th>
+   <th>Se</th>
+   <th>Úl</th>
+   <th>Soubor</th>
+   <th>Řešitel</th>
+   <th>Orig</th>
+   <th>Body</th>
+ </tr>
 <% @solutions.each do |sol| %>
   <tr>
-    <td><%= link_to sol.id, :action => :show, :id => sol.id %></a><t/d>
+    <td><%= link_to sol.id, :action => :show, :id => sol.id %></a></td>
     <td><%= sol.sosna_problem.round %></td>
     <td><%= sol.sosna_problem.problem_no %></td>
     <td>
       <% if sol.filename  %>
-         <%= link_to sol.filename , {:action => :download, :id => sol.id}, {:title => sol.orig_filename} %></td> 
+         <%= link_to sol.filename , {:action => :download, :id => sol.id}, {:title => sol.orig_filename} %></td>
       <% else %>
          <i>žádný soubor</i>
       <% end %>
@@ -25,15 +47,16 @@
     <td><%= sol.orig_filename %></td>
     <td><%= sol.score || '-'%> </td>
   </tr>
+
 <% end %>
+<% if @solutions.empty? %>
+  <tr><td colspan="6"><i>žádná řešení</i><td></tr>
+<% end %>
+
 </table>
 
 <%= link_to 'Stáhnout všechna řešení v jednom .zip',
             { :action => :downall, :roc => @annual, :se => @round, :ul => @problem_no },
             {:class=> 'btn btn-primary'} %>
 
-
-<hr>
-annuals: <%= debug @annuals %>
-rounds: <%= debug @rounds %>
-problems: <%= debug @problems %>
+<% end # annuals %>

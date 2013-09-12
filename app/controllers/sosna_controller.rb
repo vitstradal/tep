@@ -5,8 +5,8 @@ class SosnaController < ApplicationController
 
   before_filter do 
     load_config
-    params[:se] ||= @round
-    params[:roc] ||= @annual
+    #params[:se] ||= @round
+    #params[:roc] ||= @annual
     #params[:ul]
   end
   

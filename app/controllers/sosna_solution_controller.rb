@@ -8,15 +8,29 @@ class SosnaSolutionController < SosnaController
 
   UPLOAD_DIR = "public/uploads/"
   def index
-    @solutions = _solutions_from_roc_se_ul
 
-    if !@problem_no.nil?
-      @problems = _problems_roc_se(@annual, @round)
-    elsif !@round.nil?
-      @rounds = _rounds_roc(@annual)
-    else 
-      @annuals = _annuals
+    @solutions = _solutions_from_roc_se_ul
+    path = [ {name: "Ročník #{@annual}", url: {roc: @annual}} ]
+
+    if @round
+      path.push({name: "Série #{@round}", url: {roc: @annual, se: @round}})
     end
+    dir =[]
+
+    if @problem_no
+      path.push({name: "Úloha #{@problem_no}", url: {roc: @annual, se: @round, ul: @problem_no}})
+
+    elsif @round
+      dir = _problems_roc_se(@annual, @round).map do |ul|
+                        {name: "Úloha #{ul.id}", url: {roc: @annual, se: @round, ul: ul.id}}
+      end
+    else
+      @annuals = _annuals
+      dir = _rounds_roc(@annual).map do |se|
+                        {name: "Série #{se}", url: {roc: @annual, se: se}}
+      end
+    end
+    @breadcrumb = [ path, dir ]
   end
 
   def download
@@ -128,9 +142,9 @@ class SosnaSolutionController < SosnaController
     roc, se, ul = params[:roc],  params[:se], params[:ul]
     load_config
 
-    if roc.nil? && se.nil? 
-        roc  = @annual 
-        se  = @round 
+    if roc.nil? && se.nil?
+        roc  = @annual
+        se  = @round
     end
 
     @round = se
@@ -157,8 +171,13 @@ class SosnaSolutionController < SosnaController
   end
 
   def _annuals
-    return [28, 29, 30]
+    return [
+            [30, [1,2,3,4, 5, 6]],
+            [29, [1,2,3,4, 5]],
+            [28, [1,2,3,4, 11]],
+           ]
   end
+
 
 
 end
