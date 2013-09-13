@@ -17,6 +17,7 @@ Pia::Application.routes.draw do
   # org:
   #get  '/sosna/solutions/org'      => 'sosna_solution#index',        :as => :sosna_solutions_org
   get  '/sosna/solutions(/:roc(/:se(/:ul)))'=> 'sosna_solution#index',:as => :sosna_solutions_org
+  get  '/sosna/solutions/:roc/:se/:ul/edit'=>'sosna_solution#edit', :as => :sosna_solutions_edit
   post '/sosna/solution/update'    => 'sosna_solution#update',       :as => :sosna_solution_update
   get  '/sosna/solution/downall'   => 'sosna_solution#downall',      :as => :sosna_solution_update
   get  '/sosna/solution(/:id)'     => 'sosna_solution#show',         :as => :sosna_solution

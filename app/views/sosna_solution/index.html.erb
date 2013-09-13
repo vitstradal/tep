@@ -1,6 +1,5 @@
 
 
-
 <%#### seznam  ročníků -%>
 <% if @annuals %>
  <h1>Řešení úloh po ročnících</h1>
@@ -8,7 +7,7 @@
     <ul class="breadcrumb">
       <li><%= link_to "Ročník #{annual.annual}",  { roc: annual.annual }  %><span class="divider">&gt;</span></li>
         <% annual.rounds.each do |round| %>
-          <li><%= link_to "Série #{round[:name]}",  round[:url]  %>
+          <li><%= link_to round[:name],  round[:url]  %>
                <span class="divider">,</span></li>
         <% end %>
       </li>
@@ -20,6 +19,9 @@
 
 <h1>Řešení úloh, ročník <%=@annual%>, série <%=@round%><%if @problem_no%>, úloha <%=@problem_no%><%end%></h1>
 
+<% if @want_edit %>
+<form>
+<% end %>
 <table class="table table-bordered">
   <tr>
    <th>Id</th>
@@ -43,7 +45,11 @@
       <% end %>
     <td><%= sol.sosna_solver.full_name%></td>
     <td><%= sol.orig_filename %></td>
-    <td><%= sol.score || '-'%> </td>
+    <% if @want_edit %>
+      <td><input class="input-mini" type="text" name="score[<%= sol.id %>]" size="3" value="<%= sol.score || '-'%>"/></td>
+    <% else %>
+      <td><%= sol.score || '-'%> </td>
+    <% end %>
   </tr>
 
 <% end %>
@@ -53,8 +59,14 @@
 
 </table>
 
+<% if @want_edit %>
+<button type='submit' class='btn btn-primary'> Uložit</button> 
+
+<% else %>
 <%= link_to 'Stáhnout tato řešení v jednom .zip',
             { :action => :downall, :roc => @annual, :se => @round, :ul => @problem_no },
             { :class=> 'btn btn-primary'} %>
+
+<% end %>
 
 <% end # annuals %>

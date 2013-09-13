@@ -7,8 +7,19 @@ require 'tempfile'
 class SosnaSolutionController < SosnaController
 
   UPLOAD_DIR = "public/uploads/"
-  def index
 
+  def index
+    @solutions = _solutions_from_roc_se_ul
+    _load_index
+  end
+  def edit
+    @solutions = _solutions_from_roc_se_ul
+    @want_edit = true
+    render :index
+  end
+    
+  def _load_index
+    @want_edit = false
     @solutions = _solutions_from_roc_se_ul
     path = [ _annual_link(@annual) ]
 
@@ -19,6 +30,7 @@ class SosnaSolutionController < SosnaController
       path.push(_round_link(@annual, @round))
       path.push(_problem_link(@annual, @round, @problem_no))
       path[-1][:sub] = _problems_roc_se(@annual, @round)
+      path[-1][:btn] = _problem_edit_btn(@annual, @round, @problem_no)
     elsif @round
       # in level round
       path.push(_round_link(@annual, @round))
@@ -179,7 +191,7 @@ class SosnaSolutionController < SosnaController
                        .order('round')
                        .all
                        .map do |ul|
-                          _round_link(@annual, ul.round)
+                          _round_link(roc, ul.round)
                        end
 
   end
@@ -190,6 +202,10 @@ class SosnaSolutionController < SosnaController
 
   def _problem_link(annual, round, problem_no)
       {name: "Úloha #{problem_no}", url: {roc: annual, se: round, ul: problem_no}}
+  end
+
+  def _problem_edit_btn(annual, round, problem_no)
+      {name: "Editovat", url: {action: 'edit', roc: annual, se: round, ul: problem_no}}
   end
 
   def _round_link(annual, round)
