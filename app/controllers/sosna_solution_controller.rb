@@ -17,7 +17,24 @@ class SosnaSolutionController < SosnaController
     @want_edit = true
     render :index
   end
-    
+
+  def update_scores
+    roc, ul, se = params[:roc], params[:se], params[:ul]
+    scores = params[:score]
+
+    pp scores
+    scores.each_with_index do |(sol_id, score), idx|
+
+      print "xxx:#{score},#{sol_id}"
+      sol = SosnaSolution.find(sol_id)
+      sol.score = score
+      sol.save
+    end
+
+
+    redirect_to action: :edit, roc: roc, se: se, ul: ul
+  end
+
   def _load_index
     @want_edit = false
     @solutions = _solutions_from_roc_se_ul
