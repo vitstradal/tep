@@ -52,8 +52,11 @@ class Ability
 #      can :user_role_change, Pia
 #    end
     if user.org? 
-      can :show, Giwi
-      can :update, Giwi
+      #can :show, Giwi # mozna nekdy fungovalo
+      #can :update, Giwi
+
+      can :show, :giwi
+      can :update, :giwi
     end
     # https://github.com/ryanb/cancan/wiki/Defining-Abilities
   end
