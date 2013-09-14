@@ -1,3 +1,13 @@
+GIT
+  remote: https://github.com/gitlabhq/grit.git
+  revision: 42297cdcee16284d2e4eff23d41377f52fc28b9d
+  ref: 42297cdcee16284d2e4eff23d41377f52fc28b9d
+  specs:
+    grit (2.5.0)
+      diff-lcs (~> 1.1)
+      mime-types (~> 1.15)
+      posix-spawn (~> 0.3.6)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -39,10 +49,6 @@ GEM
     diff-lcs (1.2.4)
     erubis (2.6.6)
       abstract (>= 1.0.0)
-    grit (2.5.0)
-      diff-lcs (~> 1.1)
-      mime-types (~> 1.15)
-      posix-spawn (~> 0.3.6)
     i18n (0.5.0)
     json (1.8.0)
     mail (2.2.20)
@@ -94,7 +100,7 @@ PLATFORMS
 DEPENDENCIES
   cancan
   devise
-  grit
+  grit (~> 2.5.0)!
   rails (= 3.0.9)
   role_model
   rubyzip

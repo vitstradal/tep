@@ -13,7 +13,7 @@
 <% else %>
   <% if @editable %>
    <span class="pull-right">
-     <a href="<%= url_for path: @path, ls: '.'%>" class="btn">Seznam</a>
+     <a href="<%= url_for path: @path, ls: '.'%>" class="btn">Seznam stránek</a>
      <a href="<%= url_for path: @path, edit: 'me'%>" class="btn btn-danger">Editovat</a>
    </span>
   <%end%>

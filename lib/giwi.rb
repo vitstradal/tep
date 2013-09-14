@@ -44,6 +44,7 @@ class Giwi
   ##### api
   def self.get_page(wiki,path,part = nil)
     repo = get_repo(wiki)
+    print "path:", path
     head = repo.commits.first
     tree = head.tree
     blob = tree / path
