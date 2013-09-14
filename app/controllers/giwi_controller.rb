@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'trac-wiki'
+require 'iconv'
 
 class GiwiController < ApplicationController
   authorize_resource :class => false
@@ -23,7 +24,8 @@ class GiwiController < ApplicationController
     @title = @path.capitalize
     pp "giwiwiki", Giwi.wikis
     if ! @text
-      @text = 'new page'
+      @text = "= #{@path} =\n\n"
+      @path = _to_ascii(@path)
       @edit = true
     end
     @html = TracWiki.render(@text)
@@ -31,6 +33,11 @@ class GiwiController < ApplicationController
 
     # if not exists bla bla bla
 
+  end
+
+  def _to_ascii(txt)
+      txt.gsub! /\s+/, '_'
+      Iconv.iconv('ascii//translit', 'utf-8', txt).join('')
   end
 
   def update

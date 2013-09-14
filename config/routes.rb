@@ -44,8 +44,8 @@ Pia::Application.routes.draw do
   get  '/users'                   => 'pia#users',                    :as => :users_list
   put  '/user/role'               => 'pia#user_role_change',         :as => :user_role_change
 
-  get  '/wiki(/:path)'             => 'giwi#show',                   :as =>  :wiki, constrains: { path: /.*/ }, defaults: {wiki: :main}
-  post '/wiki(/:path)'               => 'giwi#update',                 :as =>  :wiki_post, constrains: { path: /.*/ }, defaults: {wiki: :main}
+  get  '/wiki(/*path)'             => 'giwi#show',                   :as =>  :wiki, constrains: { path: /.*/ }, defaults: {wiki: :main}
+  post '/wiki(/*path)'               => 'giwi#update',                 :as =>  :wiki_post, constrains: { path: /.*/ }, defaults: {wiki: :main}
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.

@@ -10,3 +10,14 @@
    </li>
 <% end %>
 </ul>
+
+
+<% form_tag :wiki , method: :get do%>
+<button type='submit' class='btn btn-success'>Nový soubor</button>
+<%= text_field_tag :path, @path %>
+
+<% end%>
+
+
+
+

@@ -50,6 +50,7 @@ GEM
     erubis (2.6.6)
       abstract (>= 1.0.0)
     i18n (0.5.0)
+    iconv (1.0.3)
     json (1.8.0)
     mail (2.2.20)
       activesupport (>= 2.3.6)
@@ -101,6 +102,7 @@ DEPENDENCIES
   cancan
   devise
   grit (~> 2.5.0)!
+  iconv
   rails (= 3.0.9)
   role_model
   rubyzip
