@@ -34,7 +34,7 @@
  </tr>
 <% @solutions.each do |sol| %>
   <tr>
-    <td><%= link_to sol.id, :action => :show, :id => sol.id %></a></td>
+    <td><%= sol.id %></td>
     <td><%= sol.sosna_problem.round %></td>
     <td><%= sol.sosna_problem.problem_no %></td>
     <td>
@@ -60,8 +60,8 @@
 </table>
 
 <% if @want_edit %>
-<button type='submit' class='btn btn-danger'> Uložit</button> 
-<%= link_to 'Zpět', {action: :index, roc: @annual, se: @round, ul: @problem_no}, {:class => 'btn btn-success'} %>
+<button type='submit' class='btn btn-success'>Uložit</button> 
+<%= link_to 'Zpět', {action: :index, roc: @annual, se: @round, ul: @problem_no}, {:class => 'btn'} %>
 </form>
 
 <% else %>

@@ -72,9 +72,9 @@ class SosnaSolutionController < SosnaController
     send_file UPLOAD_DIR + solution.filename, :type => 'application/pdf'
   end
 
-  def show
-      @solution = SosnaSolution.find params[:id]
-  end
+#  def show
+#      @solution = SosnaSolution.find params[:id]
+#  end
 
   def downall
     solutions = _solutions_from_roc_se_ul

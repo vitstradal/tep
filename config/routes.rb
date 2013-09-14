@@ -21,7 +21,7 @@ Pia::Application.routes.draw do
   post '/sosna/solutions/update_scores' =>'sosna_solution#update_scores',:as => :sosna_solutions_update_scores
   post '/sosna/solution/update'    => 'sosna_solution#update',       :as => :sosna_solution_update
   get  '/sosna/solution/downall'   => 'sosna_solution#downall',      :as => :sosna_solution_update
-  get  '/sosna/solution(/:id)'     => 'sosna_solution#show',         :as => :sosna_solution
+#  get  '/sosna/solution(/:id)'     => 'sosna_solution#show',         :as => :sosna_solution
 
   get  '/sosna/problems'           => 'sosna_problem#index',         :as => :sosna_problems
   get  '/sosna/problem(/:id)'      => 'sosna_problem#show',          :as => :sosna_problem
