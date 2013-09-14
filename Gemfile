@@ -4,7 +4,9 @@ gem 'rails', '3.0.9'
 gem 'devise'
 gem 'cancan'
 gem 'role_model'
+gem 'grit'
 gem 'rubyzip'
+gem 'trac-wiki'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'

@@ -19,7 +19,7 @@
     <div class="navbar navbar-inverse">
       <div class="navbar-inner">
         <div class="container-fluid">
-          <a class="brand" href="#">Pia desideria</a>
+          <%= link_to  'Pia desideria' , :root, :class => 'brand' %>
           <div class="nav-collapse collapse">
                 <% if user_signed_in?  %>
                   <p class="navbar-text pull-right">
@@ -30,6 +30,7 @@
                   <p class="navbar-text pull-right">
                      <%= link_to  'Přihlášení', :new_user_session  %>
                      <%= link_to  'Registrace', :new_user_registration  %>
+                <a class="btn btn-danger pull-right">Editovat</a>
                   </p>
                 <% end %>
           </div><!--/.nav-collapse -->
@@ -62,6 +63,7 @@
                 <li><%= link_to 'Řešení řešitelů', :sosna_solutions_org %></li>
                 <li><%= link_to 'Úlohy', :sosna_problems %></li>
                 <li><%= link_to 'Konfigurace', :sosna_configs  %></li>
+                <li><%= link_to 'Wiki', :wiki  %></li>
               <% end %>
               <li class="nav-header">Odkazy</li>
               <li><%= link_to 'Pikomat', 'http://pikomat.mff.cuni.cz/' %></li>

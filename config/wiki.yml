@@ -1,0 +1,11 @@
+
+---
+
+defaults: &defaults
+  main:
+    path: '/home/vitas/tmp/piki'
+
+production:
+  <<: *defaults
+development:
+  <<: *defaults

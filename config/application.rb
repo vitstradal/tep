@@ -1,6 +1,7 @@
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
+require 'pp'
 
 # If you have a Gemfile, require the gems listed there, including any gems
 # you've limited to :test, :development, or :production.
@@ -14,6 +15,7 @@ module Pia
 
     # Custom directories with classes and modules you want to be autoloadable.
     # config.autoload_paths += %W(#{config.root}/extras)
+    config.autoload_paths += %W(#{config.root}/lib)
 
     # Only load the plugins named here, in the order given (default is alphabetical).
     # :all can be used as a placeholder for all plugins not explicitly named.
@@ -39,6 +41,17 @@ module Pia
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
     config.action_mailer.default_url_options = { :host => 'pikomat.ms.mff.cuni.cz/provedouci/rails/pia' }
+    config.ble = "ahoj"
 
   end
+end
+
+require 'giwi'
+Giwi.setup do |config|
+
+  #config.add_wiki :main, '
+  puts ::Rails.env
+  conf = YAML.load_file("#{::Rails.root.to_s}/config/wiki.yml")[::Rails.env]
+  pp conf 
+  config.wikis = conf
 end

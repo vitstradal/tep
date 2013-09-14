@@ -1,0 +1,28 @@
+
+<% if @edit %>
+   <%= form_tag path: @path do %>
+    <span class="pull-right">
+      <a href="<%= url_for path: @path %>" class="btn">Zpět</a>&nbsp;
+      <button type="submit" class="btn btn-success pull-right">Uložit</button>
+    </span>
+    <h1>Edit <%= @title %></h1>
+
+    <%= text_area_tag :text, @text, class: 'span9', rows: 25%>
+  <% end %>
+
+<% else %>
+  <% if @editable %>
+   <span class="pull-right">
+     <a href="<%= url_for path: @path, ls: '.'%>" class="btn">Seznam</a>
+     <a href="<%= url_for path: @path, edit: 'me'%>" class="btn btn-danger">Editovat</a>
+   </span>
+  <%end%>
+  <%if @html %>
+    <h1><%= @title %></h1>
+    <%== @html %>
+  <%else%>
+    <pre><%=@text%></pre>
+  <%end%>
+<%end%>
+
+<hr>

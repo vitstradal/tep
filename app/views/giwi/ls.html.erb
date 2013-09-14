@@ -1,0 +1,8 @@
+<h1>Seznam souborů</h1>
+<ul>
+<% @ls.each do |file| %>
+<li><%= link_to file, path: file %>
+<%= link_to '[Edit]', {path: file, edit: :me} %>
+</li>
+<% end %>
+</ul>

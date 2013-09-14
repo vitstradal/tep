@@ -19,7 +19,7 @@ class SosnaSolutionController < SosnaController
   end
 
   def update_scores
-    roc, ul, se = params[:roc], params[:se], params[:ul]
+    roc, se, ul = params[:roc], params[:se], params[:ul]
     scores = params[:score]
 
     pp scores
