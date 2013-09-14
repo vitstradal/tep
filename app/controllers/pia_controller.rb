@@ -2,6 +2,7 @@ require 'pp'
 class PiaController < ApplicationController
 
   def index; end
+  #authorize_resource :class => false
 
   def users
     @users = User.all

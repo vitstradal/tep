@@ -1,8 +1,7 @@
-
 require 'trac-wiki'
 
 class GiwiController < ApplicationController
-  #include Giwi
+  authorize_resource :class => false
   def show
     @wiki = params[:wiki] || 'main'
     @path = params[:path] 

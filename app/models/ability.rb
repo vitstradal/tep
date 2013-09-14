@@ -46,10 +46,15 @@ class Ability
     end
 
     # pia
-    #if user.admin?
-    #  can :users, User
-    #  can :user_role_change, User
-    #end
+#    can :index, :piasia
+#    if user.admin?
+#      can :users, Pia
+#      can :user_role_change, Pia
+#    end
+    if user.org? 
+      can :show, Giwi
+      can :update, Giwi
+    end
     # https://github.com/ryanb/cancan/wiki/Defining-Abilities
   end
 end
