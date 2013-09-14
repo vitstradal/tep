@@ -58,7 +58,37 @@ class Giwi
     head = repo.commits.first
     tree = head.tree
 
-    return tree.blobs.map {|b| b.name}
+    #strip trailing /
+    path.sub! /[\/]*$/, ''
+
+    # find dir
+    while !path.empty?
+      tdir = tree / path
+      break if tdir.is_a?(Grit::Tree)
+      # strip last conponent to /
+      path.sub! /(^|\/)[^\/]*$/, ''
+    end
+
+    if path.empty?
+      tdir = tree
+    else 
+      path += '/'
+    end
+    print "path:", path, "\n"
+    print "tdir:", tdir, "\n"
+
+    files = tdir.blobs.map do |b|
+            { path: "#{path}#{b.name}", name: b.name, siz: b.size } 
+    end
+    dirs = tdir.trees.map do |t|
+            { path: "#{path}#{t.name}", name: t.name} 
+    end
+    if !path.empty?
+      dirs.push( { path: path.sub(/(^|\/)[^\/]*\/$/, ''),
+                   name: '..'} )
+    end
+
+    [files, dirs, path]
   end
 
   def self.set_page(wiki, path, text, part =nil)

@@ -1,8 +1,12 @@
-<h1>Seznam souborů</h1>
+<h1>Seznam souborů <%= @path %></h1>
 <ul>
-<% @ls.each do |file| %>
-<li><%= link_to file, path: file %>
-<%= link_to '[Edit]', {path: file, edit: :me} %>
-</li>
+<% @files.each do |file| %>
+  <li><%= link_to file[:name], path: file[:path] %>
+      <%= link_to '[Edit]', {path: file[:path], edit: :me} %>
+   </li>
+<% end %>
+<% @dirs.each do |dir| %>
+  <li><%= link_to dir[:name] + '/', ls:'.', path: dir[:path] %>
+   </li>
 <% end %>
 </ul>

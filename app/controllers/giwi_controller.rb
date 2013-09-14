@@ -15,7 +15,7 @@ class GiwiController < ApplicationController
     end
 
     if @ls
-      @ls = Giwi.get_ls @wiki, @path
+      @files, @dirs, @path = Giwi.get_ls @wiki, @path
       return render :ls
     end
 
