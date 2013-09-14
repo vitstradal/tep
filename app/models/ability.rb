@@ -46,11 +46,11 @@ class Ability
     end
 
     # pia
-#    can :index, :piasia
-#    if user.admin?
-#      can :users, Pia
-#      can :user_role_change, Pia
-#    end
+    can :index, :pium
+    if user.admin?
+      can :users, :pium
+      can :user_role_change, :pium
+    end
     if user.org? 
       #can :show, Giwi # mozna nekdy fungovalo
       #can :update, Giwi
