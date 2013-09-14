@@ -1,14 +1,16 @@
+# encoding: utf-8
+
 require 'trac-wiki'
 
 class GiwiController < ApplicationController
   authorize_resource :class => false
   def show
     @wiki = params[:wiki] || 'main'
-    @path = params[:path] 
+    @path = params[:path]
     @edit = params[:edit]
-    @ls   = params[:ls]; 
+    @ls   = params[:ls]
 
-    if ! @path 
+    if ! @path
       return redirect_to path: 'index'
     end
 
@@ -20,15 +22,15 @@ class GiwiController < ApplicationController
     @text = Giwi.get_page @wiki, @path
     @title = @path.capitalize
     pp "giwiwiki", Giwi.wikis
-    if ! @text 
+    if ! @text
       @text = 'new page'
       @edit = true
     end
     @html = TracWiki.render(@text)
-    @editable = true 
+    @editable = true
 
     # if not exists bla bla bla
-    
+
   end
 
   def update
@@ -38,7 +40,5 @@ class GiwiController < ApplicationController
     Giwi.set_page wiki, path, text
     redirect_to action: :show, wiki: wiki, path: path
   end
-
-
 end
 

@@ -50,7 +50,7 @@ class Giwi
     blob = tree / path
     return nil if blob.nil?
     return nil if blob.is_a? Grit::Tree
-    return blob.data
+    return blob.data.force_encoding('utf-8').encode
   end
 
   def self.get_ls(wiki, path)
@@ -62,7 +62,7 @@ class Giwi
   end
 
   def self.set_page(wiki, path, text, part =nil)
-    comm = text.each_line.first.chomp.strip
+    fstline = text.each_line.first.chomp.strip
 
     repo = get_repo(wiki)
     head = repo.commits.first
@@ -71,9 +71,12 @@ class Giwi
     index = Grit::Index.new(repo)
     index.read_tree(tree.id)
     index.add(path, text)
-    #index.commit("Automatic commit", [head])
-    #index.commit("Automatic commit")
-    index.commit("Automatic commit '#{comm}'", parents: [head], last_tree: head, head: 'master')
+
+    comment = "file: #{path} head: #{fstline}"
+    comment = comment.force_encoding('ASCII-8BIT')
+
+    index.commit(comment,  parents: [head], last_tree: head, head: 'master')
+
     return 1
   end
 
