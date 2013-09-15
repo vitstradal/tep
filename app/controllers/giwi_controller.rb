@@ -28,7 +28,7 @@ class GiwiController < ApplicationController
       @path = _to_ascii(@path)
       @edit = true
     end
-    @html = TracWiki.render(@text)
+    @html = TracWiki.render(@text, no_escape: true)
     @editable = true
 
     # if not exists bla bla bla
