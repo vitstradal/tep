@@ -21,4 +21,8 @@ class User < ActiveRecord::Base
   # roles later, always append them at the end!
   roles :admin, :org, :user, :guest
 
+  after_create do
+    roles << :user
+    save
+  end
 end
