@@ -27,7 +27,7 @@ for my $tab (@$tables) {
       print "INSERT INTO \"$tab_name\" (";
       print join(',',map{"\"$_\""} @cols);
       print ") VALUES (";
-      print join(',', map{defined($_)?$dbh->abstract->quote($_):'NULL'}  @vals);
+      print join(',', map{defined($_)?$dbh->dbh->quote($_):'NULL'}  @vals);
       print ");\n";
   }
 }
