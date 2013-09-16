@@ -13,7 +13,7 @@ class Giwi
            opts[:repo] = Grit::Repo.new(path)
            opts[:path] = path
         end
-        pp @@wikis
+        #pp @@wikis
         @@wikis.freeze
 
   end
