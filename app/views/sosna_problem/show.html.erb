@@ -1,8 +1,10 @@
 
 <h1>Úloha č. <%= @problem.problem_no %> - editace</h1>
 
-<%= link_to '<předchozí', { :id =>  @problem.id - 1 } %>
-<%= link_to 'další>', { :id =>  @problem.id + 1 } %>
+<% if !@problem.id.nil? %>
+  <%= link_to '<předchozí', { :id =>  @problem.id - 1 } %>
+  <%= link_to 'další>', { :id =>  @problem.id + 1 } %>
+<% end %>
 
 
 <% form_for @problem, :url => {:action => :update }  do |f| %> 
