@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 use DBIx::Simple;
-use Data::Dump 'pp';
+#use Data::Dump 'pp';
 
 # connect
 my $dbfile = $ARGV[0] || die "usage: $0 dbfile\n";
