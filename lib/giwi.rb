@@ -31,16 +31,6 @@ class Giwi
     return @@wikis[wiki.to_sym][:repo] = Grit::Repo.new(path)
   end
 
-#  def self.add_wiki(wiki, path, opts = {})
-#    if is_a? Hash
-#      opts = path
-#    else
-#      opts[:path] = path
-#    end
-#    @@wikis ||= {}
-#    @@wikis[wiki.to_sym] = opts
-#  end
-
   ##### api
   def self.get_page(wiki,path,part = nil)
     repo = get_repo(wiki)
@@ -50,7 +40,9 @@ class Giwi
     blob = tree / path
     return nil if blob.nil?
     return nil if blob.is_a? Grit::Tree
-    return blob.data.force_encoding('utf-8').encode
+    text = blob.data.force_encoding('utf-8').encode
+    commit_id = head.id
+    return [ text, commit_id]
   end
 
   def self.get_ls(wiki, path)
@@ -71,17 +63,17 @@ class Giwi
 
     if path.empty?
       tdir = tree
-    else 
+    else
       path += '/'
     end
     print "path:", path, "\n"
     print "tdir:", tdir, "\n"
 
     files = tdir.blobs.map do |b|
-            { path: "#{path}#{b.name}", name: b.name, siz: b.size } 
+            { path: "#{path}#{b.name}", name: b.name, siz: b.size }
     end
     dirs = tdir.trees.map do |t|
-            { path: "#{path}#{t.name}", name: t.name} 
+            { path: "#{path}#{t.name}", name: t.name}
     end
     if !path.empty?
       dirs.push( { path: path.sub(/(^|\/)[^\/]*\/$/, ''),
@@ -91,13 +83,23 @@ class Giwi
     [files, dirs, path]
   end
 
-  def self.set_page(wiki, path, text, part =nil)
+  # commit_id aka version
+  def self.set_page(wiki, path, text, commit_id, part =nil)
     fstline = text.each_line.first.chomp.strip
 
     repo = get_repo(wiki)
     head = repo.commits.first
-    tree = head.tree
 
+    collision = false
+
+    if head.id != commit_id
+      diff = Grit::Commit.diff(repo, commit_id, head.id)
+      difftext = diff.map {|d| d.diff}.join('-')
+      text += "\n= Collision =\n{{{\n#{difftext}\n}}}\n"
+      collision = true
+    end
+
+    tree = head.tree
     index = Grit::Index.new(repo)
     index.read_tree(tree.id)
     index.add(path, text)
@@ -107,7 +109,7 @@ class Giwi
 
     index.commit(comment,  parents: [head], last_tree: head, head: 'master')
 
-    return 1
+    return collision
   end
 
 end

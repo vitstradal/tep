@@ -1,6 +1,7 @@
 
 <% if @edit %>
    <%= form_tag path: @path do %>
+    <%= hidden_field_tag 'version', @version %>
     <span class="pull-right">
       <a href="<%= url_for path: @path %>" class="btn">Zpět</a>&nbsp;
       <button type="submit" class="btn btn-success pull-right">Uložit</button>

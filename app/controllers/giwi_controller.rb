@@ -20,7 +20,7 @@ class GiwiController < ApplicationController
       return render :ls
     end
 
-    @text = Giwi.get_page @wiki, @path
+    @text, @version = Giwi.get_page @wiki, @path
     @title = @path.capitalize
     pp "giwiwiki", Giwi.wikis
     if ! @text
@@ -35,17 +35,24 @@ class GiwiController < ApplicationController
 
   end
 
-  def _to_ascii(txt)
-      txt.gsub! /\s+/, '_'
-      Iconv.iconv('ascii//translit', 'utf-8', txt).join('')
-  end
 
   def update
     wiki = params[:wiki] || 'main'
     path = params[:path]
     text = params[:text]
-    Giwi.set_page wiki, path, text
+    version = params[:version]
+    collision = Giwi.set_page wiki, path, text, version
+
+    if collision
+       flash[:errors] = {kolize: "při editaci nastala kolize, rozdíl verzí byl připojen na konec souboru"}
+    end
+
     redirect_to action: :show, wiki: wiki, path: path
+  end
+
+  def _to_ascii(txt)
+      txt.gsub! /\s+/, '_'
+      Iconv.iconv('ascii//translit', 'utf-8', txt).join('')
   end
 end
 
