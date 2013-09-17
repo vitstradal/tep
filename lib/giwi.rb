@@ -94,7 +94,7 @@ class Giwi
 
     if head.id != commit_id
       diff = Grit::Commit.diff(repo, commit_id, head.id)
-      difftext = diff.map {|d| d.diff}.join('-')
+      difftext = diff.map {|d| d.diff}.join
       text += "\n= Collision =\n{{{\n#{difftext}\n}}}\n"
       collision = true
     end
