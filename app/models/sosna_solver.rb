@@ -8,6 +8,6 @@ class SosnaSolver < ActiveRecord::Base
      "#{name} #{last_name}"
   end 
   def address
-     "#{street} #{house_num}, #{psc} #{city}"
+     "#{street} #{num}, #{psc} #{city}"
   end
 end

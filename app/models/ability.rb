@@ -39,6 +39,11 @@ class Ability
       can :update, SosnaSolver
 
       can :index, SosnaSchool
+      can :show, SosnaSchool
+      can :update, SosnaSchool
+      can :new, SosnaSchool
+
+      can :index, SosnaSchool
       can :update, SosnaSchool
 
       can :index, SosnaConfig

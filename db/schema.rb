@@ -30,7 +30,7 @@ ActiveRecord::Schema.define(:version => 2) do
     t.text "name"
     t.text "short"
     t.text "street"
-    t.text "house_num"
+    t.text "num"
     t.text "city"
     t.text "psc"
   end
@@ -56,7 +56,7 @@ ActiveRecord::Schema.define(:version => 2) do
     t.text     "annual"
     t.text     "email"
     t.text     "street"
-    t.text     "house_num"
+    t.text     "num"
     t.text     "city"
     t.text     "psc"
     t.integer  "user_id"

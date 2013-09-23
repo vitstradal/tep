@@ -22,7 +22,6 @@ class SosnaSolverController < SosnaController
       school = SosnaSchool.find(school_id) 
     rescue
       school = SosnaSchool.new(params[:sosna_school])
-      school.id = -1 if school_id == 'jina'
     end
 
     solver = SosnaSolver.new(params[:sosna_solver])
@@ -30,6 +29,7 @@ class SosnaSolverController < SosnaController
     solver.annual = @annual
     print pp solver
     if solver.invalid?
+        school.id = -1 if school_id == 'jina'
         flash[:errors] = solver.errors
         flash[:solver] = solver
         flash[:school] = school
@@ -45,7 +45,7 @@ class SosnaSolverController < SosnaController
 
 
     # some test
-    school.save
+    school.save if school.id.nil?
     solver.save
     redirect_to :action => :create_tnx
   end

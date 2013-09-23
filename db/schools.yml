@@ -1,0 +1,638 @@
+---
+- short:     ZSNB
+  name:      ZŠ
+  street:    náměstí Míru
+  num:       128
+  city:      47301
+  psc:       Nový Bor
+
+- short:     ZVNV
+  name:      ZŠ
+  street:    U Školy
+  num:       208
+  city:      25246
+  psc:       Vrané nad Vltavou
+
+- short:     GCHO
+  name:      Gymnázium
+  street:    Jiráskova
+  num:       637
+  city:      58301
+  psc:       České Budějovice
+
+- short:     AGKP
+  name:      Arcibiskupské gymnázium
+  street:    Korunní
+  num:       2
+  city:      12000
+  psc:       Praha 2-Vinohrady
+
+- short:     MGMO
+  name:      Matiční Gymnázium
+  street:    Dr.Šmerala
+  num:       25
+  city:      72804
+  psc:       Ostrava
+
+- short:     GCCB
+  name:      Gymnázium Česká
+  street:    Česká
+  num:       64
+  city:      37021
+  psc:       České Budějovice
+
+- short:     CGKV
+  name:      První české gymnázium
+  street:    Národní
+  num:       25
+  city:      360 20
+  psc:       Karlovy Vary
+
+- short:     GCAK
+  name:      Gymnázium Čakovice
+  street:    nám. 25.března
+  num:       100
+  city:      196 00
+  psc:       Praha 9
+
+- short:     GCDP
+  name:      Gymnázium Christiana Dopplera
+  street:    Zborovská
+  num:       45/621
+  city:      150 00
+  psc:       Praha 5-Smíchov
+
+- short:     GEKP
+  name:      Gymnázium Elišky Krásnohorské
+  street:    Ohradní
+  num:       55
+  city:      130 00
+  psc:       Praha 4-Michle
+
+- short:     GFXL
+  name:      Gymnázium F. X. Šaldy
+  street:    Partyzánská
+  num:       530/3
+  city:      460 11
+  psc:       Liberec-Růžodol
+
+- short:     GHPP
+  name:      Gymnázium
+  street:    Chodovická
+  num:       2250
+  city:      193 00
+  psc:       Praha - Horní Počernice
+
+- short:     GCHB
+  name:      Gymnázium
+  street:    Nerudova
+  num:       7
+  city:      350 02
+  psc:       Cheb
+
+- short:     GJKP
+  name:      Gymnázium Jana Keplera
+  street:    Parléřova
+  num:       2
+  city:      169 00
+  psc:       Praha 6
+
+- short:     GJNP
+  name:      Gymnázium Jana Nerudy
+  street:    Hellichova
+  num:       3
+  city:      118 00
+  psc:       Praha 1
+
+- short:     GJSB
+  name:      Gymnázium a Jazyková škola s právem státní jazykové zkoušky
+  street:    Sady 28.října
+  num:       1
+  city:      690 21
+  psc:       Břeclav
+
+- short:     GJVK
+  name:      Gymnázium J. Vrchlického
+  street:    třída Národních mučedníků
+  num:       347
+  city:      339 01
+  psc:       Klatovy
+
+- short:     GKJB
+  name:      Gymnázium kpt. Jaroše
+  street:    třída kpt. Jaroše
+  num:       14
+  city:      658 70
+  psc:       Brno
+
+- short:     GKVK
+  name:      Gymnázium
+  street:    Komenského
+  num:       60
+  city:      766 26
+  psc:       Valašské Klobouky
+
+- short:     GLIP
+  name:      Gymnázium Litoměřická
+  street:    Litoměřická
+  num:       726
+  city:      190 21
+  psc:       Praha 9-Prosek
+
+- short:     GNAP
+  name:      Gymnázium Nad Alejí
+  street:    Nad Alejí
+  num:       1952
+  city:      162 00
+  psc:       Praha 6
+
+- short:     GNJH
+  name:      Gymnázium Vítězslava Nováka
+  street:    Husova
+  num:       333
+  city:      377 01
+  psc:       Jindřichův Hradec
+
+- short:     GNSP
+  name:      Gymnázium Nad Štolou
+  street:    Nad Štolou
+  num:       1
+  city:      170 00
+  psc:       Praha 7
+
+- short:     GPBM
+  name:      Gymnázium Petra Bezruče
+  street:    Čs. armády
+  num:       517
+  city:      738 02
+  psc:       Frýdek-Místek
+
+- short:     GPIP
+  name:      Gymnázium Písnická
+  street:    Písnická
+  num:       760
+  city:      142 00
+  psc:       Praha 4
+
+- short:     GPMB
+  name:      Gymnázium J. Pekaře
+  street:    Palackého
+  num:       211
+  city:      293 01
+  psc:       Mladá Boleslav
+
+- short:     GRKR
+  name:      Gymnázium
+  street:    Komenského
+  num:       211
+  city:      408 01
+  psc:       Rumburk
+
+- short:     GSOS
+  name:      Gymnázium a SOŠe
+  street:    Nádražní
+  num:       90
+  city:      264 01
+  psc:       Sedlčany
+
+- short:     GSOV
+  name:      Gymnázium a SOŠe
+  street:    Pivovarská
+  num:       69
+  city:      385 01
+  psc:       Vimperk
+
+- short:     GZAM
+  name:      Gymnázium
+  street:    Nádražní
+  num:       48
+  city:      564 01
+  psc:       Žamberk
+
+- short:     NSSP
+  name:      Německá škola v Praze
+  street:    Schwanzerberská
+  num:       700/1
+  city:      158 00
+  psc:       Praha 5
+
+- short:     OGBP
+  name:      Osmileté gymnázium Buďánka
+  street:    Pod Žvahovem
+  num:       463
+  city:      152 00
+  psc:       Praha 5
+
+- short:     PGLP
+  name:      První obnovené reálné gymnázium
+  street:    Linderova
+  num:       517/3
+  city:      180 00
+  psc:       Praha 8
+
+- short:     ZBKB
+  name:      ZŠ
+  street:    Kupkova
+  num:       1
+  city:      690 02
+  psc:       Břeclav
+
+- short:     ZWZH
+  name:      ZŠ
+  street:    Wolkerova
+  num:       712
+  city:      793 76
+  psc:       Zlaté Hory
+
+- short:     ZSUS
+  name:      ZŠ Šumavská
+  street:    Šumavská
+  num:       21
+  city:      787 01
+  psc:       Šumperk
+
+- short:     ZHNM
+  name:      CZŠ sv. Ludmily
+  street:    Zámecká
+  num:       57
+  city:      747 42
+  psc:       Hradec nad Moravicí
+
+- short:     GOMP
+  name:      Gymnázium Přelouč
+  street:    Obránců Míru
+  num:       1024
+  city:      53501
+  psc:       Přelouč
+
+- short:     ZJJO
+  name:      ZŠ Jablonné nad Orlicí
+  street:    Jamenská
+  num:       555
+  city:      56164
+  psc:       Jablonné nad Orlicí
+
+- short:     ZKRB
+  name:      ZŠ a MŠ Křídlovická
+  street:    Křídlovicka
+  num:       30b
+  city:      60300
+  psc:       Brno
+
+- short:     ZSSB
+  name:      ZŠ Sirotkova
+  street:    Sirotkova
+  num:       36
+  city:      616 00
+  psc:       Brno
+
+- short:     GCBR
+  name:      Gymnázium Český Brod
+  street:    Vítězná
+  num:       616
+  city:      28227
+  psc:       Český Brod
+
+- short:     ZOTO
+  name:      ZŠ Otická - př. org.
+  street:    Otická
+  num:       18
+  city:      74601
+  psc:       Opava
+
+- short:     GVIB
+  name:      Gymnázium Vídeňská
+  street:    Vídeňská
+  num:       47
+  city:      639 00
+  psc:       Brno
+
+- short:     ZKSO
+  name:      Základná Škola Komenského
+  street:    Komenského
+  num:       12
+  city:      07301
+  psc:       Sobrance
+
+- short:     ZZVM
+  name:      ZŠ Žerotínova
+  street:    Žerotínova
+  num:       376
+  city:      75701
+  psc:       Valašské Meziříčí
+
+- short:     GEOP
+  name:      Wichterlovo gymnázium
+  street:    Čs. exilu
+  num:       669
+  city:      70800
+  psc:       Ostrava-Poruba
+
+- short:     MGPP
+  name:      Masarykovo gymnázium
+  street:    Petákova
+  num:       2
+  city:      30100
+  psc:       Plzeň
+
+- short:     GNKP
+  name:      Gymnázium nad Kavalírkou
+  street:    Nad Kavalírkou
+  num:       1/100
+  city:      150 00
+  psc:       Praha 5
+
+- short:     ZMFM
+  name:      1. ZŠ Petra Bezruče
+  street:    tř. T. G. Masaryka
+  num:       454
+  city:      73801
+  psc:       Frýdek-Místek
+
+- short:     ZCVP
+  name:      ZŠ a MŠ Červený vrch
+  street:    Alžírská
+  num:       26/680
+  city:      16000
+  psc:       Praha
+
+- short:     GMNP
+  name:      Gymnázium, Plzeň
+  street:    Mikulášské náměstí
+  num:       23
+  city:      32600
+  psc:       Plzeň
+
+- short:     ZMRO
+  name:      ZŠ, T.G.Masaryka
+  street:    Třebízského
+  num:       32
+  city:      33701
+  psc:       Rokycany
+
+- short:     GJHP
+  name:      Gymnázium J. Heyrovského
+  street:    Mezi školami
+  num:       2475/29
+  city:      158 00
+  psc:       Praha 5
+
+- short:     GHLO
+  name:      Gymnázium Hladnov
+  street:    Hladnovská
+  num:       35
+  city:      710 00
+  psc:       Slezská Ostrava
+
+- short:     MEGO
+  name:      Mendelovo Gymnázium Opava
+  street:    Komenského
+  num:       5
+  city:      746 01
+  psc:       Opava
+
+- short:     GSOL
+  name:      Gymnázium a SOŠPg Jeronýmova
+  street:    Jeronýmova
+  num:       425/27
+  city:      460 07
+  psc:       Liberec 7
+
+- short:     ZSVP
+  name:      Základní škola sv. Voršily
+  street:    Ostrovní
+  num:       9
+  city:      11000
+  psc:       Praha 1
+
+- short:     GSOK
+  name:      Gymnázium Sokolov
+  street:    Husitská
+  num:       2053
+  city:      35611
+  psc:       Sokolov
+
+- short:     AGKR
+  name:      Arcibiskupské gymnázium
+  street:    Pilařova
+  num:       3
+  city:      76701
+  psc:       Kroměříž
+
+- short:     GHRO
+  name:      Gymnázium Hejčín
+  street:    Tomkova
+  num:       45
+  city:      779 00
+  psc:       Olomouc
+
+- short:     ZKUO
+  name:      ZŠ Komenského
+  street:    Komenského
+  num:       11
+  city:      562 01
+  psc:       Ústí nad Orlicí
+
+- short:     PRGO
+  name:      První obnovené reálné gymnázium
+  street:    Rostislavova
+  num:       7
+  city:      703 00
+  psc:       Ostrava-Vítkovice
+
+- short:     GLOV
+  name:      Gymnázium Lovosice
+  street:    Sady Pionýrů
+  num:       600/6
+  city:      41002
+  psc:       Lovosice
+
+- short:     MGJP
+  name:      Malostranské gymnázium
+  street:    Josefská
+  num:       7
+  city:      118 00
+  psc:       Praha
+
+- short:     JGNA
+  name:      Jiráskovo gymnázium
+  street:    Řezníčkova
+  num:       451
+  city:      54744
+  psc:       Náchod
+
+- short:     GHBR
+  name:      Gymnázium Broumov
+  street:    Hradební
+  num:       218
+  city:      55001
+  psc:       Broumov
+
+- short:     GTVL
+  name:      Gymnázium Vlašim
+  street:    Tylova
+  num:       271
+  city:      25801
+  psc:       Vlašim
+
+- short:     GZAM
+  name:      Gymnázium Žamberk
+  street:    Nádražní
+  num:       48
+  city:      56401
+  psc:       Žamberku
+
+- short:     GZWR
+  name:      Gymnázium Zikmunda Wintra, Rak
+  street:    Náměstí Jana Žižky
+  num:       186
+  city:      269 01
+  psc:       Rakovník
+
+- short:     NULL
+  name:      Gymnázium Josefa Kainara
+  street:    dr.Edwarda Beneše
+  num:       7/586
+  city:      748 01
+  psc:       Hlučín
+
+- short:     NULL
+  name:      6.ZŠ
+  street:    Obětí nacismu
+  num:       16
+  city:      35002
+  psc:       cheb
+
+- short:     NULL
+  name:      Gymnázium Rožnov pod Radhoštěm
+  street:    Koryčanské Paseky
+  num:       1725
+  city:      75661
+  psc:       Rožnov pod Radhoštěm
+
+- short:     NULL
+  name:      ZŠ Školní
+  street:    Školní
+  num:       862
+  city:      73514
+  psc:       Orlová Lutyně
+
+- short:     NULL
+  name:      Gymnazium Trutnov
+  street:    Jiráskovo náměstí
+  num:       325
+  city:      54101
+  psc:       Trutnov
+
+- short:     NULL
+  name:      Gymnázium Krnov
+  street:    Smetanův okruh
+  num:       2
+  city:      794 01
+  psc:       Krnov
+
+- short:     NULL
+  name:      ZŠ Litovel, Vítězná 1250
+  street:    Vítězná 
+  num:       1250
+  city:      78401
+  psc:       Litovel
+
+- short:     NULL
+  name:      ZŠ Bulharská
+  street:    Bulharská
+  num:       1532
+  city:      70800
+  psc:       Ostrava-Poruba
+
+- short:     NULL
+  name:      Gymnázium Ústavní
+  street:    Ústavní
+  num:       400
+  city:      18000
+  psc:       Praha 8
+
+- short:     NULL
+  name:      ZŠ a MŠ Pražská 98,Znojmo
+  street:    Pražská
+  num:       98
+  city:      66902
+  psc:       Znojmo
+
+- short:     NULL
+  name:      Gymnázium Volgogradská 6a
+  street:    Volgogradská 6a
+  num:       2632
+  city:      70030
+  psc:       Ostrava
+
+- short:     NULL
+  name:      Česko-anglické gymnázium s.r.o
+  street:    Třebízského
+  num:       1010/9
+  city:      370 06
+  psc:       České Budějovice 5
+
+- short:     NULL
+  name:      ZŠ a ZUŠ Bezdrevská
+  street:    Bezdrevská
+  num:       3
+  city:      370 11
+  psc:       České Budějovice
+
+- short:     NULL
+  name:      ZŠ a MŠ Kubatova
+  street:    Kubatova
+  num:       1
+  city:      370 04
+  psc:       České Budějovice
+
+- short:     NULL
+  name:      Gymnázium Trhové Sviny
+  street:    Školní
+  num:       995
+  city:      374 01
+  psc:       Trhové Sviny
+
+- short:     NULL
+  name:      Biskupské gymnázium J.N.Neuman
+  street:    Jirsíkova
+  num:       5
+  city:      370 21
+  psc:       České Budějovice
+
+- short:     NULL
+  name:      ZŠ a MŠ L.Kuby
+  street:    L.Kuby
+  num:       48
+  city:      370 07
+  psc:       České Budějovice
+
+- short:     NULL
+  name:      Biskupské gymnázium B. Balbína
+  street:    Orlické nábřeží
+  num:       356/1
+  city:      50002
+  psc:       Hradec Králové
+
+- short:     NULL
+  name:      Gymnázium,Havířov-Město
+  street:    Komenského
+  num:       2
+  city:      73601
+  psc:       Havířov
+
+- short:     NULL
+  name:      Gymnázium Velké Meziříčí
+  street:    Sokolovská
+  num:       27
+  city:      59401
+  psc:       Velké Meziříčí
+
+- short:     NULL
+  name:      Základní škola
+  street:    Blanenská
+  num:       1
+  city:      62100
+  psc:       Brno
+

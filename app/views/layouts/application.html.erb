@@ -57,12 +57,16 @@
               <% end %>
               <% if current_user && current_user.has_role?(:org) %>
                 <li class="nav-header">Org</li>
-                <li><%= link_to 'Uživatelé', :users_list  %></li>
                 <li><%= link_to 'Řešitelé', :sosna_solvers %></li>
                 <li><%= link_to 'Řešení řešitelů', :sosna_solutions_org %></li>
                 <li><%= link_to 'Úlohy', :sosna_problems %></li>
+                <li><%= link_to 'Školy', :sosna_schools %></li>
                 <li><%= link_to 'Konfigurace', :sosna_configs  %></li>
                 <li><%= link_to 'Wiki', :wiki  %></li>
+              <% end %>
+              <% if current_user && current_user.has_role?(:adm) %>
+                <li class="nav-header">Admin</li>
+                <li><%= link_to 'Uživatelé', :users_list  %></li>
               <% end %>
               <li class="nav-header">Odkazy</li>
               <li><%= link_to 'Pikomat', 'http://pikomat.mff.cuni.cz/' %></li>

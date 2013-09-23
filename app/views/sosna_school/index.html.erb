@@ -1,0 +1,20 @@
+
+<table class="table table-bordered">
+  <tr>
+   <th>Id</th>
+   <th>Zkr.</th>
+   <th>Jméno</th>
+   <th>Adresa</th>
+ </tr>
+<% @schools.each do |sch| %>
+  <tr>
+    <td><%= link_to sch.id, :action => :show, :id => sch.id %></a></td>
+    <td><%= sch.short%></td>
+    <td><%= sch.name %></td>
+    <td><%= sch.address %> </td>
+  </tr>
+<% end %>
+</table>
+
+
+<%= link_to 'Nová škola', :sosna_school_new %>

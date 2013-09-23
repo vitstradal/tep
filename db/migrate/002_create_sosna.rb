@@ -29,7 +29,7 @@ class CreateSosna < ActiveRecord::Migration
       t.text :short
 
       t.text :street
-      t.text :house_num
+      t.text :num
       t.text :city
       t.text :psc
 
@@ -52,7 +52,7 @@ class CreateSosna < ActiveRecord::Migration
       t.text :email
 
       t.text :street
-      t.text :house_num
+      t.text :num
       t.text :city
       t.text :psc
 

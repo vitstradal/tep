@@ -1,0 +1,28 @@
+
+<% if @school.nil? %>
+  no such school
+<% else %>
+  
+  <% if @school.name %>
+    <h1>Škola  <%= @school.name %> - editace</h1>
+  <% else %>
+    <h1>Nová škola</h1>
+  <% end %>
+  
+  <% if !@school.id.nil? %>
+    <%= link_to '<předchozí', { :id =>  @school.id - 1 } %>
+    <%= link_to 'další>', { :id =>  @school.id + 1 } %>
+  <% end %>
+  
+  <% form_for @school, :url => {:action => :update }  do |f| %> 
+    <%= f.hidden_field :id if @school.id %></br>
+    Zkratka: <%= f.text_field :short %><br/>
+    Název: <%= f.text_field :name %><br/>
+    Ulice: <%= f.text_field :street%><br/>
+    číslo: <%= f.text_field :num %><br/>
+    PSČ: <%= f.text_field :psc %><br/>
+    Město: <%= f.text_field :city %><br/>
+    <%= f.submit 'Uložit'%>
+    <%= f.submit 'Uložit a další' %>
+  <% end %>
+<% end %>

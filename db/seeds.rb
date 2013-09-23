@@ -7,19 +7,24 @@
 #   Mayor.create(:name => 'Daley', :city => cities.first)
 
 
-schools = SosnaSchool.create([
-          { :name => '1zakladni', :short => '1zs', 
-            :street => 'narodni', :house_num => 1, :city => 'Brno', :psc => "11111",
-          },
-          { :name => '2zakladni', :short => '2zs', 
-            :street => 'narodni', :house_num => 2, :city => 'Brno', :psc => "11111",
-          },
-        ])
+#schools = SosnaSchool.create([
+#          { :name => '1zakladni', :short => '1zs', 
+#            :street => 'narodni', :num => 1, :city => 'Brno', :psc => "11111",
+#          },
+#          { :name => '2zakladni', :short => '2zs', 
+#            :street => 'narodni', :num => 2, :city => 'Brno', :psc => "11111",
+#          },
+#        ])
 
-users = User.create([
+if false
+  users = User.create([
              {:email => "adm@pikomat.mff.cuni.cz", :roles => [:admin, :org, :user],  :password => "adm je pes"},
              {:email => "usr@pikomat.mff.cuni.cz", :roles => [:user],                :password => "usr je pes"},
              {:email => "org@pikomat.mff.cuni.cz", :roles => [:org, :user],          :password => "org je pes"},
         ])
 
-users.each { |u| u.confirm! }
+  users.each { |u| u.confirm! }
+end
+
+schools = SosnaSchool.create(YAML.load_file('db/schools.yml'))
+
