@@ -1,5 +1,12 @@
 
 <% if @edit %>
+
+  <%= stylesheet_link_tag 'jstoolbar.css'  %>
+  <%= stylesheet_link_tag 'trac.css'  %>
+  <%= javascript_include_tag 'jstoolbar/jstoolbar.js' %>
+  <%= javascript_include_tag 'jstoolbar/trac.js' %>
+  <%= javascript_include_tag 'jstoolbar/lang/jstoolbar-en.js' %>
+
    <%= form_tag path: @path do %>
     <%= hidden_field_tag 'version', @version %>
     <span class="pull-right">
@@ -8,8 +15,12 @@
     </span>
     <h1>Editace souboru '<%= @path %>'</h1>
 
-    <%= text_area_tag :text, @text, class: 'span9 ctrl-enter-submit', rows: 25%>
-  <% end %>
+    <%= text_area_tag :text, @text, class: 'span9 ctrl-enter-submit', id: 'textedit', rows: 25%>
+    <script>
+                  var toolbar = new jsToolBar(document.getElementById('textedit'));
+                  toolbar.draw();
+   </script>
+  <% end #form %>
 
 <% else %>
   <% if @editable %>
