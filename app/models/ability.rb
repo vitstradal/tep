@@ -51,7 +51,8 @@ class Ability
       can :users, :pium
       can :user_role_change, :pium
     end
-    if user.org? 
+
+    if user.org?
       #can :show, Giwi # mozna nekdy fungovalo
       #can :update, Giwi
 

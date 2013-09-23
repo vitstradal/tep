@@ -13,21 +13,17 @@ class Giwi
            opts[:repo] = Grit::Repo.new(path)
            opts[:path] = path
         end
-        #pp @@wikis
-        @@wikis.freeze
-
   end
 
   ##### conf
   def self.get_repo(wiki)
     repo =  @@wikis[wiki.to_s][:repo]
-    if repo
-      puts "YES REPO"
-      return repo
-    end
 
-    puts "NO REPO!"
+    return repo if repo
+
+    puts "REPO #{wiki}(#{path}) CREATE"
     path= @@wikis[wiki.to_sym][:path]
+
     return @@wikis[wiki.to_sym][:repo] = Grit::Repo.new(path)
   end
 
@@ -43,6 +39,28 @@ class Giwi
     text = blob.data.force_encoding('utf-8').encode
     commit_id = head.id
     return [ text, commit_id]
+  end
+
+  def split_to_parts text, from, to
+    from, to = part.split(/-/,2)    
+ 
+    from = 0 if from < 0
+    from = parts.size if from > parts.size
+
+    to = from + 1 if from > to
+    to = parts.size if from > parts.size
+
+    parts = text.split(/\n/);
+    head = parts[0    ... from].join
+    mid  = parts[from ... to].join
+    tail = parts[to   ... parts.size].join
+
+    return head, part, tail
+  end
+
+  def self.update_part text, part
+    head, part, tail = split_to_parts(text, part)
+    return head + text + tail
   end
 
   def self.get_ls(wiki, path)
