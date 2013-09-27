@@ -118,10 +118,12 @@ class Giwi
     if cur_text.id != text_id
       # collision: append diff
       diff = Grit::Commit.diff(repo, text_id, cur_text.id)
-      difftext = diff.map {|d| d.diff}.join
-      difftext = difftext.force_encoding('utf-8').encode
-      text += "\n= Collision =\n{{{\n#{difftext}\n}}}\n"
-      collision = true
+      if diff.size > 0
+         difftext = diff.map {|d| d.diff}.join
+         difftext = difftext.force_encoding('utf-8').encode
+         text += "\n= Collision =\n{{{\n#{difftext}\n}}}\n"
+         collision = true
+      end
     end
 
     index = Grit::Index.new(repo)
