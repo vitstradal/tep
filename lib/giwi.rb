@@ -1,10 +1,15 @@
 # encoding: utf-8
-
 require 'grit'
 require 'pp'
+require 'diff3'
 
 class Giwi
 
+  
+  SETPAGE_OK = 0
+  SETPAGE_MERGE_OK = 1
+  SETPAGE_MERGE_COLLISONS = 2
+  SETPAGE_MERGE_DIFF = 2
   mattr_accessor :wikis
   @@wikis
 
@@ -39,7 +44,7 @@ class Giwi
     return nil if blob.nil?
     return nil if blob.is_a? Grit::Tree
     text = blob.data.force_encoding('utf-8').encode
-    return [ text, blob.id]
+    return [ text, head.id]
   end
 
   def split_to_parts text, from, to
@@ -105,35 +110,52 @@ class Giwi
   end
 
   # text_id aka version
-  def self.set_page(wiki, path, text, text_id, part =nil)
-    fstline = text.each_line.first.chomp.strip
+  def self.set_page(wiki, path, text, commit_id, autor = 'unknown', part =nil)
 
     repo = get_repo(wiki)
+    text_head = repo.commit(commit_id)
     cur_head = repo.commits.first
 
     cur_tree = cur_head.tree
-    cur_text = cur_tree / path
-    collision = false
+    text_tree = text_head.tree
 
-    if cur_text.id != text_id
-      # collision: append diff
-      diff = Grit::Commit.diff(repo, text_id, cur_text.id)
-      if diff.size > 0
-         difftext = diff.map {|d| d.diff}.join
-         difftext = difftext.force_encoding('utf-8').encode
-         text += "\n= Collision =\n{{{\n#{difftext}\n}}}\n"
-         collision = true
+    cur_blob = cur_tree / path
+    text_blob = text_tree / path
+
+    status = SETPAGE_OK
+
+    if cur_blob.id != text_blob.id
+      # collision: try append diff
+      status = SETPAGE_MERGE_OK
+      lmine = 'me'
+      lorig = 'original'
+      lyour = 'your-concurent-editor'
+      newtext, diff3_status = Diff3.diff3(lmine, text,
+                                          lorig, text_blob.data.force_encoding('utf-8'),
+                                          lyour, cur_blob.data.force_encoding('utf-8'))
+
+      case diff3_status
+        when Diff3::MERGE_COLLISONS
+         status = SETPAGE_MERGE_COLLISONS
+
+        when Diff3::MERGE_FAIL
+         # total fall back (never happens)
+         status = SETPAGE_MERGE_DIFF
+         diff = Grit::Commit.diff(repo, text_blob.id, cur_blob.id).map {|d| d.diff}.join
+         newtext = text + "\n= Collision =\n{{{\n#{diff}\n}}}\n"
       end
+      text = newtext
     end
 
     index = Grit::Index.new(repo)
     index.read_tree(cur_tree.id)
     index.add(path, text)
 
+    fstline = text.each_line.first.chomp.strip
     comment = "file: #{path} head: #{fstline}"
     comment = comment.force_encoding('ASCII-8BIT')
 
     index.commit(comment,  parents: [cur_head], last_tree: cur_head, head: 'master')
-    return collision
+    return status
   end
 end
