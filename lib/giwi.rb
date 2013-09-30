@@ -1,3 +1,5 @@
+# encoding: utf-8
+
 require 'grit'
 require 'pp'
 
@@ -37,13 +39,14 @@ class Giwi
     return nil if blob.nil?
     return nil if blob.is_a? Grit::Tree
     text = blob.data.force_encoding('utf-8').encode
-    commit_id = head.id
-    return [ text, commit_id]
+    return [ text, blob.id]
   end
 
   def split_to_parts text, from, to
-    from, to = part.split(/-/,2)    
- 
+    from, to = part.split(/-/,2)
+    from = from.to_i
+    to = to.to_i
+
     from = 0 if from < 0
     from = parts.size if from > parts.size
 
@@ -101,33 +104,34 @@ class Giwi
     [files, dirs, path]
   end
 
-  # commit_id aka version
-  def self.set_page(wiki, path, text, commit_id, part =nil)
+  # text_id aka version
+  def self.set_page(wiki, path, text, text_id, part =nil)
     fstline = text.each_line.first.chomp.strip
 
     repo = get_repo(wiki)
-    head = repo.commits.first
+    cur_head = repo.commits.first
 
+    cur_tree = cur_head.tree
+    cur_text = cur_tree / path
     collision = false
 
-    if head.id != commit_id
-      diff = Grit::Commit.diff(repo, commit_id, head.id)
+    if cur_text.id != text_id
+      # collision: append diff
+      diff = Grit::Commit.diff(repo, text_id, cur_text.id)
       difftext = diff.map {|d| d.diff}.join
+      difftext = difftext.force_encoding('utf-8').encode
       text += "\n= Collision =\n{{{\n#{difftext}\n}}}\n"
       collision = true
     end
 
-    tree = head.tree
     index = Grit::Index.new(repo)
-    index.read_tree(tree.id)
+    index.read_tree(cur_tree.id)
     index.add(path, text)
 
     comment = "file: #{path} head: #{fstline}"
     comment = comment.force_encoding('ASCII-8BIT')
 
-    index.commit(comment,  parents: [head], last_tree: head, head: 'master')
-
+    index.commit(comment,  parents: [cur_head], last_tree: cur_head, head: 'master')
     return collision
   end
-
 end
