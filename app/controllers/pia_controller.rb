@@ -11,6 +11,11 @@ class PiaController < ApplicationController
     #print 'sign:', sign("ahoj")
   end
 
+  def user_finish_registration
+      token = params[:token]
+      @user = User.find_by_reset_password_token(token)
+      print "user:", pp(@user)
+  end
 
 
   def user_role_change

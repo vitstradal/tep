@@ -11,6 +11,7 @@ class Ability
     can :new, SosnaSolver
     can :create, SosnaSolver
     can :create_tnx, SosnaSolver
+    can :user_finish_registration, :pium
 
     if user.user?
       can :user_index, SosnaSolution
@@ -56,6 +57,7 @@ class Ability
       can :users, :pium
       can :user_role_change, :pium
     end
+
 
     if user.org?
       #can :show, Giwi # mozna nekdy fungovalo
