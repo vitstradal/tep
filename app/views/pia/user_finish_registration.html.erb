@@ -1,0 +1,18 @@
+
+<h2>Dokončení registrace</h2>
+
+<p>Pro dokončení regitrace zadej své budoucí heslo:</p>
+<%= form_for(@user, :url => password_path(:user), :html => { :method => :put }) do |f| %>
+  <%#= devise_error_messages! %>
+  <%= f.hidden_field :reset_password_token %>
+
+  <div><%= f.label :password, "Heslo" %><br />
+  <%= f.password_field :password %></div>
+
+  <div><%= f.label :password_confirmation, "Heslo znovu pro kontrolu" %><br />
+  <%= f.password_field :password_confirmation %></div>
+
+  <div><%= f.submit "Nastav heslo" %></div>
+<% end %>
+
+<%#= render :partial => "devise/shared/links" %>
