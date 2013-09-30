@@ -1,12 +1,22 @@
 require 'pp'
 class PiaController < ApplicationController
 
+  include ApplicationHelper
+
   def index; end
   authorize_resource :class => false
 
   def users
     @users = User.all
+    #print 'sign:', sign("ahoj")
   end
+
+  def user_finish_registration
+      token = params[:token]
+      @user = User.find_by_reset_password_token(token)
+      print "user:", pp(@user)
+  end
+
 
   def user_role_change
     user = User.find params[:user][:id];
@@ -27,4 +37,5 @@ class PiaController < ApplicationController
     end
     redirect_to :users_list
   end
+
 end

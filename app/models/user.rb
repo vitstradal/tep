@@ -2,7 +2,7 @@ class User < ActiveRecord::Base
   # Include default devise modules. Others available are:
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
-         :token_authenticatable, :confirmable, :lockable, :timeoutable ,
+         :token_authenticatable, :confirmable, :lockable, :timeoutable,
          :recoverable, :rememberable, :trackable, :validatable
 
   # Setup accessible (or protected) attributes for your model
@@ -21,8 +21,20 @@ class User < ActiveRecord::Base
   # roles later, always append them at the end!
   roles :admin, :org, :user, :guest
 
-  after_create do
+  before_create do
     roles << :user
-    save
+  end
+  skip_callback :create, :after, :send_confirmation_instructions
+
+  def send_first_login_instructions
+     self.generate_reset_password_token!
+     #self.send_devise_notification(:first_login_instructions)
+     #print("mailer:", pp(mailer), "\n")
+     #d.deliver
+     #mailer.first_login_instructions(self, {})
+     #opts = {}
+     #self.send_devise_notification(:first_login_instructions, opts)
+     devise_mailer.first_login_instructions(self).deliver
+
   end
 end

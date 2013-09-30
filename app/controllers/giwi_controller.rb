@@ -24,11 +24,12 @@ class GiwiController < ApplicationController
     @title = @path.capitalize
     pp "giwiwiki", Giwi.wikis
     if ! @text
-      @text = "= #{@path} =\n\n"
+      title = @path.split(/\//).last
+      @text = "= #{title.capitalize} =\n\n"
       @path = _to_ascii(@path)
       @edit = true
     end
-    @html = TracWiki.render(@text, math: true, no_escape: true)
+    @html = TracWiki.render(@text, math: true, merge: true, no_escape: true)
     @editable = true
 
     # if not exists bla bla bla
@@ -41,10 +42,18 @@ class GiwiController < ApplicationController
     path = params[:path]
     text = params[:text]
     version = params[:version]
-    collision = Giwi.set_page wiki, path, text, version
+    status = Giwi.set_page wiki, path, text, version
 
-    if collision
-       flash[:errors] = {kolize: "při editaci nastala kolize, rozdíl verzí byl připojen na konec souboru"}
+    if status !=  Giwi::SETPAGE_OK
+      if status ==  Giwi::SETPAGE_MERGE_OK
+         flash[:errors] = {Pozor: "při editaci nastala kolize, ale podařilo se jí automaticky vyřešit"}
+      elsif status ==  Giwi::SETPAGE_MERGE_COLLISONS
+         flash[:errors] = {Pozor: "při editaci nastala kolize, kolize je vyznačena v textu, editací uveďte soubor do rozumného stavu"}
+      elsif status ==  Giwi::SETPAGE_MERGE_DIFF
+         flash[:errors] = {Pozor: "při editaci nastala kolize, rozdíl verzí byl připojen na konec souboru"}
+      else
+         flash[:errors] = {Pozor: "při editaci nastala kolize, a celé se to rozsypalo"}
+      end
     end
 
     redirect_to action: :show, wiki: wiki, path: path
