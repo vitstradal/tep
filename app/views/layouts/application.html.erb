@@ -64,7 +64,7 @@
                 <li><%= link_to 'Konfigurace', :sosna_configs  %></li>
                 <li><%= link_to 'Wiki', :wiki  %></li>
               <% end %>
-              <% if current_user && current_user.has_role?(:adm) %>
+              <% if current_user && current_user.has_role?(:admin) %>
                 <li class="nav-header">Admin</li>
                 <li><%= link_to 'Uživatelé', :users_list  %></li>
               <% end %>
