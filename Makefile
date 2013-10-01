@@ -16,4 +16,4 @@ t:
 	rake test
 r: restart
 server:
-	script/rails server
+	script/rails server --binding=localhost
