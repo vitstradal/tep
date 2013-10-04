@@ -12,7 +12,7 @@ Pia::Application.routes.draw do
   # user:
   get  '/sosna/solutions/user'     => 'sosna_solution#user_index',   :as => :sosna_solutions_user
   post '/sosna/solution/upload'    => 'sosna_solution#upload',       :as => :sosna_solution_upload
-  put  '/sosna/solution/upload'    => 'sosna_solution#upload',       :as => :sosna_solution_upload
+  put  '/sosna/solution/upload'    => 'sosna_solution#upload',       :as => :sosna_solution_uploadP
   get  '/sosna/solution/:id/down'  => 'sosna_solution#download',     :as => :sosna_solution_download
 
   # org:
@@ -20,33 +20,33 @@ Pia::Application.routes.draw do
   get  '/sosna/solutions(/:roc(/:se(/:ul)))'=> 'sosna_solution#index',:as => :sosna_solutions_org
   get  '/sosna/solutions/:roc/:se/:ul/edit'=>'sosna_solution#edit',   :as => :sosna_solutions_edit
   post '/sosna/solutions/update_scores' =>'sosna_solution#update_scores',:as => :sosna_solutions_update_scores
-  post '/sosna/solution/update'    => 'sosna_solution#update',       :as => :sosna_solution_update
+  post '/sosna/solution/update'    => 'sosna_solution#update',       :as => :sosna_solution_updateP
   get  '/sosna/solution/downall'   => 'sosna_solution#downall',      :as => :sosna_solution_update
 #  get  '/sosna/solution(/:id)'     => 'sosna_solution#show',         :as => :sosna_solution
 
   get  '/sosna/problems'           => 'sosna_problem#index',         :as => :sosna_problems
   get  '/sosna/problem(/:id)'      => 'sosna_problem#show',          :as => :sosna_problem
   post '/sosna/problem/update'     => 'sosna_problem#update',        :as => :sosna_problem_update
-  put  '/sosna/problem/update'     => 'sosna_problem#update',        :as => :sosna_problem_update
+  put  '/sosna/problem/update'     => 'sosna_problem#update',        :as => :sosna_problem_updateP
   post '/sosna/problem/new_round'  => 'sosna_problem#new_round',     :as => :sosna_problem_new_round
 
   get  '/sosna/solvers'         => 'sosna_solver#index',             :as => :sosna_solvers
   get  '/sosna/solver(/:id)'    => 'sosna_solver#show',              :as => :sosna_solver
   post '/sosna/solver/update'   => 'sosna_solver#update',            :as => :sosna_solver_update
-  put  '/sosna/solver/update'   => 'sosna_solver#update',            :as => :sosna_solver_update
+  put  '/sosna/solver/update'   => 'sosna_solver#update',            :as => :sosna_solver_updateP
 
   get  '/sosna/schools'            => 'sosna_school#index',          :as => :sosna_schools
   get  '/sosna/school/new'         => 'sosna_school#new',          :as => :sosna_school_new
   get  '/sosna/school/:id/show'    => 'sosna_school#show',           :as => :sosna_school
   post '/sosna/school/update'  => 'sosna_school#update',         :as => :sosna_school_update
-  put  '/sosna/school/update'  => 'sosna_school#update',         :as => :sosna_school_update
+  put  '/sosna/school/update'  => 'sosna_school#update',         :as => :sosna_school_updateP
 
   get  '/sosna/config'             => 'sosna_config#index',          :as => :sosna_configs
   post '/sosna/config/update'      => 'sosna_config#update',         :as => :sosna_config_update
 
   # pia
   get  '/users'                   => 'pia#users',                    :as => :users_list
-  put  '/user/role'               => 'pia#user_role_change',         :as => :user_role_change
+  put  '/user/role'               => 'pia#user_role_change',         :as => :user_role_changeP
   get  '/reg/:token'               => 'pia#user_finish_registration',         :as => :user_finish_registration
 
   get  '/wiki(/*path)'             => 'giwi#show',                   :as =>  :wiki, constrains: { path: /.*/ }, defaults: {wiki: :main}

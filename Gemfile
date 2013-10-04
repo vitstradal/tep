@@ -2,6 +2,7 @@ source 'http://rubygems.org'
 
 gem 'rails'
 gem 'devise'
+gem 'devise-encryptable'
 gem 'cancan'
 gem 'role_model'
 #gem 'grit'

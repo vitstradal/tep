@@ -6,12 +6,12 @@ class User < ActiveRecord::Base
          :recoverable, :rememberable, :trackable, :validatable
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me
+  #attr_accessible :email, :password, :password_confirmation, :remember_me
 
   include RoleModel
 
   # Setup accessible (or protected) attributes for your model
-  attr_accessible :email, :password, :password_confirmation, :remember_me, :roles, :roles_mask
+  #attr_accessible :email, :password, :password_confirmation, :remember_me, :roles, :roles_mask
 
   # optionally set the integer attribute to store the roles in,
   # :roles_mask is the default
