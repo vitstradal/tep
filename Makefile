@@ -1,15 +1,19 @@
 restart:
 	touch tmp/restart.txt
 
-migrate-prod:
+prod-migrate:
 	rake db:migrate RAILS_ENV=production
 
-migrate-devel:
+dev-reset: dev-del dev-migrate dev-seed
+
+dev-del:
+	rm -f db/development.sqlite3
+dev-migrate:
 	rake db:migrate RAILS_ENV=development
 
-seed-prod:
+prod-seed:
 	rake db:seed RAILS_ENV=production
-seed-devel:
+dev-seed:
 	rake db:seed RAILS_ENV=development
 
 t:

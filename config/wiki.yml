@@ -5,6 +5,8 @@ defaults: &defaults
   main:
     path: '/home/vitas/tmp/piki'
 
+test:
+  <<: *defaults
 production:
   <<: *defaults
 development:

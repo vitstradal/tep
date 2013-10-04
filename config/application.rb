@@ -49,7 +49,5 @@ end
 
 require 'giwi'
 Giwi.setup do |config|
-
-  conf = YAML.load_file("#{::Rails.root.to_s}/config/wiki.yml")[::Rails.env]
-  config.wikis = conf
+  config.wikis = YAML.load_file("#{::Rails.root.to_s}/config/wiki.yml")[::Rails.env]
 end

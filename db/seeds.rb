@@ -16,7 +16,7 @@
 #          },
 #        ])
 
-if false
+if true
   users = User.create([
              {:email => "adm@pikomat.mff.cuni.cz", :roles => [:admin, :org, :user],  :password => "adm je pes"},
              {:email => "usr@pikomat.mff.cuni.cz", :roles => [:user],                :password => "usr je pes"},
@@ -24,6 +24,7 @@ if false
         ])
 
   users.each { |u| u.confirm! }
+
 end
 
 schools = SosnaSchool.create(YAML.load_file('db/schools.yml'))

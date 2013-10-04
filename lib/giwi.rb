@@ -5,7 +5,6 @@ require 'diff3'
 
 class Giwi
 
-  
   SETPAGE_OK = 0
   SETPAGE_MERGE_OK = 1
   SETPAGE_MERGE_COLLISONS = 2
@@ -24,6 +23,7 @@ class Giwi
 
   ##### conf
   def self.get_repo(wiki)
+    @@wikis ||= {}
     repo =  @@wikis[wiki.to_s][:repo]
 
     return repo if repo

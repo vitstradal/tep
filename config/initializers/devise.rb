@@ -80,7 +80,7 @@ Devise.setup do |config|
   # access will be blocked just in the third day. Default is 0.days, meaning
   # the user cannot access the website without confirming his account.
   # config.confirm_within = 2.days
-  config.confirm_within = 0.days
+  config.confirm_within = 2.days
 
   # Defines which key will be used when confirming an account
   config.confirmation_keys = [ :email ]
@@ -211,5 +211,7 @@ Devise.setup do |config|
   #   manager.default_strategies(:scope => :user).unshift :some_external_strategy
   # end
   config.secret_key = '8cb7fea1604b199ab85bc7885bde9ea3a0ad1f8d8ef1b40e1d05128c406c72c0ba746dbc2023b2b3e5ce3a090440ff5fc64d6e0681a25720f10c7519f0211c21'
+  config.allow_insecure_token_lookup = true
+
 
 end
