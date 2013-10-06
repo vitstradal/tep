@@ -37,7 +37,7 @@ class Giwi
   ##### api
   def self.get_page(wiki,path,part = nil)
     repo = get_repo(wiki)
-    print "path:", path
+    #print "path:", path, "\
     head = repo.commits.first
     tree = head.tree
     blob = tree / path
@@ -110,7 +110,8 @@ class Giwi
   end
 
   # text_id aka version
-  def self.set_page(wiki, path, text, commit_id, autor = 'unknown', part =nil)
+  # if text is only part of file, sline, eline specifies which part (lines from sline to eline (including))
+  def self.set_page(wiki, path, text, commit_id, autor = 'unknown', sline =nil, eline = nil)
 
     repo = get_repo(wiki)
     text_head = repo.commit(commit_id)
@@ -121,6 +122,11 @@ class Giwi
 
     cur_blob = cur_tree / path
     text_blob = text_tree / path
+    text_blob_data = text_blob.data.force_encoding('utf-8')
+
+    if ! sline.nil? && ! eline.nil?
+      text = _patch_part(text, text_blob_data, sline, eline)
+    end
 
     status = SETPAGE_OK
 
@@ -131,7 +137,7 @@ class Giwi
       lorig = 'original'
       lyour = 'your-concurent-editor'
       newtext, diff3_status = Diff3.diff3(lmine, text,
-                                          lorig, text_blob.data.force_encoding('utf-8'),
+                                          lorig, text_blob_data,
                                           lyour, cur_blob.data.force_encoding('utf-8'))
 
       case diff3_status
@@ -157,5 +163,13 @@ class Giwi
 
     index.commit(comment,  parents: [cur_head], last_tree: cur_head, head: 'master')
     return status
+  end
+
+  # replace in +text_orig+, lines from +sline+ to  +eline+ with +text+
+  # first line is 1 
+  def self._patch_part(text_part, text_orig, sline, eline)
+      lines = text_orig.split("\n", -1)
+      lines[(sline -1) ..(eline-1)] = text_part.split("\n", -1)
+      lines.join("\n")
   end
 end

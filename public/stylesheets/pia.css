@@ -56,3 +56,13 @@ margin-bottom: 0px;
 .merge-your:before {
   content: "⇑⇑⇑ ";
 }
+
+.editheading {
+font-size: 12px;
+margin-left: 3em;
+}
+.toc {
+        margin: 1em;
+}
+.editheading:before { content: "["; }
+.editheading:after  { content: "]"; }

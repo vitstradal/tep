@@ -5,36 +5,34 @@ require 'iconv'
 
 class GiwiController < ApplicationController
   authorize_resource :class => false
+
   def show
+
     @wiki = params[:wiki] || 'main'
     @path = params[:path]
-    @edit = params[:edit]
+    @edit = params[:edit] || false
     @ls   = params[:ls]
+    @part = false
 
-    if ! @path
-      return redirect_to path: 'index'
-    end
-
-    if @ls
-      @files, @dirs, @path = Giwi.get_ls @wiki, @path
-      return render :ls
-    end
+    return redirect_to path: 'index' if ! @path
+    return _handle_ls if @ls
+    return _handle_edit if @edit
 
     @text, @version = Giwi.get_page @wiki, @path
-    @title = @path.capitalize
-    pp "giwiwiki", Giwi.wikis
-    if ! @text
-      title = @path.split(/\//).last
-      @text = "= #{title.capitalize} =\n\n"
-      @path = _to_ascii(@path)
-      @edit = true
-    end
-    @html = TracWiki.render(@text, math: true, merge: true, no_escape: true)
+
+    return _create_new_page_text if ! @text
+
+    parser = TracWiki.parser(@text, math: true, merge: true, edit_heading: true, id_from_heading: true, id_translit: true, no_escape: true)
+    @html = parser.to_html
+    @headings = parser.headings
+
     @editable = true
 
-    # if not exists bla bla bla
-
+    if parser.headings.size > 3 
+      @toc = parser.make_toc_html
+    end
   end
+
 
 
   def update
@@ -42,7 +40,14 @@ class GiwiController < ApplicationController
     path = params[:path]
     text = params[:text]
     version = params[:version]
-    status = Giwi.set_page wiki, path, text, version
+
+    sline = params[:sline] 
+    eline = params[:eline]
+
+    sline = sline.to_i if ! sline.nil?
+    eline = eline.to_i if ! eline.nil?
+
+    status = Giwi.set_page wiki, path, text, version, 'autor', sline , eline
 
     if status !=  Giwi::SETPAGE_OK
       if status ==  Giwi::SETPAGE_MERGE_OK
@@ -59,9 +64,57 @@ class GiwiController < ApplicationController
     redirect_to action: :show, wiki: wiki, path: path
   end
 
+  private
+
   def _to_ascii(txt)
       txt.gsub! /\s+/, '_'
       Iconv.iconv('ascii//translit', 'utf-8', txt).join('')
   end
+
+  def _handle_ls
+    @files, @dirs, @path = Giwi.get_ls @wiki, @path
+    render :ls
+  end
+
+  def _handle_edit
+    if @edit == 'me'
+       # edit whole page
+       @text, @version = Giwi.get_page @wiki, @path
+       @edit = true
+    end
+
+    die "wrong edit value" if @edit !~  /^\d+$/
+
+    # want to edit only one chapter
+    @part = @edit.to_i
+
+    text, @version = Giwi.get_page @wiki, @path
+    print "part:#{@part}\n"
+
+    if text
+      parser = TracWiki.parser(text, math: true, merge: true,  no_escape: true)
+      parser.to_html
+      heading = parser.headings[@part]
+      print "headigns", pp(parser.headings)
+      if heading
+        # edit only selected part (from @sline to @eline)
+        @text = text.split("\n").values_at(heading[:sline]-1 .. heading[:eline]-1).join("\n")
+        @sline = heading[:sline] 
+        @eline = heading[:eline] 
+      else
+        # edit all document anyway
+        @part = nil
+      end
+    end
+  end
+
+  def _create_new_page_text
+    @text =
+    title = @path.split(/\//).last
+    @text = "= #{title.capitalize} =\n\n"
+    @path = _to_ascii(@path)
+    @edit = true
+  end
+
 end
 

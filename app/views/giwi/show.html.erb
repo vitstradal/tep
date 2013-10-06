@@ -9,6 +9,11 @@
 
    <%= form_tag path: @path do %>
     <%= hidden_field_tag 'version', @version %>
+    <% if @part %>
+      <%= hidden_field_tag 'part', @part %>
+      <%= hidden_field_tag 'sline', @sline %>
+      <%= hidden_field_tag 'eline', @eline %>
+    <% end %>
     <span class="pull-right">
       <a href="<%= url_for path: @path %>" class="btn">Zpět</a>&nbsp;
       <button type="submit" class="btn btn-success pull-right">Uložit</button>
@@ -27,12 +32,29 @@
   <%#
   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   %>
-  <% if @editable %>
-   <span class="pull-right">
-     <a href="<%= url_for path: @path, ls: '.'%>" class="btn">Seznam stránek</a>
-     <a href="<%= url_for path: @path, edit: 'me'%>" class="btn btn-danger">Editovat</a>
-   </span>
+
+
+
+  <% if @editable || @toc %>
+    <div class="pull-right">
+    <% if @editable %>
+     <%#<span class="pull-right">%>
+     <span> 
+       <a href="<%= url_for path: @path, ls: '.'%>" class="btn">Seznam stránek</a>
+       <a href="<%= url_for path: @path, edit: 'me'%>" class="btn btn-danger">Editovat</a>
+     </span>
+    <% end %>
+    <% if @toc %>
+      <div class='toc well sidebar-nav'>
+      <%== @toc %>
+      </div>
+    <%end%>
+    </div>
   <%end%>
+
+
+
+
   <%if @html %>
     <%== @html %>
   <%else%>
@@ -41,3 +63,8 @@
 <%end%>
 
 <hr>
+
+
+<pre>
+<%= debug @headings %>
+
