@@ -26,6 +26,7 @@ class SosnaProblemController < SosnaController
   end
 
   def update
+    params.require(:sosna_problem).permit!
     p = params[:sosna_problem]
     commit = params[:commit]
     if p[:id]

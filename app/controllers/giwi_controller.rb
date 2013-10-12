@@ -81,6 +81,7 @@ class GiwiController < ApplicationController
        # edit whole page
        @text, @version = Giwi.get_page @wiki, @path
        @edit = true
+       return
     end
 
     die "wrong edit value" if @edit !~  /^\d+$/

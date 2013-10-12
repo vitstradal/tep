@@ -14,7 +14,8 @@
     <%= link_to 'další>', { :id =>  @school.id + 1 } %>
   <% end %>
   
-  <% form_for @school, :url => {:action => :update }  do |f| %> 
+  <%#= form_for @school, :url => {:action => :update }  do |f| %> 
+  <%= form_for @school, :url => sosna_school_update_path() do |f| %> 
     <%= f.hidden_field :id if @school.id %></br>
     Zkratka: <%= f.text_field :short %><br/>
     Název: <%= f.text_field :name %><br/>

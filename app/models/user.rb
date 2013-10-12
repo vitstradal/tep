@@ -28,13 +28,20 @@ class User < ActiveRecord::Base
   skip_callback :create, :after, :send_confirmation_instructions
 
   def send_first_login_instructions
-     self.generate_reset_password_token!
+     #self.generate_reset_password_token!
      #self.send_devise_notification(:first_login_instructions)
      #print("mailer:", pp(mailer), "\n")
      #d.deliver
      #mailer.first_login_instructions(self, {})
      #opts = {}
      #self.send_devise_notification(:first_login_instructions, opts)
+
+     raw, enc = Devise.token_generator.generate(self.class, :reset_password_token)
+
+     self.reset_password_token   = enc
+     self.reset_password_sent_at = Time.now.utc
+     self.save(:validate => false)
+
      devise_mailer.first_login_instructions(self).deliver
 
   end

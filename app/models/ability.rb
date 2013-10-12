@@ -29,6 +29,7 @@ class Ability
       can :update, SosnaSolution
       can :downall, SosnaSolution
       can :update_scores, SosnaSolution
+      can :upload_corr, SosnaSolution
 
       can :index, SosnaProblem
       can :show, SosnaProblem

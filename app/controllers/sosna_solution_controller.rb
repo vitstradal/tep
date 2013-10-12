@@ -62,6 +62,14 @@ class SosnaSolutionController < SosnaController
     @breadcrumb = dir.nil? ? [path] : [ path, dir ]
   end
 
+  def download_corr
+    solution = SosnaSolution.find id = params[:id]
+    if ! solution.owner? current_user
+      authorize! :download_org, SosnaSolution
+    end
+    send_file UPLOAD_DIR + solution.filename_corr, :type => 'application/pdf'
+  end
+
   def download
 
     solution = SosnaSolution.find id = params[:id]
@@ -94,7 +102,87 @@ class SosnaSolutionController < SosnaController
       end
     end
     send_file zip_file_name, :filename => 'reseni.zip', :type => "application/zip"
-    File.delete zip_file_name 
+    #File.delete zip_file_name 
+  end
+
+  def upload_corr
+    cfile = params[:file_corr]
+    roc = params[:roc]
+    se =  params[:se]
+    ul =  params[:ul]
+
+    # reseni-roc29-se01-ul2-rel1-vitas-vitas.pdf
+    # oprava-roc29-se01-ul2-rel1-vitas-vitas.pdf
+    cfile_name = cfile.original_filename 
+    if cfile_name =~ /\.pdf$/
+       path =  _upload_corr_one(roc, se, ul,  cfile_name)
+       if path
+         File.open(path, 'wb') {  |f| f.write(cfile.read) }
+       end
+       _add_msg(cfile_name, path)
+    elsif cfile.original_filename =~ /\.zip$/
+       zip_file = Tempfile.new(['corr', '.zip'], UPLOAD_DIR)
+       File.open(zipfile, 'wb') {  |f| f.write(cfile.read) }
+       zip_file.close
+       Zip::File.open(zip_file.path) do |zipfile|
+         zipfile.each do |entry|
+           path =  _upload_corr_one(roc, se, ul,  entry.name)
+           if path
+             entry.extract(path)
+           end
+           _add_msg(entry.name, path)
+         end
+       end
+     
+    else
+      _add_msg(cfile_name, nil)
+    end
+    redirect_to :action =>  :index, :roc => roc, :se => se, :ul => ul
+  end
+
+  def _add_msg(fnamem, fname)
+  end
+
+  def _upload_corr_one(roc, se, ul,  fname)
+
+    if fname !~ /^(reseni|oprava)-roc(\d+)-se(\d+)-ul(\d+)-rel(\d+).*.pdf/
+      print "jmeno souboru neni ve spravnem formatu '#{fname}'"
+      return nil
+    end
+    oroc, ose, oul, relid = $2.to_i, $3.to_i, $4.to_i, $5.to_i
+
+    if oroc.to_s != roc || ose.to_s != se || oul.to_s != ul
+       print "reseni neni ke spravnemu rocniku, serii, uloze"
+       pp [oroc, ose, oul, relid]
+       pp [roc, se, ul]
+      return nil
+    end
+
+    solver = SosnaSolver.find(relid)
+    if !solver 
+       print "neexistuje takovy resitel #{relid}"
+       return nil
+    end
+    print "konecne je to v poradku"
+
+
+
+    problem = SosnaProblem.where(:annual => roc, :round => se, :problem_no => ul).take
+    solution = SosnaSolution.where( :sosna_problem_id => problem.id, :sosna_solver_id => solver.id).take
+
+    filename_corr = _sol_filename( roc, se, ul, solver.id, solver.name, solver.last_name, true)
+    solution.filename_corr = filename_corr
+    solution.filename_corr_display =  _filename_corr_display(solution.filename_orig)
+    solution.save
+
+    print "solution id: #{solution.id}, #{solution.filename_corr}\n"
+
+    return filename_corr
+
+  end
+
+  def _filename_corr_display(orig)
+      orig.sub(/(\.[^\.]+)$/, '-opraveno\1')
   end
 
   def upload
@@ -121,15 +209,15 @@ class SosnaSolutionController < SosnaController
     pp solver
 
     # save file
-    filename = 'reseni-roc%02i-se%02i-ul%i-rel%i-%s-%s.pdf'  %
-                  [ problem.annual, problem.round, problem.problem_no,
-                    solver.id, solver.name, solver.last_name ]
+    filename = _sol_filename(  problem.annual, problem.round, problem.problem_no,
+                              solver.id, solver.name, solver.last_name)
+
     File.open(UPLOAD_DIR + filename, 'wb') {  |f| f.write(solution_file.read) }
 
 
     # update solution
     solution.filename = filename
-    solution.orig_filename = solution_file.original_filename
+    solution.filename_orig = solution_file.original_filename
     solution.save
 
     redirect_to :action => :user_index
@@ -166,6 +254,8 @@ class SosnaSolutionController < SosnaController
       end
     end
   end
+
+  private
 
   def _params_roc_se_ul
     roc, se, ul = params[:roc],  params[:se], params[:ul]
@@ -241,6 +331,10 @@ class SosnaSolutionController < SosnaController
   end
 
 
+  def _sol_filename(roc, se, ul, rel_id, name, last, is_corr=  false)
+     typ = is_corr ? 'oprava' : 'reseni'
+     '%s-roc%02i-se%02i-ul%i-rel%i-%s-%s.pdf'  % [ typ, roc, se, ul, rel_id, name, last ]
+  end
 
 
 end

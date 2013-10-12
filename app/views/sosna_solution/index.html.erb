@@ -27,7 +27,8 @@
    <th>Id</th>
    <th>Se</th>
    <th>Úl</th>
-   <th>Soubor</th>
+   <th>Řešení</th>
+   <th>Oprava</th>
    <th>Řešitel</th>
    <th>Orig</th>
    <th>Body</th>
@@ -39,12 +40,20 @@
     <td><%= sol.sosna_problem.problem_no %></td>
     <td>
       <% if sol.filename  %>
-         <%= link_to sol.filename , {:action => :download, :id => sol.id}, {:title => sol.orig_filename} %></td>
+         <%= link_to sol.filename , {:action => :download, :id => sol.id}, {:title => sol.filename_orig} %></td>
       <% else %>
          <i>žádný soubor</i>
       <% end %>
+      </td>
+    <td>
+      <% if sol.filename_corr  %>
+         <%= link_to sol.filename_corr , {:action => :download_corr, :id => sol.id}, {:title => sol.filename_corr_display} %></td>
+      <% else %>
+         <i>oprava není</i>
+      <% end %>
+      </td>
     <td><%= sol.sosna_solver.full_name%></td>
-    <td><%= sol.orig_filename %></td>
+    <td><%= sol.filename_orig %></td>
     <% if @want_edit %>
       <td><input class="input-mini" type="text" name="score[<%= sol.id %>]" size="3" value="<%= sol.score || '-'%>"/></td>
     <% else %>
@@ -61,14 +70,27 @@
 
 <% if @want_edit %>
 <button type='submit' class='btn btn-success'>Uložit</button> 
-<%= link_to 'Zpět', {action: :index, roc: @annual, se: @round, ul: @problem_no}, {:class => 'btn'} %>
 </form>
 
+<%= link_to 'Zpět', {action: :index, roc: @annual, se: @round, ul: @problem_no}, {:class => 'btn'} %>
+
 <% else %>
-<%= link_to 'Stáhnout tato řešení v jednom .zip',
+  <%= link_to 'Stáhnout tato řešení v jednom .zip',
             { :action => :downall, roc: @annual, se: @round, ul: @problem_no },
             { :class=> 'btn btn-primary'} %>
 
+  <hr>
+  <% if  @problem_no %>
+    <%= form_tag({:action => :upload_corr} , :multipart => true ) do %>
+          <%= hidden_field_tag :roc, @annual %>
+          <%= hidden_field_tag :se,  @round %>
+          <%= hidden_field_tag :ul,  @problem_no %>
+          <%= file_field_tag :file_corr, :class => 'input-small', :accept => '*.pdf|*.zip'  %>
+          <%= submit_tag 'Nahraj opravené řešení ', :class => 'btn'  %>
+    <% end %>
+  <% end %>
+
 <% end %>
+
 
 <% end # annuals %>

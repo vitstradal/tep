@@ -38,7 +38,9 @@ ActiveRecord::Schema.define(version: 2) do
 
   create_table "sosna_solutions", force: true do |t|
     t.string   "filename"
-    t.string   "orig_filename"
+    t.string   "filename_orig"
+    t.string   "filename_corr"
+    t.string   "filename_corr_display"
     t.integer  "score"
     t.integer  "sosna_problem_id"
     t.integer  "sosna_solver_id"

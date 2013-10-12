@@ -17,6 +17,9 @@ class SosnaSolverController < SosnaController
 
   def create
     load_config
+    params.require(:sosna_solver).permit!
+    params.permit(:sosna_solver)
+
     school_id =  params[:school].delete :id
 
     begin
@@ -48,7 +51,7 @@ class SosnaSolverController < SosnaController
     user = User.find_by_email solver.email
     if !user 
       # create user by email
-      user =  User.new(email: solver.email, roles: [:user])
+      user =  User.new(email: solver.email, confirmation_sent_at: Time.now,  roles: [:user])
       user.confirm!
       user.send_first_login_instructions
       solver.user_id = user.id

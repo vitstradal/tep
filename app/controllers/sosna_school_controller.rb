@@ -13,6 +13,7 @@ class SosnaSchoolController < SosnaController
     render :show
   end
   def update
+    params.require(:sosna_school).permit!
     sch = params[:sosna_school]
     commit = params[:commit]
 

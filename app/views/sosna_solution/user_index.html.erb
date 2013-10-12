@@ -5,16 +5,17 @@
 <table class="table table-bordered">
   <tr> 
    <th>Úloha</td>
-   <th>Soubor</td>
+   <th>Řešení</td>
    <th>Nahrát</td>
+   <th>Opravené řešení</td>
  </tr> 
 <% @problems.each do |p| %>
   <tr>
     <td><%= p.problem_no%> </td>
     <td>
       <%# FIXME:   @solutions[p.id] orig_name to title %>
-      <% if @solutions[p.id].orig_filename  %>
-        <%= link_to @solutions[p.id].orig_filename, :action => :download, :id => @solutions[p.id].id %>
+      <% if @solutions[p.id].filename_orig  %>
+        <%= link_to @solutions[p.id].filename_orig, :action => :download, :id => @solutions[p.id].id %>
       <% else %>
         <i>zatím žádné řešení</i>
       <% end %>
@@ -25,6 +26,13 @@
           <%= f.submit :class => 'btn', :value => 'Nahraj řešení ' %>
           <% end %>
          </td>
+    <td>
+      <% if @solutions[p.id].filename_corr_display  %>
+        <%= link_to @solutions[p.id].filename_corr_display, :action => :download_corr, :id => @solutions[p.id].id %>
+      <% else %>
+        <i>řešení zatím není opravené</i>
+      <% end %>
+      </td>
 
   </tr>
 <% end %>

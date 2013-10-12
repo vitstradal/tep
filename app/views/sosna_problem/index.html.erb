@@ -20,7 +20,7 @@
 
 <%= link_to 'Nová úloha', :sosna_problem %>
 
-<%= form_tag :sosna_problem_new_round do %>
+<%= form_tag sosna_problem_new_round_path do %>
 Ročník: <%= text_field_tag :annual , @annual %>
 Série: <%= text_field_tag :round , @round.to_i + 1 %>
 Počet úloh: <%= text_field_tag :count , 6 %>

@@ -16,7 +16,11 @@ class CreateSosna < ActiveRecord::Migration
 
     create_table :sosna_solutions do |t|
       t.string  :filename
-      t.string  :orig_filename
+      t.string  :filename_orig
+
+      t.string  :filename_corr
+      t.string  :filename_corr_display
+
       t.integer :score
       t.belongs_to :sosna_problem
       t.belongs_to :sosna_solver

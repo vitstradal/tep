@@ -7,7 +7,7 @@
 <% end %>
 
 
-<% form_for @problem, :url => {:action => :update }  do |f| %> 
+<%= form_for @problem, :url => {:action => :update }  do |f| %> 
   <%= f.hidden_field :id if @problem.id %></br>
   Ročník: <%= f.text_field :annual %><br/>
   Série: <%= f.text_field :round %><br/>
