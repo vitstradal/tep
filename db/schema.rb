@@ -34,6 +34,7 @@ ActiveRecord::Schema.define(version: 2) do
     t.text "num"
     t.text "city"
     t.text "psc"
+    t.text "state"
   end
 
   create_table "sosna_solutions", force: true do |t|
@@ -62,6 +63,7 @@ ActiveRecord::Schema.define(version: 2) do
     t.text     "num"
     t.text     "city"
     t.text     "psc"
+    t.text     "state"
     t.integer  "user_id"
     t.integer  "school_id"
     t.datetime "created_at"

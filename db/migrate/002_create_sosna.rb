@@ -36,6 +36,7 @@ class CreateSosna < ActiveRecord::Migration
       t.text :num
       t.text :city
       t.text :psc
+      t.text :state
 
     end
 
@@ -59,6 +60,7 @@ class CreateSosna < ActiveRecord::Migration
       t.text :num
       t.text :city
       t.text :psc
+      t.text :state
 
       t.belongs_to :user
       t.belongs_to :school
