@@ -1,0 +1,4 @@
+cs:
+ unauthorized:
+   #default: "Nemáš oprávnění pro tuto stránku."
+   default: "Byl jsi odhlášen."

@@ -1,3 +1,7 @@
 class ApplicationController < ActionController::Base
   protect_from_forgery
+  rescue_from CanCan::AccessDenied do |exception|
+      sign_out :user
+      redirect_to :new_user_session, :alert => exception.message
+  end
 end
