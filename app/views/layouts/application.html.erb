@@ -50,18 +50,6 @@
               <% if user_signed_in?  %>
                 <li class="nav-header">Uživatel</li>
                   <li><%= link_to  'Moje řešení', :sosna_solutions_user %></li>
-<!--                  <ul>
-                   <li>Bla</li>
-                   <li>Bla</li>
-                   <ul>
-                     <li><%= link_to 'Claalsjdflkjasdlkfj alvkja sdlkjf'%></li>
-                     <li>Cla</li>
-                     <li>Cla</li>
-                     <li>Cla</li>
-                   </ul>
-                   <li>Bla</li>
-                  </ul>
-  -->
                   <li><%= link_to  'Změna hesla', :edit_user_registration %></li>
               <% else %>
               <% end %>
@@ -80,8 +68,10 @@
               <% end %>
               <li class="nav-header">Odkazy</li>
               <li><%= link_to 'Pikomat', 'http://pikomat.mff.cuni.cz/' %></li>
-<!--              <li><%= link_to 'Přihláška', :sosna_solver_new  %></li>
-              <li><%= link_to 'Archiv', '#' %></li>
+              <% if ! current_user %>
+                <li><%= link_to 'Přihláška', :sosna_solver_new  %></li>
+              <% end %> 
+<!--              <li><%= link_to 'Archiv', '#' %></li>
               <li><%= link_to 'Tábory', '#' %></li>
               <li><%= link_to 'O nás', '#'  %></li>
   -->
