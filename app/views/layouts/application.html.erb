@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-  <title>Pia</title>
+  <title>Pikomat MFF UK</title>
   <%= stylesheet_link_tag 'bootstrap.css'  %>
   <%= stylesheet_link_tag 'bootstrap-responsive.css'  %>
   <%= stylesheet_link_tag 'andulka/stylesheet.css' %>
@@ -17,7 +17,7 @@
     <div class="navbar navbar-inverse">
       <div class="navbar-inner">
         <div class="container-fluid">
-          <%= link_to  'Pia desideria' , :root, :class => 'brand' %>
+          <%= link_to  'Pikomat MFF UK' , :root, :class => 'brand' %>
           <div class="nav-collapse collapse">
                 <% if user_signed_in?  %>
                   <p class="navbar-text pull-right">
@@ -89,6 +89,8 @@
   <% end %>
 <% end %>
 
+<%# @breadrubb [ {name => 'home', url=> '/home.html', sub => [...], }  ]  %>
+<%# @breadrubb [ {btn => } %>
 <% if @breadcrumb %>
 <ul class="breadcrumb">
    <% @breadcrumb.each_with_index do |bread, bread_idx| %>

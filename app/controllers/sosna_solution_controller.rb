@@ -67,7 +67,7 @@ class SosnaSolutionController < SosnaController
     if ! solution.owner? current_user
       authorize! :download_org, SosnaSolution
     end
-    send_file UPLOAD_DIR + solution.filename_corr, :type => 'application/pdf'
+    send_file UPLOAD_DIR + solution.filename_corr, :filename => solution.filename_corr_display, :type => 'application/pdf'
   end
 
   def download
@@ -77,7 +77,7 @@ class SosnaSolutionController < SosnaController
       authorize! :download_org, SosnaSolution
     end
 
-    send_file UPLOAD_DIR + solution.filename, :type => 'application/pdf'
+    send_file UPLOAD_DIR + solution.filename, :filename => solution.filename_orig, :type => 'application/pdf'
   end
 
 #  def show
@@ -117,7 +117,8 @@ class SosnaSolutionController < SosnaController
     if cfile_name =~ /\.pdf$/
        path =  _upload_corr_one(roc, se, ul,  cfile_name)
        if path
-         File.open(path, 'wb') {  |f| f.write(cfile.read) }
+         print "writing to path"
+         File.open(UPLOAD_DIR + path, 'wb') {  |f| f.write(cfile.read) }
        end
        _add_msg(cfile_name, path)
     elsif cfile.original_filename =~ /\.zip$/
@@ -128,7 +129,7 @@ class SosnaSolutionController < SosnaController
          zipfile.each do |entry|
            path =  _upload_corr_one(roc, se, ul,  entry.name)
            if path
-             entry.extract(path)
+             entry.extract(UPLOAD_DIR + path)
            end
            _add_msg(entry.name, path)
          end
@@ -291,16 +292,18 @@ class SosnaSolutionController < SosnaController
 
   end
 
+  # return SosnaProblem
   def _rounds_roc(roc)
-    return SosnaProblem.select('round')
+    rounds = []
+    SosnaProblem.select('round')
                        .where({annual: roc})
                        .group('round')
                        .order('round')
                        .all
-                       .map do |ul|
-                          _round_link(roc, ul.round)
+                       .each do |pr|
+                          rounds.push  _round_link(roc, pr.round)
                        end
-
+    rounds
   end
 
   def _annual_link(annual)
@@ -320,16 +323,16 @@ class SosnaSolutionController < SosnaController
   end
 
   def _annuals
-
-    return SosnaProblem.select('annual')
+    annual = {}
+    SosnaProblem.select('annual')
                        .group('annual')
                        .order('annual desc')
                        .all
                        .each do |a|
-                            a[:rounds] = _rounds_roc(a.annual)
+                            annual[a.annual] = _rounds_roc(a.annual)
                        end
+    return annual
   end
-
 
   def _sol_filename(roc, se, ul, rel_id, name, last, is_corr=  false)
      typ = is_corr ? 'oprava' : 'reseni'

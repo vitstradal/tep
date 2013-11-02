@@ -3,10 +3,10 @@
 <%#### seznam  ročníků -%>
 <% if @annuals %>
  <h1>Řešení úloh po ročnících</h1>
-   <% @annuals.each do |annual| %>
+   <% @annuals.each do |annual_no, annual| %>
     <ul class="breadcrumb">
-      <li><%= link_to "Ročník #{annual.annual}",  { roc: annual.annual }  %><span class="divider">&gt;</span></li>
-        <% annual.rounds.each do |round| %>
+      <li><%= link_to "Ročník #{annual_no}",  { roc: annual_no }  %><span class="divider">&gt;</span></li>
+        <% annual.each do |round| %>
           <li><%= link_to round[:name],  round[:url]  %>
                <span class="divider">,</span></li>
         <% end %>

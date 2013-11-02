@@ -17,6 +17,7 @@ class Ability
       can :user_index, SosnaSolution
       can :upload, SosnaSolution
       can :download, SosnaSolution
+      can :download_corr, SosnaSolution
     end
 
     if user.org?
