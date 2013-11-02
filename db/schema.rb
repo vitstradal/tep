@@ -11,7 +11,17 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 2) do
+ActiveRecord::Schema.define(version: 3) do
+
+  create_table "sessions", force: true do |t|
+    t.string   "session_id", null: false
+    t.text     "data"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", unique: true
+  add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at"
 
   create_table "sosna_configs", force: true do |t|
     t.string "key"
@@ -34,7 +44,6 @@ ActiveRecord::Schema.define(version: 2) do
     t.text "num"
     t.text "city"
     t.text "psc"
-    t.text "state"
   end
 
   create_table "sosna_solutions", force: true do |t|
@@ -63,7 +72,6 @@ ActiveRecord::Schema.define(version: 2) do
     t.text     "num"
     t.text     "city"
     t.text     "psc"
-    t.text     "state"
     t.integer  "user_id"
     t.integer  "school_id"
     t.datetime "created_at"

@@ -1,5 +1,6 @@
 source 'http://rubygems.org'
 
+gem 'activerecord-session_store'
 gem 'rails'
 gem 'devise'
 gem 'devise-encryptable'
