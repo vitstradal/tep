@@ -22,8 +22,8 @@ class CreateSosna < ActiveRecord::Migration
       t.string  :filename_corr_display
 
       t.integer :score
-      t.belongs_to :sosna_problem
-      t.belongs_to :sosna_solver
+      t.belongs_to :problem
+      t.belongs_to :solver
       t.timestamps
     end
 
@@ -61,7 +61,7 @@ class CreateSosna < ActiveRecord::Migration
       t.text :psc
 
       t.belongs_to :user
-      t.belongs_to :sosna_school
+      t.belongs_to :school
       t.timestamps
     end
   end

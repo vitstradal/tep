@@ -1,0 +1,2 @@
+module Sosna::SchoolHelper
+end

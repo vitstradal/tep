@@ -7,7 +7,7 @@
 #   Mayor.create(:name => 'Daley', :city => cities.first)
 
 
-#schools = SosnaSchool.create([
+#schools = Sosna::School.create([
 #          { :name => '1zakladni', :short => '1zs', 
 #            :street => 'narodni', :num => 1, :city => 'Brno', :psc => "11111",
 #          },
@@ -27,5 +27,5 @@ if true
 
 end
 
-schools = SosnaSchool.create(YAML.load_file('db/schools.yml'))
+schools = Sosna::School.create(YAML.load_file('db/schools.yml'))
 

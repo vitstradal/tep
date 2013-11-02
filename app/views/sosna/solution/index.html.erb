@@ -36,8 +36,8 @@
 <% @solutions.each do |sol| %>
   <tr>
     <td><%= sol.id %></td>
-    <td><%= sol.sosna_problem.round %></td>
-    <td><%= sol.sosna_problem.problem_no %></td>
+    <td><%= sol.problem.round %></td>
+    <td><%= sol.problem.problem_no %></td>
     <td>
       <% if sol.filename  %>
          <%= link_to sol.filename , {:action => :download, :id => sol.id}, {:title => sol.filename_orig} %></td>
@@ -52,7 +52,7 @@
          <i>oprava není</i>
       <% end %>
       </td>
-    <td><%= sol.sosna_solver.full_name%></td>
+    <td><%= sol.solver.full_name%></td>
     <td><%= sol.filename_orig %></td>
     <% if @want_edit %>
       <td><input class="input-mini" type="text" name="score[<%= sol.id %>]" size="3" value="<%= sol.score || '-'%>"/></td>
@@ -63,7 +63,7 @@
 
 <% end %>
 <% if @solutions.empty? %>
-  <tr><td colspan="6"><i>žádná řešení</i><td></tr>
+  <tr><td colspan="8"><i>žádná řešení</i></td></tr>
 <% end %>
 
 </table>

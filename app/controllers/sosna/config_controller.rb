@@ -1,4 +1,4 @@
-class SosnaConfigController < SosnaController
+class Sosna::ConfigController < SosnaController
 
   def index
     load_config
@@ -7,9 +7,9 @@ class SosnaConfigController < SosnaController
   def update
     config = params[:config]
     config.each_pair do |k,v|
-        cfg = SosnaConfig.where(:key =>  k).first
+        cfg = Sosna::Config.where(:key =>  k).first
         if cfg.nil?
-          SosnaConfig.create :key => k, :value => v
+          Sosna::Config.create :key => k, :value => v
         else 
           cfg.value = v
           cfg.save

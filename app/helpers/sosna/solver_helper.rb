@@ -1,0 +1,2 @@
+module Sosna::SolverHelper
+end

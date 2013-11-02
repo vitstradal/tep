@@ -1,13 +1,13 @@
 # encoding: utf-8
-class SosnaProblemController < SosnaController
+class Sosna::ProblemController < SosnaController
 
   def index
-      @problems = SosnaProblem.order('annual desc, round desc,  problem_no asc')
+      @problems = Sosna::Problem.order('annual desc, round desc,  problem_no asc')
                               .all
   end
 
   def show
-    @problem = SosnaProblem.find_or_new(params[:id])
+    @problem = Sosna::Problem.find_or_new(params[:id])
     logger.fatal "id #{@problem.id}"
   end
 
@@ -16,7 +16,7 @@ class SosnaProblemController < SosnaController
      round = params[:round]
      count = params[:count].to_i
      (1..count).each do |problem_no|
-        SosnaProblem.create({ :annual => annual,
+        Sosna::Problem.create({ :annual => annual,
                               :round => round,
                               :problem_no => problem_no,
                               :title => "Úloha č. #{problem_no}",
@@ -30,10 +30,10 @@ class SosnaProblemController < SosnaController
     p = params[:sosna_problem]
     commit = params[:commit]
     if p[:id]
-      problem = SosnaProblem.find p[:id]
+      problem = Sosna::Problem.find p[:id]
       problem.update_attributes p
     else
-      problem = SosnaProblem.create p
+      problem = Sosna::Problem.create p
     end
 
     if commit =~ /Ulo.*it a dal/

@@ -1,6 +1,6 @@
-class SosnaSolver < ActiveRecord::Base
-  has_many :sosna_solutions
-  belongs_to :sosna_school
+class Sosna::Solver < ActiveRecord::Base
+  has_many :solutions
+  belongs_to :school
   belongs_to :user
   validates :name, :last_name, :city, presence: true
   #validates_associated :sosna_school

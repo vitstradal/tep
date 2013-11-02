@@ -1,11 +1,11 @@
-class SosnaProblem < ActiveRecord::Base
-  has_many :sosna_solutions
+class Sosna::Problem < ActiveRecord::Base
+  has_many :solutions
   def rounds
     _rounds_roc(annual)
   end
 
   def _rounds_roc(annual)
-    return SosnaProblem.select('round')
+    return Sosna::Problem.select('round')
                        .where({annual: annual})
                        .group('round')
                        .order('round')

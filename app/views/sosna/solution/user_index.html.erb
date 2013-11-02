@@ -1,12 +1,16 @@
 
 
-<h1>Úlohy <%= @config[:annual] %>. ročníku, série <%= @config[:round] %></h1>
+<h1>Úlohy <%= @annual %>. ročníku, série <%= @round %></h1>
+
+<% show_nahrat = @is_current && @config[:allow_upload] == 'yes' %>
 
 <table class="table table-bordered">
   <tr> 
    <th>Úloha</td>
    <th>Řešení</td>
-   <th>Nahrát</td>
+   <% if show_nahrat  %>
+     <th>Nahrát</td>
+   <% end %>
    <th>Opravené řešení</td>
  </tr> 
 <% @problems.each do |p| %>
@@ -17,20 +21,22 @@
       <% if @solutions[p.id].filename_orig  %>
         <%= link_to @solutions[p.id].filename_orig, :action => :download, :id => @solutions[p.id].id %>
       <% else %>
-        <i>zatím žádné řešení</i>
+        <i>žádné řešení</i>
       <% end %>
     </td>
+    <% if show_nahrat %>
     <td>  <%= form_for  @solutions[p.id], :html => {:class=> 'form-inline', :multipart => true}, :url => :sosna_solution_upload do |f|  %>
           <%= f.hidden_field :id %>
           <%= f.file_field :solution_file , :class => 'input-small', :accept => '*.pdf'  %>
           <%= f.submit :class => 'btn', :value => 'Nahraj řešení ' %>
           <% end %>
          </td>
+    <% end %>
     <td>
-      <% if @solutions[p.id].filename_corr_display  %>
+      <% if @solutions[p.id].filename_corr_display && @config[:show_revisions] == 'yes' %>
         <%= link_to @solutions[p.id].filename_corr_display, :action => :download_corr, :id => @solutions[p.id].id %>
       <% else %>
-        <i>řešení zatím není opravené</i>
+        <i>řešení není opravené</i>
       <% end %>
       </td>
 

@@ -1,15 +1,15 @@
-class SosnaSchoolController < SosnaController
+class Sosna::SchoolController < SosnaController
 
   def show
-    @school = SosnaSchool.find params[:id]
+    @school = Sosna::School.find params[:id]
   end
 
   def index
-    @schools =  SosnaSchool.all
+    @schools =  Sosna::School.all
   end
 
   def new
-    @school  = SosnaSchool.new
+    @school  = Sosna::School.new
     render :show
   end
   def update
@@ -21,13 +21,13 @@ class SosnaSchoolController < SosnaController
 
     if ! sch[:id]
       # new
-      school = SosnaSchool.create sch
+      school = Sosna::School.create sch
       return redirect_to action: :new if want_next
       return redirect_to action: :show, id: school.id
     end
 
     # update
-    school = SosnaSchool.find sch[:id]
+    school = Sosna::School.find sch[:id]
     school.update_attributes sch
 
     return redirect :show, id: school.id if ! want_next

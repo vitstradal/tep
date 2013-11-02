@@ -8,49 +8,49 @@ class Ability
     # anon
     # can :index, User
 
-    can :new, SosnaSolver
-    can :create, SosnaSolver
-    can :create_tnx, SosnaSolver
+    can :new, Sosna::Solver
+    can :create, Sosna::Solver
+    can :create_tnx, Sosna::Solver
     can :user_finish_registration, :pium
 
     if user.user?
-      can :user_index, SosnaSolution
-      can :upload, SosnaSolution
-      can :download, SosnaSolution
-      can :download_corr, SosnaSolution
+      can :user_index, Sosna::Solution
+      can :upload, Sosna::Solution
+      can :download, Sosna::Solution
+      can :download_corr, Sosna::Solution
     end
 
     if user.org?
-      can :index, SosnaSolution
-      can :show, SosnaSolution
-      can :download, SosnaSolution
-      can :download_org, SosnaSolution
-      can :upload, SosnaSolution
-      can :upload_org, SosnaSolution
-      can :update, SosnaSolution
-      can :downall, SosnaSolution
-      can :update_scores, SosnaSolution
-      can :upload_corr, SosnaSolution
+      can :index, Sosna::Solution
+      can :show, Sosna::Solution
+      can :download, Sosna::Solution
+      can :download_org, Sosna::Solution
+      can :upload, Sosna::Solution
+      can :upload_org, Sosna::Solution
+      can :update, Sosna::Solution
+      can :downall, Sosna::Solution
+      can :update_scores, Sosna::Solution
+      can :upload_corr, Sosna::Solution
 
-      can :index, SosnaProblem
-      can :show, SosnaProblem
-      can :update, SosnaProblem
-      can :new_round, SosnaProblem
+      can :index, Sosna::Problem
+      can :show, Sosna::Problem
+      can :update, Sosna::Problem
+      can :new_round, Sosna::Problem
 
-      can :index, SosnaSolver
-      can :show, SosnaSolver
-      can :update, SosnaSolver
+      can :index, Sosna::Solver
+      can :show, Sosna::Solver
+      can :update, Sosna::Solver
 
-      can :index, SosnaSchool
-      can :show, SosnaSchool
-      can :update, SosnaSchool
-      can :new, SosnaSchool
+      can :index, Sosna::School
+      can :show, Sosna::School
+      can :update, Sosna::School
+      can :new, Sosna::School
 
-      can :index, SosnaSchool
-      can :update, SosnaSchool
+      can :index, Sosna::School
+      can :update, Sosna::School
 
-      can :index, SosnaConfig
-      can :update, SosnaConfig
+      can :index, Sosna::Config
+      can :update, Sosna::Config
     end
 
     # pia

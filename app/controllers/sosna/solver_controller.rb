@@ -1,43 +1,43 @@
 # encoding: utf-8
-class SosnaSolverController < SosnaController
+class Sosna::SolverController < SosnaController
 
 
   def index
-      @solvers = SosnaSolver.all
+      @solvers = Sosna::Solver.all
   end
 
   def new
     load_config
-    @schools = SosnaSchool.all
-    @school = flash[:school] || SosnaSchool.new
+    @schools = Sosna::School.all
+    @school = flash[:school] || Sosna::School.new
     @solver ||= flash[:solver] 
-    @solver ||= SosnaSolver.new(:email => current_user.nil? ? nil : current_user.email )
+    @solver ||= Sosna::Solver.new(:email => current_user.nil? ? nil : current_user.email )
   end
   #def new_tnx end
 
   def create
     load_config
     params.require(:sosna_solver).permit!
-    params.permit(:sosna_solver)
 
     school_id =  params[:school].delete :id
 
     begin
-      school = SosnaSchool.find(school_id) 
+      school = Sosna::School.find(school_id) 
     rescue
-      school = SosnaSchool.new(params[:sosna_school])
+      params.require(:sosna_school).permit!
+      school = Sosna::School.new(params[:sosna_school])
     end
 
-    solver = SosnaSolver.new(params[:sosna_solver])
+    solver = Sosna::Solver.new(params[:sosna_solver])
 
-    if SosnaSolver.find_by_email solver.email
+    if Sosna::Solver.find_by_email solver.email
       flash[:errors] = {email: 'je již registrován u jiného řešitele'}
       flash[:solver] = solver
       flash[:school] = school
       return redirect_to :action => :new
     end
 
-    solver.sosna_school = school
+    solver.school = school
     solver.annual = @annual
     print pp solver
     if solver.invalid?
@@ -71,17 +71,17 @@ class SosnaSolverController < SosnaController
 
   def show
     id = params[:id]
-    @solver = id ? SosnaSolver.find(id) : SosnaSolver.new
+    @solver = id ? Sosna::Solver.find(id) : Sosna::Solver.new
     new
   end
 
   def update
     sr = params[:sosna_solver]
     if sr[:id]
-      solver = SosnaSolver.find(sr[:id])
+      solver = Sosna::Solver.find(sr[:id])
       solver.update_attributes(sr)
     else
-      solver = SosnaSolver.create(sr)
+      solver = Sosna::Solver.create(sr)
     end
     redirect_to :action =>  :show , :id => solver.id
   end
