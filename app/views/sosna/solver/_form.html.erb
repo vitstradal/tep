@@ -35,7 +35,7 @@
   </div>
 </div>
 <hr>
-<div class="<%= form_error_class @school %>">
+<div class="<%= form_error_class @solver, :skola %>">
   <label class="control-label" for="school">Škola</label>
   <div class="controls">
        <%= select :school, :id,
@@ -49,6 +49,7 @@
                                                       
                        )
          %>
+        <%= form_error @solver, :skola %>
   </div>
 </div>
 
@@ -131,8 +132,9 @@
 <% if ! is_edit %>
   <div class="<%= form_error_class @solver, :souhlasim %>">
     <div class="controls">
-     <label class="checkbox" for="souhlasim_yes"> <%= check_box :souhlasim , :yes %> Souhlasím se <a href="#souhlas">zpracováním osobních údajů</a>
-       <%= form_error @solver, :souhlasim %>
+     <label class="checkbox" for="souhlasim"> <%= check_box_tag 'souhlasim', '1', @agree %>
+         Souhlasím se <a href="#souhlas">zpracováním osobních údajů</a>
+         <%= form_error @solver, :souhlasim %>
      </label>
     </div>
   </div>

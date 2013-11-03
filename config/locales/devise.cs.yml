@@ -66,3 +66,6 @@ cs:
         subject: 'Instrukce k nastavení nového hesla'
       unlock_instructions:
         subject: 'Instrukce k odemknutí účtu'
+      first_login_instructions:
+        subject: 'Vítejte v Pikomatu MFF UK'
+
