@@ -5,4 +5,8 @@ class Sosna::School < ActiveRecord::Base
   def address
      "#{street} #{num}, #{psc} #{city}"
   end
+
+  def long
+     "#{name}, #{street} #{num}, #{psc} #{city}"
+  end
 end
