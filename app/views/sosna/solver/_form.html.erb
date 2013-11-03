@@ -94,10 +94,10 @@
 <hr>
 
 <div class="<%= form_error_class @solver, :finish_year, :grade%>">
-  <label class="control-label" for="_nazev">Rok maturity</label>
+  <label class="control-label" for="_nazev">Odpovídající ročník (číslo)</label>
   <div class="controls">
-     <%= f.text_field :finish_year, :class=>'input-mini' %>
-     Třída
+     <%= f.text_field :grade_num, :class=>'input-mini' %>
+     Třída (6.A, prima, ...)
      <%= f.text_field :grade, :class=>'input-mini' %>
      <%= form_error @solver, :finish_year, :grade%>
   </div>

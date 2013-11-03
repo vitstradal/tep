@@ -3,11 +3,16 @@ class Sosna::Solver < ActiveRecord::Base
   belongs_to :school
   belongs_to :user
 
-  validates :name, :last_name, :num, :birth, :psc, :city, presence: true
-  validates :birth,  format: {with: /\d+\.\d+.\d{4}/, message: :date}
-  validates :email, format: {with: /[a-z\d\.\-]+@[a-z\d\.\-]+/i , message: :email}
+  validates :name, :last_name,  presence: true
+  validates :num, :psc, :city, presence: true, :if  => :send_home?
+  validates :birth,  format: {with: /\A\Z|\A\d+\.\d+.\d{4}\Z/, message: :date}
+  validates :grade_num,  format: {with: /\A\d*\Z/, message: :number}
+  validates :email, format: {with: /\A\Z|\A[-_a-z\d\.]+@[a-z\d\.\-]+\Z/i , message: :email}
   #validates_associated :school
 
+  def send_home?
+     self.where_to_send == 'home'
+  end
   def full_name
      "#{name} #{last_name}"
   end 

@@ -16,6 +16,7 @@
 #          },
 #        ])
 
+require 'pp'
 if true
   users = User.create([
              {:email => "adm@pikomat.mff.cuni.cz", :roles => [:admin, :org, :user],  :password => "adm je pes"},
@@ -27,5 +28,4 @@ if true
 
 end
 
-schools = Sosna::School.create(YAML.load_file('db/schools.yml'))
 

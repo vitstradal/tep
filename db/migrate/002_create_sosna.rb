@@ -50,8 +50,9 @@ class CreateSosna < ActiveRecord::Migration
 
       t.text :where_to_send,  default: 'home'
 
-      t.text :grade,       default: '111'
-      t.text :finish_year, default: '2000'
+      t.text :grade
+      t.text :grade_num
+      t.text :finish_year
       t.text :annual
 
       t.text :email
