@@ -3,9 +3,11 @@ class Sosna::Solver < ActiveRecord::Base
   belongs_to :school
   belongs_to :user
 
-  validates :name, :last_name, :num, :city, presence: true
+  validates :name, :last_name, :num, :birth, :psc, :city, presence: true
+  validates :birth,  format: {with: /\d+\.\d+.\d{4}/, message: :date}
+  validates :email, format: {with: /[a-z\d\.\-]+@[a-z\d\.\-]+/i , message: :email}
+  #validates_associated :school
 
-  #validates_associated :sosna_school
   def full_name
      "#{name} #{last_name}"
   end 

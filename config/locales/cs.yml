@@ -1,4 +1,20 @@
 cs:
- unauthorized:
+  unauthorized:
    #default: "Nemáš oprávnění pro tuto stránku."
    default: "Byl jsi odhlášen."
+
+  errors:
+    messages:
+      blank: "nemůže být prázdné"
+      date:   "není ve formátu: DD.MM.YYYY"
+      email:  "není platný formát emailové adresy"
+
+  fields:
+    last_name: "příjmení"
+    name: "jméno"
+    num: "číslo domu"
+    birth: "datum narození"
+    city: "město"
+    email: "email"
+    psc: "PSČ"
+

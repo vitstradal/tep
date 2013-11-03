@@ -1,6 +1,6 @@
 
 <%= form_for @solver, :url => { :action => (is_edit ? :update : :create) },  :html => {:class=>'form-horizontal'} do |f| %>
-<div class="control-group">
+<div class="<%= form_error_class @solver, :name, :last_name%>">
   <% if is_edit %>
           <%= f.hidden_field :id %>
   <% end %>
@@ -8,31 +8,34 @@
   <div class="controls">
           <%= f.text_field :name %>
           <%= f.text_field :last_name %>
+          <%= form_error @solver, :name, :last_name %>
   </div>
 </div>
 
-<div class="control-group">
+<div class="<%= form_error_class @solver, :email %>">
   <label class="control-label" for="solver_email">Email</label>
-  <div class="controls"><%= f.text_field :email %></div>
+  <div class="controls"><%= f.text_field :email %><%= form_error @solver, :email %></div>
 </div>
 
-<div class="control-group">
+<div class="<%= form_error_class @solver, :street, :num %>">
   <label class="control-label" for="solver_street">Ulice a č.p.</label>
   <div class="controls">
           <%= f.text_field :street %>
           <%= f.text_field :num, :class=>'input-mini'%>
+          <%= form_error @solver, :street, :num %>
   </div>
 </div>
 
-<div class="control-group">
+<div class="<%= form_error_class @solver, :psc, :city%>">
   <label class="control-label" for="solver_psc">PSČ a Město</label>
   <div class="controls">
           <%= f.text_field :psc, :class=>'input-mini'%>
           <%= f.text_field :city %>
+          <%= form_error @solver, :psc, :city %>
   </div>
 </div>
 <hr>
-<div class="control-group">
+<div class="<%= form_error_class @school %>">
   <label class="control-label" for="school">Škola</label>
   <div class="controls">
        <%= select :school, :id,
@@ -50,26 +53,31 @@
 </div>
 
 <div id='school_div' class='hide'>
-<div class="control-group">
+<%= fields_for @school do |sf| %>
+<div class="<%= form_error_class @school, :name %>">
   <label class="control-label" for="school_nazev">Název školy.</label>
   <div class="controls">
-          <%= text_field :sosna_school, :name, :value =>  @school.name || '' %>
+          <%= sf.text_field :name %>
+          <%= form_error @school, :name %>
   </div>
 </div>
 <div class="control-group">
   <label class="control-label" for="school_nazev">Ulice a č.p.</label>
   <div class="controls">
-          <%= text_field :sosna_school, :street, :value =>  @school.street || '' %>
-          <%= text_field :sosna_school, :num, :value =>  @school.num, :class=>'input-mini'%>
+          <%= sf.text_field :street  %>
+          <%= sf.text_field :num, :class=>'input-mini'%>
+          <%= form_error @school, :street, :num %>
   </div>
 </div>
-<div class="control-group">
+<div class="<%= form_error_class @school, :psc, :city%>">
   <label class="control-label" for="_nazev">PSČ a Město</label>
   <div class="controls">
-          <%= text_field :sosna_school, :psc, :value => @school.psc, :class=>'input-mini'%>
-          <%= text_field :sosna_school, :city, :value => @school.city %>
+          <%= sf.text_field :psc, :class=>'input-mini'%>
+          <%= sf.text_field :city %>
+          <%= form_error @school, :psc, :city %>
   </div>
 </div>
+<% end %>
 </div>
 
 <div class="control-group">
@@ -85,19 +93,21 @@
 
 <hr>
 
-<div class="control-group">
+<div class="<%= form_error_class @solver, :finish_year, :grade%>">
   <label class="control-label" for="_nazev">Rok maturity</label>
   <div class="controls">
      <%= f.text_field :finish_year, :class=>'input-mini' %>
      Třída
      <%= f.text_field :grade, :class=>'input-mini' %>
+     <%= form_error @solver, :finish_year, :grade%>
   </div>
 </div>
 
-<div class="control-group">
+<div class="<%= form_error_class @solver, :birth %>">
   <label class="control-label" for="_nazev">Datum narození</label>
   <div class="controls">
      <%= f.text_field :birth %>
+     <%= form_error @solver, :birth %>
   </div>
 </div>
 
@@ -119,9 +129,11 @@
 <hr>
 
 <% if ! is_edit %>
-  <div class="control-group">
+  <div class="<%= form_error_class @solver, :souhlasim %>">
     <div class="controls">
-     <label class="checkbox" for="_chnazev"> <%= check_box :souhlasim , :yes %> Souhlasím se <a href="#souhlas">zpracováním osobních údajů</a></label>
+     <label class="checkbox" for="souhlasim_yes"> <%= check_box :souhlasim , :yes %> Souhlasím se <a href="#souhlas">zpracováním osobních údajů</a>
+       <%= form_error @solver, :souhlasim %>
+     </label>
     </div>
   </div>
 <% end %>
@@ -137,5 +149,6 @@
      <%= f.submit :class=>'btn btn-primary', :value=>'Přihlásit se do Pikomatu' %></div>
   <% end %>
 </div>
+
 
 <% end %>

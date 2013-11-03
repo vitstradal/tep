@@ -8,10 +8,12 @@ class Sosna::SolverController < SosnaController
 
   def new
     load_config
-    @schools = Sosna::School.all
     @school = flash[:school] || Sosna::School.new
     @solver ||= flash[:solver] 
-    @solver ||= Sosna::Solver.new(:email => current_user.nil? ? nil : current_user.email )
+    if ! @solver 
+      @solver= Sosna::Solver.new(:email => current_user.nil? ? nil : current_user.email )
+    end
+    @schools = Sosna::School.all
   end
   #def new_tnx end
 
@@ -27,26 +29,23 @@ class Sosna::SolverController < SosnaController
       params.require(:sosna_school).permit!
       school = Sosna::School.new(params[:sosna_school])
     end
+    #params[:sosna_solver].delte :school
 
     solver = Sosna::Solver.new(params[:sosna_solver])
 
-    if Sosna::Solver.find_by_email solver.email
-      flash[:errors] = {email: 'je již registrován u jiného řešitele'}
-      flash[:solver] = solver
-      flash[:school] = school
-      return redirect_to :action => :new
-    end
+    solver.valid?
+    solver.errors.add(:souhlasim, 'Je nutno souhlasit s podmínkami') if params[:souhlasim][:yes] == '0'
+    solver.errors.add(:email, 'je již registrován u jiného řešitele') if Sosna::Solver.find_by_email(solver.email)
 
-    solver.school = school
-    solver.annual = @annual
-    print pp solver
-    if solver.invalid?
+    if school.invalid? || solver.errors.count > 0
         school.id = -1 if school_id == 'jina'
-        flash[:errors] = solver.errors
         flash[:solver] = solver
         flash[:school] = school
         return redirect_to :action => :new
     end
+
+    solver.school = school
+    solver.annual = @annual
 
     user = User.find_by_email solver.email
     if !user 

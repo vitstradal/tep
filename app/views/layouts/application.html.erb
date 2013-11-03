@@ -86,14 +86,14 @@
 <% if flash[:errors] %>
   <% flash[:errors].each do |key,msg| %>
   <div class="alert alert-error">
-    <strong><%= key.capitalize %></strong> <%=msg %>
+    <strong><%= (t "fields.#{key}").capitalize %></strong> <%=msg %>
     </div>
   <% end %>
 <% end %>
 <% if flash[:success] %>
   <% flash[:success].each do |key,msg| %>
   <div class="alert alert-success">
-    <strong><%= key.capitalize %></strong> <%=msg %>
+    <strong><%= (t "fields.#{key}").capitalize %></strong> <%=msg %>
     </div>
   <% end %>
 <% end %>
