@@ -30,7 +30,7 @@ class Sosna::SchoolController < SosnaController
     school = Sosna::School.find sch[:id]
     school.update_attributes sch
 
-    return redirect :show, id: school.id if ! want_next
+    return redirect_to :action => :show, :id =>  school.id if ! want_next
     redirect_to :action=> :show, :id =>  school.id + 1
 
   end

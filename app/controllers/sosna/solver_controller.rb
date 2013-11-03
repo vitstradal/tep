@@ -8,7 +8,7 @@ class Sosna::SolverController < SosnaController
 
   def new
     load_config
-    @school = flash[:school] || Sosna::School.new
+    @school ||= flash[:school] || Sosna::School.new
     @solver ||= flash[:solver] 
     if ! @solver 
       @solver= Sosna::Solver.new(:email => current_user.nil? ? nil : current_user.email )
@@ -71,13 +71,26 @@ class Sosna::SolverController < SosnaController
   def show
     id = params[:id]
     @solver = id ? Sosna::Solver.find(id) : Sosna::Solver.new
+    @school = @solver.school
     new
   end
 
   def update
+    params.require(:sosna_solver).permit!
     sr = params[:sosna_solver]
+    school_id =  params[:school].delete :id
+
+    begin
+      school = Sosna::School.find(school_id) 
+    rescue
+      params.require(:sosna_school).permit!
+      school = Sosna::School.new(params[:sosna_school])
+      school.save
+    end
+
     if sr[:id]
       solver = Sosna::Solver.find(sr[:id])
+      solver.school = school
       solver.update_attributes(sr)
     else
       solver = Sosna::Solver.create(sr)
