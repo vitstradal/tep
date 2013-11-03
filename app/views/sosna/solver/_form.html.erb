@@ -41,7 +41,7 @@
        <%= select :school, :id,
                options_for_select(
                        [['Vyber školu', :none]] +
-                       @schools.map{ |s| [s.name, s.id] } <<
+                       @schools.map{ |s| ["#{s.short}, #{s.long}", s.id] } <<
                        ['Jiná škola', :jina],
                        @school.id.nil? ? :none 
                                       : @school.id < 0  ? :jina
