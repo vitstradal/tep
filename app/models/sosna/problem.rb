@@ -4,6 +4,7 @@ class Sosna::Problem < ActiveRecord::Base
     _rounds_roc(annual)
   end
 
+
   def _rounds_roc(annual)
     return Sosna::Problem.select('round')
                        .where({annual: annual})

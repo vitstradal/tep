@@ -9,6 +9,10 @@ class ActiveRecord::Base
     end
   end
 
+  def next(delta = 1)
+    self.class.find_by_id id + delta
+  end
+
   def self.update_or_create(hash)
     id = hash[:id]
     if id.nil?

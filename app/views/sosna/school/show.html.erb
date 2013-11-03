@@ -10,8 +10,8 @@
   <% end %>
   
   <% if !@school.id.nil? %>
-    <%= link_to '<předchozí', { :id =>  @school.id - 1 } %>
-    <%= link_to 'další>', { :id =>  @school.id + 1 } %>
+    <%= link_to_show '<předchozí',  @school.next(-1)  %>
+    <%= link_to_show 'další>',      @school.next      %>
   <% end %>
   
   <%#= form_for @school, :url => {:action => :update }  do |f| %> 
@@ -24,6 +24,8 @@
     PSČ: <%= f.text_field :psc %><br/>
     Město: <%= f.text_field :city %><br/>
     <%= f.submit 'Uložit'%>
-    <%= f.submit 'Uložit a další' %>
+    <% if @school.next %>
+      <%= f.submit 'Uložit a další' %>
+    <% end %>
   <% end %>
 <% end %>
