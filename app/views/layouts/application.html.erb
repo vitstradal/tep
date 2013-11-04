@@ -139,9 +139,7 @@
          </li>
          <% if crumb[:btn] %>
            <li class="pull-right">
-             <%= link_to crumb[:btn][:url], :class=>"btn btn-mini btn-danger" do  %>
-                    <%=crumb[:btn][:name]%>
-             <% end %>
+             <%= link_to crumb[:btn][:name], crumb[:btn][:url], :class=>"btn btn-mini btn-danger" %>
            </li>
          <% end %>
      <% end %>
