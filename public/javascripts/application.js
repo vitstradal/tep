@@ -17,6 +17,18 @@ jQuery(document).ready(function($) {
                   $(this).closest('form').submit();
                 }
         });
+	$('.updownkeys input[type=text]').keydown(function (e) { 
+	   if (e.key == 'Down' ) {
+	     focus_down(this, 1);
+	   }
+	   if (e.key == 'Up' ) {
+	     focus_down(this, -1);
+	   }
+	});
 });
 
+function focus_down(element, delta = 1) {
+    var td  = $(element).closest('td');
+    var tr  = $(td).closest('tr');
+}
 
