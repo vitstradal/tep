@@ -114,43 +114,47 @@ class Giwi
   def self.set_page(wiki, path, text, commit_id, autor = 'unknown', sline =nil, eline = nil)
 
     repo = get_repo(wiki)
+    cur_head = nil
+
     text_head = repo.commit(commit_id)
     cur_head = repo.commits.first
-
     cur_tree = cur_head.tree
-    text_tree = text_head.tree
-
-    cur_blob = cur_tree / path
-    text_blob = text_tree / path
-    text_blob_data = text_blob.data.force_encoding('utf-8')
-
-    if ! sline.nil? && ! eline.nil?
-      text = _patch_part(text, text_blob_data, sline, eline)
-    end
-
     status = SETPAGE_OK
 
-    if cur_blob.id != text_blob.id
-      # collision: try append diff
-      status = SETPAGE_MERGE_OK
-      lmine = 'me'
-      lorig = 'original'
-      lyour = 'your-concurent-editor'
-      newtext, diff3_status = Diff3.diff3(lmine, text,
-                                          lorig, text_blob_data,
-                                          lyour, cur_blob.data.force_encoding('utf-8'))
-
-      case diff3_status
-        when Diff3::MERGE_COLLISONS
-         status = SETPAGE_MERGE_COLLISONS
-
-        when Diff3::MERGE_FAIL
-         # total fall back (never happens)
-         status = SETPAGE_MERGE_DIFF
-         diff = Grit::Commit.diff(repo, text_blob.id, cur_blob.id).map {|d| d.diff}.join
-         newtext = text + "\n= Collision =\n{{{\n#{diff}\n}}}\n"
+    if commit_id != ''
+      # not new file
+      text_tree = text_head.tree
+      cur_blob = cur_tree / path
+      text_blob = text_tree / path
+      text_blob_data = text_blob.data.force_encoding('utf-8')
+  
+      if ! sline.nil? && ! eline.nil?
+        text = _patch_part(text, text_blob_data, sline, eline)
       end
-      text = newtext
+  
+  
+      if cur_blob.id != text_blob.id
+        # collision: try append diff
+        status = SETPAGE_MERGE_OK
+        lmine = 'me'
+        lorig = 'original'
+        lyour = 'your-concurent-editor'
+        newtext, diff3_status = Diff3.diff3(lmine, text,
+                                            lorig, text_blob_data,
+                                            lyour, cur_blob.data.force_encoding('utf-8'))
+  
+        case diff3_status
+          when Diff3::MERGE_COLLISONS
+           status = SETPAGE_MERGE_COLLISONS
+  
+          when Diff3::MERGE_FAIL
+           # total fall back (never happens)
+           status = SETPAGE_MERGE_DIFF
+           diff = Grit::Commit.diff(repo, text_blob.id, cur_blob.id).map {|d| d.diff}.join
+           newtext = text + "\n= Collision =\n{{{\n#{diff}\n}}}\n"
+        end
+        text = newtext
+      end
     end
 
     index = Grit::Index.new(repo)

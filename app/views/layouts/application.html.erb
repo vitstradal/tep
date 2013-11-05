@@ -83,18 +83,14 @@
 <%if notice %><p class="notice"><%= notice %></p><% end %>
 <%if alert %><p class="alert"><%= alert %></p><% end %>
 
-<% if flash[:errors] %>
-  <% flash[:errors].each do |key,msg| %>
-  <div class="alert alert-error">
-    <strong><%= (t "fields.#{key}").capitalize %></strong> <%=msg %>
-    </div>
+<% if flash[:alerts] %>
+  <% flash[:alerts].each do |msg| %>
+    <div class="alert alert-error"> <%= msg %> </div>
   <% end %>
 <% end %>
 <% if flash[:success] %>
-  <% flash[:success].each do |key,msg| %>
-  <div class="alert alert-success">
-    <strong><%= (t "fields.#{key}").capitalize %></strong> <%=msg %>
-    </div>
+  <% flash[:success].each do |msg| %>
+    <div class="alert alert-success"> <%=msg %> </div>
   <% end %>
 <% end %>
 

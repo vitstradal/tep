@@ -12,11 +12,21 @@
 </ul>
 
 
-<% form_tag :wiki , method: :get do%>
-<button type='submit' class='btn btn-success'>Nový soubor</button>
-<%= text_field_tag :path, @path %>
-
+<%= form_tag url_for(:action => :show, :wiki => @wiki) , method: :get do%>
+  <button type='submit' class='btn btn-success'>Nový soubor</button>
+  <%= text_field_tag :path, @path %>
 <% end%>
+
+<%= form_tag url_for(:action => :update, :wiki => @wiki), method: :post do%>
+  <button type='submit' class='btn btn-success'>Nahrát soubor</button>
+  <%= text_field_tag :filename, @path %>
+  <%= file_field_tag :file %>
+  <%= hidden_field_tag :path, @path %>
+<% end%>
+
+
+
+
 
 
 

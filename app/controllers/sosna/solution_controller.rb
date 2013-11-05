@@ -6,6 +6,8 @@ require 'tempfile'
 
 class Sosna::SolutionController < SosnaController
 
+  include SosnaHelper
+  include ActionView::Helpers::NumberHelper 
   UPLOAD_DIR = "public/uploads/"
 
   def index
@@ -66,14 +68,14 @@ class Sosna::SolutionController < SosnaController
     solution = Sosna::Solution.find id = params[:id]
     filename = solution.filename_corr_display
     if ! solution
-      flash[:errors] = {:chyba => 'soubor neexistuje'}
+      add_alert 'Chyba: soubor neexistuje'
       return redirect_to :action =>  :user_index 
     end
 
     if solution.owner? current_user
       # owner: check if it allowed to download
       if @config[:show_revisions] != 'yes' && solution.problem.round.to_s == @round && solution.problem.annual.to_s == @annual
-        flash[:errors] = {:chyba => 'soubor neexistuje'}
+        add_alert 'Chyba: soubor neexistuje'
         return redirect_to :action =>  :user_index 
       end
     else
@@ -156,11 +158,11 @@ class Sosna::SolutionController < SosnaController
 
   def _add_msg(fname, msg, success = false)
     if success
-      flash[:success] = {fname => msg}
+      add_success "#{fname}: #{msg}"
     else
-      flash[:errors] = {fname => msg}
+      add_allert "#{fname}: #{msg}"
     end
-    print "msg: #{fname}: #{msg}\n"
+    #print "msg: #{fname}: #{msg}\n"
   end
 
   def _upload_corr_one(roc, se, ul,  fname)
@@ -208,11 +210,16 @@ class Sosna::SolutionController < SosnaController
 
     print "content type:", solution_file.content_type
     if @config[:allow_upload] != 'yes'
-      flash[:errors] = {:pozor => 'pouze soubory ve formátu .pdf'}
+      add_alert 'Pozor: pouze soubory ve formátu .pdf'
       return redirect_to :action => :user_index
     end
     if solution_file.original_filename !~ /\.pdf$/
-      flash[:errors] = {:pozor => 'pouze soubory ve formátu .pdf'}
+      add_alert 'Pozor: pouze soubory ve formátu .pdf'
+      return redirect_to :action => :user_index
+    end
+    max_size =  Rails.configuration.sosna_user_solution_max_size || (20 * 1024 * 1024)
+    if solution_file.size > max_size
+      add_alert "Soubor je příliš velký (větší než #{number_to_human_size max_size})."
       return redirect_to :action => :user_index
     end
 
@@ -256,7 +263,7 @@ class Sosna::SolutionController < SosnaController
 
     @solver = Sosna::Solver.where(:user_id => current_user.id).first
     if ! @solver
-       flash[:errors] = {:pozor => 'zatím nejsi řešitelem, nejprve vyplň přihlašku!'}
+       add_alert "Pozor: zatím nejsi řešitelem, nejprve vyplň přihlašku!"
        return redirect_to :controller => :solver , :action => :new
     end
 

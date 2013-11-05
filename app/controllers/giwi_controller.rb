@@ -5,6 +5,7 @@ require 'iconv'
 
 class GiwiController < ApplicationController
   authorize_resource :class => false
+  include SosnaHelper
 
   def show
 
@@ -13,58 +14,72 @@ class GiwiController < ApplicationController
     @edit = params[:edit] || false
     @ls   = params[:ls]
     @part = false
+    fmt = params[:format]
 
     return redirect_to path: 'index' if ! @path
     return _handle_ls if @ls
     return _handle_edit if @edit
+    return _handle_raw_file("#{@path}.#{fmt}", fmt) if %w(png jpg jpeg gif).include? fmt
 
     @text, @version = Giwi.get_page @wiki, @path
 
     return _create_new_page_text if ! @text
 
-    parser = TracWiki.parser(@text, math: true, merge: true, edit_heading: true, id_from_heading: true, id_translit: true, no_escape: true)
+    base = url_for(action: :show, wiki: @wiki)
+    parser = TracWiki.parser(@text, base: base, math: true, merge: true, edit_heading: true, id_from_heading: true, id_translit: true, no_escape: true)
     @html = parser.to_html
     @headings = parser.headings
 
     @editable = true
 
-    if parser.headings.size > 3 
+    if parser.headings.size > 3
       @toc = parser.make_toc_html
     end
   end
 
-
+  def _handle_raw_file(path, fmt)
+    @raw, @version = Giwi.get_page @wiki, path
+    send_data @raw, :type => fmt, :disposition => 'inline'
+  end
 
   def update
-    wiki = params[:wiki] || 'main'
-    path = params[:path]
+    @wiki = params[:wiki] || 'main'
+    @path = params[:path]
     text = params[:text]
     version = params[:version]
 
-    sline = params[:sline] 
+    file = params[:file]
+    filename = params[:filename]
+
+    return _handle_file_upload(wiki, path, file, filename) if file
+
+    sline = params[:sline]
     eline = params[:eline]
 
     sline = sline.to_i if ! sline.nil?
     eline = eline.to_i if ! eline.nil?
 
-    status = Giwi.set_page wiki, path, text, version, 'autor', sline , eline
+    status = Giwi.set_page @wiki, @path, text, version, 'autor', sline , eline
 
     if status !=  Giwi::SETPAGE_OK
       if status ==  Giwi::SETPAGE_MERGE_OK
-         flash[:errors] = {Pozor: "při editaci nastala kolize, ale podařilo se jí automaticky vyřešit"}
+         add_alert "Pozor: při editaci nastala kolize, ale podařilo se jí automaticky vyřešit"
       elsif status ==  Giwi::SETPAGE_MERGE_COLLISONS
-         flash[:errors] = {Pozor: "při editaci nastala kolize, kolize je vyznačena v textu, editací uveďte soubor do rozumného stavu"}
+         add_alert "Pozor: při editaci nastala kolize, kolize je vyznačena v textu, editací uveďte soubor do rozumného stavu"
       elsif status ==  Giwi::SETPAGE_MERGE_DIFF
-         flash[:errors] = {Pozor: "při editaci nastala kolize, rozdíl verzí byl připojen na konec souboru"}
+         add_alert "Pozor: při editaci nastala kolize, rozdíl verzí byl připojen na konec souboru"
       else
-         flash[:errors] = {Pozor: "při editaci nastala kolize, a celé se to rozsypalo"}
+         add_alert "Pozor: při editaci nastala kolize, a celé se to rozsypalo"
       end
     end
 
-    redirect_to action: :show, wiki: wiki, path: path
+    redirect_to action: :show, wiki: @wiki, path: @path
   end
 
   private
+
+  def _handle_file_upload( file, wiki, filename)
+  end
 
   def _to_ascii(txt)
       txt.gsub! /\s+/, '_'
@@ -100,8 +115,8 @@ class GiwiController < ApplicationController
       if heading
         # edit only selected part (from @sline to @eline)
         @text = text.split("\n").values_at(heading[:sline]-1 .. heading[:eline]-1).join("\n")
-        @sline = heading[:sline] 
-        @eline = heading[:eline] 
+        @sline = heading[:sline]
+        @eline = heading[:eline]
       else
         # edit all document anyway
         @part = nil

@@ -25,12 +25,12 @@
       <% end %>
     </td>
     <% if show_nahrat %>
-    <td>  <%= form_for  @solutions[p.id], :html => {:class=> 'form-inline', :multipart => true}, :url => :sosna_solution_upload do |f|  %>
+       <td>  <%= form_for  @solutions[p.id], :html => {:class=> 'form-inline', :multipart => true}, :url => :sosna_solution_upload do |f|  %>
           <%= f.hidden_field :id %>
-          <%= f.file_field :solution_file , :class => 'input-small', :accept => '*.pdf'  %>
+          <%= f.file_field :solution_file , :class => 'input-small', :accept => 'application/pdf', 'max-size' => 20  %>
           <%= f.submit :class => 'btn', :value => 'Nahraj řešení ' %>
           <% end %>
-         </td>
+       </td>
     <% end %>
     <td>
       <% if @solutions[p.id].filename_corr_display && @config[:show_revisions] == 'yes' %>
