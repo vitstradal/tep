@@ -9,7 +9,12 @@ jQuery(document).ready(function($) {
                 else {
                   $('#school_div').hide(400);
                 }
-        }).change();
+        });
+
+        var sch = $('#school_id');
+        if( sch.length == 1 && sch.val() == 'none' ) {
+          $('#school_div').hide();
+        }
 
         // ctrl-enter submit formu in textarea
         $('.ctrl-enter-submit').keydown(function (e) {
