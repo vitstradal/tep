@@ -34,6 +34,7 @@ cs:
     sessions:
       signed_in: 'Přihlášení úspěšné.'
       signed_out: 'Odhlášení úspěšné.'
+      remember_me: 'Zapamatuj si mě.'
     passwords:
       send_instructions: 'Za několik minut obdržíte email s instrukcemi k nastavení nového hesla.'
       updated: 'Vaše heslo bylo úspěšně změněno. Nyní jste přihlášen(a).'

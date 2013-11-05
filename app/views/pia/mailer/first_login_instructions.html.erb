@@ -1,9 +1,9 @@
 <p>Vítej pikomaťáku <%= @resource.email %>!</p>
 
 
-<p>Tento dopis ti přišel protože tě někdo (pravděpodoboně ty) příhlásil do soutěže Pikomat.</p>
+<p>Tento dopis ti přišel, protože tě někdo (pravděpodoboně ty) příhlásil do soutěže Pikomat.</p>
 
-<p>Pokud chceš řešení dostávat elektronicky dokonči registraci pomocí následujícího linku:</p>
+<p>Pokud chceš řešení dostávat elektronicky, dokonči registraci pomocí následujícího linku:</p>
 
 <p><%= link_to 'Dokončit registraci', user_finish_registration_url(:token => @resource.reset_password_token) %></p>
 
