@@ -14,7 +14,7 @@
 <body>
 
 <% if ENV['RAILS_ENV'] != 'production'  %>
-<img src="<%= asset_path 'images/devel-version.png'%>" style='z-index:99;position:fixed;top:0;left:0;border:0;'>
+<img src="<%= asset_path 'images/devel-version.png'%>" style='z-index:99;position:fixed;bottom:0;right:0;border:0;'>
 <% end %>
 
     <div class="navbar navbar-inverse">
