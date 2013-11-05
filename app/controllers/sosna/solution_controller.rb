@@ -160,7 +160,7 @@ class Sosna::SolutionController < SosnaController
     if success
       add_success "#{fname}: #{msg}"
     else
-      add_allert "#{fname}: #{msg}"
+      add_alert "#{fname}: #{msg}"
     end
     #print "msg: #{fname}: #{msg}\n"
   end
