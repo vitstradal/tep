@@ -17,7 +17,26 @@ jQuery(document).ready(function($) {
                   $(this).closest('form').submit();
                 }
         });
-	$('.updownkeys input[type=text]').keydown(function (e) { 
+        $('form[id^=edit_sosna_solution]').submit(function(){
+          var isOk = true;
+          $('input[type=file][max-size]', this).each(function(){
+            if(typeof this.files[0] !== 'undefined'){
+                var maxSize = parseInt($(this).attr('max-size'),10);
+                var f = this.files[0];
+                var size = f.size || f.fileSize;
+                if( size === undefined ) {
+                  return;
+                }
+                var maxSizeMB = parseInt(maxSize/1000/1000);
+                isOk = maxSize > size;
+                if( ! isOk ) {
+                  alert('Příliš velký soubor (>' + maxSizeMB + ' MB)');
+                }
+            }
+            return isOk;
+        });
+    });
+	$('.updownkeys input[type=text]').keydown(function (e) {
 	   if (e.key == 'Down' ) {
 	     focus_down(this, 1);
 	   }

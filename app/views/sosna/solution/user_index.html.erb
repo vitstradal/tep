@@ -3,6 +3,7 @@
 <h1>Úlohy <%= @annual %>. ročníku, série <%= @round %></h1>
 
 <% show_nahrat = @is_current && @config[:allow_upload] == 'yes' %>
+<% max_size = Rails.configuration.sosna_user_solution_max_size %>
 
 <table class="table table-bordered">
   <tr> 
@@ -27,7 +28,7 @@
     <% if show_nahrat %>
        <td>  <%= form_for  @solutions[p.id], :html => {:class=> 'form-inline', :multipart => true}, :url => :sosna_solution_upload do |f|  %>
           <%= f.hidden_field :id %>
-          <%= f.file_field :solution_file , :class => 'input-small', :accept => 'application/pdf', 'max-size' => 20  %>
+          <%= f.file_field :solution_file , :class => 'input-small', :accept => 'application/pdf', 'max-size' => max_size  %>
           <%= f.submit :class => 'btn', :value => 'Nahraj řešení ' %>
           <% end %>
        </td>
@@ -45,12 +46,12 @@
 </table>
 
 <ul>
-  <li>Soubor řešení musí být menší než <%= number_to_human_size Rails.configuration.sosna_user_solution_max_size %>.</li>
+  <li>Soubor řešení musí být menší než <%= number_to_human_size max_size %>.</li>
   <li>Soubor musí být ve formátu PDF.</li>
   <li>Pokud omylem nahraješ řešení ke špatné úloze, nebo pokud ve svém řešení najdeš chybu, můžeš (pokud není po termínu) úlohu nahrát znovu.</li>
   <li>Doporučujeme, abys ve vlastním zájmu soubory s úlohami nazval tak, aby
-      bylo poznat o kterou úlohu jde (např. <code>Uloha1.pdf</code>). Není to však
-      nutné.</li>
+      bylo poznat o kterou úlohu jde (např. <code>Uloha1.pdf</code>).
+      Není to však nutné.</li>
 
 </ul>
 
