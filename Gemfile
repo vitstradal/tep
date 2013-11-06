@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 gem 'activerecord-session_store'
 gem 'rails'
-gem 'devise'
+gem 'devise', '~> 3.1.1'
 gem 'devise-encryptable'
 gem 'cancan'
 gem 'role_model'
