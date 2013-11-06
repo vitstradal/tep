@@ -83,8 +83,8 @@
         </div><!--/span-->
         <div class="span9">
 
-<%if notice %><p class="notice"><%= notice %></p><% end %>
-<%if alert %><p class="alert"><%= alert %></p><% end %>
+<%if notice %><div class="alert alert-success"><%= notice %></div><% end %>
+<%if alert %><div class="alert alert-error"><%= alert %></div><% end %>
 
 <% if flash[:alerts] %>
   <% flash[:alerts].each do |msg| %>
