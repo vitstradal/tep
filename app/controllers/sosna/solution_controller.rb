@@ -210,11 +210,11 @@ class Sosna::SolutionController < SosnaController
 
     print "content type:", solution_file.content_type
     if @config[:allow_upload] != 'yes'
-      add_alert 'Pozor: pouze soubory ve formátu .pdf'
+      add_alert 'Pozor: zatím není možné soubory nahrávat'
       return redirect_to :action => :user_index
     end
     if solution_file.original_filename !~ /\.pdf$/
-      add_alert 'Pozor: pouze soubory ve formátu .pdf'
+      add_alert 'Pozor: pouze soubory ve formátu PDF'
       return redirect_to :action => :user_index
     end
     max_size =  Rails.configuration.sosna_user_solution_max_size || (20 * 1024 * 1024)
