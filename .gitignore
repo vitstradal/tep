@@ -1,6 +1,8 @@
 .bundle
 *.swp
 db/*.sqlite3
+db/lidi29*.yml
+db/skoly29.yml
 log/*.log
 tmp/
 tags
