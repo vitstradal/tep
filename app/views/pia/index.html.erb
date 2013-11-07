@@ -1,5 +1,5 @@
 <h1>Pikomat MKK UK</h1>
 
 <% if current_user  %>
-  <p>Vítej <%= current_user.email %>.</p>
+  <p>Vítej!  Jsi přihlášen jako <%= current_user.name %>  <%= current_user.last_name || current_user.email%>.</p>
 <% end %>

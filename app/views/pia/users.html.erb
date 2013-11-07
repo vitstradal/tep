@@ -3,6 +3,8 @@
 <tr>
         <th>Id</th>
         <th>Email</th>
+        <th>Name</th>
+        <th>Last</th>
         <th>Roles</th>
 </tr>
 <% @users.each do |user|  %>
@@ -11,6 +13,8 @@
    <td>
           <%= user.id %> </td>
    <td> <%= user.email %> </td>
+   <td> <%= user.name %> </td>
+   <td> <%= user.last_name %> </td>
    <td>
         <%= form_for user,  :url => {:action => :user_role_change}, :html => {:class => 'form-inline' } do |f| %>
             <%= user.roles.to_a.join(',') %>

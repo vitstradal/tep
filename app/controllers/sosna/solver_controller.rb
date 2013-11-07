@@ -58,7 +58,7 @@ class Sosna::SolverController < SosnaController
     user = User.find_by_email solver.email
     if !user 
       # create user by email
-      user =  User.new(email: solver.email, confirmation_sent_at: Time.now,  roles: [:user])
+      user =  User.new(email: solver.email, name: solver.name, last_name: solver.last_name, confirmation_sent_at: Time.now,  roles: [:user])
       user.confirm!
       user.send_first_login_instructions
       solver.user_id = user.id
