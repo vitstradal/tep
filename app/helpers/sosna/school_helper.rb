@@ -8,7 +8,7 @@ module Sosna::SchoolHelper
    return content_tag(:span, txt , class: 'help-inline');
  end
 
- def form_error_class(obj, *attrs, &block)
+ def form_error_class(obj, *attrs)
    attrs.each  do |a|
      return 'control-group error' if ! obj.errors.get(a).nil?
    end

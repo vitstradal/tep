@@ -96,7 +96,7 @@
 <hr>
 
 <div class="<%= form_error_class @solver, :finish_year, :grade%>">
-  <label class="control-label" for="_nazev">Odpovídající ročník (číslo)</label>
+  <label class="control-label" for="_nazev">Odpovídající ročník</label>
   <div class="controls">
      <%#= f.text_field :grade_num, :class=>'input-mini' %>
      <%= f.select(:grade_num, options_for_select((1..9), @solver.grade_num) , {}, {:class=> 'input-mini'}) %>
