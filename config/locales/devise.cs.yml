@@ -19,6 +19,7 @@ cs:
         one: "%{resource} nebyl uložen kvůli chybě:"
         other: "%{resource} nebyl uložen kvůli %{count} chybám:"
       confirmation_period_expired: "musí být potvrzen během %{period}, požádejte prosím o nový"
+      confirmation: "hesla se neshodují"
 
   devise:
     failure:
