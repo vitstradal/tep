@@ -33,8 +33,8 @@ cs:
       timeout: 'Vaše relace vypršela, přihlašte se prosím znovu, pak můžete pokračovat.'
       inactive: 'Váš účet ještě nebyl aktivován.'
     sessions:
-      signed_in: 'Přihlášení úspěšné.'
-      signed_out: 'Odhlášení úspěšné.'
+      signed_in: 'Přihlášení bylo úspěšné.'
+      signed_out: 'Odhlášení bylo úspěšné.'
       remember_me: 'Zapamatuj si mě.'
     passwords:
       send_instructions: 'Za několik minut obdržíte email s instrukcemi k nastavení nového hesla.'
