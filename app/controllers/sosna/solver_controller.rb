@@ -48,7 +48,7 @@ class Sosna::SolverController < SosnaController
         flash[:school] = school
         flash[:agree] = agree
         Rails.logger.fatal(pp("school", solver.errors.messages))
-        Rails.logger.fatal(pp("solver", school.errors.messages))
+        Rails.logger.fatal(pp("solver", school.errors.messages)) if school
         return redirect_to :action => :new
     end
 
