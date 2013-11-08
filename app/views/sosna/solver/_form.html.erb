@@ -99,7 +99,7 @@
   <label class="control-label" for="_nazev">Odpovídající ročník (číslo)</label>
   <div class="controls">
      <%#= f.text_field :grade_num, :class=>'input-mini' %>
-     <%= f.select(:grade_num, options_for_select(  (1..9).map{|i| [i,i]}), {}, {:class=> 'input-mini'}) %>
+     <%= f.select(:grade_num, options_for_select((1..9), @solver.grade_num) , {}, {:class=> 'input-mini'}) %>
      Třída (6.A, prima, ...)
      <%= f.text_field :grade, :class=>'input-mini' %>
      <%= form_error @solver, :finish_year, :grade%>
