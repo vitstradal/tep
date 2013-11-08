@@ -9,23 +9,22 @@
 
 <%= form_for :config, :url => {:action => :update}, :html =>  {:class => 'form-horizontal'}  do |f| %>
 
-<div class="control-group"><label class="control-label">Ročník</label>
-  <div class="controls"><%= text_field "config[annual]", value: @config[:annual] %></div>
-</div>
+  <div class="control-group"><label class="control-label">Ročník</label>
+    <div class="controls"><%= text_field :config, :annual, value: @config[:annual] %></div>
+  </div>
 
-  <% @config.each do |key,val|  %>
-   <div class="control-group">
-     <% key_tr = translate[key] || key %>
-     <label class="control-label" for=""><%= key_tr.capitalize%></label>
-     <div class="controls">
-       <% if val == true || val == false %> 
-         <%= check_box_tag "config[#{key}]", checked: val %>
-       <% else %>
-         <%= text_field :config, key, value: val %>
-       <% end %>
-     </div>
-   </div>
-  <% end %>
+  <div class="control-group"><label class="control-label">Série</label>
+    <div class="controls"><%= text_field :config, :round,  value: @config[:round] %></div>
+  </div>
+
+  <div class="control-group"><label class="control-label">Povolit upload řešení</label>
+    <div class="controls"><%= select_tag 'config[allow_upload]', options_for_select(["yes","no"], @config[:allow_upload]) %></div>
+  </div>
+
+  <div class="control-group"><label class="control-label">Zobrazit opravené řešení</label>
+    <div class="controls"><%= select_tag 'config[show_revisions]', options_for_select(["yes","no"], @config[:show_revisions]) %></div>
+  </div>
+
   <div class="control-group">
     <div class="controls"><%= f.submit :class=>'btn btn-primary', :value=>'Uložit' %></div>
   </div>
