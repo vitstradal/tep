@@ -17,4 +17,18 @@ cs:
     city: "město"
     email: "email"
     psc: "PSČ"
+    password: 'Heslo'
+
+    password_confirmation: "BUUU"
+    current_confirmation: "BEEEE"
+
+  activerecord:
+    attributes:
+      user:
+        current_password: "Součastné heslo"
+        password_confirmation: "Zopakované heslo"
+
+
+
+
 
