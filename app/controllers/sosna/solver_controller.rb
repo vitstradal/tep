@@ -40,16 +40,18 @@ class Sosna::SolverController < SosnaController
 
     solver = Sosna::Solver.new(params[:sosna_solver])
 
+
     solver.valid?
     agree = ! params[:souhlasim].nil?
     solver.errors.add(:souhlasim, 'Je nutno souhlasit s podmínkami') if ! agree
     solver.errors.add(:email, 'je již registrován u jiného řešitele') if Sosna::Solver.find_by_email(solver.email)
     solver.errors.add(:email, 'neexistující adresa') if !solver.email.empty? && !email_valid_mx_record?(solver.email)
+    solver.errors.add(:birth, 'jsi příliš stár') if !solver.birth.empty? && (Date.parse(solver.birth) + 17.years) < Date.today
 
     case school_id
-     when 'none' 
+     when 'none'
        solver.errors.add(:skola, 'Vyber školu ze seznamu nebo zadej novou')
-     when 'jina' 
+     when 'jina'
       params.require(:sosna_school).permit!
       school = Sosna::School.new(params[:sosna_school])
      else
@@ -65,6 +67,7 @@ class Sosna::SolverController < SosnaController
         Rails.logger.fatal(pp("solver", school.errors.messages)) if school
         return redirect_to :action => :new
     end
+
 
     solver.school = school
     solver.annual = @annual
