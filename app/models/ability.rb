@@ -55,6 +55,7 @@ class Ability
 
     # pia
     can :index, :pium
+    can :faq, :pium
     if user.admin?
       can :users, :pium
       can :user_role_change, :pium

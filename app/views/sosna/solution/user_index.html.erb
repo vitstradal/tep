@@ -2,7 +2,9 @@
 
 <h1>Úlohy <%= @annual %>. ročníku, série <%= @round %></h1>
 
-<% show_nahrat = @is_current && @config[:allow_upload] == 'yes' %>
+<% deadline = deadline_time @config, @round %>
+<% is_current_annual = @config[:annual] == @annual %>
+<% show_nahrat = is_current_annual && !deadline.nil? && deadline >=  Time.now %>
 <% max_size = Rails.configuration.sosna_user_solution_max_size %>
 
 <table class="table table-bordered">
@@ -34,7 +36,9 @@
        </td>
     <% end %>
     <td>
-      <% if @solutions[p.id].filename_corr_display && @config[:show_revisions] == 'yes' %>
+      <% sol_in_this_round_allowed   = @round <  @config[:round] %>
+      <% sol_in_this_round_allowed ||= @round == @config[:round] && @config[:show_revisions] == 'yes'  %>
+      <% if sol_in_this_round_allowed && @solutions[p.id].filename_corr_display %>
         <%= link_to @solutions[p.id].filename_corr_display, :action => :download_corr, :id => @solutions[p.id].id %>
       <% else %>
         <i>řešení není opravené</i>
@@ -46,6 +50,14 @@
 </table>
 
 <ul>
+  <% if is_current_annual && !deadline.nil?%>
+    <% if deadline >= Time.now %>
+
+       <li>Termín odeslání je <%= deadline %>.</li>
+    <% else %>
+       <li>Termín odeslání byl <%= deadline %>.</li>
+    <% end %>
+  <% end %>
   <li>Soubor řešení musí být menší než <%= number_to_human_size max_size %>.</li>
   <li>Soubor musí být ve formátu PDF.</li>
   <li>Pokud omylem nahraješ řešení ke špatné úloze, nebo pokud ve svém řešení najdeš chybu, můžeš (pokud není po termínu) úlohu nahrát znovu.</li>

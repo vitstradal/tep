@@ -9,6 +9,11 @@ module SosnaHelper
       text
     end
   end
+  def deadline_time(cfg, round)
+    t = cfg["deadline#{round}".to_sym]
+    return nil if ! t
+    return Time.parse(t) + 1.day - 1
+  end
 
   def add_alert(msg)
     flash[:alerts] ||= []

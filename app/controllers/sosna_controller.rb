@@ -3,10 +3,10 @@ class SosnaController < ApplicationController
 
   authorize_resource
 
-  before_filter do 
+  before_filter do
     load_config
   end
-  
+
   def id_problem_hash(arr)
     ret = {}
     arr.each { |item|  ret[item.problem_id] = item }
@@ -18,7 +18,6 @@ class SosnaController < ApplicationController
   def load_config
     @config  =  { annual:20,
                   round: 1,
-                  allow_upload: 'no',
                   show_revisions: 'no',
                 }
     Sosna::Config.all.each {|c| @config[c.key.to_sym] =  c.value}
