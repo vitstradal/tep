@@ -1,3 +1,5 @@
+require 'resolv'
+
 module SosnaHelper
 
   #  like link_to(text, action: :show) for obj
@@ -27,6 +29,12 @@ module SosnaHelper
   def add_success(msg)
     flash[:success] ||= []
     flash[:success].push(msg)
+  end
+
+  def email_valid_mx_record?(email)
+      mail_servers = Resolv::DNS.open.getresources(email.split('@').last, Resolv::DNS::Resource::IN::MX)
+      return false if mail_servers.empty?
+      true
   end
 
 end

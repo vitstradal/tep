@@ -44,6 +44,7 @@ class Sosna::SolverController < SosnaController
     agree = ! params[:souhlasim].nil?
     solver.errors.add(:souhlasim, 'Je nutno souhlasit s podmínkami') if ! agree
     solver.errors.add(:email, 'je již registrován u jiného řešitele') if Sosna::Solver.find_by_email(solver.email)
+    solver.errors.add(:email, 'neexistující adresa') if !solver.email.empty? && !email_valid_mx_record?(solver.email)
 
     case school_id
      when 'none' 
