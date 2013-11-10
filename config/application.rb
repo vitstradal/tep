@@ -40,7 +40,7 @@ module Pia
 
     # Configure sensitive parameters which will be filtered from the log file.
     config.filter_parameters += [:password]
-    config.action_mailer.default_url_options = { :host => 'pikomat.ms.mff.cuni.cz/pia' }
+    config.action_mailer.default_url_options = { :host => 'pikomat.ms.mff.cuni.cz/tep' }
     config.action_mailer.delivery_method = :sendmail
 
     config.sosna_user_solution_max_size = 5 * 1024 * 1024
