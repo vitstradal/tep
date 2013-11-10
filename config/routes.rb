@@ -29,6 +29,7 @@ Pia::Application.routes.draw do
   get  '/sosna/problems'           => 'sosna/problem#index',         :as => :sosna_problems
   get  '/sosna/problem(/:id)'      => 'sosna/problem#show',          :as => :sosna_problem
   patch '/sosna/problem/update'     => 'sosna/problem#update',       :as => :sosna_problem_update
+  post '/sosna/problem/update'     => 'sosna/problem#update',       :as => :sosna_problem_updateP
   post '/sosna/problem/new_round'  => 'sosna/problem#new_round',    :as => :sosna_problem_new_round
 
   get  '/sosna/solvers'         => 'sosna/solver#index',             :as => :sosna_solvers

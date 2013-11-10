@@ -7,15 +7,37 @@
 <% end %>
 
 
-<%= form_for @problem, :url => {:action => :update }  do |f| %> 
+<%= form_for @problem, :url => {:action => :update }, :html => {:class=>'form-horizontal'} do |f| %>
   <%= f.hidden_field :id if @problem.id %></br>
-  Ročník: <%= f.text_field :annual %><br/>
-  Série: <%= f.text_field :round %><br/>
-  Úloha: <%= f.text_field :problem_no %><br/>
-  Název: <%= f.text_field :title %><br/>
-  <%= f.submit 'Uložit'%>
-  <% if @problem.next %>
-     <%= f.submit 'Uložit a další' %>
-  <% end %>
+
+    <div class="control-group">
+      <label class="control-label" for="problem[annual]">Ročník</label>
+      <div class="controls"> <%= f.text_field :annual %> </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="problem[round]">Série</label>
+      <div class="controls"> <%= f.text_field :round %> </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="problem[problem_no]">Úloha č.</label>
+      <div class="controls"> <%= f.text_field :problem_no %> </div>
+    </div>
+    <div class="control-group">
+      <label class="control-label" for="problem[title]">Název</label>
+      <div class="controls"> <%= f.text_field :title %> </div>
+    </div>
+
+
+    <div class="control-group">
+       <div class="controls">
+         <%= f.submit 'Uložit', :class=>'btn btn-primary'%>
+         <% if @problem.next %>
+            <%= f.submit 'Uložit a další', :class=>'btn btn-primary'%>
+         <% end %>
+       </div>
+    </div>
+
 <% end %>
 
