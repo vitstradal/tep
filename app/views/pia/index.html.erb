@@ -2,4 +2,17 @@
 
 <% if current_user  %>
   <p>Vítej!  Jsi přihlášen jako <%= current_user.name %>  <%= current_user.last_name || current_user.email%>.</p>
+
+  <p>
+  Svá řešení můžeš nahrát <%= link_to 'zde', sosna_solutions_user_path %>.
+  Na tomto místě zároveň obdržíš svá opravená řešení.
+  Pokud nevíš jak to tu funguje, neváhej navštívit stránku <%= link_to 'Nápověda', faq_path %>.
+  </p>
+
+<% else %>
+
+  <p>Vítej v Tepu. Po přihlášení zde můžeš odevzdat svá elektronická řešení Pikomatu.
+  Pokud nejsi do Pikomatu přihlášený, vyplň prosím přihlášku, tím se zaregistruješ.
+  </p>
+
 <% end %>

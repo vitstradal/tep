@@ -5,6 +5,7 @@ class PiaController < ApplicationController
 
   def index; end
   authorize_resource :class => false
+  def faq; end
 
   def users
     @users = User.all
