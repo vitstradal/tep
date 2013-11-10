@@ -41,3 +41,14 @@
 
 <% end %>
 
+<hr>
+
+<% if @problem.id %>
+  <% if can? :delete, Sosna::School %>
+    <%= form_tag sosna_problem_delete_path(id:@problem.id) do %>
+      <%= submit_tag  'Smazat úlohu (nebude žádné "jsi si jistý?")', :class=>'btn btn-danger' %></div>
+    <% end %>
+  <% else %>
+      <%= submit_tag  'Smazat úlohu může adm', :class=>'btn disabled' %></div>
+  <% end %>
+<% end %>

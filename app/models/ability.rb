@@ -62,6 +62,7 @@ class Ability
       can :update, Sosna::Config
       can :delete, Sosna::Solver
       can :delete, Sosna::School
+      can :delete, Sosna::Problem
     end
 
 

@@ -31,6 +31,7 @@ Pia::Application.routes.draw do
   patch '/sosna/problem/update'     => 'sosna/problem#update',       :as => :sosna_problem_update
   post '/sosna/problem/update'     => 'sosna/problem#update',       :as => :sosna_problem_updateP
   post '/sosna/problem/new_round'  => 'sosna/problem#new_round',    :as => :sosna_problem_new_round
+  post '/sosna/problem/:id/delete'   => 'sosna/problem#delete',           :as => :sosna_problem_delete
 
   get  '/sosna/solvers'         => 'sosna/solver#index',             :as => :sosna_solvers
   get  '/sosna/solver(/:id)'    => 'sosna/solver#show',              :as => :sosna_solver
