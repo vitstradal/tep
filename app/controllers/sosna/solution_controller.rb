@@ -66,7 +66,6 @@ class Sosna::SolutionController < SosnaController
 
   def download_corr
     solution = Sosna::Solution.find id = params[:id]
-    filename = solution.filename_corr_display
     if ! solution
       add_alert 'Chyba: soubor neexistuje'
       return redirect_to :action =>  :user_index 
@@ -74,10 +73,14 @@ class Sosna::SolutionController < SosnaController
 
     if solution.owner? current_user
       # owner: check if it allowed to download
-      if @config[:show_revisions] != 'yes' && solution.problem.round.to_s == @round && solution.problem.annual.to_s == @annual
+      round = solution.problem.round
+      sol_in_this_round_allowed   = round <  @config[:round] 
+      sol_in_this_round_allowed ||= round == @config[:round] && @config[:show_revisions] == 'yes'
+      if ! sol_in_this_round_allowed
         add_alert 'Chyba: soubor neexistuje'
         return redirect_to :action =>  :user_index 
       end
+      filename = solution.filename_corr_display
     else
       # may be org
       authorize! :download_org, Sosna::Solution
@@ -206,34 +209,48 @@ class Sosna::SolutionController < SosnaController
     solution_file = params[:sosna_solution][:solution_file]
     solution_id  = params[:sosna_solution][:id]
 
-    return redirect_to :sosna_solutions_user if solution_file.nil?
-
-    print "content type:", solution_file.content_type
-    if @config[:allow_upload] != 'yes'
-      add_alert 'Pozor: zatím není možné soubory nahrávat'
+    # find solution
+    solution = Sosna::Solution.find(solution_id) or raise RuntimeError, "bad solution id: #{solution_id}"
+    if !solution
+      add_alert "Špatné číslo řešení"
       return redirect_to :action => :user_index
     end
+    problem, solver  = solution.problem, solution.solver
+    se = problem.round
+    roc = problem.annual
+
+    if solution_file.nil?
+      return redirect_to :action => :user_index, roc: roc, se: se
+    end
+
     if solution_file.original_filename !~ /\.pdf$/
       add_alert 'Pozor: pouze soubory ve formátu PDF'
-      return redirect_to :action => :user_index
+      return redirect_to :action => :user_index, roc: roc, se: se
     end
+
     max_size =  Rails.configuration.sosna_user_solution_max_size || (20 * 1024 * 1024)
     if solution_file.size > max_size
       add_alert "Soubor je příliš velký (větší než #{number_to_human_size max_size})."
-      return redirect_to :action => :user_index
+      return redirect_to :action => :user_index, roc: roc, se: se
     end
 
-    # find solution
-    solution = Sosna::Solution.find(solution_id) or raise RuntimeError, "bad solution id: #{solution_id}"
+
+    if problem.annual.to_s != @config[:annual] || deadline_time(@config, problem.round) < Time.now
+      pp solution.problem.annual != @config[:annual]
+      pp @config[:annual]
+      pp solution.problem.annual
+      pp deadline_time(@config, solution.problem.round)
+      add_alert "Řešení není možné odevdat"
+      return redirect_to :action => :user_index, roc: roc, se: se
+    end
 
     if !solution.owner? current_user
         authorize! :upload_org, Sosna::Solution
     end
 
-    problem, solver  = solution.problem, solution.solver
-    pp problem
-    pp solver
-
+#    pp problem
+#    pp solver
+#
     # save file
     filename = _sol_filename(  problem.annual, problem.round, problem.problem_no,
                               solver.id, solver.name, solver.last_name)
@@ -246,7 +263,7 @@ class Sosna::SolutionController < SosnaController
     solution.filename_orig = solution_file.original_filename
     solution.save
 
-    redirect_to :action => :user_index
+    redirect_to :action => :user_index, roc: roc, se: se
   end
 
   def user_index

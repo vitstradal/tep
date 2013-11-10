@@ -29,6 +29,10 @@ cs:
         password_confirmation: "Zopakované heslo"
 
 
+  date:
+    order: "Pořadí Řád"
+    month_names:
+      [~, Januar, Februar, März, April, Mai, Juni, Juli, August, September, Oktober, November, Dezember]
 
 
 
