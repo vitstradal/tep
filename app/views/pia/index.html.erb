@@ -1,7 +1,9 @@
-<h1>Pikomat MFF UK</h1>
+<h1>Tep Pikomatu MFF UK</h1>
 
 <% if current_user  %>
-  <p>Vítej!  Jsi přihlášen jako <%= current_user.name %>  <%= current_user.last_name || current_user.email%>.</p>
+  <p>Vítej v Tepu!</p>
+  
+  <p>Jsi přihlášen jako <%= current_user.name %>  <%= current_user.last_name || current_user.email%>.</p>
 
   <p>
   Svá řešení můžeš nahrát <%= link_to 'zde', sosna_solutions_user_path %>.

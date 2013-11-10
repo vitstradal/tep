@@ -49,8 +49,6 @@ class Ability
       can :index, Sosna::School
       can :update, Sosna::School
 
-      can :index, Sosna::Config
-      can :update, Sosna::Config
     end
 
     # pia
@@ -59,6 +57,9 @@ class Ability
     if user.admin?
       can :users, :pium
       can :user_role_change, :pium
+
+      can :index, Sosna::Config
+      can :update, Sosna::Config
     end
 
 

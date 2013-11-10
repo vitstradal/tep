@@ -20,7 +20,8 @@
     <div class="navbar navbar-inverse">
       <div class="navbar-inner">
         <div class="container-fluid">
-          <%= link_to  'Pikomat MFF UK' , :root, :class => 'brand' %>
+          <%= link_to  'Tep' , :root, :class => 'brand' %>
+          <%= link_to  'Pikomatu' , 'http://pikomat.mff.cuni.cz', {:class => 'brand'} %>
           <div class="nav-collapse collapse">
                 <% if user_signed_in?  %>
                   <p class="navbar-text pull-right">
@@ -62,12 +63,12 @@
                 <li><%= link_to 'Řešení řešitelů', :sosna_solutions_org %></li>
                 <li><%= link_to 'Úlohy', :sosna_problems %></li>
                 <li><%= link_to 'Školy', :sosna_schools %></li>
-                <li><%= link_to 'Konfigurace', :sosna_configs  %></li>
                 <li><%= link_to 'Wiki', :wiki  %></li>
               <% end %>
               <% if current_user && current_user.has_role?(:admin) %>
                 <li class="nav-header">Admin</li>
                 <li><%= link_to 'Uživatelé', :users_list  %></li>
+                <li><%= link_to 'Konfigurace', :sosna_configs  %></li>
               <% end %>
               <li class="nav-header">Odkazy</li>
               <li><%= link_to 'Pikomat', 'http://pikomat.mff.cuni.cz/' %></li>
