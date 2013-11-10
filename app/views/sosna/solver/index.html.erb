@@ -18,7 +18,7 @@
     
     <% if s.school %>
        <% sch = s.school %>
-       <span title="<%= sch.long %>"><%= link_to sch.short, :controller =>  'sosna/school', :action => :show, :id => sch.id %></span>
+       <span title="<%= sch.long %>"><%= link_to sch.short||'?', :controller =>  'sosna/school', :action => :show, :id => sch.id %></span>
     <% else %>
        -
     <% end %>

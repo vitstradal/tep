@@ -20,6 +20,7 @@
       <div class="controls"><%= select_date(deadline_time(@config, round) || Time.parse('2010-06-06'),
                                             { :use_month_numbers => true, :prefix => "config[deadline#{round}]", :order => [:day, :month, :year]},
                                             { :class => 'input-small' } ) %>
+        <%= select_tag "config[show#{round}", options_for_select(["yes","no"], @config["show#{round}".to_sym]) %></div>
         <%= deadline_time(@config, round).to_s %>
       </div>
     </div>

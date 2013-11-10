@@ -1,3 +1,4 @@
+# encoding: utf-8
 Pia::Application.routes.draw do
 
   devise_for :users
@@ -33,11 +34,14 @@ Pia::Application.routes.draw do
   get  '/sosna/solvers'         => 'sosna/solver#index',             :as => :sosna_solvers
   get  '/sosna/solver(/:id)'    => 'sosna/solver#show',              :as => :sosna_solver
   patch '/sosna/solver/update'   => 'sosna/solver#update',           :as => :sosna_solver_update
+  post '/sosna/solver/:id/delete'   => 'sosna/solver#delete',           :as => :sosna_solver_delete
 
   get  '/sosna/schools'            => 'sosna/school#index',          :as => :sosna_schools
   get  '/sosna/school/new'         => 'sosna/school#new',            :as => :sosna_school_new
   get  '/sosna/school/:id/show'    => 'sosna/school#show',           :as => :sosna_school
   patch '/sosna/school/update'  => 'sosna/school#update',            :as => :sosna_school_update
+  post  '/sosna/school/update'  => 'sosna/school#update',            :as => :sosna_school_updateP
+  post '/sosna/school/:id/delete'   => 'sosna/school#delete',           :as => :sosna_school_delete
 
   get  '/sosna/config'             => 'sosna/config#index',          :as => :sosna_configs
   post '/sosna/config/update'      => 'sosna/config#update',         :as => :sosna_config_update

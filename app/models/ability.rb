@@ -60,6 +60,8 @@ class Ability
 
       can :index, Sosna::Config
       can :update, Sosna::Config
+      can :delete, Sosna::Solver
+      can :delete, Sosna::School
     end
 
 

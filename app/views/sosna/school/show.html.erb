@@ -29,3 +29,15 @@
     <% end %>
   <% end %>
 <% end %>
+
+<hr>
+
+<% if @school.id %>
+  <% if can? :delete, Sosna::School %>
+    <%= form_tag sosna_school_delete_path(id:@school.id) do %>
+      <%= submit_tag  'Smazat školu (nebude žádné "jsi si jistý?")', :class=>'btn btn-danger' %></div>
+    <% end %>
+  <% else %>
+      <%= submit_tag  'Smazat školu může adm', :class=>'btn disabled' %></div>
+  <% end %>
+<% end %>

@@ -1,9 +1,22 @@
 # encoding: utf-8
 class Sosna::SolverController < SosnaController
 
+  include SosnaHelper
 
   def index
       @solvers = Sosna::Solver.all
+  end
+
+  def delete
+     id = params[:id]
+     u = Sosna::Solver.find(id)
+     if u
+       u.destroy
+       add_success 'řešitel smazán'
+     else
+       add_alert 'no such řešitel'
+     end
+     redirect_to action: :index
   end
 
   def new

@@ -2,9 +2,9 @@ module SosnaHelper
 
   #  like link_to(text, action: :show) for obj
   # but if obj.nil? show only text
-  def link_to_show(text, obj)
-    if obj
-      link_to text, :action => 'show', :id =>  obj.id
+  def link_to_show(text, obj_id)
+    if obj_id
+      link_to text, :action => 'show', :id =>  obj_id
     else
       text
     end
