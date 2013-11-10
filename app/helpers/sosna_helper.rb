@@ -9,9 +9,11 @@ module SosnaHelper
       text
     end
   end
-  def deadline_time(cfg, round)
-    s = cfg["show#{round}".to_sym]
-    return nil if ! s || s != 'yes'
+  def deadline_time(cfg, round, ignore_show = false)
+    if ! ignore_show
+      s = cfg["show#{round}".to_sym]
+      return nil if ! s || s != 'yes'
+    end
     t = cfg["deadline#{round}".to_sym]
     return nil if ! t
     return Time.parse(t) + 1.day - 1

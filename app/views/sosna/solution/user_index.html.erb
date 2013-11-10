@@ -53,9 +53,9 @@
   <% if is_current_annual && !deadline.nil?%>
     <% if deadline >= Time.now %>
 
-       <li>Termín odeslání je <%= deadline %>.</li>
+       <li>Termín odeslání je <%= deadline.strftime('%-d. %-m. %Y') %> ve 24:00.</li>
     <% else %>
-       <li>Termín odeslání byl <%= deadline %>.</li>
+       <li>Termín odeslání byl <%= deadline.strftime('%-d. %-m. %Y') %> ve 24:00.</li>
     <% end %>
   <% end %>
   <li>Soubor řešení musí být menší než <%= number_to_human_size max_size %>.</li>
