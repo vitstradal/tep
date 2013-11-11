@@ -35,6 +35,14 @@
   </div>
 </div>
 <hr>
+
+<noscript>
+<div class='alert'>
+Pokud vyberete školu ze seznamu, není nutné vyplňovat název a adresu školy (nechte prázdné).<br/>
+Pokud škola v seznamu není, vyberte položku 'Jiná škola', a vyplňte název a adresu školy:
+</div>
+</noscript>
+
 <div class="<%= form_error_class @solver, :skola %>">
   <label class="control-label" for="school">Škola</label>
   <div class="controls">
@@ -52,6 +60,7 @@
         <%= form_error @solver, :skola %>
   </div>
 </div>
+
 
 <%# <div id='school_div' class='hide'> %>
 <div id='school_div' >
@@ -82,6 +91,8 @@
 <% end %>
 </div>
 
+<hr>
+
 <div class="control-group">
   <label class="control-label" for="solver_where_to_send">Koresponenci zasílejte</label>
   <div class="controls">
@@ -93,7 +104,6 @@
   </div>
 </div>
 
-<hr>
 
 <div class="<%= form_error_class @solver, :finish_year, :grade%>">
   <label class="control-label" for="_nazev">Odpovídající ročník</label>
