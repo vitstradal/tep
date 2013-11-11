@@ -56,6 +56,7 @@
                 <li class="nav-header">Uživatel</li>
                   <li><%= link_to  'Moje řešení', :sosna_solutions_user %></li>
                   <li><%= link_to  'Změna hesla', :edit_user_registration %></li>
+                  <li><%= link_to  'Nápověda', :faq%></li>
               <% else %>
               <% end %>
               <% if current_user && current_user.has_role?(:org) %>
