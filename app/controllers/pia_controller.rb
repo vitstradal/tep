@@ -1,7 +1,9 @@
+# encoding: utf-8
 require 'pp'
 class PiaController < ApplicationController
 
   include ApplicationHelper
+  include SosnaHelper
 
   def index; end
   authorize_resource :class => false
@@ -10,6 +12,52 @@ class PiaController < ApplicationController
   def users
     @users = User.all
     #print 'sign:', sign("ahoj")
+  end
+
+  def user
+    @user = User.find(params[:id])
+  end
+
+  def user_delete
+     id = params[:id]
+     u = User.find(id)
+     if u
+       u.destroy
+       add_success 'Uživatel smazán'
+     else
+       add_alert 'uživatel neexistuje'
+     end
+     redirect_to action: :users
+  end
+
+  def user_action
+    user_id = params[:id]
+    user = User.find(user_id)
+    case params[:what]
+
+      when 'send_first_email'
+        user.send_first_login_instructions
+        add_success 'Posláno'
+
+      when 'send_password_reset'
+        user.send_reset_password_instructions
+        add_success 'Posláno'
+
+      else
+        add_alert 'Bad luck'
+    end
+    redirect_to action: :user, id: user_id
+  end
+
+  def user_update
+    params.require(:user).permit!
+    user_id = params[:id]
+    user = User.find(user_id)
+    if user
+      user.update(params[:user])
+      add_success 'Data aktualizovaná'
+    end
+    redirect_to action: :user, id: user_id
   end
 
   def user_finish_registration

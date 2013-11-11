@@ -1,17 +1,30 @@
 <h2>Přihlášení</h2>
 
-<%= form_for(resource, :as => resource_name, :url => session_path(resource_name)) do |f| %>
-  <div><%= f.label "Email" %><br />
-  <%= f.email_field :email %></div>
+<%= form_for(resource, as: resource_name, url: session_path(resource_name), html: {:class=>'form-horizontal'}) do |f| %> 
 
-  <div><%= f.label "Heslo" %><br />
-  <%= f.password_field :password %></div>
+  <div class="control-group">
+    <label class="control-label" for="solver_email">Email</label>
+    <div class="controls"><%= f.text_field :email %></div>
+  </div>
+
+  <div class="control-group">
+    <label class="control-label" for="solver_email">Heslo</label>
+    <div class="controls"><%= f.password_field :password %></div>
+  </div>
 
   <% if devise_mapping.rememberable? -%>
-    <div><%= f.check_box :remember_me %> <%= f.label "Zapamatuj si mě" %></div>
+    <div class="control-group">
+      <label class="control-label" for="solver_email">Zapamatuj si mě</label>
+      <div class="controls"><%= f.check_box :remember_me %></div>
+    </div>
   <% end -%>
 
-  <div><%= f.submit "Přihlásit" %></div>
+  <div class="control-group">
+    <div class="controls"><%= f.submit "Přihlásit" , :class=>'btn btn-primary' %></div>
+  </div>
 <% end %>
 
 <%= render :partial => "devise/shared/links" %>
+
+
+

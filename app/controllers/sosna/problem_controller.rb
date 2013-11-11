@@ -1,6 +1,8 @@
 # encoding: utf-8
 class Sosna::ProblemController < SosnaController
 
+  include SosnaHelper
+
   def index
       @problems = Sosna::Problem.order('annual desc, round desc,  problem_no asc')
                               .all
@@ -9,6 +11,18 @@ class Sosna::ProblemController < SosnaController
   def show
     @problem = Sosna::Problem.find_or_new(params[:id])
     logger.fatal "id #{@problem.id}"
+  end
+
+  def delete
+     id = params[:id]
+     u = Sosna::Problem.find(id)
+     if u
+       u.destroy
+       add_success 'Uloha smazána'
+     else
+       add_alert 'no such uloha'
+     end
+     redirect_to action: :index
   end
 
   def new_round

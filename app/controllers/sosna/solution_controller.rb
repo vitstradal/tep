@@ -219,7 +219,24 @@ class Sosna::SolutionController < SosnaController
     se = problem.round
     roc = problem.annual
 
+    if problem.annual.to_s != @config[:annual] || deadline_time(@config, problem.round) < Time.now
+      pp solution.problem.annual != @config[:annual]
+      pp @config[:annual]
+      pp solution.problem.annual
+      pp deadline_time(@config, solution.problem.round)
+      add_alert "Řešení není možné odevdat"
+      return redirect_to :action => :user_index, roc: roc, se: se
+    end
+
+    if !solution.owner? current_user
+        authorize! :upload_org, Sosna::Solution
+    end
+
     if solution_file.nil?
+      solution.filename = nil
+      solution.filename_orig = nil
+      solution.save
+      add_success "Soubor smazán"
       return redirect_to :action => :user_index, roc: roc, se: se
     end
 
@@ -235,19 +252,6 @@ class Sosna::SolutionController < SosnaController
     end
 
 
-    if problem.annual.to_s != @config[:annual] || deadline_time(@config, problem.round) < Time.now
-      pp solution.problem.annual != @config[:annual]
-      pp @config[:annual]
-      pp solution.problem.annual
-      pp deadline_time(@config, solution.problem.round)
-      add_alert "Řešení není možné odevdat"
-      return redirect_to :action => :user_index, roc: roc, se: se
-    end
-
-    if !solution.owner? current_user
-        authorize! :upload_org, Sosna::Solution
-    end
-
 #    pp problem
 #    pp solver
 #
@@ -262,7 +266,7 @@ class Sosna::SolutionController < SosnaController
     solution.filename = filename
     solution.filename_orig = solution_file.original_filename
     solution.save
-
+    add_success 'Soubor úspěšně nahrán'
     redirect_to :action => :user_index, roc: roc, se: se
   end
 

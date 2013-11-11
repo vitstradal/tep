@@ -1,4 +1,7 @@
+# encoding: utf-8
 class Sosna::SchoolController < SosnaController
+
+  include SosnaHelper
 
   def show
     @school = Sosna::School.find params[:id]
@@ -6,6 +9,18 @@ class Sosna::SchoolController < SosnaController
 
   def index
     @schools =  Sosna::School.all
+  end
+
+  def delete
+     id = params[:id]
+     u = Sosna::School.find(id)
+     if u
+       u.destroy
+       add_success 'škola smazana'
+     else
+       add_alert 'no such škola'
+     end
+     redirect_to action: :index
   end
 
   def new

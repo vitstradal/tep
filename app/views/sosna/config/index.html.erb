@@ -1,5 +1,5 @@
 
-<h3>Sosna config</h3>
+<h3>Konfigurace Sosny</h3>
 
 <%= form_for :config, :url => {:action => :update}, :html =>  {:class => 'form-horizontal'}  do |f| %>
 
@@ -17,10 +17,15 @@
 
   <% (1..6).each do |round| %>
     <div class="control-group"><label class="control-label">Termín odeslani <%=round%>. série</label>
-      <div class="controls"><%= select_date(deadline_time(@config, round) || Time.parse('2010-06-06'),
+      <% dline = deadline_time(@config, round, true) %>
+      <div class="controls"><%= select_date( dline || Time.parse('2010-06-06'),
                                             { :use_month_numbers => true, :prefix => "config[deadline#{round}]", :order => [:day, :month, :year]},
                                             { :class => 'input-small' } ) %>
-        <%= deadline_time(@config, round).to_s %>
+        Povolit upload:
+        <%= select_tag("config[show#{round}]",
+                       options_for_select(["no","yes"], @config["show#{round}".to_sym]),
+                       {:class=>'input-mini'} ) %>
+        <%= dline.to_s %>
       </div>
     </div>
   <% end %>

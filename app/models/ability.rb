@@ -5,13 +5,18 @@ class Ability
 
     user ||= User.new # guest user (not logged in)
 
-    # anon
-    # can :index, User
+    # https://github.com/ryanb/cancan/wiki/Defining-Abilities
+
+    # public
 
     can :new, Sosna::Solver
     can :create, Sosna::Solver
     can :create_tnx, Sosna::Solver
     can :user_finish_registration, :pium
+
+    # pia
+    can :index, :pium
+    can :faq, :pium
 
     if user.user?
       can :user_index, Sosna::Solution
@@ -49,27 +54,25 @@ class Ability
       can :index, Sosna::School
       can :update, Sosna::School
 
+      can :show,   :giwi
+      can :update, :giwi
+
     end
 
-    # pia
-    can :index, :pium
-    can :faq, :pium
     if user.admin?
-      can :users, :pium
+      can :users,            :pium
+      can :user,             :pium
+      can :user_update,      :pium
+      can :user_delete,      :pium
+      can :user_action,      :pium
       can :user_role_change, :pium
 
-      can :index, Sosna::Config
+      can :index,  Sosna::Config
       can :update, Sosna::Config
+      can :delete, Sosna::Solver
+      can :delete, Sosna::School
+      can :delete, Sosna::Problem
     end
 
-
-    if user.org?
-      #can :show, Giwi # mozna nekdy fungovalo
-      #can :update, Giwi
-
-      can :show, :giwi
-      can :update, :giwi
-    end
-    # https://github.com/ryanb/cancan/wiki/Defining-Abilities
   end
 end

@@ -1,0 +1,42 @@
+
+<h1>Uživatel  <%= @user.email %> - editace</h1>
+
+<%= form_for @user, url: user_update_path(@user.id), html: {:class=>'form-horizontal'} do |f| %>
+    <div class="control-group">
+      <label class="control-label" for="user[email]">Email</label>
+      <div class="controls"> <%= f.text_field :email %> </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="user[name]">Jméno</label>
+      <div class="controls"> <%= f.text_field :name %> </div>
+    </div>
+
+    <div class="control-group">
+      <label class="control-label" for="user[last_name]">Příjmení</label>
+      <div class="controls"> <%= f.text_field :last_name %> </div>
+    </div>
+
+    <div class="control-group">
+       <div class="controls">
+         <%= f.submit 'Uložit', :class=>'btn btn-primary'%>
+       </div>
+    </div>
+<% end %>
+
+
+<hr>
+
+<%= form_tag user_action_path(@user.id, :send_first_email), html: {:class=>'form-horizontal'} do %>
+         <%= submit_tag 'Poslat uvítací email', :class=>'btn btn-danger'%>
+<% end %>
+
+<%= form_tag user_action_path(@user.id, :send_password_reset), html: {:class=>'form-horizontal'} do %>
+         <%= submit_tag 'Poslat reset hesla', :class=>'btn btn-danger'%>
+<% end %>
+
+<hr>
+
+<%= form_tag user_delete_path(id:@user.id) do %>
+   <%= submit_tag  'Smazat uživatele (nebude žádné "jsi si jistý?")', :class=>'btn btn-danger' %></div>
+<% end %>

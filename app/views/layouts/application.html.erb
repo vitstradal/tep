@@ -4,6 +4,7 @@
   <title>Pikomat MFF UK</title>
   <%= stylesheet_link_tag 'bootstrap.css'  %>
   <%= stylesheet_link_tag 'bootstrap-responsive.css'  %>
+  <%= stylesheet_link_tag 'bootstrap-colors.css'  %>
   <%= stylesheet_link_tag 'andulka/stylesheet.css' %>
   <%= stylesheet_link_tag 'pia.css' %>
   <%= javascript_include_tag 'jquery-1.10.2.js' %>
@@ -55,6 +56,7 @@
                 <li class="nav-header">Uživatel</li>
                   <li><%= link_to  'Moje řešení', :sosna_solutions_user %></li>
                   <li><%= link_to  'Změna hesla', :edit_user_registration %></li>
+                  <li><%= link_to  'Nápověda', :faq%></li>
               <% else %>
               <% end %>
               <% if current_user && current_user.has_role?(:org) %>
@@ -74,11 +76,8 @@
               <li><%= link_to 'Pikomat', 'http://pikomat.mff.cuni.cz/' %></li>
               <% if ! current_user %>
                 <li><%= link_to 'Přihláška', :sosna_solver_new  %></li>
+                <li><%= link_to  'Nápověda', :faq%></li>
               <% end %> 
-<!--              <li><%= link_to 'Archiv', '#' %></li>
-              <li><%= link_to 'Tábory', '#' %></li>
-              <li><%= link_to 'O nás', '#'  %></li>
-  -->
             </ul>
           </div><!--/.well -->
         </div><!--/span-->

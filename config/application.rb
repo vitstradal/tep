@@ -43,8 +43,8 @@ module Pia
     config.action_mailer.default_url_options = { :host => 'pikomat.ms.mff.cuni.cz/tep' }
     config.action_mailer.delivery_method = :sendmail
 
-    config.sosna_user_solution_max_size = 5 * 1024 * 1024
-    #config.sosna_user_solution_max_size = 5 * 1024
+    #config.sosna_user_solution_max_size = 5 * 1024 * 1024
+    config.sosna_user_solution_max_size = 20 * 1024 * 1024
 
   end
 end

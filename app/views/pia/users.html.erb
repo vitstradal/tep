@@ -1,22 +1,21 @@
-<h1>Users</h1>
+<h1>Uživatelé</h1>
 <table class="table table-bordered">
 <tr>
         <th>Id</th>
         <th>Email</th>
-        <th>Name</th>
-        <th>Last</th>
-        <th>Roles</th>
+        <th>Jméno</th>
+        <th>Příjmení</th>
+        <th>Role</th>
 </tr>
 <% @users.each do |user|  %>
 <tr>
 
-   <td>
-          <%= user.id %> </td>
+   <td> <%= link_to user.id, user_show_path(user.id) %> </td>
    <td> <%= user.email %> </td>
    <td> <%= user.name %> </td>
    <td> <%= user.last_name %> </td>
    <td>
-        <%= form_for user,  :url => {:action => :user_role_change}, :html => {:class => 'form-inline' } do |f| %>
+        <%= form_for user, url: user_role_change_path(user.id), :html => {:class => 'form-inline' } do |f| %>
             <%= user.roles.to_a.join(',') %>
             <%= f.hidden_field :id %>
             <%= select_tag :role, 

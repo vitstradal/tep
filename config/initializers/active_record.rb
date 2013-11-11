@@ -10,7 +10,13 @@ class ActiveRecord::Base
   end
 
   def next(delta = 1)
-    self.class.find_by_id id + delta
+    return nil if id.nil?
+
+    if delta > 0
+      self.class.where('id > ?', id).minimum(:id)
+    else
+      self.class.where('id < ?', id).maximum(:id)
+    end
   end
 
   def self.update_or_create(hash)

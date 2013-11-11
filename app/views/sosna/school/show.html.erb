@@ -14,18 +14,55 @@
     <%= link_to_show 'další>',      @school.next      %>
   <% end %>
   
-  <%#= form_for @school, :url => {:action => :update }  do |f| %> 
-  <%= form_for @school, :url => sosna_school_update_path() do |f| %> 
+  <%= form_for @school, :url => sosna_school_update_path(), :html => {:class=>'form-horizontal'} do |f| %> 
+
     <%= f.hidden_field :id if @school.id %></br>
-    Zkratka: <%= f.text_field :short %><br/>
-    Název: <%= f.text_field :name %><br/>
-    Ulice: <%= f.text_field :street%><br/>
-    číslo: <%= f.text_field :num %><br/>
-    PSČ: <%= f.text_field :psc %><br/>
-    Město: <%= f.text_field :city %><br/>
-    <%= f.submit 'Uložit'%>
-    <% if @school.next %>
-      <%= f.submit 'Uložit a další' %>
+
+    <div class="control-group">
+      <label class="control-label" for="school_nazev">Zkratka</label>
+      <div class="controls"> <%= f.text_field :short %> </div>
+    </div>
+    
+    <div class="control-group">
+      <label class="control-label" for="school_nazev">Název</label>
+      <div class="controls"> <%= f.text_field :street %> </div>
+    </div>
+    
+    <div class="control-group">
+      <label class="control-label" for="school_nazev">Číslo</label>
+      <div class="controls"> <%= f.text_field :num %> </div>
+    </div>
+    
+    <div class="control-group">
+      <label class="control-label" for="school_nazev">PSČ</label>
+      <div class="controls"> <%= f.text_field :psc %> </div>
+    </div>
+    
+    <div class="control-group">
+      <label class="control-label" for="school_nazev">Město</label>
+      <div class="controls"> <%= f.text_field :city %> </div>
+    </div>
+
+    <div class="control-group">
+       <div class="controls">
+        <%= f.submit 'Uložit', :class=>'btn btn-primary'%>
+        <% if @school.next %>
+          <%= f.submit 'Uložit a další', :class=>'btn btn-primary' %>
+        <% end %>
+      </div>
+    </div>
+
+  <% end %>
+<% end %>
+
+<hr>
+
+<% if @school.id %>
+  <% if can? :delete, Sosna::School %>
+    <%= form_tag sosna_school_delete_path(id:@school.id) do %>
+      <%= submit_tag  'Smazat školu (nebude žádné "jsi si jistý?")', :class=>'btn btn-danger' %></div>
     <% end %>
+  <% else %>
+      <%= submit_tag  'Smazat školu může adm', :class=>'btn disabled' %></div>
   <% end %>
 <% end %>
