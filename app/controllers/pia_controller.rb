@@ -20,9 +20,20 @@ class PiaController < ApplicationController
 
   def user_action
     user_id = params[:id]
-    print :what, params[:what]
     user = User.find(user_id)
-    add_success 'Jakoze poslano (fake)'
+    case params[:what]
+
+      when 'send_first_email'
+        user.send_first_login_instructions
+        add_success 'Posláno'
+
+      when 'send_password_reset'
+        user.send_reset_password_instructions
+        add_success 'Posláno'
+
+      else
+        add_alert 'Bad luck'
+    end
     redirect_to action: :user, id: user_id
   end
 
