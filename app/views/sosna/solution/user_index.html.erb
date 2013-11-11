@@ -52,13 +52,12 @@
 <ul>
   <% if is_current_annual && !deadline.nil?%>
     <% if deadline >= Time.now %>
-
-       <li>Termín odeslání je <%= deadline.strftime('%-d. %-m. %Y') %> ve 24:00.</li>
+       <li>Termín odeslání je <%= deadline.strftime('%-d. %-m. %Y') %> ve 23:59.</li>
     <% else %>
-       <li>Termín odeslání byl <%= deadline.strftime('%-d. %-m. %Y') %> ve 24:00.</li>
+       <li>Termín odeslání byl <%= deadline.strftime('%-d. %-m. %Y') %> ve 23:59.</li>
     <% end %>
   <% end %>
-  <li> Nahrávej řešení menší než 20MB. <%= number_to_human_size max_size %>.</li>
+  <li> Nahrávej řešení menší než <%= number_to_human_size max_size %>.</li>
   <li>Soubor musí být ve formátu PDF.</li>
   <li>Pokud omylem nahraješ řešení ke špatné úloze nebo v něm najdeš později chybu, můžeš úlohu nahrát znovu (nesmí však být již po termínu odevzdání).</li>
   <li> Špatně nahraný soubor můžeš smazat i tak, že nevybereš žádný soubor a klikneš na <button class="btn btn-mini">Nahraj řešení</button>.</li>
