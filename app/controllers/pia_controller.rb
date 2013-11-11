@@ -2,6 +2,7 @@ require 'pp'
 class PiaController < ApplicationController
 
   include ApplicationHelper
+  include SosnaHelper
 
   def index; end
   authorize_resource :class => false
@@ -10,6 +11,29 @@ class PiaController < ApplicationController
   def users
     @users = User.all
     #print 'sign:', sign("ahoj")
+  end
+
+  def user
+    @user = User.find(params[:id])
+  end
+
+  def user_action
+    user_id = params[:id]
+    print :what, params[:what]
+    user = User.find(user_id)
+    add_success 'Jakoze poslano (fake)'
+    redirect_to action: :user, id: user_id
+  end
+
+  def user_update
+    params.require(:user).permit!
+    user_id = params[:id]
+    user = User.find(user_id)
+    if user
+      user.update(params[:user])
+      add_success 'Data aktualizovaná'
+    end
+    redirect_to action: :user, id: user_id
   end
 
   def user_finish_registration

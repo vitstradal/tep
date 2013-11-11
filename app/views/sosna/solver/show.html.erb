@@ -5,6 +5,13 @@
 
 
 <hr>
+<% user = @solver.user %>
+<% if user %>
+   Řešitel je uživatelem tepu <%= link_to "#{user.name} #{user.last_name} (#{user.email})" , user_show_path(user.id) %>.
+<% else %>
+  Řešitel nemá nemá uživatele
+<% end %>
+<hr>
 
 <% if can? :delete, Sosna::Solver %>
   <%= form_tag sosna_solver_delete_path(id:@solver.id) do %>

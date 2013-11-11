@@ -10,6 +10,11 @@ class Sosna::Solver < ActiveRecord::Base
   validates :email, format: {with: /\A\Z|\A[-_a-z\d\.]+@[a-z\d\.\-]+\Z/i , message: :email}
   #validates_associated :school
 
+  def user_email_consistent?
+     return true if self.user.nil?
+     return self.user.email == email
+  end
+
   def send_home?
      self.where_to_send == 'home'
   end
