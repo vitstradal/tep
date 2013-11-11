@@ -48,10 +48,10 @@ Pia::Application.routes.draw do
 
   # pia
   get  '/users'                              => 'pia#users',                    :as => :users_list
-  get  '/user/:id'                           => 'pia#user',                     :as => :user_show
-  patch '/user/:id'                          => 'pia#user_update',              :as => :user_update
+  get  '/user/:id/show'                      => 'pia#user',                     :as => :user_show
+  patch '/user/:id/update'                   => 'pia#user_update',              :as => :user_update
+  patch '/user/:id/role'                     => 'pia#user_role_change',         :as => :user_role_change
   post  '/user/:id/action/:what'             => 'pia#user_action',              :as => :user_action
-  patch '/user/role'                         => 'pia#user_role_change',         :as => :user_role_change
   get  '/reg/:token'                         => 'pia#user_finish_registration', :as => :user_finish_registration
 
   get  '/wiki(/*path)'                       => 'giwi#show',                    :as =>  :wiki, constrains: { path: /.*/ },       defaults: {wiki: :main}

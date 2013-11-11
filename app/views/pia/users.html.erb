@@ -15,7 +15,7 @@
    <td> <%= user.name %> </td>
    <td> <%= user.last_name %> </td>
    <td>
-        <%= form_for user,  :url => {:action => :user_role_change}, :html => {:class => 'form-inline' } do |f| %>
+        <%= form_for user, url: user_role_change_path(user.id), :html => {:class => 'form-inline' } do |f| %>
             <%= user.roles.to_a.join(',') %>
             <%= f.hidden_field :id %>
             <%= select_tag :role, 
