@@ -16,7 +16,8 @@ cs:
       already_confirmed: "byl již potvrzen, prosím, zkuste se přihlásit"
       not_locked: "nebyl uzamčen"
       not_saved:
-        one: "%{resource} nebyl uložen kvůli chybě:"
+        #one: "%{resource} nebyl uložen kvůli chybě:"
+        one: "Uživatel  nebyl uložen kvůli násleudující chybě:"
         other: "%{resource} nebyl uložen kvůli %{count} chybám:"
       confirmation_period_expired: "musí být potvrzen během %{period}, požádejte prosím o nový"
       confirmation: "není neshodné"
