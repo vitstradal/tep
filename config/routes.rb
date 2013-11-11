@@ -50,6 +50,7 @@ Pia::Application.routes.draw do
   get  '/users'                              => 'pia#users',                    :as => :users_list
   get  '/user/:id/show'                      => 'pia#user',                     :as => :user_show
   patch '/user/:id/update'                   => 'pia#user_update',              :as => :user_update
+  post  '/user/:id/delete'                   => 'pia#user_delete',              :as => :user_delete
   patch '/user/:id/role'                     => 'pia#user_role_change',         :as => :user_role_change
   post  '/user/:id/action/:what'             => 'pia#user_action',              :as => :user_action
   get  '/reg/:token'                         => 'pia#user_finish_registration', :as => :user_finish_registration

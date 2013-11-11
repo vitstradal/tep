@@ -63,6 +63,7 @@ class Ability
       can :users,            :pium
       can :user,             :pium
       can :user_update,      :pium
+      can :user_delete,      :pium
       can :user_action,      :pium
       can :user_role_change, :pium
 

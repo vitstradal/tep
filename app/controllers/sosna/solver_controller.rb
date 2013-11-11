@@ -14,7 +14,7 @@ class Sosna::SolverController < SosnaController
        u.destroy
        add_success 'řešitel smazán'
      else
-       add_alert 'no such řešitel'
+       add_alert 'řešitel neexistuje'
      end
      redirect_to action: :index
   end

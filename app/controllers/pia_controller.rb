@@ -18,6 +18,18 @@ class PiaController < ApplicationController
     @user = User.find(params[:id])
   end
 
+  def user_delete
+     id = params[:id]
+     u = User.find(id)
+     if u
+       u.destroy
+       add_success 'Uživatel smazán'
+     else
+       add_alert 'uživatel neexistuje'
+     end
+     redirect_to action: :users
+  end
+
   def user_action
     user_id = params[:id]
     user = User.find(user_id)
