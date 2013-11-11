@@ -16,6 +16,8 @@ Pia::Application.routes.draw do
   post '/sosna/solution/upload_corr'         => 'sosna/solution#upload_corr',   :as => :sosna_solution_upload_corr
   get  '/sosna/solution/:id/down'            => 'sosna/solution#download',      :as => :sosna_solution_download
   get  '/sosna/solution/:id/down_corr'       => 'sosna/solution#download_corr', :as => :sosna_solution_download_corr
+  #get  '/sosna/solution/:id/down(/:ori)'     => 'sosna/solution#download',      :as => :sosna_solution_download
+  #get  '/sosna/solution/:id/down_corr(/:ori)'=> 'sosna/solution#download_corr', :as => :sosna_solution_download_corr
 
   # org:
   get  '/sosna/solutions(/:roc(/:se(/:ul)))' => 'sosna/solution#index',         :as => :sosna_solutions_org
