@@ -4,19 +4,27 @@ require 'trac-wiki'
 require 'iconv'
 
 class GiwiController < ApplicationController
-  authorize_resource :class => false
   include SosnaHelper
 
   def show
 
     @wiki = params[:wiki] || 'main'
+    print "wiki:#{@wiki}\n"
+
+    authorize! :show, Giwi.auth_name(@wiki)
+
+    @editable = can? :update,  Giwi.auth_name(@wiki)
+
     @path = params[:path]
     @edit = params[:edit] || false
     @ls   = params[:ls]
     @part = false
     fmt = params[:format]
 
-    return redirect_to path: 'index' if ! @path
+    # @wiki, Giwi.can_read?
+    print url_for action: :show, path: 'indexx',  wiki: @wiki, "wiki" => "HUUU"
+
+    return redirect_to action: :show, path: 'index',  wiki: @wiki if ! @path
     return _handle_ls if @ls
     return _handle_edit if @edit
     return _handle_raw_file("#{@path}.#{fmt}", fmt) if %w(png jpg jpeg gif).include? fmt
@@ -26,24 +34,23 @@ class GiwiController < ApplicationController
     return _create_new_page_text if ! @text
 
     base = url_for(action: :show, wiki: @wiki)
-    parser = TracWiki.parser(@text, base: base, math: true, merge: true, edit_heading: true, id_from_heading: true, id_translit: true, no_escape: true)
+    parser = TracWiki.parser(@text, _trac_wiki_options(base))
     @html = parser.to_html
     @headings = parser.headings
 
-    @editable = true
 
     if parser.headings.size > 3
       @toc = parser.make_toc_html
     end
   end
 
-  def _handle_raw_file(path, fmt)
-    @raw, @version = Giwi.get_page @wiki, path
-    send_data @raw, :type => fmt, :disposition => 'inline'
-  end
 
   def update
     @wiki = params[:wiki] || 'main'
+
+    authorize! :update, Giwi.auth_name(@wiki)
+    print "af authorize: :update #{Giwi.auth_name(@wiki)}\n"
+
     @path = params[:path]
     text = params[:text]
     version = params[:version]
@@ -77,6 +84,32 @@ class GiwiController < ApplicationController
   end
 
   private
+
+  def _handle_raw_file(path, fmt)
+    @raw, @version = Giwi.get_page @wiki, path
+    send_data @raw, :type => fmt, :disposition => 'inline'
+  end
+
+  def _trac_wiki_options(base)
+    { base: base,
+       math: true,
+       merge: true,
+       edit_heading: @editable,
+       id_from_heading: true,
+       id_translit: true,
+       no_escape: true,
+       template_handler: self.method(:template_handler)
+    }
+  end
+
+
+  def template_handler(tname, env)
+    template_path = '.template/' + tname
+    text, _ = Giwi.get_page @wiki, template_path
+    return nil if text.nil?
+    text
+  end
+
 
   def _handle_file_upload( file, wiki, filename)
   end

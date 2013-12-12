@@ -13,18 +13,22 @@ class Giwi
   @@wikis
 
   def self.setup
-        yield self
-        @@wikis.each do |wiki,opts|
-           path = opts[:path] || opts["path"]
-           opts[:repo] = Grit::Repo.new(path)
-           opts[:path] = path
-        end
+    yield self
+    @@wikis.symbolize_keys!
+    @@wikis.each do |wiki,opts|
+       opts.symbolize_keys!
+       opts[:repo] = Grit::Repo.new(opts[:path])
+    end
+  end
+
+  def self.auth_name wiki
+     "giwi_#{wiki}".to_sym
   end
 
   ##### conf
   def self.get_repo(wiki)
     @@wikis ||= {}
-    repo =  @@wikis[wiki.to_s][:repo]
+    repo =  @@wikis[wiki.to_sym][:repo]
 
     return repo if repo
 
@@ -127,12 +131,11 @@ class Giwi
       cur_blob = cur_tree / path
       text_blob = text_tree / path
       text_blob_data = text_blob.data.force_encoding('utf-8')
-  
+
       if ! sline.nil? && ! eline.nil?
         text = _patch_part(text, text_blob_data, sline, eline)
       end
-  
-  
+
       if cur_blob.id != text_blob.id
         # collision: try append diff
         status = SETPAGE_MERGE_OK

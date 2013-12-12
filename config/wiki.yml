@@ -4,6 +4,15 @@
 defaults: &defaults
   main:
     path: '/home/vitas/tmp/piki'
+    url: 'wiki'
+    read:  :org
+    update:  :org
+
+  read:
+    path: '/home/vitas/tmp/piki'
+    url: 'read'
+    read:  :anon
+    update:  :org
 
 test:
   <<: *defaults

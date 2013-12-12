@@ -18,6 +18,17 @@ class Ability
     can :index, :pium
     can :faq, :pium
 
+    #wikis
+    Giwi.wikis.each do |wiki,opts|
+      auth_name =  Giwi.auth_name(wiki)
+      can :show,   auth_name if !opts[:read].nil?   && (opts[:read]   == :anon || user.has_role?(opts[:read]))
+      can :update, auth_name if !opts[:update].nil? && (opts[:update] == :anon || user.has_role?(opts[:update]))
+
+      print "can :update, #{auth_name}\n" if !opts[:update].nil? && user.has_role?(opts[:update])
+      print "can :read, #{auth_name}\n" if !opts[:read].nil? && user.has_role?(opts[:read])
+    end
+    #can :update, :giwi, if: :can_update?
+
     if user.user?
       can :user_index, Sosna::Solution
       can :upload, Sosna::Solution
@@ -54,8 +65,6 @@ class Ability
       can :index, Sosna::School
       can :update, Sosna::School
 
-      can :show,   :giwi
-      can :update, :giwi
 
     end
 
