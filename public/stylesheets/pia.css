@@ -7,6 +7,9 @@ select { font-family: 'AndulkaSerifBookRegular', Arial, sans-serif; }
 button { font-family: 'AndulkaSerifBookBold',    Arial, sans-serif; }
 input  { font-family: 'AndulkaSerifBookBold',    Arial, sans-serif; }
 
+table, th, td { 
+ border: 1px solid black;
+}
 
 
 /* error */

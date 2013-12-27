@@ -19,13 +19,13 @@ class Ability
     can :faq, :pium
 
     #wikis
-    Giwi.wikis.each do |wiki,opts|
-      auth_name =  Giwi.auth_name(wiki)
-      can :show,   auth_name if !opts[:read].nil?   && (opts[:read]   == :anon || user.has_role?(opts[:read]))
-      can :update, auth_name if !opts[:update].nil? && (opts[:update] == :anon || user.has_role?(opts[:update]))
+    Giwi.giwis.each_value do |giwi|
+      auth_name =  Giwi.auth_name(giwi.name)
+      can :show,   auth_name if !giwi.read.nil?   && (giwi.read   == :anon || user.has_role?(giwi.read))
+      can :update, auth_name if !giwi.update.nil? && (giwi.update == :anon || user.has_role?(giwi.update))
 
-      print "can :update, #{auth_name}\n" if !opts[:update].nil? && user.has_role?(opts[:update])
-      print "can :read, #{auth_name}\n" if !opts[:read].nil? && user.has_role?(opts[:read])
+      print "can :update, #{auth_name}\n" if !giwi.update.nil? && user.has_role?(giwi.update)
+      print "can :read, #{auth_name}\n" if !giwi.read.nil? && user.has_role?(giwi.read)
     end
     #can :update, :giwi, if: :can_update?
 

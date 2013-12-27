@@ -8,11 +8,12 @@ defaults: &defaults
     read:  :org
     update:  :org
 
+
   read:
     path: '/home/vitas/tmp/piki'
     url: 'read'
     read:  :anon
-    update:  :org
+    #update:  :org
 
 test:
   <<: *defaults
@@ -20,3 +21,10 @@ production:
   <<: *defaults
 development:
   <<: *defaults
+  web:
+    path: '/home/vitas/tmp/pikoweb'
+    url: 'web'
+    read:  :org
+    update:  :org
+    nogit: true
+    ext: '.wiki'

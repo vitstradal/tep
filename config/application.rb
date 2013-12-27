@@ -50,6 +50,6 @@ module Pia
 end
 
 require 'giwi'
-Giwi.setup do |config|
-  config.wikis = YAML.load_file("#{::Rails.root.to_s}/config/wiki.yml")[::Rails.env]
+Giwi.setup do 
+  YAML.load_file("#{::Rails.root.to_s}/config/wiki.yml")[::Rails.env]
 end

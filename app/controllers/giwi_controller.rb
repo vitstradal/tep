@@ -22,14 +22,18 @@ class GiwiController < ApplicationController
     fmt = params[:format]
 
     # @wiki, Giwi.can_read?
-    print url_for action: :show, path: 'indexx',  wiki: @wiki, "wiki" => "HUUU"
+    print "path:#{@path}\n"
 
     return redirect_to action: :show, path: 'index',  wiki: @wiki if ! @path
     return _handle_ls if @ls
-    return _handle_edit if @edit
     return _handle_raw_file("#{@path}.#{fmt}", fmt) if %w(png jpg jpeg gif).include? fmt
+    return redirect_to action: :show, path: @path + 'index',  wiki: @wiki if @path =~ /\/$/
 
-    @text, @version = Giwi.get_page @wiki, @path
+    _breadcrumb_from_path(@path)
+
+    return _handle_edit if @edit
+
+    @text, @version = Giwi.get_giwi(@wiki).get_page(@path)
 
     return _create_new_page_text if ! @text
 
@@ -66,7 +70,7 @@ class GiwiController < ApplicationController
     sline = sline.to_i if ! sline.nil?
     eline = eline.to_i if ! eline.nil?
 
-    status = Giwi.set_page @wiki, @path, text, version, 'autor', sline , eline
+    status = Giwi.get_giwi(@wiki).set_page(@path, text, version, 'autor', sline , eline)
 
     if status !=  Giwi::SETPAGE_OK
       if status ==  Giwi::SETPAGE_MERGE_OK
@@ -86,7 +90,7 @@ class GiwiController < ApplicationController
   private
 
   def _handle_raw_file(path, fmt)
-    @raw, @version = Giwi.get_page @wiki, path
+    @raw, @version = Giwi.get_giwi(@wiki).get_page(path, true)
     send_data @raw, :type => fmt, :disposition => 'inline'
   end
 
@@ -98,6 +102,7 @@ class GiwiController < ApplicationController
        id_from_heading: true,
        id_translit: true,
        no_escape: true,
+       raw_html: true,
        template_handler: self.method(:template_handler)
     }
   end
@@ -105,7 +110,7 @@ class GiwiController < ApplicationController
 
   def template_handler(tname, env)
     template_path = '.template/' + tname
-    text, _ = Giwi.get_page @wiki, template_path
+    text, _ = Giwi.get_giwi(@wiki).get_page(template_path, true )
     return nil if text.nil?
     text
   end
@@ -120,14 +125,14 @@ class GiwiController < ApplicationController
   end
 
   def _handle_ls
-    @files, @dirs, @path = Giwi.get_ls @wiki, @path
+    @files, @dirs, @path = Giwi.get_giwi(@wiki).get_ls(@path)
     render :ls
   end
 
   def _handle_edit
     if @edit == 'me'
        # edit whole page
-       @text, @version = Giwi.get_page @wiki, @path
+       @text, @version = Giwi.get_giwi(@wiki).get_page(@path)
        @edit = true
        return
     end
@@ -137,7 +142,7 @@ class GiwiController < ApplicationController
     # want to edit only one chapter
     @part = @edit.to_i
 
-    text, @version = Giwi.get_page @wiki, @path
+    text, @version = Giwi.get_giwi(@wiki).get_page(@path)
     print "part:#{@part}\n"
 
     if text
@@ -163,6 +168,29 @@ class GiwiController < ApplicationController
     @text = "= #{title.capitalize} =\n\n"
     @path = _to_ascii(@path)
     @edit = true
+  end
+  def _breadcrumb_from_path(path)
+
+    cur_path  = nil
+    bread = [{ name: @wiki,
+               url: url_for(action: :show, wiki:@wiki, path: '/'),
+             }]
+
+    path.split('/').each do |part|
+      if cur_path 
+        cur_path +=  '/' + part
+      else
+        cur_path = part
+      end
+      bread.push({
+                  name: part,
+                  url: url_for(action: :show, wiki:@wiki, path: cur_path),
+                })
+    end
+    if bread.size > 0 
+      bread[-1][:active] = true
+    end
+    @breadcrumb = [ bread ] 
   end
 
 end

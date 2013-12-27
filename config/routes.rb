@@ -61,18 +61,16 @@ Pia::Application.routes.draw do
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
   get  '/faq'                                => "pia#faq",                      :as => :faq
-  root :to => "pia#index", :as => :root
 
-  Giwi.wikis.each do |wiki,opts|
-    url = opts[:url] || wiki
-    route_name = "wiki_#{wiki}".to_sym
-    route_name_post = "wiki_#{wiki}_post".to_sym
-    print "=== #{wiki}:#{url}\n"
-    #get  '/' + url + '(/*path)'       => 'giwi#show',                    :as =>  route_name,      constrains: { path: /.*/ },  defaults: {wiki: wiki}
-    #post '/' + url + '(/*path)'       => 'giwi#update',                  :as =>  route_name_post, constrains: { path: /.*/ },  defaults: {wiki: wiki}
-    get  '/' + url + '(/*path)'       => 'giwi#show',                    :as =>  route_name,      constrains: { path: /.*/ , wiki: wiki }, defaults: {wiki: wiki} 
-    post '/' + url + '(/*path)'       => 'giwi#update',                  :as =>  route_name_post, constrains: { path: /.*/ , wiki: wiki }, defaults: {wiki: wiki}
+  Giwi.giwis.each_value do |giwi|
+     url = giwi.url
+     route_name = "wiki_#{giwi.name}".to_sym
+     route_name_post = "wiki_#{giwi.name}_post".to_sym
+     get  '/' + url + '(/*path)'       => 'giwi#show',      :as =>  route_name,      constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name}
+     post '/' + url + '(/*path)'       => 'giwi#update',    :as =>  route_name_post, constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name}
   end
+
+  root :to => "pia#index", :as => :root
 
   # See how all your routes lay out with "rake routes"
 end
