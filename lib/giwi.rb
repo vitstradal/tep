@@ -3,9 +3,6 @@ require 'grit'
 require 'pp'
 require 'diff3'
 
-
-
-
 class Giwi
 
   SETPAGE_OK = 0
@@ -56,9 +53,7 @@ class Giwi
     @repo = Grit::Repo.new(@path) if ! @nogit
   end
 
-
   # public methods (api)
-
 
   def get_page(path, raw = false)
     path += @ext if ! raw

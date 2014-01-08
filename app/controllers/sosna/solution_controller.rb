@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'pp'
+require 'iconv'
 #require 'rubygems'
 require 'zip'
 require 'tempfile'
@@ -385,9 +386,16 @@ class Sosna::SolutionController < SosnaController
   end
 
   def _sol_filename(roc, se, ul, rel_id, name, last, is_corr=  false)
+     name = translit name
+     last = translit last
      typ = is_corr ? 'rev' : 'ori'
-     'reseni-roc%02i-se%02i-ul%i-rel%03i-%s-%s.pdf'  % [ roc, se, ul, rel_id, typ, name, last ]
+     'reseni-roc%02i-se%02i-ul%i-rel%03i-%s-%s-%s.pdf'  % [ roc, se, ul, rel_id, typ, name, last ]
   end
+
+  def translit(str)
+    Iconv.iconv('ascii//translit', 'utf-8', str).join
+  end
+
 
 
 end

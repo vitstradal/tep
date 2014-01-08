@@ -2,6 +2,7 @@
 
 require 'trac-wiki'
 require 'iconv'
+require 'yaml'
 
 class GiwiController < ApplicationController
   include SosnaHelper
@@ -103,13 +104,12 @@ class GiwiController < ApplicationController
        id_translit: true,
        no_escape: true,
        raw_html: true,
-       template_handler: self.method(:template_handler)
+       template_handler: self.method(:template_handler),
     }
   end
 
-
   def template_handler(tname, env)
-    template_path = '.template/' + tname
+    template_path = '.template/' + tname + '.wiki'
     text, _ = Giwi.get_giwi(@wiki).get_page(template_path, true )
     return nil if text.nil?
     text

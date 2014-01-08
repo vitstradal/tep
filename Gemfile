@@ -8,7 +8,7 @@ gem 'cancan'
 gem 'role_model'
 #gem 'grit'
 gem 'rubyzip'
-gem 'trac-wiki', '~> 0.2.16'
+gem 'trac-wiki', '~> 0.2.20'
 gem 'iconv'
 gem 'sanitize'
 
