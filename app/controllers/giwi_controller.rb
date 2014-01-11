@@ -27,7 +27,7 @@ class GiwiController < ApplicationController
 
     return redirect_to action: :show, path: 'index',  wiki: @wiki if ! @path
     return _handle_ls if @ls
-    return _handle_raw_file("#{@path}.#{fmt}", fmt) if %w(png jpg jpeg gif).include? fmt
+    return _handle_raw_file("#{@path}.#{fmt}", fmt) if %w(pdf png jpg jpeg gif).include? fmt
     return redirect_to action: :show, path: @path + 'index',  wiki: @wiki if @path =~ /\/$/
 
     _breadcrumb_from_path(@path)
@@ -63,7 +63,7 @@ class GiwiController < ApplicationController
     file = params[:file]
     filename = params[:filename]
 
-    return _handle_file_upload(wiki, path, file, filename) if file
+    return _handle_file_upload(@wiki, @path, file, filename) if file
 
     sline = params[:sline]
     eline = params[:eline]
@@ -116,7 +116,10 @@ class GiwiController < ApplicationController
   end
 
 
-  def _handle_file_upload( file, wiki, filename)
+  def _handle_file_upload( wiki, path, file, filename)
+    flash[:success] ||= []
+    flash[:success].push('upload: no implemented yet')
+    redirect_to action: :show, wiki: @wiki, path: @path
   end
 
   def _to_ascii(txt)

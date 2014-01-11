@@ -4,7 +4,7 @@ class Sosna::SolverController < SosnaController
   include SosnaHelper
 
   def index
-      @solvers = Sosna::Solver.all
+      @solvers = Sosna::Solver.order(:last_name, :name).all
   end
 
   def delete
