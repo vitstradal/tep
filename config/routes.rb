@@ -13,11 +13,11 @@ Pia::Application.routes.draw do
   # user:
   get  '/sosna/solutions/user(/:roc(/:se))'  => 'sosna/solution#user_index',    :as => :sosna_solutions_user
   patch '/sosna/solution/upload'             => 'sosna/solution#upload',        :as => :sosna_solution_upload
-  post '/sosna/solution/upload_corr'         => 'sosna/solution#upload_corr',   :as => :sosna_solution_upload_corr
+  post '/sosna/solution/upload_rev'         => 'sosna/solution#upload_rev',   :as => :sosna_solution_upload_rev
   get  '/sosna/solution/:id/down'            => 'sosna/solution#download',      :as => :sosna_solution_download
-  get  '/sosna/solution/:id/down_corr'       => 'sosna/solution#download_corr', :as => :sosna_solution_download_corr
+  get  '/sosna/solution/:id/down_rev'       => 'sosna/solution#download_rev', :as => :sosna_solution_download_rev
   #get  '/sosna/solution/:id/down(/:ori)'     => 'sosna/solution#download',      :as => :sosna_solution_download
-  #get  '/sosna/solution/:id/down_corr(/:ori)'=> 'sosna/solution#download_corr', :as => :sosna_solution_download_corr
+  #get  '/sosna/solution/:id/down_rev(/:ori)'=> 'sosna/solution#download_rev', :as => :sosna_solution_download_rev
 
   # org:
   get  '/sosna/solutions(/:roc(/:se(/:ul)))' => 'sosna/solution#index',         :as => :sosna_solutions_org

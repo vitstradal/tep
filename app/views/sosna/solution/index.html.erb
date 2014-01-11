@@ -40,14 +40,14 @@
     <td><%= sol.problem.problem_no %></td>
     <td>
       <% if sol.filename  %>
-         <%= link_to sol.get_filename , {:action => :download, :id => sol.id}, {:title => sol.filename_orig} %></td>
+         <%= link_to sol.get_filename_ori , {:action => :download, :id => sol.id}, {:title => sol.filename_orig} %></td>
       <% else %>
          <i>žádný soubor</i>
       <% end %>
       </td>
     <td>
       <% if sol.filename_corr  %>
-         <%= link_to sol.filename_corr , {:action => :download_corr, :id => sol.id}, {:title => sol.filename_corr_display} %></td>
+         <%= link_to sol.get_filename_rev , {:action => :download_corr, :id => sol.id}, {:title => sol.filename_corr_display} %></td>
       <% else %>
          <i>oprava není</i>
       <% end %>
@@ -85,7 +85,7 @@
           <%= hidden_field_tag :roc, @annual %>
           <%= hidden_field_tag :se,  @round %>
           <%= hidden_field_tag :ul,  @problem_no %>
-          <%= file_field_tag :file_corr, :class => 'input-small', :accept => '*.pdf|*.zip'  %>
+          <%= file_field_tag :file_rev, :class => 'input-small', :accept => '*.pdf|*.zip'  %>
           <%= submit_tag 'Nahraj opravené řešení ', :class => 'btn'  %>
     <% end %>
   <% end %>

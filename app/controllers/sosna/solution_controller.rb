@@ -64,7 +64,7 @@ class Sosna::SolutionController < SosnaController
     @breadcrumb = dir.nil? ? [path] : [ path, dir ]
   end
 
-  def download_corr
+  def download_rev
     solution = Sosna::Solution.find id = params[:id]
     if ! solution
       add_alert 'Chyba: soubor neexistuje'
@@ -81,12 +81,14 @@ class Sosna::SolutionController < SosnaController
         return redirect_to :action =>  :user_index 
       end
       filename = solution.filename_corr_display
+      filename_disp = solution.filename_corr_display
     else
       # may be org
       authorize! :download_org, Sosna::Solution
       filename = solution.filename_corr
+      filename_disp = solution.get_filename_rev
     end
-    send_file UPLOAD_DIR + solution.filename_corr, :filename => filename, :type => 'application/pdf'
+    send_file UPLOAD_DIR + solution.filename_corr, :filename => filename_disp, :type => 'application/pdf'
   end
 
   def download
@@ -97,7 +99,7 @@ class Sosna::SolutionController < SosnaController
     if ! solution.owner? current_user
       authorize! :download_org, Sosna::Solution
       filename = solution.filename
-      filename_disp = solution.get_filename()
+      filename_disp = solution.get_filename_ori
     end
 
     send_file UPLOAD_DIR + solution.filename, :filename => filename_disp, :type => 'application/pdf'
@@ -120,7 +122,7 @@ class Sosna::SolutionController < SosnaController
     Zip::File.open(zip_file_name, Zip::File::CREATE) do |zipfile|
       solutions.each do |solution|
         filename = solution.filename
-        filename_disp = solution.get_filename()
+        filename_disp = solution.get_filename_ori
         next if filename.nil?
         zipfile.add('reseni/' + File.basename(filename_disp),  UPLOAD_DIR + filename)
       end
@@ -129,28 +131,28 @@ class Sosna::SolutionController < SosnaController
     #File.delete zip_file_name 
   end
 
-  def upload_corr
-    cfile = params[:file_corr]
+  def upload_rev
+    rfile = params[:file_rev]
     roc = params[:roc]
     se =  params[:se]
     ul =  params[:ul]
 
     # reseni-roc29-se01-ul2-rel001-ori-vitas-vitas.pdf
     # reseni-roc29-se01-ul2-rel001-rev-vitas-vitas.pdf
-    cfile_name = cfile.original_filename
+    cfile_name = rfile.original_filename
     if cfile_name =~ /\.pdf$/
-       path =  _upload_corr_one(roc, se, ul,  cfile_name)
+       path =  _upload_rev_one(roc, se, ul,  cfile_name)
        if path
          print "writing to path"
-         File.open(UPLOAD_DIR + path, 'wb') {  |f| f.write(cfile.read) }
+         File.open(UPLOAD_DIR + path, 'wb') {  |f| f.write(rfile.read) }
        end
-    elsif cfile.original_filename =~ /\.zip$/
+    elsif rfile.original_filename =~ /\.zip$/
        zip_file = Tempfile.new(['corr', '.zip'], UPLOAD_DIR)
-       File.open(zip_file, 'wb') {  |f| f.write(cfile.read) }
+       File.open(zip_file, 'wb') {  |f| f.write(rfile.read) }
        zip_file.close
        Zip::File.open(zip_file.path) do |zipfile|
          zipfile.each do |entry|
-           path =  _upload_corr_one(roc, se, ul,  entry.name)
+           path =  _upload_rev_one(roc, se, ul,  entry.name)
            if path
              entry.extract(UPLOAD_DIR + path)  { true }
            end
@@ -171,7 +173,7 @@ class Sosna::SolutionController < SosnaController
     #print "msg: #{fname}: #{msg}\n"
   end
 
-  def _upload_corr_one(roc, se, ul,  fname)
+  def _upload_rev_one(roc, se, ul,  fname)
 
     if fname !~ /^reseni-roc(\d+)-se(\d+)-ul(\d+)-rel(\d+)-(ori|rev)-.*.pdf/
       _add_msg(fname, "jmeno souboru neni ve spravnem formatu '#{fname}'")
@@ -194,9 +196,9 @@ class Sosna::SolutionController < SosnaController
     solution = Sosna::Solution.where( :problem_id => problem.id, :solver_id => solver.id).take
 
     #filename_corr = _solution_filename(problem, solver, true)
-    filename_corr = solution.get_filename(true)
-    solution.filename_corr = filename_corr
-    solution.filename_corr_display =  _filename_corr_display(solution.filename_orig)
+    filename_rev = solution.get_filename_rev
+    solution.filename_corr = filename_rev
+    solution.filename_corr_display =  _filename_rev_display(solution.filename_orig)
     solution.save
 
     print "solution id: #{solution.id}, #{solution.filename_corr}\n"
@@ -205,7 +207,7 @@ class Sosna::SolutionController < SosnaController
 
   end
 
-  def _filename_corr_display(orig)
+  def _filename_rev_display(orig)
       orig.sub(/(\.[^\.]+)$/, '-opraveno\1')
   end
 
@@ -260,7 +262,7 @@ class Sosna::SolutionController < SosnaController
 #    pp solver
 #
     # save file
-    filename = solution.get_filename(problem, solver)
+    filename = solution.get_filename_ori
 
     File.open(UPLOAD_DIR + filename, 'wb') {  |f| f.write(solution_file.read) }
 
