@@ -93,14 +93,25 @@
 
   <hr>
   <% if  @problem_no %>
+    <a name="upload"></a>
+    <div> Soubor ve tvaru <code>reseni-rocNN-seNN-ulNN-relNNN-ori-PRIMENI-JMENO.pdf</code>
+    (tedy stejné jako neopravené řešení), nebo zip archiv s více opravenými řešeními
+    (né nutně všemi):
+    </div>
     <%= form_tag({:action => :upload_rev} , :multipart => true ) do %>
           <%= hidden_field_tag :roc, @annual %>
           <%= hidden_field_tag :se,  @round %>
           <%= hidden_field_tag :ul,  @problem_no %>
           <%= file_field_tag :file_rev, :class => 'input-small', :accept => '*.pdf|*.zip'  %>
-          <%= submit_tag 'Nahraj opravené řešení ', :class => 'btn'  %>
+          <%= submit_tag 'Nahraj opravené řešení (.pdf, .zip)',:class => 'btn'  %>
     <% end %>
     <hr>
+
+  <% else %>
+    Pro nahrání opraveného řešení vyber úlohu:
+      <% @problem_numbers.each do |no| %>
+       <%= link_to "ul#{no}", { action: :index, roc: @annual, se: @round, ul: no , anchor: 'upload' } %>,
+      <% end %>
   <% end %>
 <% end %>
 
