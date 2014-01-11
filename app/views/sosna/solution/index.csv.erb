@@ -7,10 +7,11 @@
   %>;;<% @problems.each do |pr| 
    %><% sol_arr = @solutions_by_solver[solver.id]  
    %><% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  
-   %><% if !sol.nil? && sol.filename
-          %>A<%
-        else
-          %><%
+   %><% if sol.filename
+         %>E<%
+        end 
+   %><% if sol.has_paper_mail
+         %>P<%
         end 
    %>;<%
  end %>

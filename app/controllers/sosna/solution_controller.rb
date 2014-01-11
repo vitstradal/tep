@@ -32,14 +32,19 @@ class Sosna::SolutionController < SosnaController
   def update_scores
     roc, se, ul = params[:roc], params[:se], params[:ul]
     scores = params[:score]
+    paper = params[:paper]
     solutions = Sosna::Solution.find(scores.keys)
 
     solutions.each do |sol|
 
-      score = begin Integer scores[sol.id.to_s] ; rescue ; nil ;  end
+      id = sol.id.to_s
 
-      if sol.score != score
+      score = begin Integer scores[id] ; rescue ; nil ;  end
+      has_paper_mail = paper.has_key? id
+
+      if sol.score != score || sol.has_paper_mail != has_paper_mail
         sol.score = score
+        sol.has_paper_mail = has_paper_mail
         sol.save
       end
     end
@@ -63,6 +68,7 @@ class Sosna::SolutionController < SosnaController
       # in level round
       path.push(_round_link(@annual, @round))
       path[-1][:sub] = _rounds_roc(@annual)
+      path[-1][:btn] = _problem_edit2_btn(@annual, @round)
 
       dir = _problems_roc_se(@annual, @round)
     else
@@ -441,6 +447,11 @@ class Sosna::SolutionController < SosnaController
   def _problem_edit_btn(annual, round, problem_no)
       {name: "Editovat", url: {action: 'edit', roc: annual, se: round, ul: problem_no}}
   end
+
+  def _problem_edit2_btn(annual, round)
+      {name: "Editovat", url: {action: 'edit', roc: annual, se: round }}
+  end
+
 
   def _round_link(annual, round, active= false)
      {name: "Série #{round}", active: active, url: {roc: annual, se: round}}

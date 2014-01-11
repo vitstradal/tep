@@ -46,14 +46,19 @@
        <td>
          <% sol_arr = @solutions_by_solver[solver.id]  %>
          <% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  %>
-         <% if !sol.nil? && sol.filename %>
-           <%= link_to pr.problem_no, {:action => :download, :id => sol.id}, {:title => sol.filename_orig} %>
-           <% if sol.filename_corr %>
-             <%= link_to 'o', {:action => :download_rev, :id => sol.id}, {:title => sol.filename_corr_display} %></td>
-           <% end %>
+
+         <% if  @want_edit %>
+            <input type="checkbox" name="paper[<%= sol.id %>]" size="3" <%if sol.has_paper_mail %> checked="checked" <% end %> />
          <% else %>
-          -
+           <% if sol.filename %>
+             <%= link_to pr.problem_no, {:action => :download, :id => sol.id}, {:title => sol.filename_orig} %>
+             <% if sol.filename_corr %>
+               <%= link_to 'o', {:action => :download_rev, :id => sol.id}, {:title => sol.filename_corr_display} %>
+             <% end %>
+           <% end %>
+           <% if sol.has_paper_mail %> P <% end %>
          <% end %>
+
        </td>
     <% end %>
     <%  @problems.each do |pr| %>
@@ -62,7 +67,7 @@
          <% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  %>
          <% if !sol.nil? %>
            <% if @want_edit %>
-                <input class="input-mini" type="text" name="score[<%= sol.id %>]" size="3" value="<%= sol.score || '-'%>"/>
+                <input class="input-mini input-minimini" type="text" name="score[<%= sol.id %>]" size="3" value="<%= sol.score || '-'%>"/>
            <% else %>
                 <%= sol.score || '-'%>
            <% end %>
