@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'pp'
+require 'fileutils'
 #require 'rubygems'
 require 'zip'
 require 'tempfile'
@@ -263,9 +264,9 @@ class Sosna::SolutionController < SosnaController
 #
     # save file
     filename = solution.get_filename_ori
-
     File.open(UPLOAD_DIR + filename, 'wb') {  |f| f.write(solution_file.read) }
 
+    sign_pdf(solution, UPLOAD_DIR + filename)
 
     # update solution
     solution.filename = filename
@@ -273,6 +274,28 @@ class Sosna::SolutionController < SosnaController
     solution.save
     add_success 'Soubor úspěšně nahrán'
     redirect_to :action => :user_index, roc: roc, se: se
+  end
+
+
+  def sign_pdf(solution, dest)
+      problem = solution.problem
+      solver = solution.solver
+      name = "#{solver.last_name} #{solver.name}"
+      ulfull = "roč#{problem.annual} se#{problem.round} ul#{problem.problem_no}"
+
+      template = dest + '.tmpl'
+      FileUtils::mv  dest, template
+
+      Prawn::Document.generate(dest, :template => template) do
+        # hack utf8 font
+        font_families.update( 'andulka' => { :normal => 'public/stylesheets/andulka/andulkabook-webfont.ttf' } )
+        font 'andulka' 
+        repeat( :all, :dynamic => true ) do
+                    draw_text "#{ulfull} #{name}", :at => bounds.top_left
+                    draw_text "str#{page_number}/#{page_count.to_s}", :at => bounds.top_right
+        end
+      end
+
   end
 
   def user_index
