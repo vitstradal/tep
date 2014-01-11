@@ -8,6 +8,13 @@ GIT
       mime-types (~> 1.15)
       posix-spawn (~> 0.3.6)
 
+GIT
+  remote: https://github.com/k3rni/ffi-locale.git
+  revision: 0803965fac68b8bc949195fc33069b2342c842a3
+  specs:
+    ffi-locale (0.1.2)
+      ffi (>= 1.0.7)
+
 GEM
   remote: http://rubygems.org/
   specs:
@@ -54,6 +61,7 @@ GEM
       devise (>= 2.1.0)
     diff-lcs (1.2.5)
     erubis (2.7.0)
+    ffi (1.9.3)
     hike (1.2.3)
     i18n (0.6.9)
     iconv (1.0.4)
@@ -120,6 +128,7 @@ DEPENDENCIES
   cancan
   devise (~> 3.1.1)
   devise-encryptable
+  ffi-locale (~> 0.1.2)!
   grit (~> 2.5.0)!
   iconv
   rails

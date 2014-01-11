@@ -13,7 +13,7 @@ gem 'iconv'
 gem 'sanitize'
 
 gem "grit", '~> 2.5.0',       git: 'https://github.com/gitlabhq/grit.git', ref: '42297cdcee16284d2e4eff23d41377f52fc28b9d'
-gem "ffi-locale", '~> 0.0.1', git: 'https://github.com/k3rni/ffi-locale.git' #, ref:  'a8db4907c3594e27ac54ac3be215677c5fd84685'
+gem "ffi-locale", '~> 0.1.2', git: 'https://github.com/k3rni/ffi-locale.git' #, ref:  'a8db4907c3594e27ac54ac3be215677c5fd84685'
 
 # Bundle edge Rails instead:
 # gem 'rails', :git => 'git://github.com/rails/rails.git'

@@ -1,10 +1,12 @@
+require 'ffi-locale'
 # encoding: utf-8
 class Sosna::SolverController < SosnaController
 
   include SosnaHelper
 
   def index
-      @solvers = Sosna::Solver.order(:last_name, :name).all
+    load_config
+    @solvers = get_sorted_solvers(@annual)
   end
 
   def delete
