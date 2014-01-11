@@ -12,11 +12,19 @@ class Sosna::SolutionController < SosnaController
   UPLOAD_DIR = "public/uploads/"
 
   def index
-    @solutions = _solutions_from_roc_se_ul
+    _solutions_from_roc_se_ul_by_solver
     _load_index
+    respond_to do |format|
+      format.html
+      format.csv do
+         ul = @problem_no.nil? ?  '' : "-ul#{@problem_no}"
+         headers['Content-Disposition'] = "attachment; filename=lidi-roc#{@annual}-se#{@round}#{ul}.csv"
+      end
+    end  
+
   end
   def edit
-    @solutions = _solutions_from_roc_se_ul
+    _solutions_from_roc_se_ul_by_solver
     @want_edit = true
     render :index
   end
@@ -284,7 +292,7 @@ class Sosna::SolutionController < SosnaController
       ulfull = "roč#{problem.annual} se#{problem.round} ul#{problem.problem_no}"
 
       template = dest + '.tmpl'
-      FileUtils::mv  dest, template
+      FileUtils::cp  dest, template
 
       Prawn::Document.generate(dest, :template => template) do
         # hack utf8 font
@@ -350,6 +358,27 @@ class Sosna::SolutionController < SosnaController
     @problem_no = ul 
 
     return roc, se, ul
+  end
+
+  def _solutions_from_roc_se_ul_by_solver
+    load_config
+    @solvers = get_sorted_solvers(@annual)
+    @solutions = _solutions_from_roc_se_ul
+    @solutions_by_solver = []
+
+    numbers = {}
+    
+    @solutions.each do |sol|
+      solver = sol.solver
+      problem_no = sol.problem.problem_no
+
+      @solutions_by_solver[solver.id] ||= []
+      @solutions_by_solver[solver.id][problem_no] =  sol
+
+      numbers[problem_no] = 1
+    end
+    @problem_numbers = numbers.keys.sort
+
   end
 
   def _solutions_from_roc_se_ul

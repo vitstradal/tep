@@ -22,48 +22,56 @@
 <% if @want_edit %>
 <%= form_tag action: :update_scores, :roc => @annual, :se => @round, :ul => @problem_no %> 
 <% end %>
+
+
+
 <table class="table table-bordered">
   <tr>
    <th>Id</th>
-   <th>Se</th>
-   <th>Úl</th>
-   <th>Řešení</th>
-   <th>Oprava</th>
    <th>Řešitel</th>
-   <th>Orig</th>
-   <th>Body</th>
+   <th>Škola</th>
+  <% @problem_numbers.each do |no| %>
+   <th>u<%=no%></th>
+  <% end %>
+  <% @problem_numbers.each do |no| %>
+   <th title="Body za úlohu č. <%=no%>">B<%=no%></th>
+  <% end %>
  </tr>
-<% @solutions.each do |sol| %>
+<% @solvers.each do |solver| %>
   <tr>
-    <td><%= sol.id %></td>
-    <td><%= sol.problem.round %></td>
-    <td><%= sol.problem.problem_no %></td>
-    <td>
-      <% if sol.filename  %>
-         <%= link_to sol.get_filename_ori , {:action => :download, :id => sol.id}, {:title => sol.filename_orig} %></td>
-      <% else %>
-         <i>žádný soubor</i>
-      <% end %>
-      </td>
-    <td>
-      <% if sol.filename_corr  %>
-         <%= link_to sol.get_filename_rev , {:action => :download_corr, :id => sol.id}, {:title => sol.filename_corr_display} %></td>
-      <% else %>
-         <i>oprava není</i>
-      <% end %>
-      </td>
-    <td><%= sol.solver.full_name%></td>
-    <td><%= sol.filename_orig %></td>
-    <% if @want_edit %>
-      <td><input class="input-mini" type="text" name="score[<%= sol.id %>]" size="3" value="<%= sol.score || '-'%>"/></td>
-    <% else %>
-      <td><%= sol.score || '-'%> </td>
+    <td><%= link_to solver.id, { controller: :solver, action: :show, id: solver.id }  %></td>
+    <td><%= solver.last_name %> <%= solver.name %> </td>
+    <td><%= solver.school.nil? ? '-' : solver.school.short %></td>
+    <% @problem_numbers.each do |no| %>
+       <td>
+         <% sol_arr = @solutions_by_solver[solver.id]  %>
+         <% sol  =  sol_arr.nil?  ? nil : sol_arr[no]  %>
+         <% if !sol.nil? && sol.filename %>
+           <%= link_to no, {:action => :download, :id => sol.id}, {:title => sol.filename_orig} %>
+           <% if sol.filename_corr %>
+             <%= link_to 'o', {:action => :download_rev, :id => sol.id}, {:title => sol.filename_corr_display} %></td>
+           <% end %>
+         <% else %>
+          -
+         <% end %>
+       </td>
+    <% end %>
+    <%  @problem_numbers.each do |no| %>
+       <td>
+         <% sol_arr = @solutions_by_solver[solver.id]  %>
+         <% sol  =  sol_arr.nil?  ? nil : sol_arr[no]  %>
+         <% if !sol.nil? %>
+           <% if @want_edit %>
+                <input class="input-mini" type="text" name="score[<%= sol.id %>]" size="3" value="<%= sol.score || '-'%>"/>
+           <% else %>
+                <%= sol.score || '-'%>
+           <% end %>
+         <% else %>
+          -
+         <% end %>
+       </td>
     <% end %>
   </tr>
-
-<% end %>
-<% if @solutions.empty? %>
-  <tr><td colspan="8"><i>žádná řešení</i></td></tr>
 <% end %>
 
 </table>
@@ -79,17 +87,21 @@
             { :action => :downall, roc: @annual, se: @round, ul: @problem_no },
             { :class=> 'btn btn-primary'} %>
 
+  <%= link_to 'Stáhnout tabulku řešitelů ve formátu CSV',
+            { format: 'csv'},
+            { :class=> 'btn btn-primary'} %>
+
   <hr>
   <% if  @problem_no %>
-    <%= form_tag({:action => :upload_corr} , :multipart => true ) do %>
+    <%= form_tag({:action => :upload_rev} , :multipart => true ) do %>
           <%= hidden_field_tag :roc, @annual %>
           <%= hidden_field_tag :se,  @round %>
           <%= hidden_field_tag :ul,  @problem_no %>
           <%= file_field_tag :file_rev, :class => 'input-small', :accept => '*.pdf|*.zip'  %>
           <%= submit_tag 'Nahraj opravené řešení ', :class => 'btn'  %>
     <% end %>
+    <hr>
   <% end %>
-
 <% end %>
 
 
