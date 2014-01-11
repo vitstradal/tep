@@ -49,7 +49,6 @@ class Sosna::SolutionController < SosnaController
 
   def _load_index
     @want_edit = false
-    @solutions = _solutions_from_roc_se_ul
     path = [ _annual_link(@annual) ]
 
     dir = nil
@@ -371,11 +370,11 @@ class Sosna::SolutionController < SosnaController
     numbers = {}
     
     @solutions.each do |sol|
-      solver = sol.solver
+      solver_id = sol.solver_id
       problem_no = sol.problem.problem_no
 
-      @solutions_by_solver[solver.id] ||= []
-      @solutions_by_solver[solver.id][problem_no] =  sol
+      @solutions_by_solver[solver_id] ||= []
+      @solutions_by_solver[solver_id][problem_no] =  sol
 
       numbers[problem_no] = 1
     end
