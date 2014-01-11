@@ -53,5 +53,4 @@ module SosnaHelper
     ret = FFILocale::strcoll(a, b) 
     return ret == 0 ? false : ret
   end
-
 end

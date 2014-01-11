@@ -32,16 +32,17 @@ class Sosna::SolutionController < SosnaController
   def update_scores
     roc, se, ul = params[:roc], params[:se], params[:ul]
     scores = params[:score]
+    solutions = Sosna::Solution.find(scores.keys)
 
-    pp scores
-    scores.each_with_index do |(sol_id, score), idx|
+    solutions.each do |sol|
 
-      print "xxx:#{score},#{sol_id}"
-      sol = Sosna::Solution.find(sol_id)
-      sol.score = score
-      sol.save
+      score = begin Integer scores[sol.id.to_s] ; rescue ; nil ;  end
+
+      if sol.score != score
+        sol.score = score
+        sol.save
+      end
     end
-
 
     redirect_to action: :edit, roc: roc, se: se, ul: ul
   end
@@ -364,6 +365,7 @@ class Sosna::SolutionController < SosnaController
     load_config
     @solvers = get_sorted_solvers(@annual)
     @solutions = _solutions_from_roc_se_ul
+    @problems =  _problems_from_roc_se_ul
     @solutions_by_solver = []
 
     numbers = {}
@@ -377,16 +379,32 @@ class Sosna::SolutionController < SosnaController
 
       numbers[problem_no] = 1
     end
-    @problem_numbers = numbers.keys.sort
+    @solvers.each do |solver|
+      @solutions_by_solver[solver.id] ||= []
+      @problems.each do |pr|
+        if @solutions_by_solver[solver.id][pr.problem_no].nil? 
+          sol = Sosna::Solution.create({ :solver_id => solver.id, :problem_id => pr.id, })
+          @solutions_by_solver[solver.id][pr.problem_no] = sol
+        end
+      end
+    end
 
+  end
+  def _problems_from_roc_se_ul
+    roc, se, ul = _params_roc_se_ul
+    if ul
+      return Sosna::Problem.where(:annual => roc, :round => se, :problem_no => ul).load
+    else
+      return Sosna::Problem.where(:annual => roc, :round => se).load
+    end
   end
 
   def _solutions_from_roc_se_ul
     roc, se, ul = _params_roc_se_ul
     if ul
-      return Sosna::Solution.joins(:problem).where(:sosna_problems => {:annual => roc, :round => se, :problem_no => ul}).load
+      return Sosna::Solution.includes(:problem).joins(:problem).where(:sosna_problems => {:annual => roc, :round => se, :problem_no => ul}).load
     else
-      return Sosna::Solution.joins(:problem).where(:sosna_problems => {:annual => roc, :round => se}).load
+      return Sosna::Solution.includes(:problem).joins(:problem).where(:sosna_problems => {:annual => roc, :round => se}).load
     end
   end
 

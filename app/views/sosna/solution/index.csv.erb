@@ -1,12 +1,12 @@
-%id;Příjmení;Jméno;Škola;Datum;<% @problem_numbers.each do |no| %>u<%=no%>;<% end %><% @problem_numbers.each do |no| %>B<%=no%>;<% end %>
+%id;Příjmení;Jméno;Škola;Datum;<% @problems.each do |pr| %>u<%=pr.problem_no%>;<% end %><% @problems.each do |pr| %>B<%=pr.problem_no%>;<% end %>
 <% @solvers.each do |solver| 
   %><%= solver.id 
   %>;<%= solver.last_name
   %>;<%= solver.name
   %>;<%= solver.school.nil? ? '' : solver.school.short
-  %>;;<% @problem_numbers.each do |no| 
+  %>;;<% @problems.each do |pr| 
    %><% sol_arr = @solutions_by_solver[solver.id]  
-   %><% sol  =  sol_arr.nil?  ? nil : sol_arr[no]  
+   %><% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  
    %><% if !sol.nil? && sol.filename
           %>A<%
         else

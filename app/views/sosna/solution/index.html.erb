@@ -30,11 +30,11 @@
    <th>Id</th>
    <th>Řešitel</th>
    <th>Škola</th>
-  <% @problem_numbers.each do |no| %>
-   <th>u<%=no%></th>
+  <% @problems.each do |pr| %>
+   <th>u<%=pr.problem_no%></th>
   <% end %>
-  <% @problem_numbers.each do |no| %>
-   <th title="Body za úlohu č. <%=no%>">B<%=no%></th>
+  <% @problems.each do |pr| %>
+   <th title="Body za úlohu č. <%=pr.problem_no%>">B<%=pr.problem_no%></th>
   <% end %>
  </tr>
 <% @solvers.each do |solver| %>
@@ -42,12 +42,12 @@
     <td><%= link_to solver.id, { controller: :solver, action: :show, id: solver.id }  %></td>
     <td><%= solver.last_name %> <%= solver.name %> </td>
     <td><%= solver.school.nil? ? '-' : solver.school.short %></td>
-    <% @problem_numbers.each do |no| %>
+    <% @problems.each do |pr| %>
        <td>
          <% sol_arr = @solutions_by_solver[solver.id]  %>
-         <% sol  =  sol_arr.nil?  ? nil : sol_arr[no]  %>
+         <% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  %>
          <% if !sol.nil? && sol.filename %>
-           <%= link_to no, {:action => :download, :id => sol.id}, {:title => sol.filename_orig} %>
+           <%= link_to pr.problem_no, {:action => :download, :id => sol.id}, {:title => sol.filename_orig} %>
            <% if sol.filename_corr %>
              <%= link_to 'o', {:action => :download_rev, :id => sol.id}, {:title => sol.filename_corr_display} %></td>
            <% end %>
@@ -56,10 +56,10 @@
          <% end %>
        </td>
     <% end %>
-    <%  @problem_numbers.each do |no| %>
+    <%  @problems.each do |pr| %>
        <td>
          <% sol_arr = @solutions_by_solver[solver.id]  %>
-         <% sol  =  sol_arr.nil?  ? nil : sol_arr[no]  %>
+         <% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  %>
          <% if !sol.nil? %>
            <% if @want_edit %>
                 <input class="input-mini" type="text" name="score[<%= sol.id %>]" size="3" value="<%= sol.score || '-'%>"/>
@@ -109,8 +109,8 @@
 
   <% else %>
     Pro nahrání opraveného řešení vyber úlohu:
-      <% @problem_numbers.each do |no| %>
-       <%= link_to "ul#{no}", { action: :index, roc: @annual, se: @round, ul: no , anchor: 'upload' } %>,
+      <% @problems.each do |pr| %>
+       <%= link_to "ul#{pr.problem_no}", { action: :index, roc: @annual, se: @round, ul: pr.problem_no , anchor: 'upload' } %>,
       <% end %>
   <% end %>
 <% end %>
