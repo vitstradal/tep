@@ -40,7 +40,7 @@
     <td><%= sol.problem.problem_no %></td>
     <td>
       <% if sol.filename  %>
-         <%= link_to sol.filename , {:action => :download, :id => sol.id}, {:title => sol.filename_orig} %></td>
+         <%= link_to sol.get_filename , {:action => :download, :id => sol.id}, {:title => sol.filename_orig} %></td>
       <% else %>
          <i>žádný soubor</i>
       <% end %>

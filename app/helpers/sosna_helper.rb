@@ -1,4 +1,5 @@
 require 'resolv'
+require 'iconv'
 
 module SosnaHelper
 
@@ -35,6 +36,22 @@ module SosnaHelper
       mail_servers = Resolv::DNS.open.getresources(email.split('@').last, Resolv::DNS::Resource::IN::MX)
       return false if mail_servers.empty?
       true
+  end
+
+  def translit(str)
+    Iconv.iconv('ascii//translit', 'utf-8', str).join
+  end
+  def self.translit(str)
+    Iconv.iconv('ascii//translit', 'utf-8', str).join
+  end
+
+  def strcoll(a,b)
+    FFILocale::strcoll(a, b) 
+  end
+
+  def strcollf(a,b)
+    ret = FFILocale::strcoll(a, b) 
+    return ret == 0 ? false : ret
   end
 
 end

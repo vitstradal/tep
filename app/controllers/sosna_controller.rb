@@ -26,8 +26,9 @@ class SosnaController < ApplicationController
   end
   def get_sorted_solvers(annual)
       solvers = Sosna::Solver.where(annual: annual).all 
-      solvers.sort! { |a,b| (a.last_name != b.last_name ) ? FFILocale::strcoll(a.last_name, b.last_name) :
-                                                             FFILocale::strcoll(a.name, b.name)
-                     }
+      solvers.sort! { |a,b| (a.last_name != b.last_name ) ? strcoll(a.last_name, b.last_name) :
+                                                            strcoll(a.name, b.name)
+                    }
+      solvers.sort! { |a,b| strcollf(a.last_name, b.last_name) || strcollf(a.name, b.name) || 0 }
   end
 end

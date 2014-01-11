@@ -1,6 +1,5 @@
 # encoding: utf-8
 require 'pp'
-require 'iconv'
 #require 'rubygems'
 require 'zip'
 require 'tempfile'
@@ -94,12 +93,14 @@ class Sosna::SolutionController < SosnaController
 
     solution = Sosna::Solution.find id = params[:id]
     filename = solution.filename_orig
+    filename_disp = solution.filename_orig
     if ! solution.owner? current_user
       authorize! :download_org, Sosna::Solution
       filename = solution.filename
+      filename_disp = solution.get_filename()
     end
 
-    send_file UPLOAD_DIR + solution.filename, :filename => filename, :type => 'application/pdf'
+    send_file UPLOAD_DIR + solution.filename, :filename => filename_disp, :type => 'application/pdf'
   end
 
 #  def show
@@ -119,8 +120,9 @@ class Sosna::SolutionController < SosnaController
     Zip::File.open(zip_file_name, Zip::File::CREATE) do |zipfile|
       solutions.each do |solution|
         filename = solution.filename
+        filename_disp = solution.get_filename()
         next if filename.nil?
-        zipfile.add('reseni/' + File.basename(filename),  UPLOAD_DIR + filename)
+        zipfile.add('reseni/' + File.basename(filename_disp),  UPLOAD_DIR + filename)
       end
     end
     send_file zip_file_name, :filename => 'reseni.zip', :type => "application/zip"
@@ -191,7 +193,8 @@ class Sosna::SolutionController < SosnaController
     problem = Sosna::Problem.where(:annual => roc, :round => se, :problem_no => ul).take
     solution = Sosna::Solution.where( :problem_id => problem.id, :solver_id => solver.id).take
 
-    filename_corr = _sol_filename( roc, se, ul, solver.id, solver.name, solver.last_name, true)
+    #filename_corr = _solution_filename(problem, solver, true)
+    filename_corr = solution.get_filename(true)
     solution.filename_corr = filename_corr
     solution.filename_corr_display =  _filename_corr_display(solution.filename_orig)
     solution.save
@@ -257,8 +260,7 @@ class Sosna::SolutionController < SosnaController
 #    pp solver
 #
     # save file
-    filename = _sol_filename(  problem.annual, problem.round, problem.problem_no,
-                              solver.id, solver.name, solver.last_name)
+    filename = solution.get_filename(problem, solver)
 
     File.open(UPLOAD_DIR + filename, 'wb') {  |f| f.write(solution_file.read) }
 
@@ -385,16 +387,6 @@ class Sosna::SolutionController < SosnaController
     return annual
   end
 
-  def _sol_filename(roc, se, ul, rel_id, name, last, is_corr=  false)
-     name = translit name
-     last = translit last
-     typ = is_corr ? 'rev' : 'ori'
-     'reseni-roc%02i-se%02i-ul%i-rel%03i-%s-%s-%s.pdf'  % [ roc, se, ul, rel_id, typ, name, last ]
-  end
-
-  def translit(str)
-    Iconv.iconv('ascii//translit', 'utf-8', str).join
-  end
 
 
 
