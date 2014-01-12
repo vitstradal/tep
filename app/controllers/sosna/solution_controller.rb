@@ -20,6 +20,11 @@ class Sosna::SolutionController < SosnaController
          ul = @problem_no.nil? ?  '' : "-ul#{@problem_no}"
          headers['Content-Disposition'] = "attachment; filename=lidi-roc#{@annual}-se#{@round}#{ul}.csv"
       end
+      format.pik do
+         ul = @problem_no.nil? ?  '' : "_#{@problem_no}"
+         headers['Content-Disposition'] = "attachment; filename=body#{@annual}_#{@round}#{ul}.pik"
+         headers['Content-Type'] = "text/plain; charset=UTF-8";
+      end
     end  
 
   end
