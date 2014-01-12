@@ -37,7 +37,7 @@ class Sosna::SolutionController < SosnaController
   def update_scores
     roc, se, ul = params[:roc], params[:se], params[:ul]
     scores = params[:score]
-    paper = params[:paper]
+    paper = params[:paper] || {}
     solutions = Sosna::Solution.find(scores.keys)
 
     solutions.each do |sol|
