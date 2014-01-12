@@ -17,7 +17,7 @@
   <%= text_field_tag :path, @path %>
 <% end%>
 
-<%= form_tag {:action => :update,, :wiki => @wiki}, :multipart => true, :method =>  :post do%>
+<%= form_tag {:action => :update, :wiki => @wiki}, :multipart => true, :method =>  :post do%>
 
   <button type='submit' class='btn btn-success'>Nahrát soubor</button>
   <%= text_field_tag :filename, @path %>
