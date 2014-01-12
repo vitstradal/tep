@@ -63,7 +63,7 @@ class GiwiController < ApplicationController
     file = params[:file]
     filename = params[:filename]
 
-    return _handle_file_upload(@wiki, @path, file, filename) if file
+    return _handle_file_upload(file, filename) if file
 
     sline = params[:sline]
     eline = params[:eline]
@@ -116,10 +116,19 @@ class GiwiController < ApplicationController
   end
 
 
-  def _handle_file_upload( wiki, path, file, filename)
-    flash[:success] ||= []
-    flash[:success].push('upload: no implemented yet')
-    redirect_to action: :show, wiki: @wiki, path: @path
+  def _handle_file_upload(file, filename)
+    #flash[:success] ||= []
+    #flash[:success].push('upload: no implemented yet')
+    if filename =~ /\/$/ || filename == ''
+      ori = file.original_filename
+      filename += ori
+    end
+
+    raise "bad filename #{filename}" if filename =~ /\.\./
+
+    text = file.read
+    status = Giwi.get_giwi(@wiki).set_page(@path, filename, '', 'author')
+    redirect_to action: :show, wiki: @wiki, path: @path, ls: '.'
   end
 
   def _to_ascii(txt)

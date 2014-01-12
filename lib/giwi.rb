@@ -160,8 +160,12 @@ class Giwi
     index.read_tree(cur_tree.id)
     index.add(path, text)
 
-    fstline = text.each_line.first.chomp.strip
-    comment = "file: #{path} head: #{fstline}"
+    if path =~ /\.(wiki|txt)$/
+      fstline = text.each_line.first.chomp.strip
+      comment = "file: #{path} head: #{fstline}"
+    else
+      comment = "file: #{path}"
+    end
     comment = comment.force_encoding('ASCII-8BIT')
 
     index.commit(comment,  parents: [cur_head], last_tree: cur_head, head: 'master')
