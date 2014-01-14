@@ -25,10 +25,10 @@ class GiwiController < ApplicationController
     # @wiki, Giwi.can_read?
     print "path:#{@path}\n"
 
-    return redirect_to action: :show, path: 'index',  wiki: @wiki if ! @path
     return _handle_ls if @ls
     return _handle_raw_file("#{@path}.#{fmt}", fmt) if %w(pdf png jpg jpeg gif).include? fmt
     return redirect_to action: :show, path: @path + 'index',  wiki: @wiki if @path =~ /\/$/
+    return redirect_to action: :show, path: 'index',  wiki: @wiki if ! @path
 
     _breadcrumb_from_path(@path)
 
@@ -117,8 +117,6 @@ class GiwiController < ApplicationController
 
 
   def _handle_file_upload(file, filename)
-    #flash[:success] ||= []
-    #flash[:success].push('upload: no implemented yet')
     if filename =~ /\/$/ || filename == ''
       ori = file.original_filename
       filename += ori
@@ -127,8 +125,14 @@ class GiwiController < ApplicationController
     raise "bad filename #{filename}" if filename =~ /\.\./
 
     text = file.read
-    status = Giwi.get_giwi(@wiki).set_page(@path, filename, '', 'author')
-    redirect_to action: :show, wiki: @wiki, path: @path, ls: '.'
+    Rails::logger.fatal("file:#{filename} text.size:#{text.size}, @path: #{@path}");
+
+    flash[:success] ||= []
+    flash[:success].push("Soubor #{filename} uložen.")
+
+    status = Giwi.get_giwi(@wiki).set_page(filename, text, '', 'author')
+    Rails::logger.fatal("url::#{url_for(action: :show, wiki: @wiki, path: @path, ls: '.')}"); 
+    redirect_to url_for(action: :show, wiki: @wiki, path: @path, ls: '.')
   end
 
   def _to_ascii(txt)
@@ -137,7 +141,7 @@ class GiwiController < ApplicationController
   end
 
   def _handle_ls
-    @files, @dirs, @path = Giwi.get_giwi(@wiki).get_ls(@path)
+    @files, @dirs, @path_dir = Giwi.get_giwi(@wiki).get_ls(@path)
     render :ls
   end
 

@@ -1,4 +1,4 @@
-<h1>Seznam souborů <%= @path %></h1>
+<h1>Seznam souborů <%= @path_dir %></h1>
 <ul>
 <% @files.each do |file| %>
   <li><%= link_to file[:name], path: file[:path] %>
@@ -14,15 +14,16 @@
 
 <%= form_tag url_for(:action => :show, :wiki => @wiki) , method: :get do%>
   <button type='submit' class='btn btn-success'>Nový soubor</button>
-  <%= text_field_tag :path, @path %>
+  <%= text_field_tag :path, @path_dir %>
 <% end%>
 
-<%= form_tag url_for(:action => :update, :wiki => @wiki), :multipart => true, :method =>  :post do%>
+path:<%= @path %>
+<%= form_tag url_for(:action => :update, :path => @path, :wiki => @wiki), :multipart => true, :method =>  :post do%>
 
   <button type='submit' class='btn btn-success'>Nahrát soubor</button>
-  <%= text_field_tag :filename, @path %>
+  <%= text_field_tag :filename, @path_dir %>
   <%= file_field_tag :file %>
-  <%= hidden_field_tag :path, @path %>
+  <%= hidden_field_tag :path, @path_dir %>
 <% end%>
 
 
