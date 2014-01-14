@@ -305,16 +305,20 @@ class Sosna::SolutionController < SosnaController
       template = dest + '.tmpl'
       FileUtils::cp  dest, template
 
-      Prawn::Document.generate(dest, :template => template) do
-        # hack utf8 font
-        font_families.update( 'andulka' => { :normal => 'public/stylesheets/andulka/andulkabook-webfont.ttf' } )
-        font 'andulka' 
-        repeat( :all, :dynamic => true ) do
-                    draw_text "#{ulfull} #{name}", :at => bounds.top_left
-                    draw_text "str#{page_number}/#{page_count.to_s}", :at => bounds.top_right
+      begin
+        Prawn::Document.generate(dest, :template => template) do
+          # hack utf8 font
+          font_families.update( 'andulka' => { :normal => 'public/stylesheets/andulka/andulkabook-webfont.ttf' } )
+          font 'andulka' 
+          repeat( :all, :dynamic => true ) do
+                      draw_text "#{ulfull} #{name}", :at => bounds.top_left
+                      draw_text "str#{page_number}/#{page_count.to_s}", :at => bounds.top_right
+          end
         end
+      rescue Exception => e  
+        Rails::logger.fatal("Hlavicka fail: #{e.to_s}")
+        FileUtils::cp template, dest 
       end
-
   end
 
   def user_index
