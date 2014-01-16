@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'pp'
+require 'fileutils'
 #require 'rubygems'
 require 'zip'
 require 'tempfile'
@@ -11,11 +12,24 @@ class Sosna::SolutionController < SosnaController
   UPLOAD_DIR = "public/uploads/"
 
   def index
-    @solutions = _solutions_from_roc_se_ul
+    _solutions_from_roc_se_ul_by_solver
     _load_index
+    respond_to do |format|
+      format.html
+      format.csv do
+         ul = @problem_no.nil? ?  '' : "-ul#{@problem_no}"
+         headers['Content-Disposition'] = "attachment; filename=lidi-roc#{@annual}-se#{@round}#{ul}.csv"
+      end
+      format.pik do
+         ul = @problem_no.nil? ?  '' : "_#{@problem_no}"
+         headers['Content-Disposition'] = "attachment; filename=body#{@annual}_#{@round}#{ul}.pik"
+         headers['Content-Type'] = "text/plain; charset=UTF-8";
+      end
+    end  
+
   end
   def edit
-    @solutions = _solutions_from_roc_se_ul
+    _solutions_from_roc_se_ul_by_solver
     @want_edit = true
     render :index
   end
@@ -23,23 +37,28 @@ class Sosna::SolutionController < SosnaController
   def update_scores
     roc, se, ul = params[:roc], params[:se], params[:ul]
     scores = params[:score]
+    paper = params[:paper] || {}
+    solutions = Sosna::Solution.find(scores.keys)
 
-    pp scores
-    scores.each_with_index do |(sol_id, score), idx|
+    solutions.each do |sol|
 
-      print "xxx:#{score},#{sol_id}"
-      sol = Sosna::Solution.find(sol_id)
-      sol.score = score
-      sol.save
+      id = sol.id.to_s
+
+      score = begin Integer scores[id] ; rescue ; nil ;  end
+      has_paper_mail = paper.has_key? id
+
+      if sol.score != score || sol.has_paper_mail != has_paper_mail
+        sol.score = score
+        sol.has_paper_mail = has_paper_mail
+        sol.save
+      end
     end
-
 
     redirect_to action: :edit, roc: roc, se: se, ul: ul
   end
 
   def _load_index
     @want_edit = false
-    @solutions = _solutions_from_roc_se_ul
     path = [ _annual_link(@annual) ]
 
     dir = nil
@@ -54,6 +73,7 @@ class Sosna::SolutionController < SosnaController
       # in level round
       path.push(_round_link(@annual, @round))
       path[-1][:sub] = _rounds_roc(@annual)
+      path[-1][:btn] = _problem_edit2_btn(@annual, @round)
 
       dir = _problems_roc_se(@annual, @round)
     else
@@ -263,9 +283,9 @@ class Sosna::SolutionController < SosnaController
 #
     # save file
     filename = solution.get_filename_ori
-
     File.open(UPLOAD_DIR + filename, 'wb') {  |f| f.write(solution_file.read) }
 
+    sign_pdf(solution, UPLOAD_DIR + filename)
 
     # update solution
     solution.filename = filename
@@ -273,6 +293,32 @@ class Sosna::SolutionController < SosnaController
     solution.save
     add_success 'Soubor úspěšně nahrán'
     redirect_to :action => :user_index, roc: roc, se: se
+  end
+
+
+  def sign_pdf(solution, dest)
+      problem = solution.problem
+      solver = solution.solver
+      name = "#{solver.last_name} #{solver.name}"
+      ulfull = "roč#{problem.annual} se#{problem.round} ul#{problem.problem_no}"
+
+      template = dest + '.tmpl'
+      FileUtils::cp  dest, template
+
+      begin
+        Prawn::Document.generate(dest, :template => template) do
+          # hack utf8 font
+          font_families.update( 'andulka' => { :normal => 'public/stylesheets/andulka/andulkabook-webfont.ttf' } )
+          font 'andulka' 
+          repeat( :all, :dynamic => true ) do
+                      draw_text "#{ulfull} #{name}", :at => bounds.top_left
+                      draw_text "str#{page_number}/#{page_count.to_s}", :at => bounds.top_right
+          end
+        end
+      rescue Exception => e  
+        Rails::logger.fatal("Hlavicka fail: #{e.to_s}")
+        FileUtils::cp template, dest 
+      end
   end
 
   def user_index
@@ -329,12 +375,50 @@ class Sosna::SolutionController < SosnaController
     return roc, se, ul
   end
 
+  def _solutions_from_roc_se_ul_by_solver
+    load_config
+    @solvers = get_sorted_solvers(@annual)
+    @solutions = _solutions_from_roc_se_ul
+    @problems =  _problems_from_roc_se_ul
+    @solutions_by_solver = []
+
+    numbers = {}
+    
+    @solutions.each do |sol|
+      solver_id = sol.solver_id
+      problem_no = sol.problem.problem_no
+
+      @solutions_by_solver[solver_id] ||= []
+      @solutions_by_solver[solver_id][problem_no] =  sol
+
+      numbers[problem_no] = 1
+    end
+    @solvers.each do |solver|
+      @solutions_by_solver[solver.id] ||= []
+      @problems.each do |pr|
+        if @solutions_by_solver[solver.id][pr.problem_no].nil? 
+          sol = Sosna::Solution.create({ :solver_id => solver.id, :problem_id => pr.id, })
+          @solutions_by_solver[solver.id][pr.problem_no] = sol
+        end
+      end
+    end
+
+  end
+  def _problems_from_roc_se_ul
+    roc, se, ul = _params_roc_se_ul
+    if ul
+      return Sosna::Problem.where(:annual => roc, :round => se, :problem_no => ul).load
+    else
+      return Sosna::Problem.where(:annual => roc, :round => se).load
+    end
+  end
+
   def _solutions_from_roc_se_ul
     roc, se, ul = _params_roc_se_ul
     if ul
-      return Sosna::Solution.joins(:problem).where(:sosna_problems => {:annual => roc, :round => se, :problem_no => ul}).load
+      return Sosna::Solution.includes(:problem).joins(:problem).where(:sosna_problems => {:annual => roc, :round => se, :problem_no => ul}).load
     else
-      return Sosna::Solution.joins(:problem).where(:sosna_problems => {:annual => roc, :round => se}).load
+      return Sosna::Solution.includes(:problem).joins(:problem).where(:sosna_problems => {:annual => roc, :round => se}).load
     end
   end
 
@@ -372,6 +456,11 @@ class Sosna::SolutionController < SosnaController
   def _problem_edit_btn(annual, round, problem_no)
       {name: "Editovat", url: {action: 'edit', roc: annual, se: round, ul: problem_no}}
   end
+
+  def _problem_edit2_btn(annual, round)
+      {name: "Editovat", url: {action: 'edit', roc: annual, se: round }}
+  end
+
 
   def _round_link(annual, round, active= false)
      {name: "Série #{round}", active: active, url: {roc: annual, se: round}}

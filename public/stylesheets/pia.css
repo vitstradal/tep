@@ -69,3 +69,11 @@ margin-left: 3em;
 }
 .editheading:before { content: "["; }
 .editheading:after  { content: "]"; }
+
+input.input-minimini {
+   width: 20px;
+   margin-bottom: 0px;
+}
+.table td {
+ padding: 4px;
+}

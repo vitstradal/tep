@@ -33,7 +33,7 @@ class Ability
       can :user_index, Sosna::Solution
       can :upload, Sosna::Solution
       can :download, Sosna::Solution
-      can :download_corr, Sosna::Solution
+      can :download_rev, Sosna::Solution
     end
 
     if user.org?
@@ -46,7 +46,7 @@ class Ability
       can :update, Sosna::Solution
       can :downall, Sosna::Solution
       can :update_scores, Sosna::Solution
-      can :upload_corr, Sosna::Solution
+      can :upload_rev, Sosna::Solution
 
       can :index, Sosna::Problem
       can :show, Sosna::Problem

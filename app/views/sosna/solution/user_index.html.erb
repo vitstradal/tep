@@ -39,7 +39,7 @@
       <% sol_in_this_round_allowed   = @round <  @config[:round] %>
       <% sol_in_this_round_allowed ||= @round == @config[:round] && @config[:show_revisions] == 'yes'  %>
       <% if sol_in_this_round_allowed && @solutions[p.id].filename_corr_display %>
-        <%= link_to @solutions[p.id].filename_corr_display, :action => :download_corr, :id => @solutions[p.id].id %>
+        <%= link_to @solutions[p.id].filename_corr_display, :action => :download_rev, :id => @solutions[p.id].id %>
       <% else %>
         <i>řešení není opravené</i>
       <% end %>

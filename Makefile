@@ -7,8 +7,8 @@ prod-migrate:
 dev-reset: dev-del dev-migrate dev-seed
 prod-reset: prod-del prod-migrate prod-seed
 
-prod-del:
-	rm -f db/production.sqlite3
+#prod-del:
+#	rm -f db/production.sqlite3
 dev-del:
 	rm -f db/development.sqlite3
 dev-migrate:

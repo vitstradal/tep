@@ -1,3 +1,10 @@
+exportovat lidi z tepu:
+
+sqlite3 -list -separator ';' ../tep/db/production.sqlite3 'select id,last_name,name from sosna_solvers'  > lidi.tep
+
+
+
+
 ---
 
 --

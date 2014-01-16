@@ -1,0 +1,16 @@
+%id;Příjmení Jméno               ;Ro;;<% @problems.each do |pr| %><%=pr.problem_no%><% end %>
+<% @solvers.each do |solver| 
+  %><%= '%3s' % solver.id .to_s
+  %>;<%='%-29s' % "#{solver.last_name} #{solver.name}"
+  %>;<%= '%-2s' % solver.grade_num
+  %>;;<% @problems.each do |pr| 
+   %><% sol_arr = @solutions_by_solver[solver.id]  
+   %><% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  
+   %><% if sol.score.nil? || sol.score == ''
+          %>-<%
+        else 
+          %><%= sol.score%><%
+        end 
+   %><%
+ end %>
+<% end %>
