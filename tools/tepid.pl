@@ -3,6 +3,7 @@
 use utf8;
 use strict;
 use warnings;
+die "useage: $0 lidi.tep lidi.pik data.in" unless @ARGV;
 
 my %res;
 
@@ -12,7 +13,10 @@ open(IN, $ARGV[2]) or die;
 while(my $r = <TEP>) {
   chomp $r;
   my ($id, $last, $name) =  split(/;/, $r);
-  print STDERR "double tep $last-$name\n" if defined $res{"$last-$name"}->{tepid};
+  if( my $dtepid =  defined $res{"$last-$name"}->{tepid} ) {
+    print STDERR "!!! double in tep $last-$name ($dtepid vs. $id)\n";
+  }
+
   $res{"$last-$name"}->{tepid} = $id;
   $res{"$last-$name"}->{last} = $last;
   $res{"$last-$name"}->{name} = $name;
@@ -30,8 +34,8 @@ while(my $r = <PIK>) {
 
 for my $k (sort keys %res) {
   my $v = $res{$k};
-  print STDERR "not in pik: $v->{last};$v->{name}\n" if ! $v->{pikid};
-  print STDERR "not in tep: $v->{last};$v->{name}\n" if ! $v->{tepid};
+  print STDERR "+++ not in pik: $v->{last};$v->{name}\n" if ! $v->{pikid};
+  print STDERR "--- not in tep: $v->{last};$v->{name}\n" if ! $v->{tepid};
 }
 
 

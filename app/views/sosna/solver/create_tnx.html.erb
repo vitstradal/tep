@@ -1,7 +1,23 @@
 <h1>Vítej Pikomaťáku!</h1>
 
-<p>Díky, že jsi se přihlásil.</p>
 
+<% if current_user.admin? %>
+  <p>Vytvořil jsi uživatele na jeho emailovou adresu
+  <% if (params[:send_first]||'') == 'true'  %>
+     <b>byl</b>
+  <% else %>
+     <b>nebyl</b>
+  <% end %>
+  poslán uvítací email.
+  </p>
+
+<%= link_to 'Založit dalšího nového řešitele',
+            { action: :new },
+            { :class=> 'btn btn-primary'} %>
+
+<% else %>
+
+<p>Díky, že jsi se přihlásil.</p>
 
 <p>Na zadanou emailovou adresu ti přijdou instrukce,
 jak se přihlásit v případě, že budeš chtít zasílat řešení elektronicky (elektronické zasílání řešení však není povinné).
@@ -13,3 +29,4 @@ Na tvoji účast v soutěži se těší organizátoři Pikomatu MFF UK.
 
 
 
+<% end %>

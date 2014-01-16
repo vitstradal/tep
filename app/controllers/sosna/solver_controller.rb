@@ -39,7 +39,7 @@ class Sosna::SolverController < SosnaController
 
     school_id =  params[:school].delete :id
     send_first =  true
-    send_first =  false if current_user.adm? && params[:send_first].nil?
+    send_first =  false if current_user.admin? && params[:send_first].nil?
 
     solver = Sosna::Solver.new(params[:sosna_solver])
 
@@ -90,7 +90,7 @@ class Sosna::SolverController < SosnaController
     # some test
     school.save if school.id.nil?
     solver.save
-    redirect_to :action => :create_tnx
+    redirect_to :action => :create_tnx, :send_first =>  send_first
   end
 
   def create_tnx
