@@ -152,6 +152,16 @@ Pokud škola v seznamu není, vyberte položku 'Jiná škola', a vyplňte název
   </div>
 <% end %>
 
+<% if current_user.adm?  %>
+  <div class="control-group">
+    <div class="controls">
+     <label class="checkbox" for="souhlasim"> <%= check_box_tag 'send_first', '1' %>
+         Zaslat uvítací email 
+     </label>
+    </div>
+  </div>
+<% end %>
+
 
 <div class="control-group">
   <div class="controls">

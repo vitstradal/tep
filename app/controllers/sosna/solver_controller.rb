@@ -38,7 +38,8 @@ class Sosna::SolverController < SosnaController
     params.require(:sosna_solver).permit!
 
     school_id =  params[:school].delete :id
-
+    send_first =  true
+    send_first =  false if current_user.adm? && params[:send_first].nil?
 
     solver = Sosna::Solver.new(params[:sosna_solver])
 
@@ -79,7 +80,7 @@ class Sosna::SolverController < SosnaController
       # create user by email
       user =  User.new(email: solver.email, name: solver.name, last_name: solver.last_name, confirmation_sent_at: Time.now,  roles: [:user])
       user.confirm!
-      user.send_first_login_instructions
+      user.send_first_login_instructions  if send_first
       solver.user_id = user.id
       user.save
     else 
