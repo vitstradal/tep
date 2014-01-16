@@ -39,7 +39,7 @@ class Sosna::SolverController < SosnaController
 
     school_id =  params[:school].delete :id
     send_first =  true
-    send_first =  false if current_user.admin? && params[:send_first].nil?
+    send_first =  false if !current_user.nil? && current_user.admin? && params[:send_first].nil?
 
     solver = Sosna::Solver.new(params[:sosna_solver])
 

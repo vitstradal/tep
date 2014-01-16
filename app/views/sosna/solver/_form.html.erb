@@ -152,7 +152,7 @@ Pokud škola v seznamu není, vyberte položku 'Jiná škola', a vyplňte název
   </div>
 <% end %>
 
-<% if current_user.admin?  %>
+<% if !current_user.nil? && current_user.admin?  %>
   <div class="control-group">
     <div class="controls">
      <label class="checkbox" for="send_first"> <%= check_box_tag 'send_first', '1' %>

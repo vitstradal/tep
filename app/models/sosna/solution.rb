@@ -21,9 +21,10 @@ class Sosna::Solution < ActiveRecord::Base
      roc = problem.annual
      se = problem.round
      ul = problem.problem_no
-     rel_id = solver.id
-     last = translit  solver.last_name
-     name = translit solver.name
+     rel_id = solver_id
+     last, name = "LAST", "NAME"
+     last = translit  solver.last_name if solver
+     name = translit solver.name if solver
      typ = is_ori ? 'ori' : 'rev'
      #Rails.logger.fatal "name:" + solver.name
      #Rails.logger.fatal "nametr:" + name
