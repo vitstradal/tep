@@ -30,13 +30,19 @@ class Sosna::SolutionController < SosnaController
   end
   def edit
     _solutions_from_roc_se_ul_by_solver
-    @want_edit = true
+    if params[:paper].nil?
+      @want_edit_paper = false
+      @want_edit = true
+    else
+      @want_edit_paper = true
+      @want_edit = false
+    end
     render :index
   end
 
   def update_scores
     roc, se, ul = params[:roc], params[:se], params[:ul]
-    scores = params[:score]
+    scores = params[:score] || {}
     paper = params[:paper] || {}
     solutions = Sosna::Solution.find(scores.keys)
 
@@ -59,6 +65,7 @@ class Sosna::SolutionController < SosnaController
 
   def _load_index
     @want_edit = false
+    @want_edit_paper = false
     path = [ _annual_link(@annual) ]
 
     dir = nil
@@ -459,6 +466,10 @@ class Sosna::SolutionController < SosnaController
 
   def _problem_edit2_btn(annual, round)
       {name: "Editovat", url: {action: 'edit', roc: annual, se: round }}
+  end
+
+  def _problem_edit_paper_btn(annual, round)
+      {name: "Editovat papíry", url: {action: 'edit', paper: 'yes', roc: annual, se: round }}
   end
 
 

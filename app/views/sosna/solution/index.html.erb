@@ -19,7 +19,7 @@
 
 <h1>Řešení úloh, ročník <%=@annual%>, série <%=@round%><%if @problem_no%>, úloha <%=@problem_no%><%end%></h1>
 
-<% if @want_edit %>
+<% if @want_edit || @want_edit_paper %>
 <%= form_tag action: :update_scores, :roc => @annual, :se => @round, :ul => @problem_no %> 
 <% end %>
 
@@ -47,7 +47,7 @@
          <% sol_arr = @solutions_by_solver[solver.id]  %>
          <% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  %>
 
-         <% if  @want_edit %>
+         <% if @want_edit_paper %>
             <input type="checkbox" name="paper[<%= sol.id %>]" size="3" <%if sol.has_paper_mail %> checked="checked" <% end %> />
          <% else %>
            <% if sol.filename %>
@@ -81,7 +81,7 @@
 
 </table>
 
-<% if @want_edit %>
+<% if @want_edit || @want_edit_paper%>
 <button type='submit' class='btn btn-danger'>Uložit</button> 
 <%= link_to 'Zpět', {action: :index, roc: @annual, se: @round, ul: @problem_no}, {:class => 'btn'} %>
 
