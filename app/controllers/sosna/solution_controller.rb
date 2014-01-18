@@ -202,7 +202,7 @@ class Sosna::SolutionController < SosnaController
 
   def _upload_rev_one(roc, se, ul,  fname)
 
-    if fname !~ /^reseni-roc(\d+)-se(\d+)-ul(\d+)-rel(\d+)-(ori|rev)-.*.pdf/
+    if fname !~ /^(?:[ \w]*\/)?reseni-roc(\d+)-se(\d+)-ul(\d+)-rel(\d+)-(ori|rev)-.*.pdf/
       _add_msg(fname, "jmeno souboru neni ve spravnem formatu '#{fname}'")
       return nil
     end
@@ -230,7 +230,7 @@ class Sosna::SolutionController < SosnaController
 
     print "solution id: #{solution.id}, #{solution.filename_corr}\n"
     _add_msg(fname, "ok", true)
-    return filename_corr
+    return filename_rev
 
   end
 
