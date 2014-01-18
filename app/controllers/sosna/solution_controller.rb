@@ -225,7 +225,7 @@ class Sosna::SolutionController < SosnaController
     #filename_corr = _solution_filename(problem, solver, true)
     filename_rev = solution.get_filename_rev
     solution.filename_corr = filename_rev
-    solution.filename_corr_display =  _filename_rev_display(solution.filename_orig)
+    solution.filename_corr_display =  _filename_rev_display(solution.filename_orig||filename_rev)
     solution.save
 
     print "solution id: #{solution.id}, #{solution.filename_corr}\n"

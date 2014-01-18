@@ -22,5 +22,11 @@ dev-seed:
 t:
 	rake test
 r: restart
+
+
+c:
+	rails c -e production
+
+
 server:
 	script/rails server --binding=localhost
