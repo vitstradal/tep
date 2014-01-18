@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 5) do
+ActiveRecord::Schema.define(version: 6) do
 
   create_table "sessions", force: true do |t|
     t.string   "session_id", null: false
@@ -59,6 +59,8 @@ ActiveRecord::Schema.define(version: 5) do
     t.datetime "updated_at"
     t.boolean  "has_paper_mail",        default: false, null: false
   end
+
+  add_index "sosna_solutions", ["solver_id", "problem_id"], name: "index_sosna_solutions_on_solver_id_and_problem_id", unique: true
 
   create_table "sosna_solvers", force: true do |t|
     t.text     "name"

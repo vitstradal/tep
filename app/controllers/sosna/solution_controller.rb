@@ -356,10 +356,14 @@ class Sosna::SolutionController < SosnaController
     @problems.each do |p|
       #logger.fatal "fatal2:" + @solutions.inspect
       if ! (@solutions.has_key?(p.id))
-        @solutions[p.id] = Sosna::Solution.create({
+        begin
+          @solutions[p.id] = Sosna::Solution.create({
                                             :solver_id => @solver.id,
                                             :problem_id => p.id,
                                             })
+        rescue Exception => e
+          Rails::logger.fatal("user_index:Solution.create -> " + e.to_s)
+        end
       end
     end
   end
@@ -404,7 +408,11 @@ class Sosna::SolutionController < SosnaController
       @solutions_by_solver[solver.id] ||= []
       @problems.each do |pr|
         if @solutions_by_solver[solver.id][pr.problem_no].nil? 
-          sol = Sosna::Solution.create({ :solver_id => solver.id, :problem_id => pr.id, })
+          begin
+            sol = Sosna::Solution.create({ :solver_id => solver.id, :problem_id => pr.id, })
+          rescue Exception => e
+            Rails::logger.fatal(" _solutions_from_roc_se_ul_by_solver:Solution.create -> " + e.to_s)
+          end
           @solutions_by_solver[solver.id][pr.problem_no] = sol
         end
       end
