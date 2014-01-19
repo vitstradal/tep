@@ -81,6 +81,8 @@ class Ability
       can :delete, Sosna::Solver
       can :delete, Sosna::School
       can :delete, Sosna::Problem
+
+      can :update_papers, Sosna::Solution
     end
 
   end

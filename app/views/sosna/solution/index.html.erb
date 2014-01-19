@@ -19,10 +19,11 @@
 
 <h1>Řešení úloh, ročník <%=@annual%>, série <%=@round%><%if @problem_no%>, úloha <%=@problem_no%><%end%></h1>
 
-<% if @want_edit || @want_edit_paper %>
-<%= form_tag action: :update_scores, :roc => @annual, :se => @round, :ul => @problem_no %> 
+<% if @want_edit %>
+  <%= form_tag action: :update_scores, :roc => @annual, :se => @round, :ul => @problem_no %> 
+<% elsif @want_edit_paper %>
+  <%= form_tag action: :update_papers, :roc => @annual, :se => @round, :ul => @problem_no %> 
 <% end %>
-
 
 
 <table class="table table-bordered">

@@ -40,10 +40,23 @@ class Sosna::SolutionController < SosnaController
     render :index
   end
 
+  def update_papers
+    roc, se, ul = params[:roc], params[:se], params[:ul]
+    paper = params[:paper] || {}
+    solutions = Sosna::Solution.includes(:problem).where(:sosna_problems => {:annual => roc, :round => se}).load
+    solutions.each do |sol|
+      has_paper_mail = paper.has_key?  sol.id.to_s
+      if sol.has_paper_mail != has_paper_mail
+        sol.has_paper_mail = has_paper_mail
+        sol.save
+      end
+    end
+    redirect_to action: :edit, roc: roc, se: se, ul: ul, paper: 'yes'
+  end
+
   def update_scores
     roc, se, ul = params[:roc], params[:se], params[:ul]
     scores = params[:score] || {}
-    paper = params[:paper] || {}
     solutions = Sosna::Solution.find(scores.keys)
 
     solutions.each do |sol|
@@ -51,11 +64,9 @@ class Sosna::SolutionController < SosnaController
       id = sol.id.to_s
 
       score = begin Integer scores[id] ; rescue ; nil ;  end
-      has_paper_mail = paper.has_key? id
 
-      if sol.score != score || sol.has_paper_mail != has_paper_mail
+      if sol.score != score 
         sol.score = score
-        sol.has_paper_mail = has_paper_mail
         sol.save
       end
     end
@@ -75,12 +86,14 @@ class Sosna::SolutionController < SosnaController
       path.push(_round_link(@annual, @round))
       path.push(_problem_link(@annual, @round, @problem_no))
       path[-1][:sub] = _problems_roc_se(@annual, @round)
-      path[-1][:btn] = _problem_edit_btn(@annual, @round, @problem_no)
+      @action_buttons = [ _problem_edit_btn(@annual, @round, @problem_no) ]
     elsif @round
       # in level round
       path.push(_round_link(@annual, @round))
       path[-1][:sub] = _rounds_roc(@annual)
-      path[-1][:btn] = _problem_edit2_btn(@annual, @round)
+      @action_buttons = []
+      @action_buttons.push _paper_edit_round_btn(@annual, @round)  if current_user.admin?
+      @action_buttons.push _problem_edit_round_btn(@annual, @round) 
 
       dir = _problems_roc_se(@annual, @round)
     else
@@ -469,11 +482,15 @@ class Sosna::SolutionController < SosnaController
   end
 
   def _problem_edit_btn(annual, round, problem_no)
-      {name: "Editovat", url: {action: 'edit', roc: annual, se: round, ul: problem_no}}
+      {name: "Editovat body", url: {action: 'edit', roc: annual, se: round, ul: problem_no}}
   end
 
-  def _problem_edit2_btn(annual, round)
-      {name: "Editovat", url: {action: 'edit', roc: annual, se: round }}
+  def _problem_edit_round_btn(annual, round)
+      {name: "Editovat body", url: {action: 'edit', roc: annual, se: round }}
+  end
+
+  def _paper_edit_round_btn(annual, round)
+      {name: "Editovat papíry", url: {action: 'edit', roc: annual, se: round, paper: 'yes' }}
   end
 
   def _problem_edit_paper_btn(annual, round)

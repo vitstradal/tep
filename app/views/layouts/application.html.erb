@@ -99,9 +99,9 @@
 
 <%# @breadrubb [[ {name => 'home', url=> '/home.html', sub => [...], }  ]]  %>
 <%# @breadrubb [[ {btn => } %>
-<% if @breadcrumb %>
+<% if @breadcrumb || @action_buttons %>
 <ul class="breadcrumb">
-   <% @breadcrumb.each_with_index do |bread, bread_idx| %>
+   <% (@breadcrumb||[]).each_with_index do |bread, bread_idx| %>
      <% bread.each do |crumb, crumb_idx| %>
         <% msep, esep = case bread_idx
                         when 0 then ['/', '>']
@@ -136,12 +136,17 @@
                         <span class="divider"><%= esep %></span>
             <% end %>
          </li>
-         <% if crumb[:btn] %>
-           <li class="pull-right">
-             <%= link_to crumb[:btn][:name], crumb[:btn][:url], :class=>"btn btn-mini btn-danger" %>
-           </li>
-         <% end %>
      <% end %>
+   <% end %>
+   <% if @action_buttons %>
+     <li class="pull-right">
+       <div class="btn-group">
+         <% @action_buttons.each do |button| %>
+	    <% btn_class = button[:class] || 'btn-danger' %>
+            <%= link_to button[:name], button[:url], :class=>"btn btn-mini #{btn_class}" %>
+          <% end %>
+	</div>
+     </li>
    <% end %>
 </ul>
 <% end %>
