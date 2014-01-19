@@ -1,5 +1,5 @@
 # encoding: utf-8
-Pia::Application.routes.draw do
+Tep::Application.routes.draw do
 
   devise_for :users
 
@@ -50,19 +50,19 @@ Pia::Application.routes.draw do
   get  '/sosna/config'                       => 'sosna/config#index',           :as => :sosna_configs
   post '/sosna/config/update'                => 'sosna/config#update',          :as => :sosna_config_update
 
-  # pia
-  get  '/users'                              => 'pia#users',                    :as => :users_list
-  get  '/user/:id/show'                      => 'pia#user',                     :as => :user_show
-  patch '/user/:id/update'                   => 'pia#user_update',              :as => :user_update
-  post  '/user/:id/delete'                   => 'pia#user_delete',              :as => :user_delete
-  patch '/user/:id/role'                     => 'pia#user_role_change',         :as => :user_role_change
-  post  '/user/:id/action/:what'             => 'pia#user_action',              :as => :user_action
-  get  '/reg/:token'                         => 'pia#user_finish_registration', :as => :user_finish_registration
+  # tep
+  get  '/users'                              => 'tep#users',                    :as => :users_list
+  get  '/user/:id/show'                      => 'tep#user',                     :as => :user_show
+  patch '/user/:id/update'                   => 'tep#user_update',              :as => :user_update
+  post  '/user/:id/delete'                   => 'tep#user_delete',              :as => :user_delete
+  patch '/user/:id/role'                     => 'tep#user_role_change',         :as => :user_role_change
+  post  '/user/:id/action/:what'             => 'tep#user_action',              :as => :user_action
+  get  '/reg/:token'                         => 'tep#user_finish_registration', :as => :user_finish_registration
 
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-  get  '/faq'                                => "pia#faq",                      :as => :faq
+  get  '/faq'                                => "tep#faq",                      :as => :faq
 
   Giwi.giwis.each_value do |giwi|
      url = giwi.url
@@ -72,7 +72,7 @@ Pia::Application.routes.draw do
      post '/' + url + '(/*path)'       => 'giwi#update',    :as =>  route_name_post, constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name}
   end
 
-  root :to => "pia#index", :as => :root
+  root :to => "tep#index", :as => :root
 
   # See how all your routes lay out with "rake routes"
 end

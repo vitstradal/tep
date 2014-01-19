@@ -7,7 +7,7 @@ module ApplicationHelper
 #  end
 #
 #  def digest(data, purpose = 'none')
-#    config = Pia::Application.config
+#    config = Tep::Application.config
 #    key = Digest::HMAC.base64digest(config.secret_token+ "::" + purpose, "key", Digest::SHA256)
 #    _b64_to_b64u(Digest::HMAC.base64digest(data, key, Digest::SHA256))
 #  end

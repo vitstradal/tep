@@ -15,15 +15,15 @@ task :restart do |t|
 end
 --
 cd /home/www/html/provedouci/rails
-ln -s /home/www/rails/pia/public pia
+ln -s /home/www/rails/tep/public tep
 
 
 do /etc/apache2/sites-enabled/pikomat
 pridat na odpovidajici misto:
-        RackBaseURI /provedouci/rails/pia
+        RackBaseURI /provedouci/rails/tep
 
 --
-do pia controlleru (app/controlles/pia_controller.rb)
+do tep controlleru (app/controlles/tep_controller.rb)
 pridane index a hello
 
 v conf/routes.rb odkomentovat
@@ -37,19 +37,19 @@ $ rails dbdb
 $ rake db:migrate
 ---
 vytvoreni apliakce
-$ rails generate new pia
-$ cd pia
-$ rails generate controllor pia
+$ rails generate new tep
+$ cd tep
+$ rails generate controllor tep
 ---
 zalozeni gitu:
 
 git
 
 $ cd /home/www/rails/
-$ mkdir /home/www/git/pia.git 
+$ mkdir /home/www/git/tep.git 
 
-$ git init --bare /home/www/git/pia.git 
-$ git clone  file:///home/www/git/pia.git ; cd pia/
+$ git init --bare /home/www/git/tep.git 
+$ git clone  file:///home/www/git/tep.git ; cd tep/
 $ git add .gitignore 
 $ git push origin  master
 $ git status
