@@ -20,6 +20,7 @@ class GiwiController < ApplicationController
     @edit = params[:edit] || false
     @ls   = params[:ls]
     @part = false
+
     fmt = params[:format]
 
     # @wiki, Giwi.can_read?

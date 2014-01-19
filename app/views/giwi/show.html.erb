@@ -37,11 +37,10 @@
   <% if @editable || @toc %>
     <div class="pull-right">
     <% if @editable %>
-     <%#<span class="pull-right">%>
-     <span> 
-       <a href="<%= url_for path: @path, ls: '.'%>" class="btn">Seznam stránek</a>
-       <a href="<%= url_for path: @path, edit: 'me'%>" class="btn btn-danger">Editovat</a>
-     </span>
+     <% @action_buttons ||= []
+        @action_buttons.push({ :name => 'Seznam stránek', :url => url_for(path: @path, :ls => '.') })
+        @action_buttons.push({ :name => 'Edit',           :url => url_for(path: @path, :edit => :me), :class => 'btn-danger' })
+     %>
     <% end %>
     <% if @toc %>
       <div class='toc well sidebar-nav'>

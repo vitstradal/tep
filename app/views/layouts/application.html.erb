@@ -138,13 +138,16 @@
          </li>
      <% end %>
    <% end %>
-   <% if @action_buttons %>
+   <% if @action_buttons || @action_more %>
      <li class="pull-right">
        <div class="btn-group">
-         <% @action_buttons.each do |button| %>
-	    <% btn_class = button[:class] || 'btn-danger' %>
-            <%= link_to button[:name], button[:url], :class=>"btn btn-mini #{btn_class}" %>
+         <% @action_buttons && @action_buttons.each do |button| %>
+	    <% btn_class = button[:class].nil? ? '' :  " #{button[:class]}"  %>
+            <%= link_to button[:name], button[:url], :class=>"btn btn-mini#{btn_class}" %>
           <% end %>
+	  <% if @action_more %>
+            <a href='#more' class="btn btn-mini"><i class='icon-arrow-down'></i></a>
+	  <% end %>
 	</div>
      </li>
    <% end %>

@@ -80,7 +80,7 @@ class Sosna::SolutionController < SosnaController
     path = [ _annual_link(@annual) ]
 
     dir = nil
-
+    @action_more = true
     if @problem_no
       # in level problem
       path.push(_round_link(@annual, @round))
@@ -482,21 +482,16 @@ class Sosna::SolutionController < SosnaController
   end
 
   def _problem_edit_btn(annual, round, problem_no)
-      {name: "Editovat body", url: {action: 'edit', roc: annual, se: round, ul: problem_no}}
+      {name: "Editovat body", url: {action: 'edit', roc: annual, se: round, ul: problem_no}, :class=> 'btn-danger'}
   end
 
   def _problem_edit_round_btn(annual, round)
-      {name: "Editovat body", url: {action: 'edit', roc: annual, se: round }}
+      {name: "Editovat body", url: {action: 'edit', roc: annual, se: round }, :class=>'btn-danger' }
   end
 
   def _paper_edit_round_btn(annual, round)
-      {name: "Editovat papíry", url: {action: 'edit', roc: annual, se: round, paper: 'yes' }}
+      {name: "Editovat papíry", url: {action: 'edit', roc: annual, se: round, paper: 'yes' }, :class => 'btn-danger' }
   end
-
-  def _problem_edit_paper_btn(annual, round)
-      {name: "Editovat papíry", url: {action: 'edit', paper: 'yes', roc: annual, se: round }}
-  end
-
 
   def _round_link(annual, round, active= false)
      {name: "Série #{round}", active: active, url: {roc: annual, se: round}}
