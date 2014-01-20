@@ -12,11 +12,11 @@ class Ability
     can :new, Sosna::Solver
     can :create, Sosna::Solver
     can :create_tnx, Sosna::Solver
-    can :user_finish_registration, :pium
+    can :user_finish_registration, :tep
 
-    # pia
-    can :index, :pium
-    can :faq, :pium
+    # tep
+    can :index, :tep
+    can :faq, :tep
 
     #wikis
     Giwi.giwis.each_value do |giwi|
@@ -69,12 +69,12 @@ class Ability
     end
 
     if user.admin?
-      can :users,            :pium
-      can :user,             :pium
-      can :user_update,      :pium
-      can :user_delete,      :pium
-      can :user_action,      :pium
-      can :user_role_change, :pium
+      can :users,            :tep
+      can :user,             :tep
+      can :user_update,      :tep
+      can :user_delete,      :tep
+      can :user_action,      :tep
+      can :user_role_change, :tep
 
       can :index,  Sosna::Config
       can :update, Sosna::Config

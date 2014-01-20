@@ -1,6 +1,6 @@
 # encoding: utf-8
 require 'pp'
-class PiaController < ApplicationController
+class TepController < ApplicationController
 
   include ApplicationHelper
   include SosnaHelper
