@@ -23,6 +23,8 @@
   <%= form_tag action: :update_scores, :roc => @annual, :se => @round, :ul => @problem_no %> 
 <% elsif @want_edit_paper %>
   <%= form_tag action: :update_papers, :roc => @annual, :se => @round, :ul => @problem_no %> 
+<% elsif @want_edit_penalisation %>
+  <%= form_tag action: :update_penalisations, :roc => @annual, :se => @round, :ul => @problem_no %> 
 <% end %>
 
 
@@ -37,6 +39,7 @@
   <% @problems.each do |pr| %>
    <th title="Body za úlohu č. <%=pr.problem_no%>">B<%=pr.problem_no%></th>
   <% end %>
+  <th title="penalizace">Pen<% if @want_edit_penalisation%> / Důvod<%end%></th>
  </tr>
 <% @solvers.each do |solver| %>
   <tr>
@@ -59,7 +62,6 @@
            <% end %>
            <% if sol.has_paper_mail %> P <% end %>
          <% end %>
-
        </td>
     <% end %>
     <%  @problems.each do |pr| %>
@@ -77,12 +79,23 @@
          <% end %>
        </td>
     <% end %>
+    <td>
+      <% pen = @penalisations_by_solver[solver.id] %>
+      <% pen_sc = pen.score || '-' %>
+      <% pen_tit = pen.title || '' %>
+      <% if @want_edit_penalisation %>
+        <input class="input-mini input-minimini" type="text" name="penalisation_score[<%= pen.id %>]" size="3" value="<%= pen_sc %>"/>
+        <input class="input-medium" type="text" name="penalisation_title[<%= pen.id %>]" value="<%= pen_tit %>"/>
+      <% else %>
+        <span title="<%=pen_tit == '' ? 'žádný důvod' : pen_tit %>"><%= pen_sc  %></span>
+      <% end %>
+    </td>
   </tr>
 <% end %>
 
 </table>
 <a name='more'></a>
-<% if @want_edit || @want_edit_paper%>
+<% if @want_edit || @want_edit_paper || @want_edit_penalisation%>
 <button type='submit' class='btn btn-danger'>Uložit</button> 
 <%= link_to 'Zpět', {action: :index, roc: @annual, se: @round, ul: @problem_no}, {:class => 'btn'} %>
 

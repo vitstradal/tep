@@ -45,7 +45,8 @@ module Tep
 
     #config.sosna_user_solution_max_size = 5 * 1024 * 1024
     config.sosna_user_solution_max_size = 20 * 1024 * 1024
-
+    #config.cache_store = ActiveSupport::Cache::MemoryStore.new(:expires_in => 5.minutes)
+    #config.cache_store.silence! 
   end
 end
 

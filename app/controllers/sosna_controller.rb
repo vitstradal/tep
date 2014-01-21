@@ -23,7 +23,6 @@ class SosnaController < ApplicationController
     Sosna::Config.all.each {|c| @config[c.key.to_sym] =  c.value}
     @annual = @config[:annual]
     @round = @config[:round]
-    @round = @config[:round]
   end
 
   def get_sorted_solvers(annual)

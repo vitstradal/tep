@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 6) do
+ActiveRecord::Schema.define(version: 7) do
 
   create_table "sessions", force: true do |t|
     t.string   "session_id", null: false
@@ -29,6 +29,18 @@ ActiveRecord::Schema.define(version: 6) do
   end
 
   add_index "sosna_configs", ["key"], name: "index_sosna_configs_on_key", unique: true
+
+  create_table "sosna_penalisations", force: true do |t|
+    t.integer  "annual"
+    t.integer  "round"
+    t.integer  "solver_id"
+    t.integer  "score"
+    t.text     "title"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "sosna_penalisations", ["solver_id", "annual", "round"], name: "index_sosna_penalisations_on_solver_id_and_annual_and_round", unique: true
 
   create_table "sosna_problems", force: true do |t|
     t.string  "title"

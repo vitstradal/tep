@@ -83,6 +83,7 @@ class Ability
       can :delete, Sosna::Problem
 
       can :update_papers, Sosna::Solution
+      can :update_penalisations, Sosna::Solution
     end
 
   end

@@ -17,18 +17,18 @@
    <th>Opravené řešení</td>
  </tr> 
 <% @problems.each do |p| %>
+  <% sol = @solutions_by_solver[@solver.id][p.problem_no]  %>
   <tr>
     <td><%= p.problem_no%> </td>
     <td>
-      <%# FIXME:   @solutions[p.id] orig_name to title %>
-      <% if @solutions[p.id].filename_orig  %>
-        <%= link_to @solutions[p.id].filename_orig, :action => :download, :id => @solutions[p.id].id %>
+      <% if sol.filename_orig  %>
+        <%= link_to sol.filename_orig, :action => :download, :id => sol.id %>
       <% else %>
         <i>žádné řešení</i>
       <% end %>
     </td>
     <% if show_nahrat %>
-       <td>  <%= form_for  @solutions[p.id], :html => {:class=> 'form-inline', :multipart => true}, :url => :sosna_solution_upload do |f|  %>
+       <td>  <%= form_for  sol, :html => {:class=> 'form-inline', :multipart => true}, :url => :sosna_solution_upload do |f|  %>
           <%= f.hidden_field :id %>
           <%= f.file_field :solution_file , :class => 'input-small', :accept => 'application/pdf', 'max-size' => max_size  %>
           <%= f.submit :class => 'btn', :value => 'Nahraj řešení ' %>
@@ -38,8 +38,8 @@
     <td>
       <% sol_in_this_round_allowed   = @round <  @config[:round] %>
       <% sol_in_this_round_allowed ||= @round == @config[:round] && @config[:show_revisions] == 'yes'  %>
-      <% if sol_in_this_round_allowed && @solutions[p.id].filename_corr_display %>
-        <%= link_to @solutions[p.id].filename_corr_display, :action => :download_rev, :id => @solutions[p.id].id %>
+      <% if sol_in_this_round_allowed && sol.filename_corr_display %>
+        <%= link_to sol.filename_corr_display, :action => :download_rev, :id => sol.id %>
       <% else %>
         <i>řešení není opravené</i>
       <% end %>
@@ -52,9 +52,9 @@
 <ul>
   <% if is_current_annual && !deadline.nil?%>
     <% if deadline >= Time.now %>
-       <li>Termín odeslání je <%= deadline.strftime('%-d. %-m. %Y') %> ve 23:59.</li>
+       <li>Termín odeslání je <%= deadline.strftime('%-d. %-m. %Y') %> ve 24:00.</li>
     <% else %>
-       <li>Termín odeslání byl <%= deadline.strftime('%-d. %-m. %Y') %> ve 23:59.</li>
+       <li>Termín odeslání byl <%= deadline.strftime('%-d. %-m. %Y') %> ve 24:00.</li>
     <% end %>
   <% end %>
   <li> Nahrávej řešení menší než <%= number_to_human_size max_size %>.</li>

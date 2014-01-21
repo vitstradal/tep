@@ -74,6 +74,12 @@ input.input-minimini {
    width: 20px;
    margin-bottom: 0px;
 }
+
+input,
+input.input-medium
+{
+   margin-bottom: 0px;
+}
 .table td {
  padding: 4px;
 }

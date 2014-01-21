@@ -12,7 +12,7 @@ class Sosna::SolutionController < SosnaController
   UPLOAD_DIR = "public/uploads/"
 
   def index
-    _solutions_from_roc_se_ul_by_solver
+    _prepare_solvers_problems_solutions
     _load_index
     respond_to do |format|
       format.html
@@ -29,13 +29,14 @@ class Sosna::SolutionController < SosnaController
 
   end
   def edit
-    _solutions_from_roc_se_ul_by_solver
-    if params[:paper].nil?
-      @want_edit_paper = false
-      @want_edit = true
-    else
+    _prepare_solvers_problems_solutions
+    @want_edit_paper = @want_edit = @want_edit_penalisation = false
+    if !params[:paper].nil?
       @want_edit_paper = true
-      @want_edit = false
+    elsif !params[:penalisation].nil?
+      @want_edit_penalisation = true
+    else
+      @want_edit = true
     end
     render :index
   end
@@ -52,6 +53,25 @@ class Sosna::SolutionController < SosnaController
       end
     end
     redirect_to action: :edit, roc: roc, se: se, ul: ul, paper: 'yes'
+  end
+
+  def update_penalisations
+    roc, se, ul = params[:roc], params[:se], params[:ul]
+    scores = params[:penalisation_score] || {}
+    titles = params[:penalisation_title] || {}
+    Sosna::Penalisation.find(scores.keys).each do |pen|
+      id = pen.id.to_s
+      sc = scores[id]
+      sc = nil if sc == '-'
+      tit = titles[id]
+      tit = nil if tit == ''
+      if pen.score != sc || pen.title != tit
+        pen.score = sc
+        pen.title = tit
+        pen.save
+      end
+    end
+    redirect_to action: :edit, roc: roc, se: se, ul: ul, penalisation: 'yes'
   end
 
   def update_scores
@@ -74,35 +94,6 @@ class Sosna::SolutionController < SosnaController
     redirect_to action: :edit, roc: roc, se: se, ul: ul
   end
 
-  def _load_index
-    @want_edit = false
-    @want_edit_paper = false
-    path = [ _annual_link(@annual) ]
-
-    dir = nil
-    @action_more = true
-    if @problem_no
-      # in level problem
-      path.push(_round_link(@annual, @round))
-      path.push(_problem_link(@annual, @round, @problem_no))
-      path[-1][:sub] = _problems_roc_se(@annual, @round)
-      @action_buttons = [ _problem_edit_btn(@annual, @round, @problem_no) ]
-    elsif @round
-      # in level round
-      path.push(_round_link(@annual, @round))
-      path[-1][:sub] = _rounds_roc(@annual)
-      @action_buttons = []
-      @action_buttons.push _paper_edit_round_btn(@annual, @round)  if current_user.admin?
-      @action_buttons.push _problem_edit_round_btn(@annual, @round) 
-
-      dir = _problems_roc_se(@annual, @round)
-    else
-      # in level annual
-      @annuals = _annuals
-      dir = _rounds_roc(@annual)
-    end
-    @breadcrumb = dir.nil? ? [path] : [ path, dir ]
-  end
 
   def download_rev
     solution = Sosna::Solution.find id = params[:id]
@@ -150,7 +141,8 @@ class Sosna::SolutionController < SosnaController
 #  end
 
   def downall
-    solutions = _solutions_from_roc_se_ul
+    problems = _problems_from_roc_se_ul
+    solutions = _solutions_from_problems problems
 
     zip_file = Tempfile.new(['solution', '.zip'], UPLOAD_DIR)
     zip_file_name = zip_file.path
@@ -204,51 +196,24 @@ class Sosna::SolutionController < SosnaController
     redirect_to :action =>  :index, :roc => roc, :se => se, :ul => ul
   end
 
-  def _add_msg(fname, msg, success = false)
-    if success
-      add_success "#{fname}: #{msg}"
-    else
-      add_alert "#{fname}: #{msg}"
-    end
-    #print "msg: #{fname}: #{msg}\n"
-  end
+  def user_index
 
-  def _upload_rev_one(roc, se, ul,  fname)
+    @annual = params[:roc] || @config[:annual]
+    @round  = params[:se]  || @config[:round]
+    @breadcrumb = [[], _rounds_roc(@annual, @round) ]
 
-    if fname !~ /^(?:[ \w]*\/)?reseni-roc(\d+)-se(\d+)-ul(\d+)-rel(\d+)-(ori|rev)-.*.pdf/
-      _add_msg(fname, "jmeno souboru neni ve spravnem formatu '#{fname}'")
-      return nil
-    end
-    oroc, ose, oul, relid = $1.to_i, $2.to_i, $3.to_i, $4.to_i
+    @is_current = (@annual == @config[:annual] && @round ==  @config[:round])
 
-    if oroc.to_s != roc || ose.to_s != se || oul.to_s != ul
-       _add_msg(fname, "reseni neni ke spravnemu rocniku, serii, uloze")
-      return nil
+    raise 'not logged' if current_user.nil?
+
+    @solver = Sosna::Solver.where(:user_id => current_user.id).take
+    if ! @solver
+       add_alert "Pozor: zatím nejsi řešitelem, nejprve vyplň přihlašku!"
+       return redirect_to :controller => :solver , :action => :new
     end
 
-    solver = Sosna::Solver.find(relid)
-    if !solver
-       _add_msg(fname, "neexistuje takovy resitel #{relid}")
-       return nil
-    end
-
-    problem = Sosna::Problem.where(:annual => roc, :round => se, :problem_no => ul).take
-    solution = Sosna::Solution.where( :problem_id => problem.id, :solver_id => solver.id).take
-
-    #filename_corr = _solution_filename(problem, solver, true)
-    filename_rev = solution.get_filename_rev
-    solution.filename_corr = filename_rev
-    solution.filename_corr_display =  _filename_rev_display(solution.filename_orig||filename_rev)
-    solution.save
-
-    print "solution id: #{solution.id}, #{solution.filename_corr}\n"
-    _add_msg(fname, "ok", true)
-    return filename_rev
-
-  end
-
-  def _filename_rev_display(orig)
-      orig.sub(/(\.[^\.]+)$/, '-opraveno\1')
+    @problems  = Sosna::Problem.where(:annual=> @annual, :round=> @round)
+    @solutions_by_solver = _solutions_by_solver [@solver], @problems
   end
 
   def upload
@@ -305,7 +270,7 @@ class Sosna::SolutionController < SosnaController
     filename = solution.get_filename_ori
     File.open(UPLOAD_DIR + filename, 'wb') {  |f| f.write(solution_file.read) }
 
-    sign_pdf(solution, UPLOAD_DIR + filename)
+    _sign_pdf(solution, UPLOAD_DIR + filename)
 
     # update solution
     solution.filename = filename
@@ -315,8 +280,140 @@ class Sosna::SolutionController < SosnaController
     redirect_to :action => :user_index, roc: roc, se: se
   end
 
+  private
+  def _penalisations_by_solver(solvers)
+    penalisations = Sosna::Penalisation.where(:solver_id => solvers.map{ |s| s.id },
+                                              :annual => @annual, 
+                                              :round => @round).load
+    penalisations_by_solver = {}
+    penalisations.each { |p| penalisations_by_solver[p.solver_id] = p }
+    solvers.each do |solver| 
+      if penalisations_by_solver[solver.id].nil?
+          begin
+            penalisations_by_solver[solver.id] = Sosna::Penalisation.create({
+                                                                        :solver_id => solver.id,
+                                                                        :annual => @annual,
+                                                                        :round => @round, })
+          rescue Exception => e
+            Rails::logger.fatal(" penalisations_by_solver :Solution.create -> " + e.to_s)
+          end
+      end
+    end
+    penalisations_by_solver
+  end
+  def _solutions_by_solver(solvers, problems)
+    solutions = Sosna::Solution.where( :solver_id  => solvers.map{ |s| s.id },
+                                       :problem_id => problems.map { |p| p.id },
+                                    ).load
+    solutions_by_solver = []
+    problems_by_id = {} 
+    problems.each { |p| problems_by_id[p.id] = p }
 
-  def sign_pdf(solution, dest)
+    # solution_by_solver[solver_id][problem_no] => solution
+    solutions.each do |sol|
+      solutions_by_solver[sol.solver_id] ||= []
+      problem_no = problems_by_id[sol.problem_id].problem_no
+      solutions_by_solver[sol.solver_id][problem_no] =  sol
+    end
+
+    # fill missing solutions
+    solvers.each do |solver|
+      solutions_by_solver[solver.id] ||= []
+      problems.each do |pr|
+        if solutions_by_solver[solver.id][pr.problem_no].nil? 
+          begin
+            sol = Sosna::Solution.create({ :solver_id => solver.id, :problem_id => pr.id, })
+          rescue Exception => e
+            Rails::logger.fatal(" solutions_from_roc_se_ul_by_solver:Solution.create -> " + e.to_s)
+          end
+          solutions_by_solver[solver.id][pr.problem_no] = sol
+        end
+      end
+    end
+    solutions_by_solver
+  end
+
+  def _load_index
+    @want_edit = false
+    @want_edit_paper = false
+    @want_edit_penalisation = false
+    path = [ _annual_link(@annual) ]
+
+    dir = nil
+    @action_more = true
+    if @problem_no
+      # in level problem
+      path.push(_round_link(@annual, @round))
+      path.push(_problem_link(@annual, @round, @problem_no))
+      path[-1][:sub] = _problems_roc_se(@annual, @round)
+      @action_buttons = [ _problem_edit_btn(@annual, @round, @problem_no) ]
+    elsif @round
+      # in level round
+      path.push(_round_link(@annual, @round))
+      path[-1][:sub] = _rounds_roc(@annual)
+      @action_buttons = []
+      @action_buttons.push _paper_edit_round_btn(@annual, @round)  if current_user.admin?
+      @action_buttons.push _penalisation_edit_round_btn(@annual, @round)  if current_user.admin?
+      @action_buttons.push _problem_edit_round_btn(@annual, @round) 
+
+      dir = _problems_roc_se(@annual, @round)
+    else
+      # in level annual
+      @annuals = _annuals
+      dir = _rounds_roc(@annual)
+    end
+    @breadcrumb = dir.nil? ? [path] : [ path, dir ]
+  end
+
+  def _add_msg(fname, msg, success = false)
+    if success
+      add_success "#{fname}: #{msg}"
+    else
+      add_alert "#{fname}: #{msg}"
+    end
+    #print "msg: #{fname}: #{msg}\n"
+  end
+
+  def _upload_rev_one(roc, se, ul,  fname)
+
+    if fname !~ /^(?:[ \w]*\/)?reseni-roc(\d+)-se(\d+)-ul(\d+)-rel(\d+)-(ori|rev)-.*.pdf/
+      _add_msg(fname, "jmeno souboru neni ve spravnem formatu '#{fname}'")
+      return nil
+    end
+    oroc, ose, oul, relid = $1.to_i, $2.to_i, $3.to_i, $4.to_i
+
+    if oroc.to_s != roc || ose.to_s != se || oul.to_s != ul
+       _add_msg(fname, "reseni neni ke spravnemu rocniku, serii, uloze")
+      return nil
+    end
+
+    solver = Sosna::Solver.find(relid)
+    if !solver
+       _add_msg(fname, "neexistuje takovy resitel #{relid}")
+       return nil
+    end
+
+    problem = Sosna::Problem.where(:annual => roc, :round => se, :problem_no => ul).take
+    solution = Sosna::Solution.where( :problem_id => problem.id, :solver_id => solver.id).take
+
+    #filename_corr = _solution_filename(problem, solver, true)
+    filename_rev = solution.get_filename_rev
+    solution.filename_corr = filename_rev
+    solution.filename_corr_display =  _filename_rev_display(solution.filename_orig||filename_rev)
+    solution.save
+
+    print "solution id: #{solution.id}, #{solution.filename_corr}\n"
+    _add_msg(fname, "ok", true)
+    return filename_rev
+
+  end
+
+  def _filename_rev_display(orig)
+      orig.sub(/(\.[^\.]+)$/, '-opraveno\1')
+  end
+
+
+  def _sign_pdf(solution, dest)
       problem = solution.problem
       solver = solution.solver
       name = "#{solver.last_name} #{solver.name}"
@@ -341,48 +438,6 @@ class Sosna::SolutionController < SosnaController
       end
   end
 
-  def user_index
-    #load_config
-    @annual = params[:roc] || @config[:annual]
-    @round  = params[:se]  || @config[:round]
-    @breadcrumb = [[], _rounds_roc(@annual, @round) ]
-
-    @is_current = (@annual == @config[:annual] && @round ==  @config[:round])
-
-    die if current_user.nil?
-
-    @problems  = Sosna::Problem.where(:annual=> @annual, :round=> @round)
-
-    @solver = Sosna::Solver.where(:user_id => current_user.id).first
-    if ! @solver
-       add_alert "Pozor: zatím nejsi řešitelem, nejprve vyplň přihlašku!"
-       return redirect_to :controller => :solver , :action => :new
-    end
-
-    problem_ids = @problems.map { |p| p.id }
-    @solutions = id_problem_hash(Sosna::Solution.find(:all,  :conditions => {
-                                          :solver_id => @solver.id,
-                                          :problem_id => problem_ids,
-                                         }))
-
-    #logger.fatal "fatal:" + @solutions.inspect
-    @problems.each do |p|
-      #logger.fatal "fatal2:" + @solutions.inspect
-      if ! (@solutions.has_key?(p.id))
-        begin
-          @solutions[p.id] = Sosna::Solution.create({
-                                            :solver_id => @solver.id,
-                                            :problem_id => p.id,
-                                            })
-        rescue Exception => e
-          Rails::logger.fatal("user_index:Solution.create -> " + e.to_s)
-        end
-      end
-    end
-  end
-
-  private
-
   def _params_roc_se_ul
     roc, se, ul = params[:roc],  params[:se], params[:ul]
     load_config
@@ -399,39 +454,14 @@ class Sosna::SolutionController < SosnaController
     return roc, se, ul
   end
 
-  def _solutions_from_roc_se_ul_by_solver
+  def _prepare_solvers_problems_solutions
     load_config
     @solvers = get_sorted_solvers(@annual)
-    @solutions = _solutions_from_roc_se_ul
-    @problems =  _problems_from_roc_se_ul
-    @solutions_by_solver = []
-
-    numbers = {}
-    
-    @solutions.each do |sol|
-      solver_id = sol.solver_id
-      problem_no = sol.problem.problem_no
-
-      @solutions_by_solver[solver_id] ||= []
-      @solutions_by_solver[solver_id][problem_no] =  sol
-
-      numbers[problem_no] = 1
-    end
-    @solvers.each do |solver|
-      @solutions_by_solver[solver.id] ||= []
-      @problems.each do |pr|
-        if @solutions_by_solver[solver.id][pr.problem_no].nil? 
-          begin
-            sol = Sosna::Solution.create({ :solver_id => solver.id, :problem_id => pr.id, })
-          rescue Exception => e
-            Rails::logger.fatal(" _solutions_from_roc_se_ul_by_solver:Solution.create -> " + e.to_s)
-          end
-          @solutions_by_solver[solver.id][pr.problem_no] = sol
-        end
-      end
-    end
-
+    @problems = _problems_from_roc_se_ul
+    @solutions_by_solver = _solutions_by_solver @solvers, @problems
+    @penalisations_by_solver = _penalisations_by_solver @solvers
   end
+
   def _problems_from_roc_se_ul
     roc, se, ul = _params_roc_se_ul
     if ul
@@ -441,14 +471,18 @@ class Sosna::SolutionController < SosnaController
     end
   end
 
-  def _solutions_from_roc_se_ul
-    roc, se, ul = _params_roc_se_ul
-    if ul
-      return Sosna::Solution.includes(:problem).joins(:problem).where(:sosna_problems => {:annual => roc, :round => se, :problem_no => ul}).load
-    else
-      return Sosna::Solution.includes(:problem).joins(:problem).where(:sosna_problems => {:annual => roc, :round => se}).load
-    end
+  def _solutions_from_problems(problems)
+      Sosna::Solution.where(:problem_id => problems.map{|p| p.id}).load
   end
+
+#  def _ solutions_from_roc_se_ul
+#    roc, se, ul = _params_roc_se_ul
+#    if ul
+#      return Sosna::Solution.includes(:problem).joins(:problem).where(:sosna_problems => {:annual => roc, :round => se, :problem_no => ul}).load
+#    else
+#      return Sosna::Solution.includes(:problem).joins(:problem).where(:sosna_problems => {:annual => roc, :round => se}).load
+#    end
+#  end
 
   def _problems_roc_se(roc, se)
       return Sosna::Problem.where({:annual => roc, :round => se})
@@ -491,6 +525,10 @@ class Sosna::SolutionController < SosnaController
 
   def _paper_edit_round_btn(annual, round)
       {name: "Editovat papíry", url: {action: 'edit', roc: annual, se: round, paper: 'yes' }, :class => 'btn-danger' }
+  end
+
+  def _penalisation_edit_round_btn(annual, round)
+      {name: "Editovat penalizaci", url: {action: 'edit', roc: annual, se: round, penalisation: 'yes' }, :class => 'btn-danger' }
   end
 
   def _round_link(annual, round, active= false)
