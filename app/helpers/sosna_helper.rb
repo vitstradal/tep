@@ -53,4 +53,9 @@ module SosnaHelper
     ret = FFILocale::strcoll(a, b) 
     return ret == 0 ? false : ret
   end
+
+  # solutions  [ sol1, sol2, ..., sol7 ]
+  def count_body(solutions, alg = '6z7')
+  end
+
 end
