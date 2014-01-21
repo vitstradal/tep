@@ -1,4 +1,4 @@
-%id;Příjmení;Jméno;Škola;Datum;<% @problems.each do |pr| %>u<%=pr.problem_no%>;<% end %><% @problems.each do |pr| %>B<%=pr.problem_no%>;<% end %>
+%id;Příjmení;Jméno;Škola;Datum;<% @problems.each do |pr| %>u<%=pr.problem_no%>;<% end %><% @problems.each do |pr| %>B<%=pr.problem_no%>;<% end %>Pen;Reason
 <% @solvers.each do |solver| 
   %><%= solver.id 
   %>;<%= solver.last_name
@@ -14,5 +14,12 @@
          %>P<%
         end 
    %>;<%
- end %>
+ end %><% @problems.each do |pr| 
+   %><% sol_arr = @solutions_by_solver[solver.id]  
+   %><% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  
+   %><% if sol.score
+         %><%=sol.score%><%
+        end 
+   %>;<%
+ end %><% pen = @penalisations_by_solver[solver.id]  %><%= pen.score || '' %>;<%= pen.title||'' %>
 <% end %>
