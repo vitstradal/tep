@@ -12,5 +12,11 @@
           %><%= sol.score%><%
         end 
    %><%
- end %>
+ end %><%
+ %><% pen = @penalisations_by_solver[solver.id]
+ %><% if pen.score.nil? || pen.score == ''
+          %>-<%
+      else
+          %><%= pen.score%><%
+      end  %>
 <% end %>
