@@ -47,9 +47,10 @@
     <td><%= solver.last_name %> <%= solver.name %> </td>
     <td><%= solver.school.nil? ? '-' : solver.school.short %></td>
     <% @problems.each do |pr| %>
-       <td>
-         <% sol_arr = @solutions_by_solver[solver.id]  %>
-         <% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  %>
+       <% sol_arr = @solutions_by_solver[solver.id]  %>
+       <% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  %>
+       <% ready = (!sol.filename.nil? && !sol.filename_corr.nil? || sol.has_paper_mail ) && !sol.score.nil? %>
+       <td<%if ready%> class="greenbg"<%end%>>
 
          <% if @want_edit_paper %>
             <input type="checkbox" name="paper[<%= sol.id %>]" size="3" <%if sol.has_paper_mail %> checked="checked" <% end %> />

@@ -83,3 +83,7 @@ input.input-medium
 .table td {
  padding: 4px;
 }
+
+td.greenbg {
+	background-color: #a0ffa0;
+}

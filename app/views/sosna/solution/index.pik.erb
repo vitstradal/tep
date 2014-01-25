@@ -1,6 +1,6 @@
 %id;Příjmení Jméno               ;Ro;;<% @problems.each do |pr| %><%=pr.problem_no%><% end %>
 <% @solvers.each do |solver| 
-  %><%= '%3s' % solver.id .to_s
+  %><%= '%03i' % solver.id
   %>;<%='%-29s' % "#{solver.last_name} #{solver.name}"
   %>;<%= '%-2s' % solver.grade_num
   %>;;<% @problems.each do |pr| 
