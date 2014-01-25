@@ -141,6 +141,7 @@ class Sosna::SolutionController < SosnaController
 #  end
 
   def downall
+    want_rev = ! params[:rev].nil?
     problems = _problems_from_roc_se_ul
     solutions = _solutions_from_problems problems
 
@@ -153,8 +154,13 @@ class Sosna::SolutionController < SosnaController
     # naopak Tempfile nedokaze jen vymyslet jmeno a neotevirat
     Zip::File.open(zip_file_name, Zip::File::CREATE) do |zipfile|
       solutions.each do |solution|
-        filename = solution.filename
-        filename_disp = solution.get_filename_ori
+        if want_rev 
+          filename = solution.filename_corr
+          filename_disp = solution.get_filename_rev
+        else
+          filename = solution.filename
+          filename_disp = solution.get_filename_ori
+        end
         next if filename.nil?
         zipfile.add('reseni/' + File.basename(filename_disp),  UPLOAD_DIR + filename)
       end

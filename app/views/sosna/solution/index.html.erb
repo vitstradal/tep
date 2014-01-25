@@ -50,7 +50,11 @@
        <% sol_arr = @solutions_by_solver[solver.id]  %>
        <% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  %>
        <% ready = (!sol.filename.nil? && !sol.filename_corr.nil? || sol.has_paper_mail ) && !sol.score.nil? %>
-       <td<%if ready%> class="greenbg"<%end%>>
+       <% weird = (sol.filename.nil? && !sol.has_paper_mail ) && !sol.score.nil? %>
+       <% weird = weird || (!sol.filename.nil? || sol.has_paper_mail ) && sol.score.nil? %>
+       <% weird = weird || ( !sol.filename.nil? && sol.filename_corr.nil?  && !sol.score.nil? ) %>
+       <% cls = weird ? 'bg-red' : (ready ? 'bg-green' : nil) %>
+       <td<%if cls%> class="<%=cls%>"<%end%>>
 
          <% if @want_edit_paper %>
             <input type="checkbox" name="paper[<%= sol.id %>]" size="3" <%if sol.has_paper_mail %> checked="checked" <% end %> />
@@ -114,10 +118,16 @@
 <b>P</b> -- řešení přislo papírově;
 <b>1-9</b> řešení přišlo elektronicky, link na stažení;
 <b>o</b> opravené řešení;
+<span class='bg-green box'>&nbsp;</span> -- došlé řešení je obodované a pokud je elektronické, tak i nahrána oprava;
+<span class='bg-red box'>&nbsp;</span> -- obodováná nedošlá úloha, nebo neobodována došlá úloha, nebo chybí el. oprava.
 </div>
 
   <%= link_to 'Stáhnout tato řešení v jednom .zip',
             { :action => :downall, roc: @annual, se: @round, ul: @problem_no },
+            { :class=> 'btn btn-primary'} %>
+
+  <%= link_to 'Stáhnout opravena řešení v jednom .zip',
+            { :action => :downall, roc: @annual, se: @round, ul: @problem_no, rev: 'yes' },
             { :class=> 'btn btn-primary'} %>
 
   <%= link_to 'Stáhnout tabulku řešitelů ve formátu CSV',
