@@ -84,6 +84,12 @@ input.input-medium
  padding: 4px;
 }
 
-td.greenbg {
+.box {
+	border:1px solid black;
+}
+.bg-green {
 	background-color: #a0ffa0;
+}
+.bg-red {
+	background-color: #ffa0a0;
 }

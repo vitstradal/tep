@@ -39,6 +39,11 @@ function do_one () {
   echo "$DST"
 }
 
+if [ -z "$1" ] ; then
+	echo "usage $0 src-dir/ dest-dir/ subdir"
+	exit
+fi
+
 SRC_DIR="$1"
 DST_DIR="$2"
 SUBDIR="$3"
