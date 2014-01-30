@@ -26,7 +26,7 @@ class Sosna::SolverController < SosnaController
     @school ||= flash[:school] || Sosna::School.new
     @solver ||= flash[:solver] 
     if ! @solver 
-      @solver= Sosna::Solver.new(:email => current_user.nil? ? nil : current_user.email )
+      @solver= Sosna::Solver.new(:email => current_user.nil? ? nil : current_user.email.downcase )
     end
     @schools = Sosna::School.all
     @agree = flash[:agree] || false
@@ -78,7 +78,7 @@ class Sosna::SolverController < SosnaController
     user = User.find_by_email solver.email
     if !user 
       # create user by email
-      user =  User.new(email: solver.email, name: solver.name, last_name: solver.last_name, confirmation_sent_at: Time.now,  roles: [:user])
+      user =  User.new(email: solver.email.downcase, name: solver.name, last_name: solver.last_name, confirmation_sent_at: Time.now,  roles: [:user])
       user.confirm!
       user.send_first_login_instructions  if send_first
       solver.user_id = user.id
