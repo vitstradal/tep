@@ -22,9 +22,9 @@ production:
 development:
   <<: *defaults
   web:
-    path: '/home/vitas/tmp/pikoweb'
+    path: '/home/vitas/tmp/pikoweb/web'
     url: 'web'
     read:  :org
     update:  :org
-    nogit: true
+    #nogit: true
     ext: '.wiki'

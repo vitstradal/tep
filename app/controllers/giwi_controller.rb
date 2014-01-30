@@ -50,7 +50,6 @@ class GiwiController < ApplicationController
     end
   end
 
-
   def update
     @wiki = params[:wiki] || 'main'
 
@@ -163,7 +162,7 @@ class GiwiController < ApplicationController
     print "part:#{@part}\n"
 
     if text
-      parser = TracWiki.parser(text, math: true, merge: true,  no_escape: true)
+      parser = TracWiki.parser(text, math: true, merge: true,  no_escape: true, raw_html: true,)
       parser.to_html
       heading = parser.headings[@part]
       print "headigns", pp(parser.headings)

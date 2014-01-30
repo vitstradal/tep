@@ -8,7 +8,8 @@ class Giwi
   SETPAGE_OK = 0
   SETPAGE_MERGE_OK = 1
   SETPAGE_MERGE_COLLISONS = 2
-  SETPAGE_MERGE_DIFF = 2
+  SETPAGE_MERGE_DIFF = 3
+  SETPAGE_ERROR = 4
   attr_accessor :repo
   attr_accessor :name
   attr_accessor :nogit
@@ -248,4 +249,22 @@ class GiwiNoGit < Giwi
   def get_ls(path)
     [[], [], path]
   end
+
+  def set_page(path, text, commit_id, autor = 'unknown', sline =nil, eline = nil)
+    path += @ext
+    path_fs = File.join(@path, path)
+    path_try = path_fs
+
+    if ! sline.nil?
+      begin
+        text_old = File.read(path_fs)
+        text = _patch_part(text, text_old, sline, eline)
+      rescue
+        return SETPAGE_ERROR
+      end
+    end
+    File.write(path_fs, text)
+    return SETPAGE_OK
+  end
+
 end

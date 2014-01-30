@@ -36,6 +36,7 @@ function do_one () {
      s#</(pre)>#\n}}}\n#gi;
      s#</(form|table)>#$&\n}}}#gi;
     ' >  "$DST"
+  echo "$DST"
 }
 
 SRC_DIR="$1"
