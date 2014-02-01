@@ -105,8 +105,8 @@ class Sosna::SolutionController < SosnaController
     if solution.owner? current_user
       # owner: check if it allowed to download
       round = solution.problem.round
-      sol_in_this_round_allowed   = round <  @config[:round] 
-      sol_in_this_round_allowed ||= round == @config[:round] && @config[:show_revisions] == 'yes'
+      sol_in_this_round_allowed   = round <  @config[:round].to_i
+      sol_in_this_round_allowed ||= round == @config[:round].to_i && @config[:show_revisions] == 'yes'
       if ! sol_in_this_round_allowed
         add_alert 'Chyba: soubor neexistuje'
         return redirect_to :action =>  :user_index 
