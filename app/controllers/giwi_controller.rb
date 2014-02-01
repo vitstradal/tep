@@ -10,7 +10,8 @@ class GiwiController < ApplicationController
   def show
 
     @wiki = params[:wiki] || 'main'
-    auth_name = Giwi.auth_name(@wiki)
+    @giwi = Giwi.get_giwi(@wiki)
+    auth_name = @giwi.auth_name
 
     authorize! :show, auth_name
 
@@ -33,7 +34,6 @@ class GiwiController < ApplicationController
     _breadcrumb_from_path(@path)
 
     return _handle_edit if @edit
-    @giwi = Giwi.get_giwi(@wiki)
 
     path_ext = @path + @giwi.ext
     @text, @version = @giwi.get_page(path_ext)
@@ -60,9 +60,10 @@ class GiwiController < ApplicationController
 
   def update
     @wiki = params[:wiki] || 'main'
+    @giwi = Giwi.get_giwi(@wiki)
 
-    authorize! :update, Giwi.auth_name(@wiki)
-    print "af authorize: :update #{Giwi.auth_name(@wiki)}\n"
+    authorize! :update, @giwi.auth_name
+    print "af authorize: :update #{@giwi.auth_name}\n"
 
     @path = params[:path]
     text = params[:text]
@@ -79,7 +80,7 @@ class GiwiController < ApplicationController
     sline = sline.to_i if ! sline.nil?
     eline = eline.to_i if ! eline.nil?
 
-    status = Giwi.get_giwi(@wiki).set_page(@path, text, version, 'autor', sline , eline)
+    status = @giwi.set_page(@path + @giwi.ext, text, version, 'autor', sline , eline)
 
     if status !=  Giwi::SETPAGE_OK
       if status ==  Giwi::SETPAGE_MERGE_OK
@@ -159,7 +160,7 @@ class GiwiController < ApplicationController
   def _handle_edit
     if @edit == 'me'
        # edit whole page
-       @text, @version = Giwi.get_giwi(@wiki).get_page(@path)
+       @text, @version = @giwi.get_page(@path + @giwi.ext)
        @edit = true
        return
     end

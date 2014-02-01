@@ -14,6 +14,7 @@ class Giwi
   attr_accessor :name
   attr_accessor :nogit
   attr_accessor :bare
+  attr_accessor :branche
   attr_accessor :path
   attr_accessor :url
   attr_accessor :read
@@ -53,6 +54,7 @@ class Giwi
   # class constructor
   def initialize(wiki_name, options)
     @bare = true
+    @branche = 'master'
     @ext = ''
     options.each_pair {|k,v| send("#{k}=", v) }
     @name = wiki_name.to_sym
@@ -67,15 +69,16 @@ class Giwi
   # path/index.wiki
   def get_page(path, raw = false)
 
-    head = @repo.commits.first
-    tree = head.tree
+    #head = @repo.commits.first
+    #tree = head.tree @branche
 
+    tree = @repo.tree @branche
     blob = tree / path
 
     return nil if ! blob.is_a? Grit::Blob
 
     text = blob.data.force_encoding('utf-8').encode
-    return [ text, head.id]
+    return [ text, tree.id]
   end
 
 
@@ -84,9 +87,11 @@ class Giwi
   #      path, -- normalized path
   #    ] 
   def get_ls(path)
-    repo = @repo
-    head = repo.commits.first
-    tree = head.tree
+    #repo = @repo
+    #head = repo.commits.first
+    #tree = head.tree @branche
+
+    tree = @repo.tree @branche
 
     #strip trailing /
     path.sub! /[\/]*$/, ''
@@ -132,8 +137,9 @@ class Giwi
     return st[:isdir]
   end
   def stat(path)
-    head = @repo.commits.first
-    tree = head.tree
+    #head = @repo.commits.first
+    #tree = head.tree @branche
+    tree = @repo.tree @branche
     blob = tree / path
     return nil if  blob.nil?
     return { :isdir => blob.is_a?(Grit::Tree) }
@@ -145,18 +151,21 @@ class Giwi
 
     cur_head = nil
 
-    print "commit_id: #{commit_id}\n"
-    text_head = @repo.commit(commit_id)
-    cur_head = @repo.commits.first
-    cur_tree = cur_head.tree
+    #print "commit_id: #{commit_id}\n"
+    #text_head = @repo.commit(commit_id)
+    #cur_head = @repo.commits.first
+    #cur_tree = cur_head.tree @branche
+
+    cur_tree = @repo.tree @branche
+
     status = SETPAGE_OK
 
     if commit_id != ''
       # not new file
-      text_tree = text_head.tree
+      text_tree =  @repo.tree commit_id
 
       text_blob = text_tree / path
-      raise "no path" if ! text_blob.is_a? Grit::Blob
+      raise "no path #{path}" if ! text_blob.is_a? Grit::Blob
       cur_blob  = cur_tree / path
       text_blob_data = text_blob.data.force_encoding('utf-8')
 
