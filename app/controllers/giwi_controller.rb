@@ -10,11 +10,11 @@ class GiwiController < ApplicationController
   def show
 
     @wiki = params[:wiki] || 'main'
-    print "wiki:#{@wiki}\n"
+    auth_name = Giwi.auth_name(@wiki)
 
-    authorize! :show, Giwi.auth_name(@wiki)
+    authorize! :show, auth_name
 
-    @editable = can? :update,  Giwi.auth_name(@wiki)
+    @editable = can? :update, auth_name
 
     @path = params[:path]
     @edit = params[:edit] || false
@@ -24,7 +24,6 @@ class GiwiController < ApplicationController
     fmt = params[:format]
 
     # @wiki, Giwi.can_read?
-    print "path:#{@path}\n"
 
     return _handle_ls if @ls
     return _handle_raw_file("#{@path}.#{fmt}", fmt) if %w(pdf png jpg jpeg gif).include? fmt
@@ -34,10 +33,19 @@ class GiwiController < ApplicationController
     _breadcrumb_from_path(@path)
 
     return _handle_edit if @edit
+    @giwi = Giwi.get_giwi(@wiki)
 
-    @text, @version = Giwi.get_giwi(@wiki).get_page(@path)
+    path_ext = @path + @giwi.ext
+    @text, @version = @giwi.get_page(path_ext)
 
-    return _create_new_page_text if ! @text
+    if ! @text
+      path_idx  = @path + '/index'
+      return redirect_to(action: :show, wiki: @wiki, path: path_idx) if @giwi.file?(path_idx + @giwi.ext)
+      return _create_new_page_text if can? :update, auth_name
+      return _not_found
+    end
+    @path = path_ext
+
 
     base = url_for(action: :show, wiki: @wiki)
     parser = TracWiki.parser(@text, _trac_wiki_options(base))
@@ -91,7 +99,7 @@ class GiwiController < ApplicationController
   private
 
   def _handle_raw_file(path, fmt)
-    @raw, @version = Giwi.get_giwi(@wiki).get_page(path, true)
+    @raw, @version = Giwi.get_giwi(@wiki).get_page(path)
     send_data @raw, :type => fmt, :disposition => 'inline'
   end
 
@@ -110,11 +118,14 @@ class GiwiController < ApplicationController
 
   def template_handler(tname, env)
     template_path = '.template/' + tname + '.wiki'
-    text, _ = Giwi.get_giwi(@wiki).get_page(template_path, true )
+    text, _ = @giwi.get_page(template_path)
     return nil if text.nil?
     text
   end
 
+  def _not_found
+    @html = 'not found'
+  end
 
   def _handle_file_upload(file, filename)
     if filename =~ /\/$/ || filename == ''

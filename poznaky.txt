@@ -1,0 +1,9 @@
+po skušenosti z úvodním návrhem je duležite (ale to má asi Vítek v malíčku):
+
+* aby se člověk neztratil, měl nějak přehledně před sebou kde je (bradcrumb).
+* jsem pro pro co největší jednoduchost a raději infantilnost
+* rozhodně co nejménš hybajícího (žádné plameny, měnící se obrázky)
+
+
+
+

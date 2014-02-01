@@ -6,23 +6,30 @@ defaults: &defaults
     path: '/home/vitas/tmp/piki'
     url: 'wiki'
     read:  :org
+    bare: false
     update:  :org
-
-
-  read:
-    path: '/home/vitas/tmp/piki'
-    url: 'read'
-    read:  :anon
-    #update:  :org
 
 test:
   <<: *defaults
 production:
   <<: *defaults
-development:
+
+local:
   <<: *defaults
   web:
     path: '/home/vitas/tmp/pikoweb/web'
+    bare: false
+    url: 'web'
+    read:  :org
+    update:  :org
+    #nogit: true
+    ext: '.wiki'
+
+development:
+  <<: *defaults
+  web:
+    path: '/home/www/git/wiki.git'
+    bare: true
     url: 'web'
     read:  :org
     update:  :org
