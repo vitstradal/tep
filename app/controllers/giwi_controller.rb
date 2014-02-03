@@ -170,8 +170,8 @@ class GiwiController < ApplicationController
     # want to edit only one chapter
     @part = @edit.to_i
 
-    text, @version = Giwi.get_giwi(@wiki).get_page(@path)
-    print "part:#{@part}\n"
+    text, @version = @giwi.get_page(@path + @giwi.ext)
+    print "part:#{@part}, text.size: #{text.size}\n"
 
     if text
       parser = TracWiki.parser(text, math: true, merge: true,  no_escape: true, raw_html: true,)

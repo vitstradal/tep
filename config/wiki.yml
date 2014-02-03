@@ -19,6 +19,7 @@ local:
   web:
     path: '/home/vitas/tmp/pikoweb/web'
     bare: false
+    branch: edit
     url: 'web'
     read:  :org
     update:  :org

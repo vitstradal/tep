@@ -14,7 +14,7 @@ class Giwi
   attr_accessor :name
   attr_accessor :nogit
   attr_accessor :bare
-  attr_accessor :branche
+  attr_accessor :branch
   attr_accessor :path
   attr_accessor :url
   attr_accessor :read
@@ -54,7 +54,7 @@ class Giwi
   # class constructor
   def initialize(wiki_name, options)
     @bare = true
-    @branche = 'master'
+    @branch = 'master'
     @ext = ''
     options.each_pair {|k,v| send("#{k}=", v) }
     @name = wiki_name.to_sym
@@ -70,9 +70,9 @@ class Giwi
   def get_page(path, raw = false)
 
     #head = @repo.commits.first
-    #tree = head.tree @branche
+    #tree = head.tree @branch
 
-    tree = @repo.tree @branche
+    tree = @repo.tree @branch
     blob = tree / path
 
     return nil if ! blob.is_a? Grit::Blob
@@ -89,9 +89,9 @@ class Giwi
   def get_ls(path)
     #repo = @repo
     #head = repo.commits.first
-    #tree = head.tree @branche
+    #tree = head.tree @branch
 
-    tree = @repo.tree @branche
+    tree = @repo.tree @branch
 
     #strip trailing /
     path.sub! /[\/]*$/, ''
@@ -138,8 +138,8 @@ class Giwi
   end
   def stat(path)
     #head = @repo.commits.first
-    #tree = head.tree @branche
-    tree = @repo.tree @branche
+    #tree = head.tree @branch
+    tree = @repo.tree @branch
     blob = tree / path
     return nil if  blob.nil?
     return { :isdir => blob.is_a?(Grit::Tree) }
@@ -149,14 +149,14 @@ class Giwi
   # if text is only part of file, sline, eline specifies which part (lines from sline to eline (including))
   def set_page(path, text, commit_id, autor = 'unknown', sline =nil, eline = nil)
 
-    cur_head = nil
+    cur_head = @repo.commits(@branch, 1).first
 
     #print "commit_id: #{commit_id}\n"
     #text_head = @repo.commit(commit_id)
     #cur_head = @repo.commits.first
-    #cur_tree = cur_head.tree @branche
+    #cur_tree = cur_head.tree @branch
 
-    cur_tree = @repo.tree @branche
+    cur_tree = @repo.tree @branch
 
     status = SETPAGE_OK
 
@@ -209,7 +209,7 @@ class Giwi
     end
     comment = comment.force_encoding('ASCII-8BIT')
 
-    index.commit(comment,  parents: [cur_head], last_tree: cur_head, head: 'master')
+    index.commit(comment,  parents: [cur_head], last_tree: cur_head, head: @branch)
     return status
   end
 
