@@ -118,10 +118,20 @@ class GiwiController < ApplicationController
   end
 
   def template_handler(tname, env)
-    template_path = '.template/' + tname + '.wiki'
+    template_path = '.template/' + tname + @giwi.ext
     text, _ = @giwi.get_page(template_path)
+
+    # not found
     return nil if text.nil?
-    text
+    fst, rest = text.split(/\r?\n/, 2)
+
+    #return only single line
+    return fst if  fst != '{{{'
+
+    # macro enclosed in {{{ }}}
+    fst, rest = rest.split(/\r?\n\}\}\}/, 2)
+
+    fst
   end
 
   def _not_found
