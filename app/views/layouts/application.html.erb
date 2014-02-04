@@ -66,6 +66,8 @@
                 <li><%= link_to 'Úlohy', :sosna_problems %></li>
                 <li><%= link_to 'Školy', :sosna_schools %></li>
                 <li><%= link_to 'Wiki', :wiki_main  %></li>
+                <li><%= link_to 'Web', :wiki_web  %></li>
+                <li><%= link_to 'Web Edit', :wiki_web_edit  %></li>
               <% end %>
               <% if current_user && current_user.has_role?(:admin) %>
                 <li class="nav-header">Admin</li>
