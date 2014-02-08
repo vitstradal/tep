@@ -147,7 +147,7 @@ class Giwi
 
   # text_id aka version
   # if text is only part of file, sline, eline specifies which part (lines from sline to eline (including))
-  def set_page(path, text, commit_id, autor = 'unknown', sline =nil, eline = nil)
+  def set_page(path, text, commit_id, email = 'unknown', sline =nil, eline = nil)
 
     cur_head = @repo.commits(@branch, 1).first
 
@@ -209,7 +209,9 @@ class Giwi
     end
     comment = comment.force_encoding('ASCII-8BIT')
 
-    index.commit(comment,  parents: [cur_head], last_tree: cur_head, head: @branch)
+    actor = Grit::Actor.from_string(email)
+
+    index.commit(comment,  parents: [cur_head], actor: actor, last_tree: cur_head, head: @branch)
     return status
   end
 
@@ -279,7 +281,7 @@ class GiwiNoGit < Giwi
     [[], [], path]
   end
 
-  def set_page(path, text, commit_id, autor = 'unknown', sline =nil, eline = nil)
+  def set_page(path, text, commit_id, email = 'unknown', sline =nil, eline = nil)
     path_fs = File.join(@path, path)
 
     if ! sline.nil?

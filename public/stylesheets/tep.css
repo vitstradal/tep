@@ -93,3 +93,38 @@ input.input-medium
 .bg-red {
 	background-color: #ffa0a0;
 }
+
+.math:hover {
+	background-color: #ffff80;
+}
+
+.fotos hr {
+  clear: left;
+}
+.foto {
+  border:1px solid black;
+  float:left;
+  display: block;
+  position: relative;
+  overflow:hidden;
+}
+.foto img {
+  height: 170px;
+  display: table;
+  margin: 0 auto;
+}
+.foto span {
+  width: 1000px;
+  position: absolute;
+  bottom: 0;
+  padding-left: 0.5em;
+  overflow: visible;
+  clean: left;
+  color: white;
+  font-family: arial,sans-serif;
+  font-size: 13px;
+  text-overflow: ellipsis;
+  background-color:rgba(0,0,0, 0.5);
+}
+
+

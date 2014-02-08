@@ -27,6 +27,21 @@ class User < ActiveRecord::Base
   end
   skip_callback :create, :after, :send_confirmation_instructions
 
+  def full_email
+    "#{full_name} <#{email}>"
+  end
+  def full_name
+    if !name.nil?  && !last_name.nil?
+      "#{name} #{last_name}"
+    elsif !name.nil? 
+      "#{name}"
+    elsif !last_name.nil? 
+      "#{last_name}"
+    else
+      email.split('@',2)[0]
+    end
+  end
+
   def send_first_login_instructions
      #self.generate_reset_password_token!
      #self.send_devise_notification(:first_login_instructions)

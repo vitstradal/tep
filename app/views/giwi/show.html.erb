@@ -27,8 +27,10 @@
   <% end #form %>
 
 <% else %>
+  <script type="text/x-mathjax-config"> MathJax.Hub.Config({ extensions: ["jsMath2jax.js"] });</script>
+  <script type="text/javascript" src="/js/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script>
   <%#
-  <script type="text/javascript" src="http://pikomat.ms.mff.cuni.cz/js/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script>
+  <script src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS_HTML"></script>
   <script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
   %>
 

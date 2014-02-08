@@ -80,7 +80,8 @@ class GiwiController < ApplicationController
     sline = sline.to_i if ! sline.nil?
     eline = eline.to_i if ! eline.nil?
 
-    status = @giwi.set_page(@path + @giwi.ext, text, version, 'autor', sline , eline)
+    email = current_user.full_email
+    status = @giwi.set_page(@path + @giwi.ext, text, version, email, sline , eline)
 
     if status !=  Giwi::SETPAGE_OK
       if status ==  Giwi::SETPAGE_MERGE_OK
@@ -152,7 +153,8 @@ class GiwiController < ApplicationController
     flash[:success] ||= []
     flash[:success].push("Soubor #{filename} uložen.")
 
-    status = Giwi.get_giwi(@wiki).set_page(filename, text, '', 'author')
+    email = current_user.full_email
+    status = Giwi.get_giwi(@wiki).set_page(filename, text, '', email)
     Rails::logger.fatal("url::#{url_for(action: :show, wiki: @wiki, path: @path, ls: '.')}"); 
     redirect_to url_for(action: :show, wiki: @wiki, path: @path, ls: '.')
   end
