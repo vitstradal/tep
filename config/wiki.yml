@@ -25,6 +25,15 @@ local:
     update:  :org
     #nogit: true
     ext: '.wiki'
+  web_edit:
+    path: '/home/vitas/tmp/pikoweb/web'
+    bare: true
+    url: 'webed'
+    branch: edit
+    read:  :org
+    update:  :org
+    #nogit: true
+    ext: '.wiki'
 
 development:
   <<: *defaults
