@@ -11,7 +11,7 @@ while(my $r = <F>) {
   next if $r =~ /^\s*$/;
   my ($src, $desc, $cats) = split(m{\|}, $r);
   $desc =~ s/!$/! /;
-  $desc = "\"$desc\""  if $desc =~ /:/;
+  $desc = "\"$desc\""  if $desc =~ /[:]|^\?$/;
   if( !$src && ( !$cats || $cats =~ /^-\.$/ ) ) {
     $y{title} = $desc;
   }
@@ -19,6 +19,7 @@ while(my $r = <F>) {
     $y{cats}->{$cats} = $desc;
   }
   else {
+    $cats =~ s/\s*//g;
     my @cats_arr = split(m{\.}, $cats);
     push(@{$y{data}}, {foto=> $src, desc=>$desc, cats=> \@cats_arr});
   }
