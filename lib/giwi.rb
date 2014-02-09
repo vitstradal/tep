@@ -266,15 +266,18 @@ end
 
 class GiwiNoGit < Giwi
   def stat(path)
-    st = File.stat
+    path_fs = File.join(@path, path)
+    print "fs: #{path_fs}\n"
+    return nil if ! File.exists?(path_fs)
+    st = File.stat(path_fs)
     return nil if st.nil?
     return { :isdir => st.directory? }
   end
 
   def get_page(path, raw = false)
     path_fs = File.join(@path, path)
-    return nil if ! File.exists? path
-    return [ File.read(path),  '0.1']
+    return nil if ! File.exists? path_fs
+    return [ File.read(path_fs),  '0.1']
   end
 
   def get_ls(path)
