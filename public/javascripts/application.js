@@ -7,6 +7,10 @@ jQuery(document).ready(function($) {
             $(this).addClass('label-success');
             var id = $(this).attr('id');
             console.log("select", id);
+            if( id == 'ff-all' ) {
+              $("span.foto").show();
+              return;
+            }
             $("span.foto").each(function (i, el) {
               if( $(el).hasClass(id) ) {
                 $(el).show();
