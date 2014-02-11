@@ -2,6 +2,15 @@
 // This file is automatically included by javascript_include_tag :defaults
 
 jQuery(document).ready(function($) {
+
+        $('.datatable').dataTable({
+                "bPaginate": false,
+                "bLengthChange": false,
+                "bFilter": false,
+                "bInfo": false,
+                "bAutoWidth": false
+        });
+
         $('.fotofilter').click(function (){
             $(".fotofilter").removeClass('label-success');
             $(this).addClass('label-success');

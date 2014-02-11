@@ -1,5 +1,5 @@
-require 'ffi-locale'
 # encoding: utf-8
+require 'ffi-locale'
 class Sosna::SolverController < SosnaController
 
   include SosnaHelper
