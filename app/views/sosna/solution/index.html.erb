@@ -28,7 +28,8 @@
 <% end %>
 
 
-<table class="table table-bordered">
+<table class="table table-bordered datatable">
+  <thead>
   <tr>
    <th>Id</th>
    <th>Řešitel</th>
@@ -41,10 +42,12 @@
   <% end %>
   <th title="penalizace">Pen<% if @want_edit_penalisation%> / Důvod<%end%></th>
  </tr>
+ </thead>
+ <tbody>
 <% @solvers.each do |solver| %>
   <tr>
-    <td><%= link_to solver.id, { controller: :solver, action: :show, id: solver.id }  %></td>
-    <td><%= solver.last_name %> <%= solver.name %> </td>
+    <td><%= solver.id  %></td>
+    <td><%= link_to solver.full_name, { controller: :solver, action: :show, id: solver.id }  %></td>
     <td><%= solver.school.nil? ? '-' : solver.school.short %></td>
     <% @problems.each do |pr| %>
        <% sol_arr = @solutions_by_solver[solver.id]  %>
@@ -97,7 +100,7 @@
     </td>
   </tr>
 <% end %>
-
+ <tbody>
 </table>
 <a name='more'></a>
 <% if @want_edit || @want_edit_paper || @want_edit_penalisation%>

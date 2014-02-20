@@ -6,8 +6,10 @@
   <%= stylesheet_link_tag 'bootstrap-responsive.css'  %>
   <%= stylesheet_link_tag 'bootstrap-colors.css'  %>
   <%= stylesheet_link_tag 'andulka/stylesheet.css' %>
+  <%= stylesheet_link_tag 'jquery.dataTables.css' %>
   <%= stylesheet_link_tag 'tep.css' %>
   <%= javascript_include_tag 'jquery-1.10.2.js' %>
+  <%= javascript_include_tag 'jquery.dataTables.js' %>
   <%= javascript_include_tag 'bootstrap.js' %>
   <%= javascript_include_tag 'application.js' %>
   <%= csrf_meta_tag %>
@@ -66,6 +68,8 @@
                 <li><%= link_to 'Úlohy', :sosna_problems %></li>
                 <li><%= link_to 'Školy', :sosna_schools %></li>
                 <li><%= link_to 'Wiki', :wiki_main  %></li>
+                <li><%= link_to 'Web', :wiki_web  %></li>
+                <li><%= link_to 'Web Edit', :wiki_web_edit  %></li>
               <% end %>
               <% if current_user && current_user.has_role?(:admin) %>
                 <li class="nav-header">Admin</li>
@@ -81,7 +85,7 @@
             </ul>
           </div><!--/.well -->
         </div><!--/span-->
-        <div class="span9">
+        <div class="span10">
 
 <%if notice %><div class="alert alert-success"><%= notice %></div><% end %>
 <%if alert %><div class="alert alert-error"><%= alert %></div><% end %>
@@ -143,7 +147,7 @@
        <div class="btn-group">
          <% @action_buttons && @action_buttons.each do |button| %>
 	    <% btn_class = button[:class].nil? ? '' :  " #{button[:class]}"  %>
-            <%= link_to button[:name], button[:url], :class=>"btn btn-mini#{btn_class}" %>
+            <%= link_to button[:name], button[:url], :class=>"btn btn-mini#{btn_class}", :accesskey => button[:accesskey]%>
           <% end %>
 	  <% if @action_more %>
             <a href='#more' class="btn btn-mini"><i class='icon-arrow-down'></i></a>

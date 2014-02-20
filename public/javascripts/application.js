@@ -2,6 +2,35 @@
 // This file is automatically included by javascript_include_tag :defaults
 
 jQuery(document).ready(function($) {
+
+        $('.datatable').dataTable({
+                "bPaginate": false,
+                "bLengthChange": false,
+                "bFilter": false,
+                "bInfo": false,
+                "bAutoWidth": false,
+	        "aoColumnDefs": [
+					{ "sType": "numeric", "aTargets": [ 0 ] },
+			        ],
+        });
+
+        $('.fotofilter').click(function (){
+            $(".fotofilter").removeClass('label-success');
+            $(this).addClass('label-success');
+            var id = $(this).attr('id');
+            console.log("select", id);
+            if( id == 'ff-all' ) {
+              $("span.foto").show();
+              return;
+            }
+            $("span.foto").each(function (i, el) {
+              if( $(el).hasClass(id) ) {
+                $(el).show();
+              } else {
+                $(el).hide();
+              }
+            });
+        });
         $('#school_id').change(function (){
                 if('jina' == $(this).val()) {
                   $('#school_div').show(400);

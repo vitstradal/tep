@@ -10,11 +10,12 @@ class GiwiController < ApplicationController
   def show
 
     @wiki = params[:wiki] || 'main'
-    print "wiki:#{@wiki}\n"
+    @giwi = Giwi.get_giwi(@wiki)
+    auth_name = @giwi.auth_name
 
-    authorize! :show, Giwi.auth_name(@wiki)
+    authorize! :show, auth_name
 
-    @editable = can? :update,  Giwi.auth_name(@wiki)
+    @editable = can? :update, auth_name
 
     @path = params[:path]
     @edit = params[:edit] || false
@@ -24,7 +25,6 @@ class GiwiController < ApplicationController
     fmt = params[:format]
 
     # @wiki, Giwi.can_read?
-    print "path:#{@path}\n"
 
     return _handle_ls if @ls
     return _handle_raw_file("#{@path}.#{fmt}", fmt) if %w(pdf png jpg jpeg gif).include? fmt
@@ -35,9 +35,17 @@ class GiwiController < ApplicationController
 
     return _handle_edit if @edit
 
-    @text, @version = Giwi.get_giwi(@wiki).get_page(@path)
+    path_ext = @path + @giwi.ext
+    @text, @version = @giwi.get_page(path_ext)
 
-    return _create_new_page_text if ! @text
+    if ! @text
+      path_idx  = @path + '/index'
+      return redirect_to(action: :show, wiki: @wiki, path: path_idx) if @giwi.file?(path_idx + @giwi.ext)
+      return _create_new_page_text if can? :update, auth_name
+      return _not_found
+    end
+    @path = path_ext
+
 
     base = url_for(action: :show, wiki: @wiki)
     parser = TracWiki.parser(@text, _trac_wiki_options(base))
@@ -50,12 +58,12 @@ class GiwiController < ApplicationController
     end
   end
 
-
   def update
     @wiki = params[:wiki] || 'main'
+    @giwi = Giwi.get_giwi(@wiki)
 
-    authorize! :update, Giwi.auth_name(@wiki)
-    print "af authorize: :update #{Giwi.auth_name(@wiki)}\n"
+    authorize! :update, @giwi.auth_name
+    print "af authorize: :update #{@giwi.auth_name}\n"
 
     @path = params[:path]
     text = params[:text]
@@ -72,7 +80,8 @@ class GiwiController < ApplicationController
     sline = sline.to_i if ! sline.nil?
     eline = eline.to_i if ! eline.nil?
 
-    status = Giwi.get_giwi(@wiki).set_page(@path, text, version, 'autor', sline , eline)
+    email = current_user.full_email
+    status = @giwi.set_page(@path + @giwi.ext, text, version, email, sline , eline)
 
     if status !=  Giwi::SETPAGE_OK
       if status ==  Giwi::SETPAGE_MERGE_OK
@@ -92,7 +101,7 @@ class GiwiController < ApplicationController
   private
 
   def _handle_raw_file(path, fmt)
-    @raw, @version = Giwi.get_giwi(@wiki).get_page(path, true)
+    @raw, @version = Giwi.get_giwi(@wiki).get_page(path)
     send_data @raw, :type => fmt, :disposition => 'inline'
   end
 
@@ -110,12 +119,25 @@ class GiwiController < ApplicationController
   end
 
   def template_handler(tname, env)
-    template_path = '.template/' + tname + '.wiki'
-    text, _ = Giwi.get_giwi(@wiki).get_page(template_path, true )
+    template_path = '.template/' + tname + @giwi.ext
+    text, _ = @giwi.get_page(template_path)
+
+    # not found
     return nil if text.nil?
-    text
+    fst, rest = text.split(/\r?\n/, 2)
+
+    #return only single line
+    return fst if  fst != '{{{'
+
+    # macro enclosed in {{{ }}}
+    fst, rest = rest.split(/\r?\n\}\}\}/, 2)
+
+    fst
   end
 
+  def _not_found
+    @html = 'not found'
+  end
 
   def _handle_file_upload(file, filename)
     if filename =~ /\/$/ || filename == ''
@@ -131,7 +153,8 @@ class GiwiController < ApplicationController
     flash[:success] ||= []
     flash[:success].push("Soubor #{filename} uložen.")
 
-    status = Giwi.get_giwi(@wiki).set_page(filename, text, '', 'author')
+    email = current_user.full_email
+    status = Giwi.get_giwi(@wiki).set_page(filename, text, '', email)
     Rails::logger.fatal("url::#{url_for(action: :show, wiki: @wiki, path: @path, ls: '.')}"); 
     redirect_to url_for(action: :show, wiki: @wiki, path: @path, ls: '.')
   end
@@ -149,7 +172,7 @@ class GiwiController < ApplicationController
   def _handle_edit
     if @edit == 'me'
        # edit whole page
-       @text, @version = Giwi.get_giwi(@wiki).get_page(@path)
+       @text, @version = @giwi.get_page(@path + @giwi.ext)
        @edit = true
        return
     end
@@ -159,11 +182,11 @@ class GiwiController < ApplicationController
     # want to edit only one chapter
     @part = @edit.to_i
 
-    text, @version = Giwi.get_giwi(@wiki).get_page(@path)
-    print "part:#{@part}\n"
+    text, @version = @giwi.get_page(@path + @giwi.ext)
+    print "part:#{@part}, text.size: #{text.size}\n"
 
     if text
-      parser = TracWiki.parser(text, math: true, merge: true,  no_escape: true)
+      parser = TracWiki.parser(text, math: true, merge: true,  no_escape: true, raw_html: true,)
       parser.to_html
       heading = parser.headings[@part]
       print "headigns", pp(parser.headings)

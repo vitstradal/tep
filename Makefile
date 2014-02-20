@@ -4,6 +4,7 @@ restart:
 prod-migrate:
 	rake db:migrate RAILS_ENV=production
 
+loc-reset: loc-del loc-migrate loc-seed
 dev-reset: dev-del dev-migrate dev-seed
 prod-reset: prod-del prod-migrate prod-seed
 
@@ -11,22 +12,29 @@ prod-reset: prod-del prod-migrate prod-seed
 #	rm -f db/production.sqlite3
 dev-del:
 	rm -f db/development.sqlite3
+loc-del:
+	rm -f db/local.sqlite3
 dev-migrate:
 	rake db:migrate RAILS_ENV=development
+loc-migrate:
+	rake db:migrate RAILS_ENV=local
 
 prod-seed:
 	rake db:seed RAILS_ENV=production
 dev-seed:
 	rake db:seed RAILS_ENV=development
+loc-seed:
+	rake db:seed RAILS_ENV=local
 
 t:
 	rake test
 r: restart
 
 
-c:
+prod:
 	rails c -e production
-
+loc:
+	rails c -e local
 
 server:
-	script/rails server --binding=localhost
+	script/rails server -e local --binding=localhost

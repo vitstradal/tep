@@ -6,25 +6,61 @@ defaults: &defaults
     path: '/home/vitas/tmp/piki'
     url: 'wiki'
     read:  :org
+    bare: false
     update:  :org
-
-
-  read:
-    path: '/home/vitas/tmp/piki'
-    url: 'read'
-    read:  :anon
-    #update:  :org
 
 test:
   <<: *defaults
 production:
   <<: *defaults
-development:
+
+local:
   <<: *defaults
   web:
-    path: '/home/vitas/tmp/pikoweb'
+    path: '/home/vitas/tmp/pikoweb/web'
+    bare: false
+    branch: edit
     url: 'web'
     read:  :org
     update:  :org
+    #nogit: true
+    ext: '.wiki'
+  web_edit:
+    path: '/home/vitas/tmp/pikoweb/web'
+    bare: true
+    url: 'webed'
+    branch: edit
+    read:  :org
+    update:  :org
+    #nogit: true
+    ext: '.wiki'
+  webfs:
+    url: 'webfs'
+    path: '/home/vitas/tmp/pikoweb/web'
+    #bare: true
+    #branch: edit
+    read:  :org
+    update:  :org
     nogit: true
+    ext: '.wiki'
+
+development:
+  <<: *defaults
+  web:
+    path: '/home/www/git/web.git'
+    bare: true
+    url: 'web'
+    branch: edit
+    read:  :org
+    #update:  :org
+    #nogit: true
+    ext: '.wiki'
+  web_edit:
+    path: '/home/www/git/web.git'
+    bare: true
+    url: 'webed'
+    branch: edit
+    read:  :org
+    update:  :org
+    #nogit: true
     ext: '.wiki'

@@ -8,10 +8,13 @@ class Giwi
   SETPAGE_OK = 0
   SETPAGE_MERGE_OK = 1
   SETPAGE_MERGE_COLLISONS = 2
-  SETPAGE_MERGE_DIFF = 2
+  SETPAGE_MERGE_DIFF = 3
+  SETPAGE_ERROR = 4
   attr_accessor :repo
   attr_accessor :name
   attr_accessor :nogit
+  attr_accessor :bare
+  attr_accessor :branch
   attr_accessor :path
   attr_accessor :url
   attr_accessor :read
@@ -40,6 +43,9 @@ class Giwi
   def self.auth_name wiki
      "giwi_#{wiki}".to_sym
   end
+  def auth_name
+     "giwi_#{self.name}".to_sym
+  end
 
   def self.get_giwi(wiki_name)
     @@giwis[wiki_name.to_sym]
@@ -47,23 +53,32 @@ class Giwi
 
   # class constructor
   def initialize(wiki_name, options)
+    @bare = true
+    @branch = 'master'
     @ext = ''
     options.each_pair {|k,v| send("#{k}=", v) }
     @name = wiki_name.to_sym
-    @repo = Grit::Repo.new(@path) if ! @nogit
+    @repo = Grit::Repo.new(@path, is_bare: @bare) if ! @nogit
   end
 
   # public methods (api)
 
+  # try (in that order):
+  # path
+  # path.wiki
+  # path/index.wiki
   def get_page(path, raw = false)
-    path += @ext if ! raw
-    head = @repo.commits.first
-    tree = head.tree
+
+    #head = @repo.commits.first
+    #tree = head.tree @branch
+
+    tree = @repo.tree @branch
     blob = tree / path
-    return nil if blob.nil?
-    return nil if blob.is_a? Grit::Tree
+
+    return nil if ! blob.is_a? Grit::Blob
+
     text = blob.data.force_encoding('utf-8').encode
-    return [ text, head.id]
+    return [ text, tree.id]
   end
 
 
@@ -72,9 +87,11 @@ class Giwi
   #      path, -- normalized path
   #    ] 
   def get_ls(path)
-    repo = @repo
-    head = repo.commits.first
-    tree = head.tree
+    #repo = @repo
+    #head = repo.commits.first
+    #tree = head.tree @branch
+
+    tree = @repo.tree @branch
 
     #strip trailing /
     path.sub! /[\/]*$/, ''
@@ -109,23 +126,47 @@ class Giwi
     [files, dirs, path]
   end
 
+  def file?(path)
+    st = stat(path)
+    return false if st.nil?
+    return ! st[:isdir]
+  end
+  def dir?(path)
+    st = stat(path)
+    return false if st.nil?
+    return st[:isdir]
+  end
+  def stat(path)
+    #head = @repo.commits.first
+    #tree = head.tree @branch
+    tree = @repo.tree @branch
+    blob = tree / path
+    return nil if  blob.nil?
+    return { :isdir => blob.is_a?(Grit::Tree) }
+  end
+
   # text_id aka version
   # if text is only part of file, sline, eline specifies which part (lines from sline to eline (including))
-  def set_page(path, text, commit_id, autor = 'unknown', sline =nil, eline = nil)
+  def set_page(path, text, commit_id, email = 'unknown', sline =nil, eline = nil)
 
-    cur_head = nil
+    cur_head = @repo.commits(@branch, 1).first
 
-    print "commit_id: #{commit_id}\n"
-    text_head = @repo.commit(commit_id)
-    cur_head = @repo.commits.first
-    cur_tree = cur_head.tree
+    #print "commit_id: #{commit_id}\n"
+    #text_head = @repo.commit(commit_id)
+    #cur_head = @repo.commits.first
+    #cur_tree = cur_head.tree @branch
+
+    cur_tree = @repo.tree @branch
+
     status = SETPAGE_OK
 
     if commit_id != ''
       # not new file
-      text_tree = text_head.tree
-      cur_blob = cur_tree / path
+      text_tree =  @repo.tree commit_id
+
       text_blob = text_tree / path
+      raise "no path #{path}" if ! text_blob.is_a? Grit::Blob
+      cur_blob  = cur_tree / path
       text_blob_data = text_blob.data.force_encoding('utf-8')
 
       if ! sline.nil? && ! eline.nil?
@@ -141,11 +182,11 @@ class Giwi
         newtext, diff3_status = Diff3.diff3(lmine, text,
                                             lorig, text_blob_data,
                                             lyour, cur_blob.data.force_encoding('utf-8'))
-  
+
         case diff3_status
           when Diff3::MERGE_COLLISONS
            status = SETPAGE_MERGE_COLLISONS
-  
+
           when Diff3::MERGE_FAIL
            # total fall back (never happens)
            status = SETPAGE_MERGE_DIFF
@@ -168,7 +209,9 @@ class Giwi
     end
     comment = comment.force_encoding('ASCII-8BIT')
 
-    index.commit(comment,  parents: [cur_head], last_tree: cur_head, head: 'master')
+    actor = Grit::Actor.from_string(email)
+
+    index.commit(comment,  parents: [cur_head], actor: actor, last_tree: cur_head, head: @branch)
     return status
   end
 
@@ -222,30 +265,38 @@ class Giwi
 end
 
 class GiwiNoGit < Giwi
+  def stat(path)
+    path_fs = File.join(@path, path)
+    print "fs: #{path_fs}\n"
+    return nil if ! File.exists?(path_fs)
+    st = File.stat(path_fs)
+    return nil if st.nil?
+    return { :isdir => st.directory? }
+  end
+
   def get_page(path, raw = false)
     path_fs = File.join(@path, path)
-    path_try = path_fs
-    path_try += @ext if ! raw
-    print "try:#{path_try}, raw:#{raw}\n"
-    print "fs:#{path_fs}\n"
-
-    if ! File.exists? path_try
-      print "ex:#{File.directory?(path_fs)}\n"
-      if File.directory?(path_fs) && ! raw
-        path_try = File.join(path_fs, 'index' + @ext)
-        print "try2:#{path_try}\n"
-        if ! File.exists? path_try
-          return ['NOTFOUND', '0.1']
-        end
-      else
-        return ['NOTFOUND', '0.1']
-      end
-    end
-
-    return [ File.read(path_try),  '0.1']
+    return nil if ! File.exists? path_fs
+    return [ File.read(path_fs),  '0.1']
   end
 
   def get_ls(path)
     [[], [], path]
   end
+
+  def set_page(path, text, commit_id, email = 'unknown', sline =nil, eline = nil)
+    path_fs = File.join(@path, path)
+
+    if ! sline.nil?
+      begin
+        text_old = File.read(path_fs)
+        text = _patch_part(text, text_old, sline, eline)
+      rescue
+        return SETPAGE_ERROR
+      end
+    end
+    File.write(path_fs, text)
+    return SETPAGE_OK
+  end
+
 end
