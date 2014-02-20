@@ -41,7 +41,7 @@
     <% if @editable %>
      <% @action_buttons ||= []
         @action_buttons.push({ :name => 'Seznam stránek', :url => url_for(path: @path, :ls => '.') })
-        @action_buttons.push({ :name => 'Edit',           :url => url_for(path: @path, :edit => :me), :class => 'btn-danger' })
+        @action_buttons.push({ :name => 'Edit',           :url => url_for(path: @path, :edit => :me), :accesskey => 'e', :class => 'btn-danger' })
      %>
     <% end %>
     <% if @toc %>

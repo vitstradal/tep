@@ -8,7 +8,10 @@ jQuery(document).ready(function($) {
                 "bLengthChange": false,
                 "bFilter": false,
                 "bInfo": false,
-                "bAutoWidth": false
+                "bAutoWidth": false,
+	        "aoColumnDefs": [
+					{ "sType": "numeric", "aTargets": [ 0 ] },
+			        ],
         });
 
         $('.fotofilter').click(function (){
