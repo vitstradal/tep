@@ -3,14 +3,32 @@
 
 jQuery(document).ready(function($) {
 
+
+	jQuery.extend( jQuery.fn.dataTableExt.oSort, {
+	    "locale-pre": function ( a ) {
+	        return a.replace(/<[^>]*>/,'');
+	    },
+	    "locale-asc": function ( a, b ) {
+		console.log("asc:", a, b, a.localeCompare(b));
+		return a.localeCompare(b) < 0 ? -1 : 1;
+	    },
+	    "locale-desc": function ( a, b ) {
+		console.log("desc:", a, b, a.localeCompare(b));
+		return b.localeCompare(a) < 0 ? -1 : 1;
+	    }
+	} );
+ 
         $('.datatable').dataTable({
                 "bPaginate": false,
                 "bLengthChange": false,
                 "bFilter": false,
                 "bInfo": false,
                 "bAutoWidth": false,
+		//"bSort": false,
+		"aaSorting": [],
 	        "aoColumnDefs": [
 					{ "sType": "numeric", "aTargets": [ 0 ] },
+					{ "sType": "locale", "aTargets": [ 1 ] },
 			        ],
         });
 

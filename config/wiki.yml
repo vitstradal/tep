@@ -8,6 +8,24 @@ defaults: &defaults
     read:  :org
     bare: false
     update:  :org
+  web:
+    path: '/home/www/git/web.git'
+    bare: true
+    url: 'web'
+    branch: edit
+    read:  :org
+    #update:  :org
+    #nogit: true
+    ext: '.wiki'
+  web_edit:
+    path: '/home/www/git/web.git'
+    bare: true
+    url: 'webed'
+    branch: edit
+    read:  :org
+    update:  :org
+    #nogit: true
+    ext: '.wiki'
 
 test:
   <<: *defaults

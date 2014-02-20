@@ -19,7 +19,7 @@ class Sosna::Solver < ActiveRecord::Base
      self.where_to_send == 'home'
   end
   def full_name
-     "#{name} #{last_name}"
+     "#{last_name} #{name}"
   end 
   def address
      "#{street} #{num}, #{psc} #{city}"
