@@ -84,6 +84,7 @@ class Ability
 
       can :update_papers, Sosna::Solution
       can :update_penalisations, Sosna::Solution
+      can :update_results, Sosna::Solution
     end
 
   end

@@ -35,6 +35,8 @@ prod:
 	rails c -e production
 loc:
 	rails c -e local
+dev:
+	rails c -e development
 
 server:
 	script/rails server -e local --binding=localhost

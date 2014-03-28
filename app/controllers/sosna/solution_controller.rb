@@ -286,7 +286,88 @@ class Sosna::SolutionController < SosnaController
     redirect_to :action => :user_index, roc: roc, se: se
   end
 
+  def update_results
+    roc, se, ul = _params_roc_se_ul
+    add_alert "generovani je zatim trosku fake, anjoy #{roc} #{se}"
+
+    solvers = get_sorted_solvers(roc)
+    #results_by_solver, _results = _results_by_solver(solvers)
+    results_by_solver = _results_by_solver(solvers)
+    problems = Sosna::Problem.where(:annual => roc, :round => se).load
+    pens = Sosna::Penalisation.where(:annual => roc, :round => se).load
+
+    problems_by_id = {}
+    problems.each{|p| problems_by_id[p.id] = p}
+
+    pens_by_solver_id = {}
+    pens.each{|p| pens_by_solver_id[p.solver_id] = p.score }
+
+    solutions = Sosna::Solution.where(:problem_id => problems.map{|p|p.id}).load
+    scores = {}
+    solutions.each do  |sol|
+      scores[sol.solver_id] ||= {}
+      scores[sol.solver_id][problems_by_id[sol.problem_id].problem_no] = sol.score || 0
+    end
+    solver_scores = {}
+    solvers.each do |solver|
+      score, comment = _compute_round_score( scores[solver.id] || [])
+      res = results_by_solver[solver.id]
+      score -=  pens_by_solver_id[solver.id] || 0
+      score = [score, 0].max
+      res.comment = comment
+      res.score = score
+    end
+    
+
+    rank = 0;
+    solvers.sort_by { |solver| results_by_solver[solver.id].score  }.each do |solver| 
+      results_by_solver[solver.id].rank = (rank += 1)
+    end
+
+    results_by_solver.each {|id,res| res.save}
+
+
+    redirect_to :action =>  :index , :roc => roc, :se => se
+  end
+
+
   private
+
+  # scores hash of integers (key are problem_no, values are score)
+  #  { '1' => 5, '2'=>'1',  '3'=>1,  '4' => 3, '5' => 1, '6' => 1, '7' => 0 }
+  def _compute_round_score(scores)
+    # sest nejlepsich prikladu [ ['1' => 5], [ '4' => 3], ['2' => 1], ...
+    # [ 7 => 0] omnited
+    top6 = scores.to_a.sort {|a,b| b[1] <=> a[1]} [ 0 .. 5 ]
+
+    # ktere priklady to byly
+    comment = top6.map {|x| x[0]}.join(',')
+
+    # soucet bodu za nejlepsi priklady
+    sum = top6.inject(0) { |sum,x| sum + x[1] }
+    return sum, comment
+  end
+
+  def _results_by_solver(solvers)
+    _results = Sosna::Result.where(:solver_id => solvers.map{ |s| s.id },
+                                              :annual => @annual, 
+                                              :round => @round).load
+    results_by_solver = {}
+    _results.each { |p| results_by_solver[p.solver_id] = p }
+    solvers.each do |solver| 
+      if results_by_solver[solver.id].nil?
+          begin
+            results_by_solver[solver.id] = Sosna::Result.create({ :solver_id => solver.id,
+                                                                            :annual => @annual,
+                                                                            :round => @round, })
+          rescue Exception => e
+            Rails::logger.fatal(" results_by_solver :Solution.create -> " + e.to_s)
+          end
+      end
+    end
+    #return results_by_solver, _results
+    return results_by_solver
+  end
   def _penalisations_by_solver(solvers)
     penalisations = Sosna::Penalisation.where(:solver_id => solvers.map{ |s| s.id },
                                               :annual => @annual, 
@@ -466,6 +547,8 @@ class Sosna::SolutionController < SosnaController
     @problems = _problems_from_roc_se_ul
     @solutions_by_solver = _solutions_by_solver @solvers, @problems
     @penalisations_by_solver = _penalisations_by_solver @solvers
+    #@results_by_solver, _results = _results_by_solver @solvers
+    @results_by_solver = _results_by_solver @solvers
   end
 
   def _problems_from_roc_se_ul

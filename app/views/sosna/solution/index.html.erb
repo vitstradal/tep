@@ -41,6 +41,7 @@
    <th title="Body za úlohu č. <%=pr.problem_no%>">B<%=pr.problem_no%></th>
   <% end %>
   <th title="penalizace">Pen<% if @want_edit_penalisation%> / Důvod<%end%></th>
+  <th title="Výsledky">V</th>
  </tr>
  </thead>
  <tbody>
@@ -98,6 +99,14 @@
         <span title="<%=pen_tit == '' ? 'žádný důvod' : pen_tit %>"><%= pen_sc  %></span>
       <% end %>
     </td>
+    <td>
+      <% res = @results_by_solver[solver.id] %>
+      <% if res %>
+          <%= res.score %>, <%= res.rank %>
+      <% else %>
+          -
+      <% end %>
+    </td>
   </tr>
 <% end %>
  <tbody>
@@ -140,6 +149,10 @@
   <%= link_to 'Stáhnout tabulku body.pik',
             { format: 'pik'},
             { :class=> 'btn btn-primary'} %>
+
+  <%= form_tag({:action => :update_results, :roc => @annual, :se => @round, :ul => @problem_no}, :class => 'form-inline') do %>
+          <%= submit_tag 'Vygenerovat výsledky', :class => 'btn btn-primary'  %>
+  <% end %>
 
   <hr>
   <% if  @problem_no %>

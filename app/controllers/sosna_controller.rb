@@ -20,13 +20,13 @@ class SosnaController < ApplicationController
                   round: 1,
                   show_revisions: 'no',
                 }
-    Sosna::Config.all.each {|c| @config[c.key.to_sym] =  c.value}
+    Sosna::Config.all.load.each {|c| @config[c.key.to_sym] =  c.value}
     @annual = @config[:annual]
     @round = @config[:round]
   end
 
   def get_sorted_solvers(annual)
-      solvers = Sosna::Solver.includes(:school).where(annual: annual).all 
+      solvers = Sosna::Solver.includes(:school).where(annual: annual).load 
       solvers.sort! { |a,b| (a.last_name != b.last_name ) ? strcoll(a.last_name, b.last_name) :
                                                             strcoll(a.name, b.name)
                     }
