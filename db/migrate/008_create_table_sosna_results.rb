@@ -7,8 +7,11 @@ class CreateTableSosnaResults < ActiveRecord::Migration
       t.text    :comment    # za ktere priklady jsou body
 
       t.integer :score      # počet bodů
+      t.integer :round_score # počet bodů
       t.text :rank          # poradi
+      t.text :rank_to       # poradi do
       t.text :class_rank    # poradi v rocniku
+      t.text :class_rank_to # poradi v rocniku
 
       t.timestamps
     end

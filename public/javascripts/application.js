@@ -9,13 +9,16 @@ jQuery(document).ready(function($) {
 	        return a.replace(/<[^>]*>/,'');
 	    },
 	    "locale-asc": function ( a, b ) {
-		console.log("asc:", a, b, a.localeCompare(b));
+		//console.log("asc:", a, b, a.localeCompare(b));
 		return a.localeCompare(b) < 0 ? -1 : 1;
 	    },
 	    "locale-desc": function ( a, b ) {
-		console.log("desc:", a, b, a.localeCompare(b));
+		//console.log("desc:", a, b, a.localeCompare(b));
 		return b.localeCompare(a) < 0 ? -1 : 1;
-	    }
+	    },
+            "numstr-pre": function ( a ) { return parseInt(a); },
+            "numstr-asc":  function ( a, b ) { return a - b; },
+            "numstr-desc": function ( a, b ) { return b - a; },
 	} );
  
         $('.datatable').dataTable({
@@ -29,6 +32,7 @@ jQuery(document).ready(function($) {
 	        "aoColumnDefs": [
 					{ "sType": "numeric", "aTargets": [ 0 ] },
 					{ "sType": "locale", "aTargets": [ 1 ] },
+					{ "sType": "numstr", "aTargets": [ 20, 21 ] },
 			        ],
         });
 

@@ -33,6 +33,7 @@
   <tr>
    <th>Id</th>
    <th>Řešitel</th>
+   <th title="Ročník num">R</th>
    <th>Škola</th>
   <% @problems.each do |pr| %>
    <th>u<%=pr.problem_no%></th>
@@ -41,7 +42,10 @@
    <th title="Body za úlohu č. <%=pr.problem_no%>">B<%=pr.problem_no%></th>
   <% end %>
   <th title="penalizace">Pen<% if @want_edit_penalisation%> / Důvod<%end%></th>
+  <th title="Výsledky">Vs</th>
   <th title="Výsledky">V</th>
+  <th title="Celkové pořadí">cp</th>
+  <th title="Pořadí v ročníku">pvr</th>
  </tr>
  </thead>
  <tbody>
@@ -49,6 +53,7 @@
   <tr>
     <td><%= solver.id  %></td>
     <td><%= link_to solver.full_name, { controller: :solver, action: :show, id: solver.id }  %></td>
+    <td><%= solver.grade_num %></td>
     <td><%= solver.school.nil? ? '-' : solver.school.short %></td>
     <% @problems.each do |pr| %>
        <% sol_arr = @solutions_by_solver[solver.id]  %>
@@ -99,12 +104,17 @@
         <span title="<%=pen_tit == '' ? 'žádný důvod' : pen_tit %>"><%= pen_sc  %></span>
       <% end %>
     </td>
-    <td>
       <% res = @results_by_solver[solver.id] %>
       <% if res %>
-          <%= res.score %>, <%= res.rank %>
+         <td><%= res.round_score %></td>
+         <td><%= res.score %></td>
+         <td><%= res.rank %> - <%= res.rank_to %></td>
+         <td><%= res.class_rank %> - <%= res.class_rank_to %></td>
       <% else %>
-          -
+         <td>-</td>
+         <td>-</td>
+         <td>-</td>
+         <td>-</td>
       <% end %>
     </td>
   </tr>

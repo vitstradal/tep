@@ -44,8 +44,8 @@ class Sosna::SolutionController < SosnaController
   def update_papers
     roc, se, ul = params[:roc], params[:se], params[:ul]
     paper = params[:paper] || {}
-    solutions = Sosna::Solution.includes(:problem).where(:sosna_problems => {:annual => roc, :round => se}).load
-    solutions.each do |sol|
+
+    Sosna::Solution.includes(:problem).where(:sosna_problems => {:annual => roc, :round => se}).each do |sol|
       has_paper_mail = paper.has_key?  sol.id.to_s
       if sol.has_paper_mail != has_paper_mail
         sol.has_paper_mail = has_paper_mail
@@ -290,11 +290,11 @@ class Sosna::SolutionController < SosnaController
     roc, se, ul = _params_roc_se_ul
     add_alert "generovani je zatim trosku fake, anjoy #{roc} #{se}"
 
-    solvers = get_sorted_solvers(roc)
-    #results_by_solver, _results = _results_by_solver(solvers)
-    results_by_solver = _results_by_solver(solvers)
-    problems = Sosna::Problem.where(:annual => roc, :round => se).load
-    pens = Sosna::Penalisation.where(:annual => roc, :round => se).load
+    solvers = get_sorted_solvers(roc).to_a
+    results_by_solver = _get_results_by_solver(solvers, roc, se)
+    results_last = _get_results_by_solver(solvers, roc, se.to_i - 1, false)
+    problems = Sosna::Problem.where(:annual => roc, :round => se)
+    pens = Sosna::Penalisation.where(:annual => roc, :round => se)
 
     problems_by_id = {}
     problems.each{|p| problems_by_id[p.id] = p}
@@ -302,9 +302,8 @@ class Sosna::SolutionController < SosnaController
     pens_by_solver_id = {}
     pens.each{|p| pens_by_solver_id[p.solver_id] = p.score }
 
-    solutions = Sosna::Solution.where(:problem_id => problems.map{|p|p.id}).load
     scores = {}
-    solutions.each do  |sol|
+    Sosna::Solution.where(:problem_id => problems.map{|p|p.id}).each do  |sol|
       scores[sol.solver_id] ||= {}
       scores[sol.solver_id][problems_by_id[sol.problem_id].problem_no] = sol.score || 0
     end
@@ -315,18 +314,55 @@ class Sosna::SolutionController < SosnaController
       score -=  pens_by_solver_id[solver.id] || 0
       score = [score, 0].max
       res.comment = comment
-      res.score = score
+      res.round_score = score
+      lres = results_last[solver.id]
+      res.score = score + ( lres.nil? ? 0 : lres.score )
     end
     
+    solvers.sort_by! { |solver| results_by_solver[solver.id].score  }.reverse!
 
-    rank = 0;
-    solvers.sort_by { |solver| results_by_solver[solver.id].score  }.each do |solver| 
-      results_by_solver[solver.id].rank = (rank += 1)
+    rank = 0
+    i = 0
+    grade_rank = {}
+    while  i < solvers.size do
+      cur_score = results_by_solver[solvers[i].id].score
+      first_i = i
+
+      # dojed na konec tehle fronty
+      while true
+        i += 1
+        break if i >= solvers.size
+        break if results_by_solver[solvers[i].id].score != cur_score
+      end
+
+      grade_count = {}
+
+      # set rank, rank_to, and count solvers in each grade
+      (first_i .. i - 1).each do |j| 
+        # nastav jim to
+        solver = solvers[j]
+        res = results_by_solver[solver.id]
+        res.rank = first_i + 1
+        res.rank_to = (i - 1) + 1
+        grade_count[solver.grade_num] = (grade_count[solver.grade_num] || 0) + 1
+      end
+
+      # set class_rank, class_rank_to
+      (first_i .. i - 1).each do |j| 
+        solver = solvers[j]
+        grade = solver.grade_num
+        res = results_by_solver[solver.id]
+        cr = grade_rank[grade] || 1
+        ct = cr + grade_count[grade]
+        res.class_rank = cr
+        res.class_rank_to = ct
+      end
+
+      # increment current grade_rank
+      grade_count.each { |grade, count| grade_rank[grade] = ( grade_rank[grade] || 1 ) + count }
     end
 
     results_by_solver.each {|id,res| res.save}
-
-
     redirect_to :action =>  :index , :roc => roc, :se => se
   end
 
@@ -348,14 +384,20 @@ class Sosna::SolutionController < SosnaController
     return sum, comment
   end
 
-  def _results_by_solver(solvers)
-    _results = Sosna::Result.where(:solver_id => solvers.map{ |s| s.id },
-                                              :annual => @annual, 
-                                              :round => @round).load
+
+  def _get_results(solvers, roc, se)
+    Sosna::Result.where(:solver_id => solvers.map{ |s| s.id },
+                                              :annual => roc, 
+                                              :round => se).load
+
+  end
+
+  def _get_results_by_solver(solvers, roc, se, want_create = true)
+    _results = _get_results(solvers, roc, se)
     results_by_solver = {}
     _results.each { |p| results_by_solver[p.solver_id] = p }
     solvers.each do |solver| 
-      if results_by_solver[solver.id].nil?
+      if results_by_solver[solver.id].nil? && want_create
           begin
             results_by_solver[solver.id] = Sosna::Result.create({ :solver_id => solver.id,
                                                                             :annual => @annual,
@@ -391,7 +433,7 @@ class Sosna::SolutionController < SosnaController
   def _solutions_by_solver(solvers, problems)
     solutions = Sosna::Solution.where( :solver_id  => solvers.map{ |s| s.id },
                                        :problem_id => problems.map { |p| p.id },
-                                    ).load
+                                    )
     solutions_by_solver = []
     problems_by_id = {} 
     problems.each { |p| problems_by_id[p.id] = p }
@@ -547,16 +589,15 @@ class Sosna::SolutionController < SosnaController
     @problems = _problems_from_roc_se_ul
     @solutions_by_solver = _solutions_by_solver @solvers, @problems
     @penalisations_by_solver = _penalisations_by_solver @solvers
-    #@results_by_solver, _results = _results_by_solver @solvers
-    @results_by_solver = _results_by_solver @solvers
+    @results_by_solver = _get_results_by_solver(@solvers, @annual, @round)
   end
 
   def _problems_from_roc_se_ul
     roc, se, ul = _params_roc_se_ul
     if ul
-      return Sosna::Problem.where(:annual => roc, :round => se, :problem_no => ul).load
+      return Sosna::Problem.where(:annual => roc, :round => se, :problem_no => ul)
     else
-      return Sosna::Problem.where(:annual => roc, :round => se).load
+      return Sosna::Problem.where(:annual => roc, :round => se)
     end
   end
 
@@ -629,7 +670,6 @@ class Sosna::SolutionController < SosnaController
     Sosna::Problem.select('annual')
                        .group('annual')
                        .order('annual desc')
-                       .load
                        .each do |a|
                             annual[a.annual] = _rounds_roc(a.annual)
                        end
