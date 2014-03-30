@@ -286,32 +286,53 @@ class Sosna::SolutionController < SosnaController
     redirect_to :action => :user_index, roc: roc, se: se
   end
 
+  # pocitani vysledku
+  #
+  # pocet bodu se pocita ze seti nejlepsich prikladu (ze sedmi)
+  # pripocte se pocet bodu za minulou serii (pokdu byla)
+  # a spocita se poradi (a pokud ma stejne bodu tak interval porad)
+  # a spocita se poradi v rocniku (a pokud ma stejne bodu tak interval poradi)
   def update_results
     roc, se, ul = _params_roc_se_ul
     add_alert "generovani je zatim trosku fake, anjoy #{roc} #{se}"
 
+    # resitele
     solvers = get_sorted_solvers(roc).to_a
+
+    # vysledky (budou zmeneny)
     results_by_solver = _get_results_by_solver(solvers, roc, se)
+
+    # vysledky z minule seri
     results_last = _get_results_by_solver(solvers, roc, se.to_i - 1, false)
+
+    # priklady v teto serii
     problems = Sosna::Problem.where(:annual => roc, :round => se)
+
+    # penalizace za tuto serii
     pens = Sosna::Penalisation.where(:annual => roc, :round => se)
 
+    # poblemy podle id  
     problems_by_id = {}
     problems.each{|p| problems_by_id[p.id] = p}
 
+    # resitele podle id  
     pens_by_solver_id = {}
     pens.each{|p| pens_by_solver_id[p.solver_id] = p.score }
 
+    # pocty bodu za dane ulohy
     scores = {}
     Sosna::Solution.where(:problem_id => problems.map{|p|p.id}).each do  |sol|
       scores[sol.solver_id] ||= {}
       scores[sol.solver_id][problems_by_id[sol.problem_id].problem_no] = sol.score || 0
     end
+
+    # spocitej body kazdemu resitely
     solver_scores = {}
     solvers.each do |solver|
       score, comment = _compute_round_score( scores[solver.id] || [])
       res = results_by_solver[solver.id]
       score -=  pens_by_solver_id[solver.id] || 0
+      # kdyby penalizace mela byt vetsi nez pocet bodu, tak ji nepocitej
       score = [score, 0].max
       res.comment = comment
       res.round_score = score
@@ -319,25 +340,33 @@ class Sosna::SolutionController < SosnaController
       res.score = score + ( lres.nil? ? 0 : lres.score )
     end
     
+    # setridime od nejvice bodu
     solvers.sort_by! { |solver| results_by_solver[solver.id].score  }.reverse!
 
+    # priradime poradi (rank) 
     rank = 0
+
+    # od prvnich mist
     i = 0
+
+    # poradi v rocniku (klic je round_num, tedy cislo rocniku)
     grade_rank = {}
+
     while  i < solvers.size do
       cur_score = results_by_solver[solvers[i].id].score
       first_i = i
 
-      # dojed na konec tehle fronty
+      # dojed na konec bloku lidi se stejnymi body
       while true
         i += 1
         break if i >= solvers.size
         break if results_by_solver[solvers[i].id].score != cur_score
       end
 
+      # pocet lidi z kazdeho rocniku  v tomto bloku (klicem je cislo rocniku)
       grade_count = {}
 
-      # set rank, rank_to, and count solvers in each grade
+      # nastav jim poradi, a zaroven spocitej kolik je v tomto bloku lidi z jake tridy
       (first_i .. i - 1).each do |j| 
         # nastav jim to
         solver = solvers[j]
@@ -347,22 +376,25 @@ class Sosna::SolutionController < SosnaController
         grade_count[solver.grade_num] = (grade_count[solver.grade_num] || 0) + 1
       end
 
-      # set class_rank, class_rank_to
+      # resitelum z tohoto bloku nastav poradi v rocniku
       (first_i .. i - 1).each do |j| 
         solver = solvers[j]
         grade = solver.grade_num
         res = results_by_solver[solver.id]
         cr = grade_rank[grade] || 1
-        ct = cr + grade_count[grade]
+        ct = cr + grade_count[grade] - 1
         res.class_rank = cr
         res.class_rank_to = ct
       end
 
-      # increment current grade_rank
+      # aktualizuj pocet poradi lidi v rocniku, po tomto bloku lidi
       grade_count.each { |grade, count| grade_rank[grade] = ( grade_rank[grade] || 1 ) + count }
     end
 
+    # a ulozit vysledky
     results_by_solver.each {|id,res| res.save}
+
+    # presmerovat na zobrazeni tabukly
     redirect_to :action =>  :index , :roc => roc, :se => se
   end
 
@@ -590,6 +622,10 @@ class Sosna::SolutionController < SosnaController
     @solutions_by_solver = _solutions_by_solver @solvers, @problems
     @penalisations_by_solver = _penalisations_by_solver @solvers
     @results_by_solver = _get_results_by_solver(@solvers, @annual, @round)
+    if !params[:sous].nil?
+      @want_sous = true
+      @solvers = @solvers.select { |solver| @results_by_solver[solver.id].class_rank < 10 }
+    end
   end
 
   def _problems_from_roc_se_ul

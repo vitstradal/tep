@@ -8,10 +8,10 @@ class CreateTableSosnaResults < ActiveRecord::Migration
 
       t.integer :score      # počet bodů
       t.integer :round_score # počet bodů
-      t.text :rank          # poradi
-      t.text :rank_to       # poradi do
-      t.text :class_rank    # poradi v rocniku
-      t.text :class_rank_to # poradi v rocniku
+      t.integer :rank          # poradi
+      t.integer :rank_to       # poradi do
+      t.integer :class_rank    # poradi v rocniku
+      t.integer :class_rank_to # poradi v rocniku
 
       t.timestamps
     end

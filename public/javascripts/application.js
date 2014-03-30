@@ -30,9 +30,9 @@ jQuery(document).ready(function($) {
 		//"bSort": false,
 		"aaSorting": [],
 	        "aoColumnDefs": [
-					{ "sType": "numeric", "aTargets": [ 0 ] },
+					{ "sType": "numeric", "aTargets": [ 0,  ] },
 					{ "sType": "locale", "aTargets": [ 1 ] },
-					{ "sType": "numstr", "aTargets": [ 20, 21 ] },
+					{ "sType": "numstr", "aTargets": [ 20, 21, 22 ] },
 			        ],
         });
 

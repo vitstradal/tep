@@ -33,7 +33,6 @@
   <tr>
    <th>Id</th>
    <th>Řešitel</th>
-   <th title="Ročník num">R</th>
    <th>Škola</th>
   <% @problems.each do |pr| %>
    <th>u<%=pr.problem_no%></th>
@@ -42,10 +41,13 @@
    <th title="Body za úlohu č. <%=pr.problem_no%>">B<%=pr.problem_no%></th>
   <% end %>
   <th title="penalizace">Pen<% if @want_edit_penalisation%> / Důvod<%end%></th>
-  <th title="Výsledky">Vs</th>
-  <th title="Výsledky">V</th>
-  <th title="Celkové pořadí">cp</th>
-  <th title="Pořadí v ročníku">pvr</th>
+  <% if !@want_edit && !@want_edit_paper && ! @want_edit_penalisation %>
+    <th title="Body za sérii">Bs</th>
+    <th title="Body celkově">Bc</th>
+    <th title="Celkové pořadí">cp</th>
+    <th title="Pořadí v ročníku">pvr</th>
+    <th title="Ročník">R</th>
+  <% end %>
  </tr>
  </thead>
  <tbody>
@@ -53,7 +55,6 @@
   <tr>
     <td><%= solver.id  %></td>
     <td><%= link_to solver.full_name, { controller: :solver, action: :show, id: solver.id }  %></td>
-    <td><%= solver.grade_num %></td>
     <td><%= solver.school.nil? ? '-' : solver.school.short %></td>
     <% @problems.each do |pr| %>
        <% sol_arr = @solutions_by_solver[solver.id]  %>
@@ -104,19 +105,25 @@
         <span title="<%=pen_tit == '' ? 'žádný důvod' : pen_tit %>"><%= pen_sc  %></span>
       <% end %>
     </td>
-      <% res = @results_by_solver[solver.id] %>
-      <% if res %>
-         <td><%= res.round_score %></td>
-         <td><%= res.score %></td>
-         <td><%= res.rank %> - <%= res.rank_to %></td>
-         <td><%= res.class_rank %> - <%= res.class_rank_to %></td>
-      <% else %>
-         <td>-</td>
-         <td>-</td>
-         <td>-</td>
-         <td>-</td>
+      <% if !@want_edit  && !@want_edit_paper && ! @want_edit_penalisation %>
+        <% res = @results_by_solver[solver.id] %>
+        <% cls = @want_sous.nil?  ?  nil  : ( res.class_rank <= 5 ? 'bg-green' : 'bg-red' ) %>
+        <% if res %>
+           <td><%= res.round_score %></td>
+           <td<%if cls%> class="<%=cls%>"<%end%>>
+             <%= res.score %></td>
+           <td<%if cls%> class="<%=cls%>"<%end%>>
+             <%= res.rank %><% if res.rank_multi? %> - <%= res.rank_to %><% end %></td>
+           <td<%if cls%> class="<%=cls%>"<%end%>>
+             <%= res.class_rank %><% if res.class_rank_multi? %> - <%= res.class_rank_to %><% end %></td>
+        <% else %>
+           <td>-</td>
+           <td>-</td>
+           <td>-</td>
+           <td>-</td>
+        <% end %>
+        <td><%= solver.grade_num %></td>
       <% end %>
-    </td>
   </tr>
 <% end %>
  <tbody>
@@ -158,6 +165,10 @@
 
   <%= link_to 'Stáhnout tabulku body.pik',
             { format: 'pik'},
+            { :class=> 'btn btn-primary'} %>
+
+  <%= link_to 'Filtruj soustředění',
+            { :action => :index, roc: @annual, se: @round, ul: @problem_no, sous: 1  },
             { :class=> 'btn btn-primary'} %>
 
   <%= form_tag({:action => :update_results, :roc => @annual, :se => @round, :ul => @problem_no}, :class => 'form-inline') do %>
