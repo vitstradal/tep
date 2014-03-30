@@ -107,11 +107,15 @@
     </td>
       <% if !@want_edit  && !@want_edit_paper && ! @want_edit_penalisation %>
         <% res = @results_by_solver[solver.id] %>
+        <% cls = @want_sous.nil?  ?  nil  : ( res.class_rank <= 5 ? 'bg-green' : 'bg-red' ) %>
         <% if res %>
            <td><%= res.round_score %></td>
-           <td><%= res.score %></td>
-           <td><%= res.rank %><% if res.rank_multi? %> - <%= res.rank_to %><% end %></td>
-           <td><%= res.class_rank %><% if res.class_rank_multi? %> - <%= res.class_rank_to %><% end %></td>
+           <td<%if cls%> class="<%=cls%>"<%end%>>
+             <%= res.score %></td>
+           <td<%if cls%> class="<%=cls%>"<%end%>>
+             <%= res.rank %><% if res.rank_multi? %> - <%= res.rank_to %><% end %></td>
+           <td<%if cls%> class="<%=cls%>"<%end%>>
+             <%= res.class_rank %><% if res.class_rank_multi? %> - <%= res.class_rank_to %><% end %></td>
         <% else %>
            <td>-</td>
            <td>-</td>
@@ -161,6 +165,10 @@
 
   <%= link_to 'Stáhnout tabulku body.pik',
             { format: 'pik'},
+            { :class=> 'btn btn-primary'} %>
+
+  <%= link_to 'Filtruj soustředění',
+            { :action => :index, roc: @annual, se: @round, ul: @problem_no, sous: 1  },
             { :class=> 'btn btn-primary'} %>
 
   <%= form_tag({:action => :update_results, :roc => @annual, :se => @round, :ul => @problem_no}, :class => 'form-inline') do %>
