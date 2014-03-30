@@ -28,7 +28,7 @@ class Sosna::SolverController < SosnaController
     if ! @solver 
       @solver= Sosna::Solver.new(:email => current_user.nil? ? nil : current_user.email.downcase )
     end
-    @schools = Sosna::School.load
+    @schools = Sosna::School.all.load
     @agree = flash[:agree] || false
   end
   #def new_tnx end
