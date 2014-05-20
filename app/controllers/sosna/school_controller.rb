@@ -8,7 +8,7 @@ class Sosna::SchoolController < SosnaController
   end
 
   def index
-    @schools =  Sosna::School.all
+    @schools =  Sosna::School.all.load
   end
 
   def delete

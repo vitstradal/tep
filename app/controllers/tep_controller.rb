@@ -10,7 +10,7 @@ class TepController < ApplicationController
   def faq; end
 
   def users
-    @users = User.all
+    @users = User.all.load
     #print 'sign:', sign("ahoj")
   end
 

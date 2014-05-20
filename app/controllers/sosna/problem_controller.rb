@@ -4,8 +4,7 @@ class Sosna::ProblemController < SosnaController
   include SosnaHelper
 
   def index
-      @problems = Sosna::Problem.order('annual desc, round desc,  problem_no asc')
-                              .all
+      @problems = Sosna::Problem.order('annual desc, round desc,  problem_no asc').load
   end
 
   def show

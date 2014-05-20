@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 7) do
+ActiveRecord::Schema.define(version: 9) do
 
   create_table "sessions", force: true do |t|
     t.string   "session_id", null: false
@@ -49,6 +49,23 @@ ActiveRecord::Schema.define(version: 7) do
     t.integer "problem_no"
   end
 
+  create_table "sosna_results", force: true do |t|
+    t.integer  "annual"
+    t.integer  "round"
+    t.integer  "solver_id"
+    t.text     "comment"
+    t.integer  "score"
+    t.integer  "round_score"
+    t.integer  "rank"
+    t.integer  "rank_to"
+    t.integer  "class_rank"
+    t.integer  "class_rank_to"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "sosna_results", ["solver_id", "annual", "round"], name: "index_sosna_results_on_solver_id_and_annual_and_round", unique: true
+
   create_table "sosna_schools", force: true do |t|
     t.text "name"
     t.text "short"
@@ -57,6 +74,7 @@ ActiveRecord::Schema.define(version: 7) do
     t.text "city"
     t.text "psc"
     t.text "state"
+    t.text "universal_id"
   end
 
   create_table "sosna_solutions", force: true do |t|
