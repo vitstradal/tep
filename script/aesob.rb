@@ -39,7 +39,8 @@ def print_round(annual, round)
   maturity_grade = 13
   date = DateTime.now.strftime('%Y-%m-%d %H:%M:%S')
   year = 2014 + annual - 30
-  event = "pikomat.rocnik.#{annual}.serie.#{round}"
+  #event = "pikomat.rocnik.#{annual}.serie.#{round}"
+  event = "pikomat.#{annual}"
 
   solvers = Sosna::Solver.where(annual: annual)
   
@@ -47,18 +48,21 @@ def print_round(annual, round)
   ex << ['version',     1]
   ex << ['year',        year]
   ex << ['event',       event]
-  ex << ['erros-to',    errors_to]
+  ex << ['errors-to',    errors_to]
   ex << ['date',        date]
-  ex << ['max-ransk',   solvers.count ]
+  ex << ['max-rank',   solvers.count ]
   ex << ['max-points',  round * 30]
   ex << []
-  ex << ['name', 'surname', 'fullname', 'street', 'postcode', 'city', 'country', 'email', 'end-year', 'rank', 'points', 'spam-flag', 'spam-date',
+  ex << ['id', 'name', 'surname', 'fullname', 'school', 'street', 'postcode', 'town', 'country', 'email', 'end-year', 'rank', 'points', 'spam-flag', 'spam-date',
          #'grade',
          ]
   
   solvers.each  do |solver|
   
   
+    next if ['p.zahajska@yahoo.com', 'lux.filip@gmail.com'  ] .include? solver.email
+    school = solver.school
+
     rank = 0
     points = 0
   
@@ -69,11 +73,11 @@ def print_round(annual, round)
     end
     finish_year = solver.finish_year || ( year + 1 + maturity_grade - solver.grade_num.to_i )
   
-    spam_flag = 'N'
-    spam_flag = 'N'
+    spam_flag = 'Y'
     spam_date = solver.created_at.strftime('%Y-%m-%d')
     full_name = "#{solver.name} #{solver.last_name}"
-    ex << [  solver.name, solver.last_name, full_name,
+    ex << [  solver.id, solver.name, solver.last_name, full_name,
+             school.nil? ? 'ufo' : school.universal_id,
              "#{solver.street} #{solver.num}", (solver.psc||'').gsub(' ',''), solver.city,
              'cz', solver.email,
              finish_year,
@@ -93,7 +97,7 @@ def main
   annual = Sosna::Config.where(key: 'annual').take.value.to_i
 
   files = []
-  (1 .. round_max ).each do |round|
+  (round_max .. round_max ).each do |round|
 
     file = "ovvp.#{annual}.#{round}.txt"
     File.open(file, 'w') do |f| 
