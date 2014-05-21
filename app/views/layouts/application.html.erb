@@ -75,9 +75,16 @@
       <ul class="nav nav-list">
         <% if user_signed_in?  %>
           <li><a href="#"><i class="menu-icon fa fa-user"></i><span class="menu-text"> Uživatel</span></a></li>
-            <li><%= link_to :sosna_solutions_user do %><span class="menu-text"><i class="menu-icon fa fa-user"></i>Moje řešení</span><% end %> </li>
-            <li><%= link_to  'Změna hesla', :edit_user_registration %></li>
-            <li><%= link_to  'Nápověda', :faq%></li>
+          <%= menu_li '#', 'Uzivatel2', 'dropdown-toggle fa-user' %>
+          <%= menu_li '#', 'Uzivatel 3', 'fa-user' do %>
+	    
+	    <ul class="submenu nav-show" style="display:block"> 
+	      <%= menu_li :sosna_solutions_user, 'Moje řešení', 'fa-lightbulb-o' %>
+	      <%= menu_li :edit_user_registration, 'Moje řešení', 'fa-lightbulb-o' %>
+              <%= menu_li :sosna_solutions_user, 'Změna hesla', ''  %>
+              <%= menu_li :faq, 'Nápověda', ''  %>
+	    </ul>
+          <% end %>
         <% else %>
         <% end %>
         <% if current_user && current_user.has_role?(:org) %>

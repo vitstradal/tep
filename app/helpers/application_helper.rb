@@ -2,6 +2,24 @@
 require 'digest/hmac'
 module ApplicationHelper
 
+  def menu_li(uri, text = nil, ico = nil, &block) 
+   
+    a_text =  ''
+    li_extra = ''
+    if block_given? 
+      li_extra = capture(&block)
+      a_extra  = content_tag(:b, '', {:class => 'arrow fa fa-angle-down'} ) 
+    end 
+
+    content_tag(:li, {:class => 'hsub open'}) do
+      content_tag(:a, {:href => '#'}) do
+         (ico.nil? ? '' : content_tag(:i, '', { :class => "menu-icon fa #{ico}"})) +
+         content_tag(:span, text, { :class => 'menu-text' }  ) +
+         a_extra
+      end + li_extra
+    end
+  end
+
 #  def valid_digest?(data, dig, purpose = 'none')
 #     digest(data, purpose) == dig
 #  end
