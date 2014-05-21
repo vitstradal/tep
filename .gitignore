@@ -7,4 +7,5 @@ db/lidi29*.yml
 db/skoly29.yml
 log/*.log
 tmp/
+/tmp.*
 tags

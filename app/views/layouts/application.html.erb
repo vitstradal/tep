@@ -1,171 +1,141 @@
 <!DOCTYPE html>
 <html>
 <head>
+  <meta charset="utf-8" />
+  <!-- use the following meta to force IE use its most up to date rendering engine -->
+  <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+
+  <%#  rozmyslet: viz http://pikomat.ms.mff.cuni.cz/pokusy/ace-admin/docs/#basics/layout  %>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  
   <title>Pikomat MFF UK</title>
-  <%= stylesheet_link_tag 'bootstrap.css'  %>
-  <%= stylesheet_link_tag 'bootstrap-responsive.css'  %>
-  <%= stylesheet_link_tag 'bootstrap-colors.css'  %>
-  <%= stylesheet_link_tag 'andulka/stylesheet.css' %>
-  <%= stylesheet_link_tag 'jquery.dataTables.css' %>
-  <%= stylesheet_link_tag 'tep.css' %>
-  <%= javascript_include_tag 'jquery-1.10.2.js' %>
-  <%= javascript_include_tag 'jquery.dataTables.js' %>
-  <%= javascript_include_tag 'bootstrap.js' %>
-  <%= javascript_include_tag 'application.js' %>
-  <%= csrf_meta_tag %>
+  <meta name="description" content="pikomat korespondenční matematický seminář, soustředění matematické tábory" />
+  <%= stylesheet_link_tag '/ace/css/bootstrap.min.css' %>
+  <%= stylesheet_link_tag '/ace/css/font-awesome.min.css' %>
+  <%= stylesheet_link_tag '/ace/css/ace-fonts.css' %>
+  <%= stylesheet_link_tag '/ace/css/chosen.css' %>
+  <%= stylesheet_link_tag '/ace/css/ui.jqgrid.css' %>
+  <%= stylesheet_link_tag '/ace/css/ace.min.css' %>
+  <%# stylesheet_link_tag '/ace/css/ace-part2.css' %>
+  <%= stylesheet_link_tag '/ace/css/ace-skins.min.css' %>
+  <%= javascript_include_tag '/ace/js/ace-extra.min.js' %>
+
+  <%# stylesheet_link_tag '/ace/BLABLA.css' %>
+  <%# stylesheet_link_tag 'bootstrap.css'  %>
+  <%# stylesheet_link_tag 'bootstrap-responsive.css'  %>
+  <%# stylesheet_link_tag 'bootstrap-colors.css'  %>
+  <%# stylesheet_link_tag 'andulka/stylesheet.css' %>
+  <%# stylesheet_link_tag 'jquery.dataTables.css' %>
+  <%# stylesheet_link_tag 'tep.css' %>
+  <%# javascript_include_tag 'jquery-1.10.2.js' %>
+  <%# javascript_include_tag 'jquery.dataTables.js' %>
+  <%# javascript_include_tag 'bootstrap.js' %>
+  <%# javascript_include_tag 'application.js' %>
+  <%# csrf_meta_tag %>
+
 </head>
-<body>
+<body class="no-skin">
 
 <% if ENV['RAILS_ENV'] != 'production'  %>
 <img src="<%= asset_path 'images/devel-version.png'%>" style='z-index:99;position:fixed;bottom:0;right:0;border:0;'>
 <% end %>
 
-    <div class="navbar navbar-inverse">
-      <div class="navbar-inner">
-        <div class="container-fluid">
-          <%= link_to  'Tep' , :root, :class => 'brand' %>
-          <%= link_to  'Pikomatu' , 'http://pikomat.mff.cuni.cz', {:class => 'brand'} %>
-          <div class="nav-collapse collapse">
-                <% if user_signed_in?  %>
-                  <p class="navbar-text pull-right">
-                     <a href="#" class="navbar-link"><%= current_user.email %></a>
-                     <%= link_to  'Logout', :destroy_user_session %>
-                  </p>
-                <% else %>
-                  <p class="navbar-text pull-right">
-                     <%= link_to  'Přihlášení', :new_user_session  %>
-                     <%#= link_to  'Registrace', :new_user_registration  %>
-                  </p>
-                <% end %>
-          </div><!--/.nav-collapse -->
-        </div>
-      </div>
+<div class="navbar" id="navbar navbar-default">
+
+
+  <div id="navbar-container" class="navbar-container container">
+  
+    <div class="navbar-header pull-left">
+      <a href="#" class="navbar-brand">
+        <small><i class="ace-icon fa fa-square"></i> Pikomat </small>
+     </a>
     </div>
+    <div class="navbar-buttons navbar-header pull-right navbar-collapse collapse">
+      <ul class="nav ace-nav">
+        <% if user_signed_in?  %>
+          <li><a href="#" class="navbar-link"><%= current_user.email %></a></li>
+          <li><%= link_to  'Logout', :destroy_user_session %></li>
+        <% else %>
+           <li><%= link_to  'Přihlášení', :new_user_session  %></li>
+           <li><%#= link_to  'Registrace', :new_user_registration  %></li>
+        <% end %>
+      </ul>
+    </div><%# navbar-buttons %>
+  </div><%# navbar-container %>
+</div><%# navbar %>
 
+ 
+<div class="main-container container" id="main-container">
+  <div class="sidebar responsive" id="sidebar">
+    <div class="sidebar responsive" id="sidebar">
+<%#      <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+      ...
+      </div> %>
+      <ul class="nav nav-list">
+        <% if user_signed_in?  %>
+          <li><a href="#"><i class="menu-icon fa fa-user"></i><span class="menu-text"> Uživatel</span></a></li>
+            <li><%= link_to :sosna_solutions_user do %><span class="menu-text"><i class="menu-icon fa fa-user"></i>Moje řešení</span><% end %> </li>
+            <li><%= link_to  'Změna hesla', :edit_user_registration %></li>
+            <li><%= link_to  'Nápověda', :faq%></li>
+        <% else %>
+        <% end %>
+        <% if current_user && current_user.has_role?(:org) %>
+          <li class="nav-header">Org</li>
+          <li><%= link_to 'Řešitelé', :sosna_solvers %></li>
+          <li><%= link_to 'Řešení řešitelů', :sosna_solutions_org %></li>
+          <li><%= link_to 'Úlohy', :sosna_problems %></li>
+          <li><%= link_to 'Školy', :sosna_schools %></li>
+          <li><%= link_to 'Wiki', :wiki_main  %></li>
+          <li><%= link_to 'Web', :wiki_web  %></li>
+          <li><%= link_to 'Web Edit', :wiki_web_edit  %></li>
+        <% end %>
+        <% if current_user && current_user.has_role?(:admin) %>
+          <li class="nav-header">Admin</li>
+          <li><%= link_to 'Uživatelé', :users_list  %></li>
+          <li><%= link_to 'Konfigurace', :sosna_configs  %></li>
+        <% end %>
+        <li class="nav-header">Odkazy</li>
+        <li><%= link_to 'Pikomat', 'http://pikomat.mff.cuni.cz/' %></li>
+        <% if ! current_user %>
+          <li><%= link_to 'Přihláška', :sosna_solver_new  %></li>
+          <li><%= link_to  'Nápověda', :faq%></li>
+        <% end %> 
+      </ul>
+    </div>
+  </div>
+  
+  <div class="main-content">
 
+   <div class="page-content">
+     <div class="row">
+       <div class="col-xs-12">
+        <!-- page content goes here -->
+        <%= yield %>
+       </div><!-- /.col -->
+     </div><!-- /.row -->
+   </div><!-- /.page-content -->
 
-
-<div style="background-color:gray" class="">
-</div>
-
-    <div class="container-fluid">
-      <div class="row-fluid">
-        <div class="span2">
-          <div class="well sidebar-nav">
-            <ul class="nav nav-list">
-
-              <% if user_signed_in?  %>
-                <li class="nav-header">Uživatel</li>
-                  <li><%= link_to  'Moje řešení', :sosna_solutions_user %></li>
-                  <li><%= link_to  'Změna hesla', :edit_user_registration %></li>
-                  <li><%= link_to  'Nápověda', :faq%></li>
-              <% else %>
-              <% end %>
-              <% if current_user && current_user.has_role?(:org) %>
-                <li class="nav-header">Org</li>
-                <li><%= link_to 'Řešitelé', :sosna_solvers %></li>
-                <li><%= link_to 'Řešení řešitelů', :sosna_solutions_org %></li>
-                <li><%= link_to 'Úlohy', :sosna_problems %></li>
-                <li><%= link_to 'Školy', :sosna_schools %></li>
-                <li><%= link_to 'Wiki', :wiki_main  %></li>
-                <li><%= link_to 'Web', :wiki_web  %></li>
-                <li><%= link_to 'Web Edit', :wiki_web_edit  %></li>
-              <% end %>
-              <% if current_user && current_user.has_role?(:admin) %>
-                <li class="nav-header">Admin</li>
-                <li><%= link_to 'Uživatelé', :users_list  %></li>
-                <li><%= link_to 'Konfigurace', :sosna_configs  %></li>
-              <% end %>
-              <li class="nav-header">Odkazy</li>
-              <li><%= link_to 'Pikomat', 'http://pikomat.mff.cuni.cz/' %></li>
-              <% if ! current_user %>
-                <li><%= link_to 'Přihláška', :sosna_solver_new  %></li>
-                <li><%= link_to  'Nápověda', :faq%></li>
-              <% end %> 
-            </ul>
-          </div><!--/.well -->
-        </div><!--/span-->
-        <div class="span10">
-
-<%if notice %><div class="alert alert-success"><%= notice %></div><% end %>
-<%if alert %><div class="alert alert-error"><%= alert %></div><% end %>
-
-<% if flash[:alerts] %>
-  <% flash[:alerts].each do |msg| %>
-    <div class="alert alert-error"> <%= msg %> </div>
-  <% end %>
-<% end %>
-<% if flash[:success] %>
-  <% flash[:success].each do |msg| %>
-    <div class="alert alert-success"> <%=msg %> </div>
-  <% end %>
-<% end %>
-
-<%# @breadrubb [[ {name => 'home', url=> '/home.html', sub => [...], }  ]]  %>
-<%# @breadrubb [[ {btn => } %>
-<% if @breadcrumb || @action_buttons %>
-<ul class="breadcrumb">
-   <% (@breadcrumb||[]).each_with_index do |bread, bread_idx| %>
-     <% bread.each do |crumb, crumb_idx| %>
-        <% msep, esep = case bread_idx
-                        when 0 then ['/', '>']
-                        when 1 then [',', '|']
-                        else [',', '|']
-                        end -%>
-         <li <% if crumb[:active] || crumb[:sub] %>class="active"<% end  %>>
-            <% if crumb[:sub] %>
-               <span class="dropdown">
-               <%#= link_to   '#', :class => 'dropdown-toggle', 'data-target'=>'#', 'data-toggle'=> "dropdown", :role=>"button"  do %>
-               <span class='dropdown-toggle' data-target="#" data-toggle="dropdown" role="button"  >
-                 <%= crumb[:name] %>
-                 </span>
-               <%# end # link_to %>
-               <ul class="dropdown-menu" role="menu" aria-labelledby="dLabel">
-                 <% crumb[:sub].each do |sub| %>
-                   <li role="presentation"><%= link_to sub[:name], sub[:url] %></li>
-                  <%# <li role="presentation"><a role="menuitem" tabindex="-1" href="http://gxxxle.com">Action 1</a></li> %>
-                 <% end %>
-               </ul>
-               </span>
-            <% else %>
-               <% if crumb[:active] %>
-                 <%= crumb[:name] %>
-               <% else %>
-                 <%= link_to crumb[:name],  crumb[:url] %>
-               <% end %>
-            <% end %>
-            <% if bread.last != crumb %>
-                        <span class="divider"><%= msep %></span>
-            <% elsif @breadcrumb.last != bread %>
-                        <span class="divider"><%= esep %></span>
-            <% end %>
-         </li>
-     <% end %>
-   <% end %>
-   <% if @action_buttons || @action_more %>
-     <li class="pull-right">
-       <div class="btn-group">
-         <% @action_buttons && @action_buttons.each do |button| %>
-	    <% btn_class = button[:class].nil? ? '' :  " #{button[:class]}"  %>
-            <%= link_to button[:name], button[:url], :class=>"btn btn-mini#{btn_class}", :accesskey => button[:accesskey]%>
-          <% end %>
-	  <% if @action_more %>
-            <a href='#more' class="btn btn-mini"><i class='icon-arrow-down'></i></a>
-	  <% end %>
+   <div class="footer">
+     <div class="footer-inner">
+        <div class="footer-content">
+          <small>V případě obtíží se obrať na <a href="mailto:pikomat@pikomat.mff.cuni.cz">pikomat@pikomat.mff.cuni.cz</a>.<small>
 	</div>
-     </li>
-   <% end %>
-</ul>
-<% end %>
-
-<%= yield %>
      </div>
-   </div>
-</div>
+  </div><!-- /.main-content -->
+</div><!-- /.main-container -->
 
-<hr>
-<div style='text-align:center' > <small>V případě obtíží se obrať na <a href="mailto:pikomat@pikomat.mff.cuni.cz">pikomat@pikomat.mff.cuni.cz</a>.  <small></div>
-
+<!-- list of script files -->
+<!--[if !IE]> -->
+<%= javascript_include_tag '/ace/js/jquery.min.js' %>
+<!-- <![endif]-->
+<!--[if lte IE 9]>
+<%= javascript_include_tag '/ace/js/jquery1x.min.js' %>
+<![endif]-->
+<%= javascript_include_tag '/ace/js/ace-elements.min.js' %>
+<%= javascript_include_tag '/ace/js/ace.min.js' %>
+  
 
 </body>
 </html>
+
