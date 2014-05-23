@@ -2,20 +2,52 @@
 require 'digest/hmac'
 module ApplicationHelper
 
-  def menu_li(uri, text = nil, ico = nil, &block) 
-   
-    a_text =  ''
-    li_extra = ''
-    if block_given? 
-      li_extra = capture(&block)
-      a_extra  = content_tag(:b, '', {:class => 'arrow fa fa-angle-down'} ) 
-    end 
+  def menu_lii(uri, text = nil, opt = {} ,  &block) 
+     opt.merge! ({:lii => true})
+     menu_li uri, text, opt, &block
+  end
 
-    content_tag(:li, {:class => 'hsub open'}) do
-      content_tag(:a, {:href => '#'}) do
-         (ico.nil? ? '' : content_tag(:i, '', { :class => "menu-icon fa #{ico}"})) +
-         content_tag(:span, text, { :class => 'menu-text' }  ) +
-         a_extra
+  # opt:
+  #  ico
+  #  class
+  #  lii
+  def menu_li(uri, text = nil, opt = {} , &block) 
+   
+    li_cls =  opt[:cls].nil? ?  [] :
+           opt[:cls].is_a?(String) ? [opt[:cls]] : opt[:cls]
+
+    url =  url_for(uri)
+    print "XXX:#{url_for(uri)}\t#{current_page?(uri)}\t#{current_page?(url)}\n"
+
+
+
+    ico_tag = opt[:ico].nil? ? '' : content_tag(:i, '', { :class => "menu-icon fa #{opt[:ico]}"})
+
+    text_tag = opt[:lii] ? text : content_tag(:span, text, { :class => 'menu-text' }  )
+
+    li_extra = ''
+    a_extra = ''
+    a_cls = nil
+
+    if block_given? 
+      li_cls.push('hsub')
+      a_cls = "dropdown-toggle"
+      a_extra = content_tag(:b, '', {:class => 'arrow fa fa-angle-down'} ) 
+      li_extra = \
+          content_tag(:b, '', { :class=> "arrow" } )  +
+          capture(&block)
+
+       li_cls.push('open active')
+    end
+
+    if current_page?(url)
+      print "set active\n"
+      li_cls.push('active')
+    end
+
+    content_tag(:li, { :class => li_cls.join(' ') } ) do
+      content_tag(:a, {:class => a_cls, :href => url}) do
+         ico_tag + text_tag + a_extra
       end + li_extra
     end
   end

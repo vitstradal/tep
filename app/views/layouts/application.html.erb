@@ -8,31 +8,24 @@
 
   <%#  rozmyslet: viz http://pikomat.ms.mff.cuni.cz/pokusy/ace-admin/docs/#basics/layout  %>
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  
+
   <title>Pikomat MFF UK</title>
   <meta name="description" content="pikomat korespondenční matematický seminář, soustředění matematické tábory" />
   <%= stylesheet_link_tag '/ace/css/bootstrap.min.css' %>
   <%= stylesheet_link_tag '/ace/css/font-awesome.min.css' %>
   <%= stylesheet_link_tag '/ace/css/ace-fonts.css' %>
+  <%= stylesheet_link_tag '/ace/css/ace.min.css' %>
+  <%= stylesheet_link_tag '/ace/css/ace-skins.min.css' %>
+  <%= stylesheet_link_tag '/ace/css/ace-rtl.min.css' %>
   <%= stylesheet_link_tag '/ace/css/chosen.css' %>
   <%= stylesheet_link_tag '/ace/css/ui.jqgrid.css' %>
-  <%= stylesheet_link_tag '/ace/css/ace.min.css' %>
   <%# stylesheet_link_tag '/ace/css/ace-part2.css' %>
   <%= stylesheet_link_tag '/ace/css/ace-skins.min.css' %>
-  <%= javascript_include_tag '/ace/js/ace-extra.min.js' %>
 
-  <%# stylesheet_link_tag '/ace/BLABLA.css' %>
-  <%# stylesheet_link_tag 'bootstrap.css'  %>
-  <%# stylesheet_link_tag 'bootstrap-responsive.css'  %>
-  <%# stylesheet_link_tag 'bootstrap-colors.css'  %>
-  <%# stylesheet_link_tag 'andulka/stylesheet.css' %>
-  <%# stylesheet_link_tag 'jquery.dataTables.css' %>
-  <%# stylesheet_link_tag 'tep.css' %>
-  <%# javascript_include_tag 'jquery-1.10.2.js' %>
-  <%# javascript_include_tag 'jquery.dataTables.js' %>
-  <%# javascript_include_tag 'bootstrap.js' %>
-  <%# javascript_include_tag 'application.js' %>
-  <%# csrf_meta_tag %>
+  <%= stylesheet_link_tag 'andulka/stylesheet.css' %>
+  <%= stylesheet_link_tag 'tep.css' %>
+
+  <%= javascript_include_tag '/ace/js/ace-extra.min.js' %>
 
 </head>
 <body class="no-skin">
@@ -45,7 +38,7 @@
 
 
   <div id="navbar-container" class="navbar-container container">
-  
+
     <div class="navbar-header pull-left">
       <a href="#" class="navbar-brand">
         <small><i class="ace-icon fa fa-square"></i> Pikomat </small>
@@ -65,53 +58,50 @@
   </div><%# navbar-container %>
 </div><%# navbar %>
 
- 
+
 <div class="main-container container" id="main-container">
   <div class="sidebar responsive" id="sidebar">
-    <div class="sidebar responsive" id="sidebar">
-<%#      <div class="sidebar-shortcuts" id="sidebar-shortcuts">
+<%#   <div class="sidebar-shortcuts" id="sidebar-shortcuts">
       ...
-      </div> %>
-      <ul class="nav nav-list">
-        <% if user_signed_in?  %>
-          <li><a href="#"><i class="menu-icon fa fa-user"></i><span class="menu-text"> Uživatel</span></a></li>
-          <%= menu_li '#', 'Uzivatel2', 'dropdown-toggle fa-user' %>
-          <%= menu_li '#', 'Uzivatel 3', 'fa-user' do %>
-	    
-	    <ul class="submenu nav-show" style="display:block"> 
-	      <%= menu_li :sosna_solutions_user, 'Moje řešení', 'fa-lightbulb-o' %>
-	      <%= menu_li :edit_user_registration, 'Moje řešení', 'fa-lightbulb-o' %>
-              <%= menu_li :sosna_solutions_user, 'Změna hesla', ''  %>
-              <%= menu_li :faq, 'Nápověda', ''  %>
-	    </ul>
-          <% end %>
-        <% else %>
+      </div>
+  #%>
+    <ul class="nav nav-list">
+      <% if user_signed_in?  %>
+        <%= menu_li '#', 'Uživatel', ico: 'fa-user' do %>
+          <ul class="submenu">
+            <%= menu_lii :sosna_solutions_user,   'Moje řešení' %>
+            <%= menu_lii :edit_user_registration, 'Moje řešení' %>
+            <%= menu_lii :faq,                    'Nápověda'   %>
+          </ul>
         <% end %>
-        <% if current_user && current_user.has_role?(:org) %>
-          <li class="nav-header">Org</li>
-          <li><%= link_to 'Řešitelé', :sosna_solvers %></li>
-          <li><%= link_to 'Řešení řešitelů', :sosna_solutions_org %></li>
-          <li><%= link_to 'Úlohy', :sosna_problems %></li>
-          <li><%= link_to 'Školy', :sosna_schools %></li>
-          <li><%= link_to 'Wiki', :wiki_main  %></li>
-          <li><%= link_to 'Web', :wiki_web  %></li>
-          <li><%= link_to 'Web Edit', :wiki_web_edit  %></li>
+      <% else %>
+      <% end %>
+      <% if current_user && current_user.has_role?(:org) %>
+        <%= menu_li '#', 'Org', ico: 'fa-flag' do %>
+          <ul class="submenu">
+            <%= menu_lii :sosna_solvers,       'Řešitelé' %>
+            <%= menu_lii :sosna_solutions_org, 'Řešení řešitelů' %>
+            <%= menu_lii :sosna_problems,      'Úlohy' %>
+            <%= menu_lii :sosna_schools,       'Školy' %>
+            <%= menu_lii :wiki_main,           'Wiki' %>
+            <%= menu_lii :wiki_web,            'Web' %>
+            <%= menu_lii :wiki_web_edit,       'Web Edit'%>
+          </ul>
         <% end %>
-        <% if current_user && current_user.has_role?(:admin) %>
-          <li class="nav-header">Admin</li>
-          <li><%= link_to 'Uživatelé', :users_list  %></li>
-          <li><%= link_to 'Konfigurace', :sosna_configs  %></li>
+      <% end %>
+      <% if current_user && current_user.has_role?(:admin) %>
+        <%= menu_li '#', 'Admin', ico: 'fa-eye' do %>
+          <ul class="submenu">
+            <%= menu_lii :users_list,       'Uživatelé' %>
+            <%= menu_lii :sosna_configs,   'Konfigurace' %>
+          </ul>
         <% end %>
-        <li class="nav-header">Odkazy</li>
-        <li><%= link_to 'Pikomat', 'http://pikomat.mff.cuni.cz/' %></li>
-        <% if ! current_user %>
-          <li><%= link_to 'Přihláška', :sosna_solver_new  %></li>
-          <li><%= link_to  'Nápověda', :faq%></li>
-        <% end %> 
-      </ul>
-    </div>
+      <% end %>
+      <%= menu_li 'http://pikomat.mff.cuni.cz/', 'Pikomat',  ico: 'fa-square'  %>
+      <%= menu_li 'http://pikomat.mff.cuni.cz/', request.url , ico: 'fa-square'  %>
+    </ul>
   </div>
-  
+
   <div class="main-content">
 
    <div class="page-content">
@@ -132,16 +122,21 @@
   </div><!-- /.main-content -->
 </div><!-- /.main-container -->
 
-<!-- list of script files -->
-<!--[if !IE]> -->
 <%= javascript_include_tag '/ace/js/jquery.min.js' %>
-<!-- <![endif]-->
-<!--[if lte IE 9]>
-<%= javascript_include_tag '/ace/js/jquery1x.min.js' %>
-<![endif]-->
+<%= javascript_include_tag '/ace/js/bootstrap.min.js' %>
+<%= javascript_include_tag '/ace/js/jquery-ui.custom.min.js' %>
+<%= javascript_include_tag '/ace/js/jquery.ui.touch-punch.min.js' %>
+<%= javascript_include_tag '/ace/js/jquery.easypiechart.min.js' %>
+<%= javascript_include_tag '/ace/js/jquery.sparkline.min.js' %>
+<%= javascript_include_tag '/ace/js/flot/jquery.flot.min.js' %>
+<%= javascript_include_tag '/ace/js/flot/jquery.flot.pie.min.js' %>
+<%= javascript_include_tag '/ace/js/flot/jquery.flot.resize.min.js' %>
+
+<script type="text/javascript"> ace.vars['base'] = '/ace'; </script>
+
 <%= javascript_include_tag '/ace/js/ace-elements.min.js' %>
 <%= javascript_include_tag '/ace/js/ace.min.js' %>
-  
+
 
 </body>
 </html>

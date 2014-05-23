@@ -1,5 +1,7 @@
 
-/* fonty */
+/************************
+ *  fonty andulka wiki: diff
+ */
 p      { font-family: 'AndulkaSerifBookRegular', Arial, sans-serif; }
 h1     { font-family: 'AndulkaSerifBookRegular', Arial, sans-serif; }
 body   { font-family: 'AndulkaSerifBookRegular', Arial, sans-serif; }
@@ -7,10 +9,10 @@ select { font-family: 'AndulkaSerifBookRegular', Arial, sans-serif; }
 button { font-family: 'AndulkaSerifBookBold',    Arial, sans-serif; }
 input  { font-family: 'AndulkaSerifBookBold',    Arial, sans-serif; }
 
-table, th, td { 
- border: 1px solid black;
-}
 
+/************************
+ *  forms
+ */
 
 /* error */
 .field_with_errors {
@@ -27,6 +29,19 @@ form.form-inline {
 margin-bottom: 0px;
 }
 
+input,
+input.input-medium
+{
+   margin-bottom: 0px;
+}
+
+input.input-minimini {
+   width: 20px;
+   margin-bottom: 0px;
+}
+/************************
+ *  wiki: diff
+ */
 .merge {
   border: 1px solid black;
   background-color: red;
@@ -60,6 +75,9 @@ margin-bottom: 0px;
   content: "⇑⇑⇑ ";
 }
 
+/************************
+ *  wiki hacks
+ */
 .editheading {
 font-size: 12px;
 margin-left: 3em;
@@ -70,19 +88,10 @@ margin-left: 3em;
 .editheading:before { content: "["; }
 .editheading:after  { content: "]"; }
 
-input.input-minimini {
-   width: 20px;
-   margin-bottom: 0px;
-}
 
-input,
-input.input-medium
-{
-   margin-bottom: 0px;
-}
-.table td {
- padding: 4px;
-}
+/************************
+ *  foto galerie
+ */
 
 .box {
 	border:1px solid black;
@@ -94,10 +103,17 @@ input.input-medium
 	background-color: #ffa0a0;
 }
 
+/************************
+ *  math hack
+ */
+
 .math:hover {
 	background-color: #ffff80;
 }
 
+/************************
+ *  wiki foto
+ */
 .fotos hr {
   clear: left;
 }
@@ -131,3 +147,21 @@ input.input-medium
   cursor: pointer;
 }
 
+/************************
+ *  hacks
+ */
+table, th, td { 
+ border: 1px solid black;
+}
+.table td {
+ padding: 4px;
+}
+
+/************************
+ *  ace hacks
+ */
+
+
+.no-skin .nav-list > li.open > a {
+  color: #585858;
+}
