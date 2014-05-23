@@ -37,7 +37,8 @@ module ApplicationHelper
           content_tag(:b, '', { :class=> "arrow" } )  +
           capture(&block)
 
-       li_cls.push('open active')
+       li_cls.push('open')
+       li_cls.push('active') if ! opt[:close]
     end
 
     if current_page?(url)

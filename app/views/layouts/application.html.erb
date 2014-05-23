@@ -66,11 +66,19 @@
       </div>
   #%>
     <ul class="nav nav-list">
+      <%= menu_li '#', 'Pikomat', ico: 'fa-square', close: true do %>
+        <ul class="submenu">
+          <%= menu_lii '/',        'Hlavní stránka' %>
+          <%= menu_lii '/tabor',   'Tábory' %>
+          <%= menu_lii '/archiv',  'Archiv příkladů'  %>
+          <%= menu_lii '/fotky',   'Fotky'   %>
+        </ul>
+      <% end %>
       <% if user_signed_in?  %>
         <%= menu_li '#', 'Uživatel', ico: 'fa-user' do %>
           <ul class="submenu">
             <%= menu_lii :sosna_solutions_user,   'Moje řešení' %>
-            <%= menu_lii :edit_user_registration, 'Moje řešení' %>
+            <%= menu_lii :edit_user_registration, 'Změna hesla' %>
             <%= menu_lii :faq,                    'Nápověda'   %>
           </ul>
         <% end %>
@@ -97,8 +105,6 @@
           </ul>
         <% end %>
       <% end %>
-      <%= menu_li 'http://pikomat.mff.cuni.cz/', 'Pikomat',  ico: 'fa-square'  %>
-      <%= menu_li 'http://pikomat.mff.cuni.cz/', request.url , ico: 'fa-square'  %>
     </ul>
   </div>
 
@@ -131,6 +137,8 @@
 <%= javascript_include_tag '/ace/js/flot/jquery.flot.min.js' %>
 <%= javascript_include_tag '/ace/js/flot/jquery.flot.pie.min.js' %>
 <%= javascript_include_tag '/ace/js/flot/jquery.flot.resize.min.js' %>
+<%= javascript_include_tag '/ace/js/jquery.dataTables.min.js' %>
+
 
 <script type="text/javascript"> ace.vars['base'] = '/ace'; </script>
 
