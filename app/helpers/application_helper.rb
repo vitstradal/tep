@@ -2,7 +2,7 @@
 require 'digest/hmac'
 module ApplicationHelper
 
-  def menu_lii(uri, text = nil, opt = {} ,  &block) 
+  def menu_lii(uri, text = nil, opt = {} ,  &block)
      opt.merge! ({:lii => true})
      menu_li uri, text, opt, &block
   end
@@ -11,39 +11,42 @@ module ApplicationHelper
   #  ico
   #  class
   #  lii
-  def menu_li(uri, text = nil, opt = {} , &block) 
-   
+  def menu_li(uri, text = nil, opt = {} , &block)
+
+    @_level ||= 1
+    @_active ||= false
     li_cls =  opt[:cls].nil? ?  [] :
            opt[:cls].is_a?(String) ? [opt[:cls]] : opt[:cls]
 
     url =  url_for(uri)
-    print "XXX:#{url_for(uri)}\t#{current_page?(uri)}\t#{current_page?(url)}\n"
-
-
 
     ico_tag = opt[:ico].nil? ? '' : content_tag(:i, '', { :class => "menu-icon fa #{opt[:ico]}"})
 
-    text_tag = opt[:lii] ? text : content_tag(:span, text, { :class => 'menu-text' }  )
+    text_tag = @_level == 2 ? text : content_tag(:span, text, { :class => 'menu-text' }  )
 
     li_extra = ''
     a_extra = ''
     a_cls = nil
 
-    if block_given? 
+    if block_given?
       li_cls.push('hsub')
       a_cls = "dropdown-toggle"
-      a_extra = content_tag(:b, '', {:class => 'arrow fa fa-angle-down'} ) 
+      a_extra = content_tag(:b, '', {:class => 'arrow fa fa-angle-down'} )
+      @_level += 1
       li_extra = \
           content_tag(:b, '', { :class=> "arrow" } )  +
           capture(&block)
+      @_level -= 1
 
-       li_cls.push('open')
-       li_cls.push('active') if ! opt[:close]
+       #li_cls.push('open')
+       li_cls.push('open active') if @_active
+       @_active = false
     end
 
-    if current_page?(url)
+    if _my_current_page?(url)
       print "set active\n"
       li_cls.push('active')
+      @_active = true
     end
 
     content_tag(:li, { :class => li_cls.join(' ') } ) do
@@ -53,29 +56,20 @@ module ApplicationHelper
     end
   end
 
-#  def valid_digest?(data, dig, purpose = 'none')
-#     digest(data, purpose) == dig
-#  end
-#
-#  def digest(data, purpose = 'none')
-#    config = Tep::Application.config
-#    key = Digest::HMAC.base64digest(config.secret_token+ "::" + purpose, "key", Digest::SHA256)
-#    _b64_to_b64u(Digest::HMAC.base64digest(data, key, Digest::SHA256))
-#  end
-#
-#  def send_invitation_mail(email, roles)
-#      print "url:", sign("email\0roles", 'invitation')
-#  end
-#
-#  def create_invated_user!(email, roles, pass, digest)
-#    if valid_digest?("email\0roles", 'invitation')
-#      user = User.create(email: email, roles: roles.split('|'), password: pass)
-#      user.confirm!
-#      sign_in user
-#    end
-#  end
-#
-#  def _b64_to_b64u(txt)
-#     txt.tr('+/', '-_').tr('=','')
-#  end
+  private
+
+  def _my_current_page?(uri)
+      cur_uri = request.fullpath
+      his_uri = url_for(uri)
+
+      if his_uri.size < 1
+        return cur_uri == his_uri
+      end
+      his_uri.sub!( /s$/, '')
+      his_uri += '/'
+      cur_uri += '/'
+      ret = cur_uri[0,his_uri.size] == his_uri
+      print "cur: #{cur_uri}, his: #{his_uri}, ret: #{ret}\n"
+      return ret;
+  end
 end
