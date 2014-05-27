@@ -120,7 +120,7 @@
              <li>
                <% if bread[:ico] %><i class="fa <%= bread[:ico] %> home-icon"></i><% end %>
                <%=link_to  bread[:name].capitalize, bread[:url] %></li>
-           <% elsif bread[:name] != 'index' %>
+           <% elsif bread[:name] !~  /^index$/i %>
              <li> <%=  bread[:name].capitalize %></li>
            <% end %>
          <% end %> 

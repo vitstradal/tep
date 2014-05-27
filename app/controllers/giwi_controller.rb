@@ -224,7 +224,7 @@ class GiwiController < ApplicationController
         cur_path = part
       end
       bread.push({
-                  name: part,
+                  name: part.capitalize.gsub(/_/, ' '),
                   url: url_for(action: :show, wiki:@wiki, path: cur_path),
                 })
     end
