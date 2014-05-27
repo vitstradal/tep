@@ -214,6 +214,7 @@ class GiwiController < ApplicationController
     cur_path  = nil
     bread = [{ name: @wiki,
                url: url_for(action: :show, wiki:@wiki, path: '/'),
+               ico: 'fa-home',
              }]
 
     path.split('/').each do |part|
