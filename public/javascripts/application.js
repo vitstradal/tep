@@ -4,6 +4,7 @@
 jQuery(document).ready(function($) {
 
 
+        // data tables 
 	jQuery.extend( jQuery.fn.dataTableExt.oSort, {
 	    "locale-pre": function ( a ) {
 	        return a.replace(/<[^>]*>/,'');
@@ -21,6 +22,8 @@ jQuery(document).ready(function($) {
             "numstr-desc": function ( a, b ) { return b - a; },
 	} );
  
+/*
+ */
         $('.datatable').dataTable({
                 "bPaginate": false,
                 "bLengthChange": false,
@@ -32,10 +35,9 @@ jQuery(document).ready(function($) {
 	        "aoColumnDefs": [
 					{ "sType": "numeric", "aTargets": [ 0,  ] },
 					{ "sType": "locale", "aTargets": [ 1 ] },
-					{ "sType": "numstr", "aTargets": [ 20, 21, 22 ] },
+//					{ "sType": "numstr", "aTargets": [ 1 ] },
 			        ],
         });
-
         $('.fotofilter').click(function (){
             $(".fotofilter").removeClass('label-success');
             $(this).addClass('label-success');

@@ -12,9 +12,11 @@
   <title>Pikomat MFF UK</title>
   <meta name="description" content="pikomat korespondenční matematický seminář, soustředění matematické tábory" />
   <%= stylesheet_link_tag '/ace/css/bootstrap.min.css' %>
+  <%= stylesheet_link_tag '/ace/css/bootstrap.min.css' %>
   <%= stylesheet_link_tag '/ace/css/font-awesome.min.css' %>
   <%= stylesheet_link_tag '/ace/css/ace-fonts.css' %>
-  <%= stylesheet_link_tag '/ace/css/ace.min.css' %>
+  <%# stylesheet_link_tag '/ace/css/ace.min.css' %>
+  <%= stylesheet_link_tag '/ace/css/uncompressed/ace.css' %>
   <%= stylesheet_link_tag '/ace/css/ace-skins.min.css' %>
   <%= stylesheet_link_tag '/ace/css/ace-rtl.min.css' %>
   <%= stylesheet_link_tag '/ace/css/chosen.css' %>
@@ -110,6 +112,20 @@
 
   <div class="main-content">
 
+  <% if @breadcrumb %>
+    <div id="breadcrumbs" class="breadcrumbs">
+      <ul class="breadcrumb">
+         <% @breadcrumb[0].each_with_index do |bread| %>
+           <% if ! bread[:active] %>
+             <li><%=link_to  bread[:name].capitalize, bread[:url] %></li>
+           <% elsif bread[:name] != 'index' %>
+             <li> <%=  bread[:name].capitalize %></li>
+           <% end %>
+         <% end %> 
+       </ul>
+     </div>
+   <% end %>
+
    <div class="page-content">
      <div class="row">
        <div class="col-xs-12">
@@ -137,7 +153,10 @@
 <%= javascript_include_tag '/ace/js/flot/jquery.flot.min.js' %>
 <%= javascript_include_tag '/ace/js/flot/jquery.flot.pie.min.js' %>
 <%= javascript_include_tag '/ace/js/flot/jquery.flot.resize.min.js' %>
-<%= javascript_include_tag '/ace/js/jquery.dataTables.min.js' %>
+<%# javascript_include_tag '/ace/js/jquery.dataTables.min.js' %>
+<%= javascript_include_tag '/ace/js/uncompressed/jquery.dataTables.js' %>
+<%= javascript_include_tag '/ace/js/jquery.dataTables.bootstrap.js' %>
+<%= javascript_include_tag 'application.js' %>
 
 
 <script type="text/javascript"> ace.vars['base'] = '/ace'; </script>

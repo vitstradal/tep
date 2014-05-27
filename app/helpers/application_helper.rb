@@ -44,7 +44,7 @@ module ApplicationHelper
     end
 
     if _my_current_page?(url)
-      print "set active\n"
+      #print "set active\n"
       li_cls.push('active')
       @_active = true
     end
@@ -59,17 +59,17 @@ module ApplicationHelper
   private
 
   def _my_current_page?(uri)
-      cur_uri = request.fullpath
+      cur_ori = cur_uri = request.fullpath
       his_uri = url_for(uri)
 
       if his_uri.size < 1
         return cur_uri == his_uri
       end
-      his_uri.sub!( /s$/, '')
+      #his_uri = his_uri.sub( /[^s]$/, 's')
       his_uri += '/'
       cur_uri += '/'
       ret = cur_uri[0,his_uri.size] == his_uri
-      print "cur: #{cur_uri}, his: #{his_uri}, ret: #{ret}\n"
+      print "cur: #{cur_uri} cur_ori #{cur_ori}, his: #{his_uri}, ret: #{ret}\n"
       return ret;
   end
 end

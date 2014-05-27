@@ -5173,6 +5173,7 @@ body.mob-safari .sidebar.sidebar-fixed {
   text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.25) !important;
   background-image: none !important;
   border: 5px solid #FFF;
+  border: 0px solid #FFF;
   border-radius: 0;
   box-shadow: none !important;
   -webkit-transition: all ease .15s;
