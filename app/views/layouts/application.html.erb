@@ -62,8 +62,8 @@
 
 
 <div class="main-container container" id="main-container">
-  <% if ! @no_sidebar %>
   <div class="sidebar responsive x-menu-min" id="sidebar">
+  <% if ! @no_sidebar %>
 <%#   <div class="sidebar-shortcuts" id="sidebar-shortcuts">
       ...
       </div>
@@ -112,8 +112,8 @@
     <div id="sidebar-collapse" class="sidebar-toggle sidebar-collapse">
       <i class="ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
     </div>
+  <% end # no_sidebar %>
   </div>
-  <% end %>
   <div class="main-content">
 
   <% if @breadcrumb %>
