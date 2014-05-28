@@ -165,3 +165,8 @@ table, th, td {
 .no-skin .nav-list > li.open > a {
   color: #585858;
 }
+
+
+.navbar > .container .navbar-brand  {
+  margin-left: 0px;
+}

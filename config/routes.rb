@@ -75,6 +75,7 @@ Tep::Application.routes.draw do
   end
 
   root :to => "tep#index", :as => :root
+  #root :to => redirect('/web'), :as => :root
 
   # See how all your routes lay out with "rake routes"
 end

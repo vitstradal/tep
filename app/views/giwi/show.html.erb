@@ -19,7 +19,7 @@
     </span>
     <h1>Editace souboru '<%= @path %>'</h1>
 
-    <%= text_area_tag :text, @text, class: 'span9 ctrl-enter-submit', id: 'textedit', rows: 25%>
+    <%= text_area_tag :text, @text, class: 'span9 ctrl-enter-submit', id: 'textedit', cols: 100, rows: 25%>
     <script>
                   var toolbar = new jsToolBar(document.getElementById('textedit'));
                   toolbar.draw();

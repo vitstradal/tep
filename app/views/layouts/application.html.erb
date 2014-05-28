@@ -42,11 +42,11 @@
   <div id="navbar-container" class="navbar-container container">
 
     <div class="navbar-header pull-left">
-      <a href="#" class="navbar-brand">
+      <a href="<%=url_for '/'%>" class="navbar-brand " >
         <small><i class="ace-icon fa fa-square"></i> Pikomat </small>
      </a>
     </div>
-    <div class="navbar-buttons navbar-header pull-right navbar-collapse collapse">
+    <div class="navbar-buttons navbar-header pull-right ">
       <ul class="nav ace-nav">
         <% if user_signed_in?  %>
           <li><a href="#" class="navbar-link"><%= current_user.email %></a></li>
@@ -62,13 +62,14 @@
 
 
 <div class="main-container container" id="main-container">
-  <div class="sidebar responsive" id="sidebar">
+  <% if ! @no_sidebar %>
+  <div class="sidebar responsive x-menu-min" id="sidebar">
 <%#   <div class="sidebar-shortcuts" id="sidebar-shortcuts">
       ...
       </div>
   #%>
     <ul class="nav nav-list">
-      <%= menu_li '#', 'Pikomat', ico: 'fa-square' do %>
+      <%= menu_li '/tabor', 'Pikomat', ico: 'fa-square' do %>
         <ul class="submenu">
           <%= menu_lii '/',        'Hlavní stránka' %>
           <%= menu_lii '/tabor',   'Tábory' %>
@@ -108,8 +109,11 @@
         <% end %>
       <% end %>
     </ul>
+    <div id="sidebar-collapse" class="sidebar-toggle sidebar-collapse">
+      <i class="ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
+    </div>
   </div>
-
+  <% end %>
   <div class="main-content">
 
   <% if @breadcrumb %>

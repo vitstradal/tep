@@ -70,6 +70,7 @@ development:
     url: 'web'
     branch: edit
     read:  :org
+    update: ''
     #update:  :org
     #nogit: true
     ext: '.wiki'
