@@ -167,6 +167,23 @@ table, th, td {
 }
 
 
+/* hack v navbaru aby 'brand' zacinal opticky zarovnany s menu */
 .navbar > .container .navbar-brand  {
   margin-left: 0px;
+}
+
+/* hacky na hlavni stranku */
+
+.tep-main.row {
+  padding-left: 12px;
+  padding-right: 12px;
+}
+.tep-main .col-sm-3 {
+  padding-left: 0px;
+  padding-right: 0px;
+  margin-left: -1px;
+}
+.tep-main .col-sm-3 {
+  /* FIXME: hack: fixed size  */
+  height: 200px;
 }
