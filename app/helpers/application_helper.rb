@@ -2,6 +2,26 @@
 require 'digest/hmac'
 module ApplicationHelper
 
+  # opt:
+  #  ico -- icon class (fa-search)
+  #  
+  def button_tag (text, opt = {}, &block)
+    if block_given?
+      opt = text
+      text = capture(&block)
+    end
+    ico = opt.delete(:ico);
+    tag = opt[:href].nil? ? :button : :a
+    opt[:type] ||=  'submit';
+
+    content_tag(tag, opt ) do
+       if ico 
+         content_tag(:i, '', :class => "ace-icon fa #{ico}") + " " + text
+       else
+         text
+       end
+    end
+  end
   def menu_lii(uri, text = nil, opt = {} ,  &block)
      opt.merge! ({:lii => true})
      menu_li uri, text, opt, &block

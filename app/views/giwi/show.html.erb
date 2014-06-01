@@ -6,20 +6,18 @@
   <%= javascript_include_tag 'jstoolbar/trac.js' %>
   <%= javascript_include_tag 'jstoolbar/lang/jstoolbar-en.js' %>
 
-   <%= form_tag path: @path do %>
+   <%= form_tag({:path =>  @path}, {id: 'edit-form'})  do %>
     <%= hidden_field_tag 'version', @version %>
     <% if @part %>
       <%= hidden_field_tag 'part', @part %>
       <%= hidden_field_tag 'sline', @sline %>
       <%= hidden_field_tag 'eline', @eline %>
     <% end %>
-    <span class="pull-right">
-      <a href="<%= url_for path: @path %>" class="btn">Zpět</a>&nbsp;
-      <button type="submit" class="btn btn-success pull-right">Uložit</button>
-    </span>
     <h1>Editace souboru '<%= @path %>'</h1>
 
     <%= text_area_tag :text, @text, class: 'span9 ctrl-enter-submit', id: 'textedit', cols: 100, rows: 25%>
+    <%= button_tag  'Zpět',   :class=>'btn',            :ico => 'fa-reply', :href => url_for(path: @path)  %>
+    <%= button_tag  'Uložit', :class=>'btn btn-danger', ico: 'fa-floppy-o'  %>
     <script>
                   var toolbar = new jsToolBar(document.getElementById('textedit'));
                   toolbar.draw();
@@ -38,12 +36,6 @@
 
   <% if @editable || @toc %>
     <div class="pull-right">
-    <% if @editable %>
-     <% @action_buttons ||= []
-        @action_buttons.push({ :name => 'Seznam stránek', :url => url_for(path: @path, :ls => '.') })
-        @action_buttons.push({ :name => 'Edit',           :url => url_for(path: @path, :edit => :me), :accesskey => 'e', :class => 'btn-danger' })
-     %>
-    <% end %>
     <% if @toc %>
       <div class='toc well sidebar-nav'>
       <%== @toc %>
@@ -59,3 +51,23 @@
     <pre><%=@text%></pre>
   <%end%>
 <%end%>
+
+
+
+<% if ! @edit && @editable %>
+  <% content_for :action_buttons do %>
+    <div class="pull-right">
+      <%= button_tag 'Seznam stránek', :class=>'btn btn-primary', :href => url_for(path: @path, :ls => '.'), ico: 'fa-list' %>
+      <%= button_tag 'Edit', :accesskey => 'e', :class=>'btn btn-danger', :href => url_for(path: @path, :edit => 'me'), ico: 'fa-edit' %>
+    </div>
+  <% end %>
+<% end %>
+
+<% if @edit %>
+  <% content_for :action_buttons do %>
+    <div class="pull-right">
+      <%= button_tag  'Zpět',   :class=>'btn',            :ico => 'fa-reply', :href => url_for(path: @path)  %>
+      <%= button_tag  'Uložit', :class=>'btn btn-danger', ico: 'fa-floppy-o', :type => 'button', 'data-submit-form'=>'#edit-form'   %>
+    </div>
+  <% end %>
+<% end %>

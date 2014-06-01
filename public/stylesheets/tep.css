@@ -194,3 +194,9 @@ table, th, td {
 .nojs-in {
   display:block;
 }
+
+/* nahravani opravenych reseni: */
+.form-inline input[type="file"] {
+  display: inline-block;
+
+}

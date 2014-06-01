@@ -507,15 +507,11 @@ class Sosna::SolutionController < SosnaController
       path.push(_round_link(@annual, @round))
       path.push(_problem_link(@annual, @round, @problem_no))
       path[-1][:sub] = _problems_roc_se(@annual, @round)
-      @action_buttons = [ _problem_edit_btn(@annual, @round, @problem_no) ]
     elsif @round
       # in level round
       path.push(_round_link(@annual, @round))
       path[-1][:sub] = _rounds_roc(@annual)
       @action_buttons = []
-      @action_buttons.push _paper_edit_round_btn(@annual, @round)  if current_user.admin?
-      @action_buttons.push _penalisation_edit_round_btn(@annual, @round)  if current_user.admin?
-      @action_buttons.push _problem_edit_round_btn(@annual, @round) 
 
       dir = _problems_roc_se(@annual, @round)
     else

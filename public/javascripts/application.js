@@ -108,6 +108,9 @@ jQuery(document).ready(function($) {
 
         /* when js enabled, move  */
         $('div[data-move-to]').each(function (idx, el) { $(el).prependTo($(el).data('move-to')); });
+        $('button[data-submit-form]').click(function () {
+                $($(this).data('submit-form')).submit();
+        });
 });
 
 function focus_down(element, delta = 1) {
