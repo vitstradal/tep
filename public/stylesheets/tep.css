@@ -4,6 +4,9 @@
  */
 p      { font-family: 'AndulkaSerifBookRegular', Arial, sans-serif; }
 h1     { font-family: 'AndulkaSerifBookRegular', Arial, sans-serif; }
+h2     { font-family: 'AndulkaSerifBookRegular', Arial, sans-serif; }
+h3     { font-family: 'AndulkaSerifBookRegular', Arial, sans-serif; }
+h4     { font-family: 'AndulkaSerifBookRegular', Arial, sans-serif; }
 body   { font-family: 'AndulkaSerifBookRegular', Arial, sans-serif; }
 select { font-family: 'AndulkaSerifBookRegular', Arial, sans-serif; }
 button { font-family: 'AndulkaSerifBookBold',    Arial, sans-serif; }
@@ -169,4 +172,7 @@ table, th, td {
 
 .navbar > .container .navbar-brand  {
   margin-left: 0px;
+}
+.nojs-in {
+  display:block;
 }

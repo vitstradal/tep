@@ -5,5 +5,27 @@ po skušenosti z úvodním návrhem je duležite (ale to má asi Vítek v malí�
 * rozhodně co nejménš hybajícího (žádné plameny, měnící se obrázky)
 
 
+== dodledo ==
 
+{{kokodak}}
+|       | pondeli | utery | streda |
+| vitas | {{y}}   | {{n}} | {{m}}  | {{-}}
+
+
+
+<span class="kokodak">
+<table>
+| | pondeli | utery | streda |
+
+<span class="kokodak-value" data-offset="33.1:44.3">yes</span>
+
+patch=33.1:33.4&value={{no}}
+
+== kategorie ==
+
+
+path, var, val
+
+{{cat:priklad}}
+{{cat:obtiznost:0}}
 

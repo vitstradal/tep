@@ -62,8 +62,8 @@
 
 
 <div class="main-container container" id="main-container">
-  <div class="sidebar responsive x-menu-min" id="sidebar">
   <% if ! @no_sidebar %>
+  <div class="sidebar responsive x-menu-min" id="sidebar">
 <%#   <div class="sidebar-shortcuts" id="sidebar-shortcuts">
       ...
       </div>
@@ -112,9 +112,9 @@
     <div id="sidebar-collapse" class="sidebar-toggle sidebar-collapse">
       <i class="ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
     </div>
-  <% end # no_sidebar %>
   </div>
-  <div class="main-content">
+  <% end # no_sidebar %>
+  <div class="xmain-content">
 
   <% if @breadcrumb %>
     <div id="breadcrumbs" class="breadcrumbs">
@@ -129,14 +129,25 @@
            <% end %>
          <% end %> 
        </ul>
+       <div class="pull-right">
+         <div class="btn-group btn-corner ">
+           <a type='submit' class='btn btn-info btn-white btn-sm btn-round'><i class="ace-icon fa fa-check"></i>Stahnout řešení jako .zip</a>
+           <a type='submit' class='btn btn-info btn-white btn-sm btn-round'><i class="ace-icon fa fa-check"></i>Stahnout řešení jako .zip</a>
+         </div>
+         <div class="btn-group btn-corner ">
+           <a data-toggle="collapse" data-parent='#row' href="#tools-more" type='submit' class='btn btn-info btn-white btn-sm btn-round'><i class="ace-icon fa fa-angle-double-down"></i></a>
+         </div>
+       </div>
      </div>
    <% end %>
-
    <div class="page-content">
+
      <div class="row">
-       <div class="col-xs-12">
+       <div id="page-content-top" class="col-xs-12">
         <!-- page content goes here -->
         <%= yield %>
+
+
        </div><!-- /.col -->
      </div><!-- /.row -->
    </div><!-- /.page-content -->
