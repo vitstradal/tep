@@ -62,10 +62,10 @@ module ApplicationHelper
       cur_ori = cur_uri = request.fullpath
       his_uri = url_for(uri)
 
-      if his_uri.size < 1
-        return cur_uri == his_uri
-      end
-      #his_uri = his_uri.sub( /[^s]$/, 's')
+      return true if cur_uri == his_uri
+      return false if his_uri.size < 1
+
+      his_uri = his_uri.sub( /s$/, '')
       his_uri += '/'
       cur_uri += '/'
       ret = cur_uri[0,his_uri.size] == his_uri

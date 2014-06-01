@@ -134,14 +134,25 @@
            <% end %>
          <% end %> 
        </ul>
+       <div class="pull-right">
+         <div class="btn-group btn-corner ">
+           <a type='submit' class='btn btn-info btn-white btn-sm btn-round'><i class="ace-icon fa fa-check"></i>Stahnout řešení jako .zip</a>
+           <a type='submit' class='btn btn-info btn-white btn-sm btn-round'><i class="ace-icon fa fa-check"></i>Stahnout řešení jako .zip</a>
+         </div>
+         <div class="btn-group btn-corner ">
+           <a data-toggle="collapse" data-parent='#row' href="#tools-more" type='submit' class='btn btn-info btn-white btn-sm btn-round'><i class="ace-icon fa fa-angle-double-down"></i></a>
+         </div>
+       </div>
      </div>
    <% end %>
-
    <div class="page-content">
+
      <div class="row">
-       <div class="col-xs-12">
+       <div id="page-content-top" class="col-xs-12">
         <!-- page content goes here -->
         <%= yield %>
+
+
        </div><!-- /.col -->
      </div><!-- /.row -->
    </div><!-- /.page-content -->

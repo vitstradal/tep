@@ -2,7 +2,7 @@
 
 <%#### seznam  ročníků -%>
 <% if @annuals %>
- <h1>Řešení úloh po ročnících</h1>
+  <div class='page-header'><h1>Řešení úloh po ročnících</h1></div>
    <% @annuals.each do |annual_no, annual| %>
     <ul class="breadcrumb">
       <li><%= link_to "Ročník #{annual_no}",  { roc: annual_no }  %><span class="divider">&gt;</span></li>
@@ -17,186 +17,202 @@
 
 <%#### tabulka řešení -%>
 
-<h1>Řešení úloh, ročník <%=@annual%>, série <%=@round%><%if @problem_no%>, úloha <%=@problem_no%><%end%></h1>
-
-<% if @want_edit %>
-  <%= form_tag action: :update_scores, :roc => @annual, :se => @round, :ul => @problem_no %> 
-<% elsif @want_edit_paper %>
-  <%= form_tag action: :update_papers, :roc => @annual, :se => @round, :ul => @problem_no %> 
-<% elsif @want_edit_penalisation %>
-  <%= form_tag action: :update_penalisations, :roc => @annual, :se => @round, :ul => @problem_no %> 
-<% end %>
-
-
-<table class="table table-bordered datatable">
-  <thead>
-  <tr>
-   <th>Id</th>
-   <th>Řešitel</th>
-   <th>Škola</th>
-  <% @problems.each do |pr| %>
-   <th>u<%=pr.problem_no%></th>
+  <div class='page-header'>
+    <h1>Řešení úloh, ročník <%=@annual%>, série <%=@round%><%if @problem_no%>, úloha <%=@problem_no%><%end%></h4>
+  </div>
+  <% if @want_edit %>
+    <%= form_tag action: :update_scores, :roc => @annual, :se => @round, :ul => @problem_no %> 
+  <% elsif @want_edit_paper %>
+    <%= form_tag action: :update_papers, :roc => @annual, :se => @round, :ul => @problem_no %> 
+  <% elsif @want_edit_penalisation %>
+    <%= form_tag action: :update_penalisations, :roc => @annual, :se => @round, :ul => @problem_no %> 
   <% end %>
-  <% @problems.each do |pr| %>
-   <th title="Body za úlohu č. <%=pr.problem_no%>">B<%=pr.problem_no%></th>
-  <% end %>
-  <th title="penalizace">Pen<% if @want_edit_penalisation%> / Důvod<%end%></th>
-  <% if !@want_edit && !@want_edit_paper && ! @want_edit_penalisation %>
-    <th title="Body za sérii">Bs</th>
-    <th title="Body celkově">Bc</th>
-    <th title="Celkové pořadí">cp</th>
-    <th title="Pořadí v ročníku">pvr</th>
-    <th title="Ročník">R</th>
-  <% end %>
- </tr>
- </thead>
- <tbody>
-<% @solvers.each do |solver| %>
-  <tr>
-    <td><%= solver.id  %></td>
-    <td><%= link_to solver.full_name, { controller: :solver, action: :show, id: solver.id }  %></td>
-    <td><%= solver.school.nil? ? '-' : solver.school.short %></td>
+
+
+  <table class="table table-bordered datatable">
+    <thead>
+    <tr>
+     <th>Id</th>
+     <th>Řešitel</th>
+     <th>Škola</th>
     <% @problems.each do |pr| %>
-       <% sol_arr = @solutions_by_solver[solver.id]  %>
-       <% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  %>
-       <% ready = (!sol.filename.nil? && !sol.filename_corr.nil? || sol.has_paper_mail ) && !sol.score.nil? %>
-       <% weird = (sol.filename.nil? && !sol.has_paper_mail ) && !sol.score.nil? %>
-       <% weird = weird || (!sol.filename.nil? || sol.has_paper_mail ) && sol.score.nil? %>
-       <% weird = weird || ( !sol.filename.nil? && sol.filename_corr.nil?  && !sol.score.nil? ) %>
-       <% cls = weird ? 'bg-red' : (ready ? 'bg-green' : nil) %>
-       <td<%if cls%> class="<%=cls%>"<%end%>>
-
-         <% if @want_edit_paper %>
-            <input type="checkbox" name="paper[<%= sol.id %>]" size="3" <%if sol.has_paper_mail %> checked="checked" <% end %> />
-         <% else %>
-           <% if sol.filename %>
-             <%= link_to pr.problem_no, {:action => :download, :id => sol.id}, {:title => sol.filename_orig} %>
-             <% if sol.filename_corr %>
-               <%= link_to 'o', {:action => :download_rev, :id => sol.id}, {:title => sol.filename_corr_display} %>
-             <% end %>
-           <% end %>
-           <% if sol.has_paper_mail %> P <% end %>
-         <% end %>
-       </td>
+     <th>u<%=pr.problem_no%></th>
     <% end %>
-    <%  @problems.each do |pr| %>
-       <td>
+    <% @problems.each do |pr| %>
+     <th title="Body za úlohu č. <%=pr.problem_no%>">B<%=pr.problem_no%></th>
+    <% end %>
+    <th title="penalizace">Pen<% if @want_edit_penalisation%> / Důvod<%end%></th>
+    <% if !@want_edit && !@want_edit_paper && ! @want_edit_penalisation %>
+      <th title="Body za sérii">Bs</th>
+      <th title="Body celkově">Bc</th>
+      <th title="Celkové pořadí">cp</th>
+      <th title="Pořadí v ročníku">pvr</th>
+      <th title="Ročník">R</th>
+    <% end %>
+   </tr>
+   </thead>
+   <tbody>
+  <% @solvers.each do |solver| %>
+    <tr>
+      <td><%= solver.id  %></td>
+      <td><%= link_to solver.full_name, { controller: :solver, action: :show, id: solver.id }  %></td>
+      <td><%= solver.school.nil? ? '-' : solver.school.short %></td>
+      <% @problems.each do |pr| %>
          <% sol_arr = @solutions_by_solver[solver.id]  %>
          <% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  %>
-         <% if !sol.nil? %>
-           <% if @want_edit %>
-                <input class="input-mini input-minimini" type="text" name="score[<%= sol.id %>]" size="3" value="<%= sol.score || '-'%>"/>
+         <% ready = (!sol.filename.nil? && !sol.filename_corr.nil? || sol.has_paper_mail ) && !sol.score.nil? %>
+         <% weird = (sol.filename.nil? && !sol.has_paper_mail ) && !sol.score.nil? %>
+         <% weird = weird || (!sol.filename.nil? || sol.has_paper_mail ) && sol.score.nil? %>
+         <% weird = weird || ( !sol.filename.nil? && sol.filename_corr.nil?  && !sol.score.nil? ) %>
+         <% cls = weird ? 'bg-red' : (ready ? 'bg-green' : nil) %>
+         <td<%if cls%> class="<%=cls%>"<%end%>>
+           <% if @want_edit_paper %>
+              <input type="checkbox" name="paper[<%= sol.id %>]" size="3" <%if sol.has_paper_mail %> checked="checked" <% end %> />
            <% else %>
-                <%= sol.score || '-'%>
+             <% if sol.filename %>
+               <%= link_to pr.problem_no, {:action => :download, :id => sol.id}, {:title => sol.filename_orig} %>
+               <% if sol.filename_corr %>
+                 <%= link_to 'o', {:action => :download_rev, :id => sol.id}, {:title => sol.filename_corr_display} %>
+               <% end %>
+             <% end %>
+             <% if sol.has_paper_mail %> P <% end %>
            <% end %>
-         <% else %>
-          -
-         <% end %>
-       </td>
-    <% end %>
-    <td>
-      <% pen = @penalisations_by_solver[solver.id] %>
-      <% pen_sc = pen.score || '-' %>
-      <% pen_tit = pen.title || '' %>
-      <% if @want_edit_penalisation %>
-        <input class="input-mini input-minimini" type="text" name="penalisation_score[<%= pen.id %>]" size="3" value="<%= pen_sc %>"/>
-        <input class="input-medium" type="text" name="penalisation_title[<%= pen.id %>]" value="<%= pen_tit %>"/>
-      <% else %>
-        <span title="<%=pen_tit == '' ? 'žádný důvod' : pen_tit %>"><%= pen_sc  %></span>
+         </td>
       <% end %>
-    </td>
-      <% if !@want_edit  && !@want_edit_paper && ! @want_edit_penalisation %>
-        <% res = @results_by_solver[solver.id] %>
-        <% cls = @want_sous.nil?  ?  nil  : ( res.class_rank <= 5 ? 'bg-green' : 'bg-red' ) %>
-        <% if res %>
-           <td><%= res.round_score %></td>
-           <td<%if cls%> class="<%=cls%>"<%end%>>
-             <%= res.score %></td>
-           <td<%if cls%> class="<%=cls%>"<%end%>>
-             <%= res.rank %><% if res.rank_multi? %> - <%= res.rank_to %><% end %></td>
-           <td<%if cls%> class="<%=cls%>"<%end%>>
-             <%= res.class_rank %><% if res.class_rank_multi? %> - <%= res.class_rank_to %><% end %></td>
+      <%  @problems.each do |pr| %>
+         <td>
+           <% sol_arr = @solutions_by_solver[solver.id]  %>
+           <% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  %>
+           <% if !sol.nil? %>
+             <% if @want_edit %>
+                  <input class="input-mini input-minimini" type="text" name="score[<%= sol.id %>]" size="3" value="<%= sol.score || '-'%>"/>
+             <% else %>
+                  <%= sol.score || '-'%>
+             <% end %>
+           <% else %>
+            -
+           <% end %>
+         </td>
+      <% end %>
+      <td>
+        <% pen = @penalisations_by_solver[solver.id] %>
+        <% pen_sc = pen.score || '-' %>
+        <% pen_tit = pen.title || '' %>
+        <% if @want_edit_penalisation %>
+          <input class="input-mini input-minimini" type="text" name="penalisation_score[<%= pen.id %>]" size="3" value="<%= pen_sc %>"/>
+          <input class="input-medium" type="text" name="penalisation_title[<%= pen.id %>]" value="<%= pen_tit %>"/>
         <% else %>
-           <td>-</td>
-           <td>-</td>
-           <td>-</td>
-           <td>-</td>
+          <span title="<%=pen_tit == '' ? 'žádný důvod' : pen_tit %>"><%= pen_sc  %></span>
         <% end %>
-        <td><%= solver.grade_num %></td>
-      <% end %>
-  </tr>
-<% end %>
- <tbody>
-</table>
-<a name='more'></a>
-<% if @want_edit || @want_edit_paper || @want_edit_penalisation%>
-<button type='submit' class='btn btn-danger'>Uložit</button> 
-<%= link_to 'Zpět', {action: :index, roc: @annual, se: @round, ul: @problem_no}, {:class => 'btn'} %>
-
-<div style='position:fixed;bottom:0px;left:0px;'>
-<button type='submit' class='btn btn-danger'>Uložit</button> 
-<%= link_to 'Zpět', {action: :index, roc: @annual, se: @round, ul: @problem_no}, {:class => 'btn'} %>
-</div>
-
-</form>
-
-<% else %>
-
-<div>
-<i>Legenda</i>:
-<b>P</b> -- řešení přislo papírově;
-<b>1-9</b> řešení přišlo elektronicky, link na stažení;
-<b>o</b> opravené řešení;
-<span class='bg-green box'>&nbsp;</span> -- došlé řešení je obodované a pokud je elektronické, tak i nahrána oprava;
-<span class='bg-red box'>&nbsp;</span> -- obodováná nedošlá úloha, nebo neobodována došlá úloha, nebo chybí el. oprava.
-</div>
-
-  <%= link_to 'Stáhnout tato řešení v jednom .zip',
-            { :action => :downall, roc: @annual, se: @round, ul: @problem_no },
-            { :class=> 'btn btn-primary'} %>
-
-  <%= link_to 'Stáhnout opravena řešení v jednom .zip',
-            { :action => :downall, roc: @annual, se: @round, ul: @problem_no, rev: 'yes' },
-            { :class=> 'btn btn-primary'} %>
-
-  <%= link_to 'Stáhnout tabulku řešitelů ve formátu CSV',
-            { format: 'csv'},
-            { :class=> 'btn btn-primary'} %>
-
-  <%= link_to 'Stáhnout tabulku body.pik',
-            { format: 'pik'},
-            { :class=> 'btn btn-primary'} %>
-
-  <%= link_to 'Filtruj soustředění',
-            { :action => :index, roc: @annual, se: @round, ul: @problem_no, sous: 1  },
-            { :class=> 'btn btn-primary'} %>
-
-  <%= form_tag({:action => :update_results, :roc => @annual, :se => @round, :ul => @problem_no}, :class => 'form-inline') do %>
-          <%= submit_tag 'Vygenerovat výsledky', :class => 'btn btn-primary'  %>
+      </td>
+        <% if !@want_edit  && !@want_edit_paper && ! @want_edit_penalisation %>
+          <% res = @results_by_solver[solver.id] %>
+          <% cls = @want_sous.nil?  ?  nil  : ( res.class_rank <= 5 ? 'bg-green' : 'bg-red' ) %>
+          <% if res %>
+             <td><%= res.round_score %></td>
+             <td<%if cls%> class="<%=cls%>"<%end%>>
+               <%= res.score %></td>
+             <td<%if cls%> class="<%=cls%>"<%end%>>
+               <%= res.rank %><% if res.rank_multi? %> - <%= res.rank_to %><% end %></td>
+             <td<%if cls%> class="<%=cls%>"<%end%>>
+               <%= res.class_rank %><% if res.class_rank_multi? %> - <%= res.class_rank_to %><% end %></td>
+          <% else %>
+             <td>-</td>
+             <td>-</td>
+             <td>-</td>
+             <td>-</td>
+          <% end %>
+          <td><%= solver.grade_num %></td>
+        <% end %>
+    </tr>
   <% end %>
+   <tbody>
+  </table>
 
-  <hr>
-  <% if  @problem_no %>
-    <a name="upload"></a>
-    <div> Soubor ve tvaru <code>reseni-rocNN-seNN-ulNN-relNNN-ori-PRIMENI-JMENO.pdf</code>
-    (tedy stejné jako neopravené řešení), nebo zip archiv s více opravenými řešeními
-    (né nutně všemi):
+  <div>
+    <i>Legenda</i>:
+    <b>P</b> -- řešení přislo papírově;
+    <b>1-9</b> řešení přišlo elektronicky, link na stažení;
+    <b>o</b> opravené řešení;
+    <span class='bg-green box'>&nbsp;</span> -- došlé řešení je obodované a pokud je elektronické, tak i nahrána oprava;
+    <span class='bg-red box'>&nbsp;</span> -- obodováná nedošlá úloha, nebo neobodována došlá úloha, nebo chybí el. oprava.
+  </div>
+
+
+  <div data-move-to="#page-content-top" id='tools-more' class="row collapse in nojs-in">
+    <div class="col-sm-12">
+      <div class="btn-toolbox tabbable">
+          <% if @want_edit || @want_edit_paper || @want_edit_penalisation%>
+            <button type='submit' class='btn btn-danger'>Uložit</button> 
+            <%= link_to 'Zpět', {action: :index, roc: @annual, se: @round, ul: @problem_no}, {:class => 'btn'} %>
+            <div style='position:fixed;bottom:0px;left:0px;'>
+              <button type='submit' class='btn btn-danger'>Uložit</button> 
+              <%= link_to 'Zpět', {action: :index, roc: @annual, se: @round, ul: @problem_no}, {:class => 'btn'} %>
+            </div>
+          
+           <% else %>
+          
+          
+            <div class="btn-group ">
+              <%= link_to({ :action => :downall, :roc =>  @annual, :se =>  @round, :ul =>  @problem_no }, { :class => 'btn btn-primary'}) do %>
+                        <i class="fa fa-file-o"></i>
+                        řešení v .zip
+              <% end %>
+              <%= link_to({ :action => :downall, :roc =>  @annual, :se =>  @round, :ul =>  @problem_no, rev: :yes }, { :class => 'btn btn-primary'}) do %>
+                        <i class="fa fa-file"></i>
+                        opravy v .zip
+              <% end %>
+
+              <%= link_to( { format: 'csv'}, { :class=> 'btn btn-primary'} ) do %>
+                        <i class="fa fa-table"></i>
+                        řešitelé .csv
+              <% end %>
+
+              <%= link_to( { format: 'csv'}, { :class=> 'btn btn-primary'} ) do %>
+                        <i class="fa fa-th"></i>
+                        body.pik
+              <% end %>
+            </div>
+            <div class="btn-group">
+          
+            
+              <%= link_to({ :action => :index, roc: @annual, se: @round, ul: @problem_no, sous: 1  }, { :class=> 'btn btn-primary'}) do %>
+                        <i class="fa fa-filter"></i>
+                        Filtruj soustředění
+              <% end %>
+            </div >
+            <%= form_tag({:action => :update_results, :roc => @annual, :se => @round, :ul => @problem_no}, :class => 'btn-group form-inline') do %>
+                      <button type="submit" class="btn btn-primary"> <i class="fa fa-flash"></i> Vygenerovat výsledky</button>
+            </div >
+          <% end %>
+          
+          <hr>
+          <% if  @problem_no %>
+            <a name="upload"></a>
+            <div> Soubor ve tvaru <code>reseni-rocNN-seNN-ulNN-relNNN-ori-PRIMENI-JMENO.pdf</code>
+            (tedy stejné jako neopravené řešení), nebo zip archiv s více opravenými řešeními
+            (né nutně všemi):
+            </div>
+            <%= form_tag({:action => :upload_rev} , :multipart => true , :class => 'form-inline') do %>
+                  <%= hidden_field_tag :roc, @annual %>
+                  <%= hidden_field_tag :se,  @round %>
+                  <%= hidden_field_tag :ul,  @problem_no %>
+                  <%= file_field_tag :file_rev, :class => 'input-small', :accept => '*.pdf|*.zip'  %>
+                  <%= submit_tag 'Nahraj opravené řešení (.pdf, .zip)',:class => 'btn'  %>
+            <% end %>
+            <hr>
+         
+          <% else # problem_no %>
+              Pro nahrání opraveného řešení vyber úlohu:
+                <% @problems.each do |pr| %>
+                 <%= link_to "ul#{pr.problem_no}", { action: :index, roc: @annual, se: @round, ul: pr.problem_no , anchor: 'upload' } %>,
+                <% end %>
+          <% end # problem_no %>
+        </div>
+      </div>
+      <hr>
     </div>
-    <%= form_tag({:action => :upload_rev} , :multipart => true ) do %>
-          <%= hidden_field_tag :roc, @annual %>
-          <%= hidden_field_tag :se,  @round %>
-          <%= hidden_field_tag :ul,  @problem_no %>
-          <%= file_field_tag :file_rev, :class => 'input-small', :accept => '*.pdf|*.zip'  %>
-          <%= submit_tag 'Nahraj opravené řešení (.pdf, .zip)',:class => 'btn'  %>
-    <% end %>
-    <hr>
-
-  <% else %>
-    Pro nahrání opraveného řešení vyber úlohu:
-      <% @problems.each do |pr| %>
-       <%= link_to "ul#{pr.problem_no}", { action: :index, roc: @annual, se: @round, ul: pr.problem_no , anchor: 'upload' } %>,
-      <% end %>
-  <% end %>
+  </div>
 <% end %>
 
 

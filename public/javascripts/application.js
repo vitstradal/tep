@@ -102,6 +102,12 @@ jQuery(document).ready(function($) {
 	     focus_down(this, -1);
 	   }
 	});
+
+        /* nojs-in:  show when no js, so hide when js enabled */
+        $('.nojs-in').removeClass('nojs-in');
+
+        /* when js enabled, move  */
+        $('div[data-move-to]').each(function (idx, el) { $(el).prependTo($(el).data('move-to')); });
 });
 
 function focus_down(element, delta = 1) {
