@@ -112,9 +112,14 @@
     <div id="sidebar-collapse" class="sidebar-toggle sidebar-collapse">
       <i class="ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
     </div>
-  </div>
+  </div> <%# sidebar %>
   <% end # no_sidebar %>
-  <div class="xmain-content">
+
+  <% if @no_sidebar %>
+    <div>
+  <% else %>
+    <div class="main-content">
+  <% end %>
 
   <% if @breadcrumb %>
     <div id="breadcrumbs" class="breadcrumbs">
