@@ -186,9 +186,9 @@ table, th, td {
   padding-right: 0px;
   margin-left: -1px;
 }
-.tep-main .col-sm-3 {
+.tep-main .widget-box {
   /* FIXME: hack: fixed size  */
-  height: 200px;
+  height: 250px;
 }
 
 .nojs-in {
