@@ -121,20 +121,42 @@
     <div class="main-content">
   <% end %>
 
+  <%#
+    # struktura @breadcumb
+    # [ cast1, cast2, cast3 ]
+    # cast1 : [ item1, item2, item2, ... ]
+    # item: 
+    #        {name: "Série #{round}", active: true|false, url: url_for(roc: annual, se: round)}
+    #%>
   <% if @breadcrumb %>
     <div id="breadcrumbs" class="breadcrumbs">
       <ul class="breadcrumb">
-         <% @breadcrumb[0].each_with_index do |bread| %>
-           <% if ! bread[:active] %>
-             <li>
-               <% if bread[:ico] %><i class="fa <%= bread[:ico] %> home-icon"></i><% end %>
-               <%=link_to  bread[:name].capitalize, bread[:url] %></li>
-           <% elsif bread[:name] !~  /^index$/i %>
-             <li> <%=  bread[:name].capitalize %></li>
-           <% end %>
+
+         <% @breadcrumb.each_with_index do |b, idx| %>
+           <% b.each_with_index do |bread| %>
+             <% if ! bread[:active] || true %>
+               <li class="<%= idx == 0 ? 'tep-slash' : ''%>">
+                 <% if bread[:ico] %><i class="fa <%= bread[:ico] %> home-icon"></i><% end %>
+                 <%=link_to  bread[:name].capitalize, bread[:url] %>
+                 <% if bread[:sub] %>
+                   <div class="inline pos-rel">
+                   <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-caret-down"></i></a>
+                   <ul class="dropdown-menu dropdown-light dropdown-caret dropdown-closer">
+                     <% bread[:sub].each do |bread2| %>
+                       <li><%=link_to  bread2[:name].capitalize, bread2[:url] %></li>
+                     <% end %>
+                   </ul>
+                   </div>
+                 <% end %>
+               </li>
+             <% elsif bread[:name] !~  /^index$/i %>
+               <li> <%=  bread[:name].capitalize %></li>
+             <% end %>
+           <% end %> 
          <% end %> 
        </ul>
      <%= yield :action_buttons %>
+         <div style='padding-left:12px' id="page-content-top2"></div>
      </div><%#breadcrumb %>
    <% end %>
    <div class="page-content">

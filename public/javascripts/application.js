@@ -111,6 +111,7 @@ jQuery(document).ready(function($) {
         $('button[data-submit-form]').click(function () {
                 $($(this).data('submit-form')).submit();
         });
+        $('.ace-input-file').ace_file_input({icon_remove: null, style: false});
 });
 
 function focus_down(element, delta = 1) {

@@ -677,21 +677,9 @@ class Sosna::SolutionController < SosnaController
       {name: "Úloha #{problem_no}", url: {roc: annual, se: round, ul: problem_no}}
   end
 
-  def _problem_edit_btn(annual, round, problem_no)
-      {name: "Editovat body", url: {action: 'edit', roc: annual, se: round, ul: problem_no}, :class=> 'btn-danger'}
-  end
 
-  def _problem_edit_round_btn(annual, round)
-      {name: "Editovat body", url: {action: 'edit', roc: annual, se: round }, :class=>'btn-danger' }
-  end
 
-  def _paper_edit_round_btn(annual, round)
-      {name: "Editovat papíry", url: {action: 'edit', roc: annual, se: round, paper: 'yes' }, :class => 'btn-danger' }
-  end
 
-  def _penalisation_edit_round_btn(annual, round)
-      {name: "Editovat penalizaci", url: {action: 'edit', roc: annual, se: round, penalisation: 'yes' }, :class => 'btn-danger' }
-  end
 
   def _round_link(annual, round, active= false)
      {name: "Série #{round}", active: active, url: {roc: annual, se: round}}

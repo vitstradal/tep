@@ -195,8 +195,15 @@ table, th, td {
   display:block;
 }
 
-/* nahravani opravenych reseni: */
-.form-inline input[type="file"] {
-  display: inline-block;
-
+.tep-fix-tools {
+   position:fixed;
+   bottom:0px;
+   left:0px;
 }
+
+
+.breadcrumb > li + li.tep-slash:before {
+  
+  content: "/";
+}
+

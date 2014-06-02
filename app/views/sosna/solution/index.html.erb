@@ -30,7 +30,7 @@
   <% if @want_edit || @want_edit_paper || @want_edit_penalisation%>
     <%= button_tag  'Zpět', :class => 'btn', :ico => 'fa-reply', :href => url_for(action: :index, roc: @annual, se: @round, ul: @problem_no)  %>
     <%= button_tag  'Uložit', :class=>'btn btn-danger', ico: 'fa-floppy-o'  %>
-    <div style='position:fixed;bottom:0px;left:0px;'>
+    <div class="tep-fix-tools">
       <%= button_tag  'Zpět', :class => 'btn', :ico => 'fa-reply', :href => url_for(action: :index, roc: @annual, se: @round, ul: @problem_no)  %>
       <%= button_tag  'Uložit', :class=>'btn btn-danger', ico: 'fa-floppy-o'  %>
     </div>
@@ -147,19 +147,11 @@
   </div>
 
 
-  <div data-move-to="#page-content-top" id='tools-more' class="row collapse nojs-in"> 
+  <div data-move-to="#page-content-top2" id='tools-more' style='background-color:xred' class="xrow collapse nojs-in"> 
   <%#<div data-move-to="#page-af-breadcrumbs" id='tools-more' class="row collapse in nojs-in">%>
-    <div class="col-sm-12">
+    <div class="xcol-sm-12">
       <div class="btn-toolbox ">
-          <% if @want_edit || @want_edit_paper || @want_edit_penalisation%>
-            <button type='submit' class='btn btn-danger'>Uložit</button> 
-            <%= link_to 'Zpět', {action: :index, roc: @annual, se: @round, ul: @problem_no}, {:class => 'btn'} %>
-            <div style='position:fixed;bottom:0px;left:0px;'>
-              <button type='submit' class='btn btn-danger'>Uložit</button> 
-              <%= link_to 'Zpět', {action: :index, roc: @annual, se: @round, ul: @problem_no}, {:class => 'btn'} %>
-            </div>
-
-           <% else %>
+          <% if ! ( @want_edit || @want_edit_paper || @want_edit_penalisation  ) %>
 
             <div class="btn-group ">
               <%= link_to({ :action => :downall, :roc =>  @annual, :se =>  @round, :ul =>  @problem_no }, { :class => 'btn btn-primary'}) do %>
@@ -187,43 +179,47 @@
                         <i class="fa fa-filter"></i>
                         Filtruj soustředění
               <% end %>
-            </div >
-            <%= form_tag({:action => :update_results, :roc => @annual, :se => @round, :ul => @problem_no}, :class => 'btn-group form-inline') do %>
+            </div>
+            <div class="btn-group">
+              <%= form_tag({:action => :update_results, :roc => @annual, :se => @round, :ul => @problem_no}, :class => 'btn-group form-inline') do %>
                       <button type="submit" class="btn btn-primary"> <i class="fa fa-flash"></i> Vygenerovat výsledky</button>
-            </div >
-          <% end %>
+              <% end %>
+            </div>
           
-          <hr>
           <% if  @problem_no %>
-            <div class="btn-toolbox">
+            <div class="btn-group">
                <%= button_tag "Editovat body", :class=> 'btn btn-danger', ico: 'fa-th', href: url_for(action: 'edit', roc: @annual, se: @round, ul: @problem_no)  %>
                <%= button_tag "Editovat papíry", :class=> 'btn btn-danger', ico: 'fa-file-text', href: url_for(action: 'edit', roc: @annual, se: @round, ul: @problem_no, paper: 'yes')  %>
                <%= button_tag "Editovat penalizaci", :class=> 'btn btn-danger', ico: 'fa-thumbs-down', href: url_for(action: 'edit', roc: @annual, se: @round, ul: @problem_no, penalisation: 'yes' )  %>
             </div>
             <hr>
-            <div> Soubor ve tvaru <code>reseni-rocNN-seNN-ulNN-relNNN-ori-PRIMENI-JMENO.pdf</code>
-              (tedy stejné jako neopravené řešení), nebo zip archiv s více opravenými řešeními
-              (né nutně všemi):
-            </div>
             <%= form_tag({:action => :upload_rev} , :multipart => true , :class => 'form-inline') do %>
+            <div class="clearfix" >
+              <div class="grid2">
                   <%= hidden_field_tag :roc, @annual %>
                   <%= hidden_field_tag :se,  @round %>
                   <%= hidden_field_tag :ul,  @problem_no %>
-                  <%= file_field_tag :file_rev, :class => 'btn', :accept => '*.pdf|*.zip'  %>
-                  <%= button_tag 'Nahraj opravené řešení (.pdf, .zip)', :ico => 'fa-cloud-upload', :class => 'btn btn-danger'  %>
+                    <div class="input-xlarge" >
+                      <%= file_field_tag :file_rev, :style=>'display:block', :class => 'btn btn-small ace-input-file input-large', :accept => '*.pdf|*.zip'  %>
+                    </div>
+                  <%= button_tag 'Nahraj opravené řešení (.pdf, .zip)', :ico => 'fa-cloud-upload',:class => 'btn btn-danger'  %>
+              </div>
+              <div style="line-height:1.5" class="grid2">
+                  <span class='help-block' style='display:block'>Soubor ve tvaru <code>reseni-rocNN-seNN-ulNN-relNNN-ori-PRIMENI-JMENO.pdf</code>
+                     (tedy stejné jako neopravené řešení), nebo zip archiv s více opravenými řešeními
+                     (né nutně všemi)</p>
+              </div>
+              </div>
             <% end %>
-            <hr>
+            </div>
           <% else # problem_no %>
             <%= button_tag "Editovat body", :class=> 'btn btn-danger', ico: 'fa-th', href: url_for(action: 'edit', roc: @annual, se: @round)  %>
-            <hr>
             <p>Pro nahrání opraveného řešení vyber úlohu:
               <% @problems.each do |pr| %>
                 <%= link_to "ul#{pr.problem_no}", { action: :index, roc: @annual, se: @round, ul: pr.problem_no , anchor: 'upload' } %>,
               <% end %></p>
-            <hr>
           <% end # problem_no %>
       </div> <%#btn-toolsbox%>
-      <hr>
     </div><%# col-sm-12 %>
   </div><%# tools-more %>
 <% end %>
