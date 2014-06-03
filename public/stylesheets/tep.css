@@ -208,7 +208,11 @@ table, th, td {
 }
 
 /* stin  hlavniho boxu */
-.main-container.container:before {
+.no-skin .container.main-container:before,
+.skin-1 .container.main-container:before,
+.skin-2 .container.main-container:before,
+.skin-3 .container.main-container:before
+{
   box-shadow: 0px 2px 70px #888888;
 }
 
