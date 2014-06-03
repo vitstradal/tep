@@ -17,12 +17,12 @@
   <%= stylesheet_link_tag '/ace/css/ace-fonts.css' %>
   <%# stylesheet_link_tag '/ace/css/ace.min.css' %>
   <%= stylesheet_link_tag '/ace/css/uncompressed/ace.css' %>
-  <%= stylesheet_link_tag '/ace/css/ace-skins.min.css' %>
+  <%#= stylesheet_link_tag '/ace/css/ace-skins.min.css' %>
+  <%= stylesheet_link_tag '/ace/css/uncompressed/ace-skins-plus.css' %>
   <%= stylesheet_link_tag '/ace/css/ace-rtl.min.css' %>
   <%= stylesheet_link_tag '/ace/css/chosen.css' %>
   <%= stylesheet_link_tag '/ace/css/ui.jqgrid.css' %>
   <%# stylesheet_link_tag '/ace/css/ace-part2.css' %>
-  <%= stylesheet_link_tag '/ace/css/ace-skins.min.css' %>
 
   <%= stylesheet_link_tag 'andulka/stylesheet.css' %>
   <%= stylesheet_link_tag 'tep.css' %>
@@ -31,7 +31,7 @@
 
 </head>
 <%#  <body class="no-skin"> %>
-<body class="no-skin">
+<body class="skin-1">
 
 <% if ENV['RAILS_ENV'] != 'production'  %>
 <img src="<%= asset_path 'images/devel-version.png'%>" style='pointer-events:none;z-index:99;position:fixed;bottom:0;right:0;border:0;'>
