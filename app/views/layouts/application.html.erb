@@ -33,7 +33,7 @@
 <body class="no-skin">
 
 <% if ENV['RAILS_ENV'] != 'production'  %>
-<img src="<%= asset_path 'images/devel-version.png'%>" style='z-index:99;position:fixed;bottom:0;right:0;border:0;'>
+<img src="<%= asset_path 'images/devel-version.png'%>" style='pointer-events:none;z-index:99;position:fixed;bottom:0;right:0;border:0;'>
 <% end %>
 
 <div id="navbar" class="navbar navbar-default">
@@ -171,13 +171,24 @@
      </div><!-- /.row -->
    </div><!-- /.page-content -->
 
-   <div class="footer">
-     <div class="footer-inner">
-        <div class="footer-content">
-          <small>V případě obtíží se obrať na <a href="mailto:pikomat@pikomat.mff.cuni.cz">pikomat@pikomat.mff.cuni.cz</a>.<small>
-	</div>
-     </div>
   </div><!-- /.main-content -->
+  <div class="footer">
+    <div class="footer-inner">
+       <div class="footer-content">
+          <small>V případě obtíží se obrať na <a href="mailto:pikomat@pikomat.mff.cuni.cz">pikomat@pikomat.mff.cuni.cz</a>.<small>
+            <div class="pull-right">
+              <div class="ace-settings-item" >
+                                <select id="skin-colorpicker" class="">
+                                        <option data-skin="no-skin" value="#438EB9">#438EB9</option>
+                                        <option data-skin="skin-1" value="#222A2D">#222A2D</option>
+                                        <option data-skin="skin-2" value="#C6487E">#C6487E</option>
+                                        <option data-skin="skin-3" value="#D0D0D0">#D0D0D0</option>
+                                </select>
+              </div>
+           </div>
+	</div>
+      </div>
+    </div>
 </div><!-- /.main-container -->
 
 <%= javascript_include_tag '/ace/js/jquery.min.js' %>

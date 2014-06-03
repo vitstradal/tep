@@ -212,10 +212,7 @@ table, th, td {
   box-shadow: 0px 2px 70px #888888;
 }
 
-/* podklad */
-body{
-  background-image: url('../images/f2b.jpg');
-}
+/* podklad hacky*/
 
 body,
 .main-container > div,
@@ -238,4 +235,13 @@ div.widget-box {
 }
 
 #navbar {
+}
+
+body{
+  background-image: url('../images/f2b.jpg');
+}
+body.skin-1,
+body.skin-2
+{
+  background-image: url('../images/f2.jpg');
 }
