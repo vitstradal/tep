@@ -1,7 +1,77 @@
 <%#<h1>Tep Pikomatu MFF UK</h1> %>
 
 <% @no_sidebar  = true %>
+<% @tep_index = true %>
 
+<% if true %>
+<div class="row tep-index-menu">
+      <div class="clearfix tep-index-header" >
+        <div class="grid4" >
+            <a href="<%=url_for '/'%>" class="navbar-brand center" ><i class="ace-icon fa fa-square"></i> O Pikomatu</a>
+        </div>
+        <div class="grid4" >
+          <a href="<%=url_for '/'%>" class="navbar-brand center " ><i class="ace-icon fa fa-edit"></i> Zadání</a>
+        </div>
+        <div class="grid4" >
+          <a href="<%=url_for '/'%>" class="navbar-brand  center" ><i class="ace-icon fa fa-file"></i> Tábory</a>
+        </div>
+        <div class="grid4" >
+          <a href="<%=url_for '/'%>" class="navbar-brand  center" ><i class="ace-icon fa fa-camera"></i> Fotky</a>
+        </div>
+     </div>
+  <div class="tep-index-body">
+  <div class="clearfix">
+    <div class="grid4">
+      <div class="popover top in">
+        <div  class="arrow"></div>
+      </div>
+      <ul class="list-unstyled spaced">
+         <li><a href="<%= url_for :wiki_web %>"><i class="fa fa-flag green"></i> Hodnoty a cíle</a></li>
+         <li><a href="<%= url_for :wiki_web %>"><i class="fa fa-flag green"></i> Oranizátoři</a></li>
+         <li><a href="<%= url_for :wiki_web %>"><i class="fa fa-flag green"></i> Kontakty</a></li>
+         <li><a href="<%= url_for :wiki_web %>"><i class="fa fa-flag green"></i> Historie</a></li>
+         <li><a href="<%= url_for :wiki_web %>"><i class="fa fa-flag green"></i> Píší o někom jiném</a></li>
+      </ul>
+   </div>
+    <div class="grid4">
+      <div class="popover top in">
+        <div  class="arrow"></div>
+      </div>
+          <ul class="list-unstyled spaced">
+             <li><a href="/web"><i class="fa fa-flag green"></i> Aktuální série</a></li>
+             <li><a href="/web"><i class="fa fa-flag green"></i> Archiv</a></li>
+             <li><a href="/web"><i class="fa fa-flag green"></i> Pravidla, pokyny a rady</a></li>
+          </ul>
+   </div>
+    <div class="grid4">
+      <div class="popover top in">
+        <div  class="arrow"></div>
+      </div>
+          <ul class="list-unstyled spaced">
+             <li><a href="<%= url_for 'web' %>"><i class="fa fa-flag green"></i> 2014</a></li>
+             <li><a href="<%= url_for 'web' %>"><i class="fa fa-flag green"></i> 2013</a></li>
+             <li><a href="<%= url_for 'web' %>"><i class="fa fa-flag green"></i> 2012</a></li>
+             <li><a href="<%= url_for 'web' %>"><i class="fa fa-flag green"></i> 2011</a></li>
+             <li><a href="<%= url_for 'web' %>"><i class="fa fa-flag green"></i> Další...</a></li>
+          </ul>
+   </div>
+    <div class="grid4">
+      <div class="popover top in"> 
+        <div  class="arrow"></div>
+      </div>
+          <ul class="list-unstyled spaced">
+             <li><a href="/web"><i class="fa fa-flag green"></i> Fotky</a></li>
+             <li><a href="/web"><i class="fa fa-flag green"></i> Fotky</a></li>
+             <li><a href="/web"><i class="fa fa-flag green"></i> Fotky</a></li>
+             <li><a href="/web"><i class="fa fa-flag green"></i> Fotky</a></li>
+             <li><a href="/web"><i class="fa fa-flag green"></i> a zase Fotky</a></li>
+          </ul>
+   </div>
+  </div>
+  </div>
+</div>
+<% else %>
+<img width="100%" height='200px' src='http://pikomat.ms.mff.cuni.cz/tabor/2013/pasy/pas4_2013.png'>
 <div class="tep-main row">
   <div class="col-sm-3">
     <div class="widget-box">
@@ -66,8 +136,11 @@
     </div>
   </div>
 </div>
+<% end %>
 
+<% if false %>
 <% if current_user  %>
+
   <p>Vítej v Tepu!</p>
 
   <p>Jsi přihlášen jako <%= current_user.name %>  <%= current_user.last_name || current_user.email%>.</p>
@@ -85,3 +158,190 @@
   </p>
 
 <% end %>
+<% end %>
+
+
+<div style="padding:20px">
+
+
+
+
+<div class="row">
+<div class="col-sm-9">
+
+<div class="timeline-container">
+<div class="timeline-items">
+
+  <div class="timeline-label">
+	<span class="label label-primary arrowed-in-right label-lg">Aktuality, novinky</span>
+  </div>
+  <div class="timeline-item clearfix">
+     <div class="timeline-info">
+       <!-- icon or image -->
+          <i class="timeline-indicator ace-icon fa fa-beer btn btn-warning no-hover green"></i>
+	  <span class="label label-info label-sm">1.1.</span>
+     </div>
+
+     <div class="widget-box transparent">
+       <div class="widget-body ">
+         <div class="widget-main ">
+	   <b>Péťa odjede do irska</b> rozkouceni se kona pred odevzdanim
+	   42.serie pristiho roku.  Lorem ipsum dolor sit amet, consectetur
+	   adipisicing elit, sed do eiusmod tempor incididunt ut labore et
+	   dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+	   exercitation ullamco laboris nisi ut aliquip ex ea commodo
+	   consequat. Duis aute irure dolor in reprehenderit in voluptate velit
+	   esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat
+	   cupidatat non proident, sunt in culpa qui officia deserunt mollit
+	   anim id est laborum
+         </div>
+       </div>
+     </div>
+  </div>
+  <div class="timeline-item clearfix">
+     <div class="timeline-info">
+       <!-- icon or image -->
+          <i class="timeline-indicator ace-icon fa fa-bug btn btn-success no-hover green"></i>
+	  <span class="label label-info label-sm">1.3.</span>
+     </div>
+
+     <div class="widget-box transparent">
+       <div class="widget-body ">
+         <div class="widget-main ">
+	   <b>Péťa odjede do severniho irska</b> rozkouceni se kona pred
+	   odevzdanim -1.serie pristiho roku.  Lorem ipsum dolor sit amet,
+	   consectetur adipisicing elit, sed do eiusmod tempor incididunt ut
+	   labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
+	   exercitation ullamco laboris nisi ut aliquip ex ea commodo
+	   consequat.  Duis aute irure dolor in reprehenderit in voluptate
+	   velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint
+	   occaecat cupidatat non proident, sunt in culpa qui officia deserunt
+	   mollit anim id est laborum
+         </div>
+       </div>
+     </div>
+  </div>
+
+</div>
+</div>
+
+
+<div class="row">
+<div class="col-sm-12">
+  <div class="widget-box transparent" style="background-color:transparent">
+    <div class="widget-header" style="background-color:transparent"> <h5><i class="btn btn-success fa fa-star-o"></i> Drb</h5></div>
+    <div class="widget-main">
+      <b>Peta odjede do finska</b> rozkouceni se kona pred odevzdanim 1.serie pristiho roku.
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="row">
+<div class="col-sm-12">
+  <div class="widget-box transparent" style="background-color:rgba(255,255,255,0.5)">
+    <div class="widget-header" style="background-color:transparent"> <h5><i class="fa fa-flag"></i> Novinka</h5></div>
+    <div class="widget-main">
+      <b>Peta odjede do norska</b> rozkouceni se kona pred odevzdanim 7.serie.
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+    </div>
+  </div>
+</div>
+</div>
+
+<div class="row">
+<div class="col-sm-12">
+  <div class="widget-box transparent" style="background-color:transparent">
+    <div class="widget-header" style="background-color:transparent"> <h5><i class="fa fa-flag-o"></i> Fáma</h5></div>
+    <div class="widget-main">
+      <b>Peta odjede do svedska</b> rozkouceni se kona pred odevzdanim 0.serie.
+      Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum
+    </div>
+  </div>
+</div>
+</div>
+
+</div>
+
+<div class="col-sm-3">
+ <div class="widget-box widget-color-blue">
+   <div class="widget-header">
+     <h5 class="widget-title"><i class="fa fa-camera"></i> Fotka dne</h5>
+   </div>
+   <div class="widget-body">
+     <div class="widget-main">
+       <ul class="ace-thumbnails clearfix">
+         <li>
+           <a class="cboxElement" data-rel="colorbox" href="http://pikomat.ms.mff.cuni.cz/fotky/tabor/2007/f/tabor243-n.jpg" aiotitle="150x150" aiotarget="false">
+             <img src="http://pikomat.ms.mff.cuni.cz/fotky/tabor/2007/f/tabor243-n.jpg" width="228px" alt="150x150"></img>
+  	   <div class="tags">
+  	      <span class="label-holder"><span class="label label-warning arrowed">Za mlada</span></span>
+  	      <span class="label-holder"><span class="label label-info arrowed">2007</span></span>
+  	   </div>
+           </a>
+         </li>
+       </ul>
+     </div>
+   </div>
+ </div>
+ <br/>
+ <div class="widget-box widget-color-green">
+   <div class="widget-header">
+     <h5 class="widget-title"><i class="fa fa-edit"></i> Příklad dne</h5>
+   </div>
+   <div class="widget-body">
+     <div class="widget-main">
+       <p>
+	 <b>Úloha:</b> Má Amadeus pravdu? Lze z devíti zápalek složit 3 shodné
+	 čtverce? Lze z dvanácti zápalek složit 6 čtverců? Lze z šesti zápalek
+	 složit 4 shodné trojúhelníky? Pokud nevyřešíte všechny otázky, vyřešte
+	 alespoň některé. Zápalky nelze lámat.
+       </p>
+       <a
+       href="http://pikomat.ms.mff.cuni.cz/archiv/rocnik16/zad1.html" >celý
+       příklade...</a>
+       
+     </div>
+   </div>
+ </div>
+</div>
+
+
+</div>
+
+<div class="widget-box">
+  <div class="widget-header"> <h5>bla</h5></div>
+  <div class="widget-main">
+    <b>Termín odeslání</b> 6. série je pondělí 12. května 2014.
+  </div>
+</div>
+
+<div class="well">
+<h4 class="green smaller lighter"> Novinka</h4>
+řešení je možné odesílat elektronicky . Doporučujeme přečíst informace k elektronickému odevzdávání.
+</div>
+
+<div class="alert alert-success">
+<b> Novinka:</b> řešení je možné odesílat elektronicky . Doporučujeme přečíst informace k elektronickému odevzdávání.
+</div>
+
+<div class="alert alert-danger">
+ Vy, kdo jste posílali <b>řešení elektronicky</b>, se již můžete podívat na vaše opravená řešení, ostatní očekávejte obálku se svými úlohami a zadáním v nejbližších dnech ve svých poštovních schránkách.
+
+</div>
+
+<div class="alert alert-danger">
+<b> Anketa o přednáškách na akcích Pikomatu</b>
+ Protože se nám již více let stává, že během akcí si sami vymýšlíte přednášky, které byste chtěli slyšet, rozhodli jsme se, že tento rok vás oslovíme ještě před soustředěním a táborem s nabídkou, kde můžete vybrat, co byste chtěli slyšet přednášet a případně můžete sami další témata navrhnout. Pokud to bude v našich silách, rádi vám odpřednášíme vybraná témata. Základní matematické přednášky samozřejmě nevynecháme. Hlasovat můžete naprosto anonymně zde .
+</div>
+
+<div class="alert alert-warning">
+<b> Novinky ze světa Pikomatu</b> se můžete dozvědět i na naší facebookové stránce.
+k Soustředění
+ Děkujeme všem účastníkům za povedené soustředění, fotky a další věci ze soustředení budou na stránkách co nevidět. Budeme se těšit na další setkání. Fotky najdete zde . Tábor
+ Tábor tento rok proběhne od 11.7. do 25.7. 2014. Kapacita tábora bude 35 účastníků. Aktuální počet volných míst a další informace budeme doplňovat postupně na táborové stránky . Přihlašovat se můžete do konce května. MaSo
+ MAtematická SOutěž má vlastní stránku . 
+</div>
+</div>
+

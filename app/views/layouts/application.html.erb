@@ -31,22 +31,27 @@
 
 </head>
 <%#  <body class="no-skin"> %>
-<body class="skin-1">
+<body class="no-skin">
 
 <% if ENV['RAILS_ENV'] != 'production'  %>
 <img src="<%= asset_path 'images/devel-version.png'%>" style='pointer-events:none;z-index:99;position:fixed;bottom:0;right:0;border:0;'>
 <% end %>
 
 <div id="navbar" class="navbar navbar-default">
-
-
-  <div id="navbar-container" class="navbar-container container">
-
-    <div class="navbar-header pull-left">
-      <a href="<%=url_for '/'%>" class="navbar-brand " >
-        <small><i class="ace-icon fa fa-square"></i> Pikomat </small>
-     </a>
-    </div>
+  <div id="navbar-container" class="navbar-container container" >
+     <div class="navbar-header">
+        <div class="tep-navbar-brand" >
+          <a href="<%=url_for '/'%>" class="navbar-brand " >
+	     <img src="<%= asset_path '/images/logo_vw.png'%>" width="290px"/> 
+	  </a>
+        </div>
+      </div>
+      <div class="navbar-header pull-right" >
+          <a href="<%=url_for '/'%>" class="navbar-brand " ><small><i class="ace-icon fa fa-user"></i> prihlaseni</small> </a>
+          <a href="<%=url_for '/'%>" class="navbar-brand " ><small><i class="ace-icon fa fa-search"></i> search</small> </a>
+      </div>
+     </div>
+    <% if false %> 
     <div class="navbar-buttons navbar-header pull-right ">
       <ul class="nav ace-nav">
         <% if user_signed_in?  %>
@@ -58,11 +63,12 @@
         <% end %>
       </ul>
     </div><%# navbar-buttons %>
+    <%end%>
   </div><%# navbar-container %>
 </div><%# navbar %>
 
 
-<div class="main-container container" id="main-container">
+<div class="main-container container <% if @tep_index %>tep-index<% end %>" id="main-container">
   <% if ! @no_sidebar %>
   <div class="sidebar responsive x-menu-min" id="sidebar">
 <%#   <div class="sidebar-shortcuts" id="sidebar-shortcuts">
@@ -184,6 +190,7 @@
                                         <option data-skin="skin-1" value="#222A2D">#222A2D</option>
                                         <option data-skin="skin-2" value="#C6487E">#C6487E</option>
                                         <option data-skin="skin-3" value="#D0D0D0">#D0D0D0</option>
+                                        <option selected data-skin="skin-green" value="green">green</option>
                                 </select>
               </div>
            </div>

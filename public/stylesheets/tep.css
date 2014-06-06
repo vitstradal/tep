@@ -52,7 +52,7 @@ input.input-minimini {
   /* not dry: cut'n'paste from bootstrap.css */
   padding: 8px 35px 8px 14px;
   margin-bottom: 20px;
-  text-shadow: 0 1px 0 rgba(255, 255, 255, 0.5);
+  text-shadow: 0 1px 0 rgba(255, 2005, 255, 0.5);
   background-color: #fcf8e3;
   border: 1px solid #fbeed5;
   -webkit-border-radius: 4px;
@@ -177,18 +177,14 @@ table, th, td {
 
 /* hacky na hlavni stranku */
 
-.tep-main.row {
+.tep-index .tep-index-menu.row {
   padding-left: 12px;
   padding-right: 12px;
 }
-.tep-main .col-sm-3 {
+.tep-index .col-sm-3 {
   padding-left: 0px;
   padding-right: 0px;
   margin-left: -1px;
-}
-.tep-main .widget-box {
-  /* FIXME: hack: fixed size  */
-  height: 250px;
 }
 
 .nojs-in {
@@ -211,41 +207,139 @@ table, th, td {
 .no-skin .container.main-container:before,
 .skin-1 .container.main-container:before,
 .skin-2 .container.main-container:before,
-.skin-3 .container.main-container:before
+.skin-3 .container.main-container:before,
+.skin-green .container.main-container:before
 {
   box-shadow: 0px 2px 70px #888888;
 }
 
+/* stin horni listy */
+.navbar {
+  box-shadow: 0px 2px 30px #888888;
+}
 /* podklad hacky*/
 
 body,
 .main-container > div,
 .main-container > div > div ,
 .main-container > div > div > div,
-.main-container > div > div > div > div,
 .main-container {
   background-color: transparent;
 }
 
-div.widget-box {
-  background-color: white;
-}
 .main-container {
   background-color: rgba(255,255,255,.0);
 }
+
+
 .main-container.container:before ,
 .page-content{
   background-color: rgba(255,255,255,.85);
 }
 
-#navbar {
-}
-
+/* pozadi  */
 body{
   background-image: url('../images/f2b.jpg');
 }
 body.skin-1,
 body.skin-2
-{
+{ /* cerna */
   background-image: url('../images/f2.jpg');
+}
+
+/* hacky green skinu */
+.skin-green .ace-nav a  {
+  background-color: green;
+}
+.skin-green a ,
+.skin-green .breadcrumb > li > a,
+.skin-green .widget-header  {
+  color:green;
+}
+
+
+
+/* stin pod rameckem */
+.widget-box {
+    box-shadow: 5px 5px 10px rgba(0, 0, 0, 0.075);
+}
+
+
+.center  {
+ margin-left: auto;
+ margin-right: auto;
+ width: 100%;
+}
+
+/***********************************************************************************/
+
+
+/* prouzek 'devel version' v pravem dolnim rohu */
+.devel-version {
+   pointer-events:none;
+   z-index:99;
+   position:fixed;
+   bottom:0;
+   right:0;
+   border:0;
+}
+
+
+/***********************************************************************************/
+/* hacky v navbarech a indexu */
+/* logo pikomatu */
+
+.tep-index-menu .tep-index-body {
+ background-image:  url('http://pikomat.ms.mff.cuni.cz/tabor/2013/pasy/pas4_2013.png');
+ /*background-color: #D8EBF1; /*  peta 2 */
+}
+.tep-index-menu .tep-index-body > div {
+ background-color: rgba(255,255,255,0.7);
+}
+
+/* hack na zobacky */
+.popover.top {
+ box-shadow: black 0 0 0 0;
+ position:relative;
+ border-color:transparent;
+ display: block;
+ top: 8px;
+ margin-left: auto;
+ margin-right: auto;
+ width:20px
+}
+.popover.top .arrow {
+  border-top-color: transparent;
+}
+
+/* cele index-menu je  pruhledne */
+.tep-index-menu {
+  background-color: #f3f3f3;
+}
+/* barva zobacku */
+.popover.top .arrow:after {
+  border-top-color: #438EB9;
+  -moz-border-top-colors: #438EB9;
+  border-top-color: #f3f3f3;
+  -moz-border-top-colors: #f3f3f3;
+}
+
+/* oheckovani paddingu v indexu */
+.tep-index .page-content .row #page-content-top {
+  padding: 0px;
+}
+.tep-index .page-content .row {
+  margin: 0px;
+}
+.tep-index .page-content {
+  padding: 0px;
+}
+.tep-index .tep-index-menu.row {
+  margin: 0px;
+  padding: 0px;
+  padding-right: -10px;
+}
+/* mezera na zobacek */
+.tep-index-body .grid4 ul{
+padding-top: 20px;
 }
