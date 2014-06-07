@@ -48,8 +48,8 @@ class GiwiController < ApplicationController
 
 
     base = url_for(action: :show, wiki: @wiki)
-    parser = TracWiki.parser(@text, _trac_wiki_options(base))
-    @html = parser.to_html
+    parser = TracWiki.parser(_trac_wiki_options(base))
+    @html = parser.to_html(@text)
     @headings = parser.headings
 
 
@@ -113,26 +113,36 @@ class GiwiController < ApplicationController
        id_from_heading: true,
        id_translit: true,
        no_escape: true,
-       raw_html: true,
        template_handler: self.method(:template_handler),
     }
   end
 
   def template_handler(tname, env)
+    part = 0
+    if tname =~ /\A\//
+      tname = $'
+      part = 1
+    end
+
     template_path = '.template/' + tname + @giwi.ext
     text, _ = @giwi.get_page(template_path)
 
     # not found
     return nil if text.nil?
-    fst, rest = text.split(/\r?\n/, 2)
 
-    #return only single line
-    return fst if  fst != '{{{'
+    while part > 0
 
-    # macro enclosed in {{{ }}}
-    fst, rest = rest.split(/\r?\n\}\}\}/, 2)
+      #return only single line
+      ret, text = text.split(/\r?\n/, 2)
 
-    fst
+      # macro enclosed in {{{ }}}
+      if  ret == '{{{'
+        ret, text = text.split(/\r?\n\}\}\}/, 2)
+      end
+
+      return ret if part == 0
+      part -= 1
+    end
   end
 
   def _not_found
@@ -186,8 +196,8 @@ class GiwiController < ApplicationController
     print "part:#{@part}, text.size: #{text.size}\n"
 
     if text
-      parser = TracWiki.parser(text, math: true, merge: true,  no_escape: true, raw_html: true,)
-      parser.to_html
+      parser = TracWiki.parser(math: true, merge: true,  no_escape: true, raw_html: true,)
+      parser.to_html(text)
       heading = parser.headings[@part]
       print "headigns", pp(parser.headings)
       if heading

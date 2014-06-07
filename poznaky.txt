@@ -11,9 +11,35 @@ po skušenosti z úvodním návrhem je duležite (ale to má asi Vítek v malí�
 |       | pondeli | utery | streda |
 | vitas | {{y}}   | {{n}} | {{m}}  | {{-}}
 
+{{/kokodak}}
+
+---
+
+{{sitemap
+
+{{mapbar  ico=fa-square | title=O pikomatu |
+
+* {{ico|fa-user}} [[O nas]]
+* [[tabor]]
+* [[tabor]]
+* [[tabor]]
+
+}}
+
+}}
+---
+
+{{navbar  ico=fa-square  title=O pikomatu }}
+
+* {{ico|fa-user}} [[O nas]]
+* [[tabor]]
+* [[tabor]]
+* [[tabor]]
+
 
 
 <span class="kokodak">
+</span>
 <table>
 | | pondeli | utery | streda |
 

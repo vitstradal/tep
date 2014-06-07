@@ -74,8 +74,8 @@ Tep::Application.routes.draw do
      post '/' + url + '(/*path)'       => 'giwi#update',    :as =>  route_name_post, constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name}
   end
 
-  root :to => "tep#index", :as => :root
-  #root :to => redirect('/web'), :as => :root
+  #root :to => "tep#index", :as => :root
+  root :to => "tep#index"
 
   # See how all your routes lay out with "rake routes"
 end

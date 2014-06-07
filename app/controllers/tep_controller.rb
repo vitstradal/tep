@@ -5,7 +5,10 @@ class TepController < ApplicationController
   include ApplicationHelper
   include SosnaHelper
 
-  def index; end
+  def index;
+    redirect_to(wiki_web_path(path: 'index'))
+  end
+
   authorize_resource :class => false
   def faq; end
 
