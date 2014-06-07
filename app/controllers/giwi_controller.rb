@@ -51,6 +51,8 @@ class GiwiController < ApplicationController
     parser = TracWiki.parser(_trac_wiki_options(base))
     @html = parser.to_html(@text)
     @headings = parser.headings
+    @tep_index = parser.env.at('tep_index', false).nil? ? false : true
+
 
 
     if parser.headings.size > 3
