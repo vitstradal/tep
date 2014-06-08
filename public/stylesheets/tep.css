@@ -298,20 +298,6 @@ body.skin-2
  background-color: rgba(255,255,255,0.7);
 }
 
-/* hack na zobacky */
-.popover.top {
- box-shadow: black 0 0 0 0;
- position:relative;
- border-color:transparent;
- display: block;
- top: 8px;
- margin-left: auto;
- margin-right: auto;
- width:20px
-}
-.popover.top .arrow {
-  border-top-color: transparent;
-}
 
 /* cele index-menu je  pruhledne */
 .tep-index-menu .tep-index-header {
@@ -341,16 +327,14 @@ body.skin-2
   padding-right: -10px;
 }
 /* mezera na zobacek */
-.tep-index-body .grid4 ul{
-padding-top: 20px;
+.tep-index-body ul{
+  padding-left: 20px;
 }
 .tep-index-header {
   font-size: 18px;
   width: 100%;
 }
 .tep-index-header a {
-  margin-left: auto;
-  margin-right: auto;
   display: block;
   height: 50px;
 }
@@ -376,3 +360,14 @@ padding-top: 20px;
   }
 }
 
+.tep-index-arrow {
+
+  border: 9px solid #f3f3f3;
+  width:0px;
+  height:0px;
+  border-bottom-size: 0px;
+  border-left-color: transparent;
+  border-right-color: transparent;
+  border-bottom-color: transparent;
+  margin: auto;
+}
