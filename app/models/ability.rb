@@ -24,8 +24,8 @@ class Ability
       can :show,   auth_name if !giwi.read.nil?   && (giwi.read   == :anon || user.has_role?(giwi.read))
       can :update, auth_name if !giwi.update.nil? && (giwi.update == :anon || user.has_role?(giwi.update))
 
-      print "can :update, #{auth_name}\n" if !giwi.update.nil? && user.has_role?(giwi.update)
-      print "can :read, #{auth_name}\n" if !giwi.read.nil? && user.has_role?(giwi.read)
+      #print "can :update, #{auth_name}\n" if !giwi.update.nil? && user.has_role?(giwi.update)
+      #print "can :read, #{auth_name}\n" if !giwi.read.nil? && user.has_role?(giwi.read)
     end
     #can :update, :giwi, if: :can_update?
 
