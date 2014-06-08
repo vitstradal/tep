@@ -51,7 +51,7 @@ class GiwiController < ApplicationController
     parser = TracWiki.parser(_trac_wiki_options(base))
     @html = parser.to_html(@text)
     @headings = parser.headings
-    @tep_index = parser.env.nil? ? false : parser.env.at('tep_index', false).nil? ? false : true
+    @tep_index = parser.env.nil? ? false : parser.env.at('tep_index', nil).nil? ? false : true
 
     if @tep_index
       @no_sidebar = true
@@ -188,9 +188,16 @@ class GiwiController < ApplicationController
   end
 
   def _handle_edit
+
+    @text, @version = @giwi.get_page(@path + @giwi.ext)
+
+    base = url_for(action: :show, wiki: @wiki)
+    parser = TracWiki.parser(_trac_wiki_options(base))
+    parser.to_html(@text)
+    @used_templates = parser.used_templates
+    pp "used templates", @used_templates
+
     if @edit == 'me'
-       # edit whole page
-       @text, @version = @giwi.get_page(@path + @giwi.ext)
        @edit = true
        return
     end
@@ -200,17 +207,9 @@ class GiwiController < ApplicationController
     # want to edit only one chapter
     @part = @edit.to_i
 
-    text, @version = @giwi.get_page(@path + @giwi.ext)
-
     if text
      # parser = TracWiki.parser(math: true, merge: true,  no_escape: true, )
-      base = url_for(action: :show, wiki: @wiki)
-      parser = TracWiki.parser(_trac_wiki_options(base))
-      parser.to_html(text)
       heading = parser.headings[@part]
-      #print "headigns", pp(parser.headings)
-      @used_templates = parser.used_templates
-      pp "used templates", @used_templates
       if heading
         # edit only selected part (from @sline to @eline)
         @text = text.split("\n").values_at(heading[:sline]-1 .. heading[:eline]-1).join("\n")
