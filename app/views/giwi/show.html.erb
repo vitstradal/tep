@@ -23,6 +23,18 @@
                   toolbar.draw();
    </script>
   <% end #form %>
+  <% if @used_templates %>
+    Templates:
+    <ul>
+    <% @used_templates.sort.each do |template,defined| %>
+      <% next if template =~ /^\// %>
+      <% path = ".template/" + template %>
+
+      <li><%= link_to template, path: path %>
+          <%= link_to "[edit]", path: path , edit: 'me'%> : <%= defined %>,</li>
+    <% end %>
+    </ul>
+  <% end %>
 
 <% else %>
   <script type="text/x-mathjax-config"> MathJax.Hub.Config({ extensions: ["jsMath2jax.js"] });</script>

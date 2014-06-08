@@ -51,8 +51,13 @@ class GiwiController < ApplicationController
     parser = TracWiki.parser(_trac_wiki_options(base))
     @html = parser.to_html(@text)
     @headings = parser.headings
-    @tep_index = parser.env.at('tep_index', false).nil? ? false : true
+    @tep_index = parser.env.nil? ? false : parser.env.at('tep_index', false).nil? ? false : true
 
+    if @tep_index
+      @no_sidebar = true
+      @breadcrumb = nil
+    end
+    print "tep_index:",  @tep_index
 
 
     if parser.headings.size > 3
@@ -115,6 +120,7 @@ class GiwiController < ApplicationController
        id_from_heading: true,
        id_translit: true,
        no_escape: true,
+       allow_html: true,
        template_handler: self.method(:template_handler),
     }
   end
@@ -132,14 +138,14 @@ class GiwiController < ApplicationController
     # not found
     return nil if text.nil?
 
-    while part > 0
+    while part >= 0
 
       #return only single line
       ret, text = text.split(/\r?\n/, 2)
 
       # macro enclosed in {{{ }}}
       if  ret == '{{{'
-        ret, text = text.split(/\r?\n\}\}\}/, 2)
+        ret, text = text.split(/\r?\n\}\}\}\r?\n?/, 2)
       end
 
       return ret if part == 0
@@ -195,13 +201,16 @@ class GiwiController < ApplicationController
     @part = @edit.to_i
 
     text, @version = @giwi.get_page(@path + @giwi.ext)
-    print "part:#{@part}, text.size: #{text.size}\n"
 
     if text
-      parser = TracWiki.parser(math: true, merge: true,  no_escape: true, raw_html: true,)
+     # parser = TracWiki.parser(math: true, merge: true,  no_escape: true, )
+      base = url_for(action: :show, wiki: @wiki)
+      parser = TracWiki.parser(_trac_wiki_options(base))
       parser.to_html(text)
       heading = parser.headings[@part]
-      print "headigns", pp(parser.headings)
+      #print "headigns", pp(parser.headings)
+      @used_templates = parser.used_templates
+      pp "used templates", @used_templates
       if heading
         # edit only selected part (from @sline to @eline)
         @text = text.split("\n").values_at(heading[:sline]-1 .. heading[:eline]-1).join("\n")

@@ -289,11 +289,12 @@ body.skin-2
 /* hacky v navbarech a indexu */
 /* logo pikomatu */
 
-.tep-index-menu .tep-index-body {
+.tep-index-menu {
  background-image:  url('http://pikomat.ms.mff.cuni.cz/tabor/2013/pasy/pas4_2013.png');
+ background-position: 0px 40px;
  /*background-color: #D8EBF1; /*  peta 2 */
 }
-.tep-index-menu .tep-index-body > div {
+.tep-index-menu > div {
  background-color: rgba(255,255,255,0.7);
 }
 
@@ -313,7 +314,7 @@ body.skin-2
 }
 
 /* cele index-menu je  pruhledne */
-.tep-index-menu {
+.tep-index-menu .tep-index-header {
   background-color: #f3f3f3;
 }
 /* barva zobacku */
@@ -343,3 +344,35 @@ body.skin-2
 .tep-index-body .grid4 ul{
 padding-top: 20px;
 }
+.tep-index-header {
+  font-size: 18px;
+  width: 100%;
+}
+.tep-index-header a {
+  margin-left: auto;
+  margin-right: auto;
+  display: block;
+  height: 50px;
+}
+
+
+.tep-index-menu .grid4 {
+ width: 25%;
+ margin: 0px;
+ padding: 0px;
+ float: left;
+}
+@media only screen and (max-width: 360px) {
+
+.tep-index-menu .grid4 {
+    float: none;
+    display: block;
+    width: 100%;
+    border-left-width: 0;
+    position: relative;
+    margin-bottom: 11px;
+    border-bottom: 1px solid #E3E3E3;
+    padding-bottom: 4px;
+  }
+}
+
