@@ -37,6 +37,10 @@
 <img src="<%= asset_path 'images/devel-version.png'%>" style='pointer-events:none;z-index:99;position:fixed;bottom:0;right:0;border:0;'>
 <% end %>
 
+<%################################################################################## %>
+<%# horni lista %>
+<%################################################################################## %>
+
 <div id="navbar" class="navbar navbar-default">
   <div id="navbar-container" class="navbar-container container" >
      <div class="navbar-header">
@@ -67,14 +71,13 @@
   </div><%# navbar-container %>
 </div><%# navbar %>
 
+<%################################################################################## %>
+<%# leve menu %>
+<%################################################################################## %>
 
 <div class="main-container container <% if @tep_index %>tep-index<% end %>" id="main-container">
   <% if ! @no_sidebar %>
   <div class="sidebar responsive x-menu-min" id="sidebar">
-<%#   <div class="sidebar-shortcuts" id="sidebar-shortcuts">
-      ...
-      </div>
-  #%>
     <ul class="nav nav-list">
       <%= menu_li '/tabor', 'Pikomat', ico: 'fa-square' do %>
         <ul class="submenu">
@@ -128,6 +131,10 @@
     <div class="main-content">
   <% end %>
 
+<%################################################################################## %>
+<%# cesta %>
+<%################################################################################## %>
+
   <%#
     # struktura @breadcumb
     # [ cast1, cast2, cast3 ]
@@ -162,10 +169,18 @@
            <% end %> 
          <% end %> 
        </ul>
+<%################################################################################## %>
+<%# akcni tlacitka %>
+<%################################################################################## %>
      <%= yield :action_buttons %>
          <div style='padding-left:12px' id="page-content-top2"></div>
      </div><%#breadcrumb %>
    <% end %>
+
+<%################################################################################## %>
+<%# obsah stranky %>
+<%################################################################################## %>
+
    <div class="page-content">
 
      <div class="row">
@@ -179,6 +194,10 @@
    </div><!-- /.page-content -->
 
   </div><!-- /.main-content -->
+
+<%################################################################################## %>
+<%# paticka %>
+<%################################################################################## %>
   <div class="footer">
     <div class="footer-inner">
        <div class="footer-content">

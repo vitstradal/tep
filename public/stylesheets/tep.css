@@ -11,6 +11,7 @@ body   { font-family: 'AndulkaSerifBookRegular', Arial, sans-serif; }
 select { font-family: 'AndulkaSerifBookRegular', Arial, sans-serif; }
 button { font-family: 'AndulkaSerifBookBold',    Arial, sans-serif; }
 input  { font-family: 'AndulkaSerifBookBold',    Arial, sans-serif; }
+textarea  { font-family: 'Courier' ; }
 
 
 /************************
@@ -327,16 +328,32 @@ body.skin-2
   padding-right: -10px;
 }
 /* mezera na zobacek */
+
+/* nahrada za list-unstyled, spaced */
 .tep-index-body ul{
   padding-left: 20px;
+  list-style: none outside none;
+  margin-left: 0px;
 }
+
+.tep-index-body ul li{
+  margin-top: 9px;
+  margin-bottom: 9px;
+}
+
+
 .tep-index-header {
   font-size: 18px;
   width: 100%;
 }
+.tep-index-header p {
+  margin: 0px;
+}
 .tep-index-header a {
   display: block;
-  height: 50px;
+  text-align: center;
+  padding: 10px;
+  vertical-align: middle;
 }
 
 
@@ -370,4 +387,13 @@ body.skin-2
   border-right-color: transparent;
   border-bottom-color: transparent;
   margin: auto;
+}
+
+
+/* skryt menu a cestu kdyz je */
+.tep-index .breadcrumbs {
+  display: none;
+}
+.tep-index-back {
+  padding: 20px;
 }
