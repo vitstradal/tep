@@ -55,7 +55,7 @@ class GiwiController < ApplicationController
 
     if @tep_index
       @no_sidebar = true
-      @breadcrumb = nil
+      #@breadcrumb = nil
     end
     print "tep_index:",  @tep_index
 
@@ -193,9 +193,11 @@ class GiwiController < ApplicationController
 
     base = url_for(action: :show, wiki: @wiki)
     parser = TracWiki.parser(_trac_wiki_options(base))
-    parser.to_html(@text)
-    @used_templates = parser.used_templates
-    pp "used templates", @used_templates
+    if @text
+      parser.to_html(@text)
+      @used_templates = parser.used_templates
+      pp "used templates", @used_templates
+    end
 
     if @edit == 'me'
        @edit = true
