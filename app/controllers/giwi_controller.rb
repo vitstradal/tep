@@ -77,9 +77,11 @@ class GiwiController < ApplicationController
     version = params[:version]
 
     file = params[:file]
+    data = params[:data]
     filename = params[:filename]
 
-    return _handle_file_upload(file, filename) if file
+    return _handle_file_upload(file.read, filename) if file
+    return _handle_file_upload(data, filename, false) if data
 
     sline = params[:sline]
     eline = params[:eline]
@@ -157,7 +159,7 @@ class GiwiController < ApplicationController
     @html = 'not found'
   end
 
-  def _handle_file_upload(file, filename)
+  def _handle_file_upload(file, filename, redirect = true)
     if filename =~ /\/$/ || filename == ''
       ori = file.original_filename
       filename += ori
@@ -174,7 +176,9 @@ class GiwiController < ApplicationController
     email = current_user.full_email
     status = Giwi.get_giwi(@wiki).set_page(filename, text, '', email)
     Rails::logger.fatal("url::#{url_for(action: :show, wiki: @wiki, path: @path, ls: '.')}"); 
-    redirect_to url_for(action: :show, wiki: @wiki, path: @path, ls: '.')
+
+    return redirect_to url_for(action: :show, wiki: @wiki, path: @path, ls: '.') if redirect
+    render text: 'tnx'
   end
 
   def _to_ascii(txt)
