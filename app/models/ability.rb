@@ -17,6 +17,7 @@ class Ability
     # tep
     can :index, :tep
     can :faq, :tep
+    can :csrf, :tep
 
     #wikis
     Giwi.giwis.each_value do |giwi|
