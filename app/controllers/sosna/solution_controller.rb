@@ -294,7 +294,7 @@ class Sosna::SolutionController < SosnaController
   # a spocita se poradi v rocniku (a pokud ma stejne bodu tak interval poradi)
   def update_results
     roc, se, ul = _params_roc_se_ul
-    add_alert "generovani je zatim trosku fake, anjoy #{roc} #{se}"
+    add_alert "generovani je zatim trosku alfa, anjoy #{roc} #{se}"
 
     # resitele
     solvers = get_sorted_solvers(roc).to_a
@@ -337,7 +337,7 @@ class Sosna::SolutionController < SosnaController
       res.comment = comment
       res.round_score = score
       lres = results_last[solver.id]
-      res.score = score + ( lres.nil? ? 0 : lres.score )
+      res.score = (score||0) + ( lres.nil? ? 0 : (lres.score||0) )
     end
     
     # setridime od nejvice bodu
