@@ -1,3 +1,16 @@
+
+
+
+{{doodle}}
+||        || 19.5. ||  20.5. 19:30 ||
+|| vitas  || {{y}} || {{n}} ||
+|| lenka  || {{y}} || {{n}} ||
+|| {{+}}  ||
+
+
+{{cat:priklad1}}
+{{cat:priklad1}}
+
 exportovat lidi z tepu:
 
 sqlite3 -list -separator ';' ../tep/db/production.sqlite3 'select id,last_name,name from sosna_solvers'  > lidi.tep
