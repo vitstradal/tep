@@ -45,13 +45,19 @@
   <div id="navbar-container" class="navbar-container container" >
      <div class="navbar-header">
         <div class="tep-navbar-brand" >
-          <a href="<%=url_for '/'%>" class="navbar-brand " >
+          <a href="<%=url_for :root%>" class="navbar-brand " >
 	     <img src="<%= asset_path '/images/logo_vw.png'%>" width="290px"/> 
 	  </a>
         </div>
       </div>
       <div class="navbar-header pull-right" >
-        <a href="<%=url_for '/'%>" class="navbar-brand " ><small><i class="ace-icon fa fa-user"></i> Přihlášení</small> </a>
+        <% if user_signed_in?  %>
+          <%= ilink_to  current_user.email, '#', :ico => 'fa-user', :class=> 'navbar-brand' %>
+          <%= ilink_to  'Logout', :destroy_user_session , :ico => 'fa-sign-out', :class => 'navbar-brand' %>
+       <% else %> 
+         <%= ilink_to 'Přihlášení', :new_user_session , :ico => 'fa-user', :class=> 'navbar-brand' %> 
+       <% end %>
+        <%#
         <div id="nav-search" class="nav-search pull-right">
           <form class="form-search">
             <span class="input-icon">
@@ -60,6 +66,7 @@
             </span>
           </form>
         </div>
+        %>
      </div>
     <% if false %> 
     <div class="navbar-buttons navbar-header pull-right ">
@@ -85,12 +92,35 @@
   <% if ! @no_sidebar %>
   <div class="sidebar responsive x-menu-min" id="sidebar">
     <ul class="nav nav-list">
-      <%= menu_li '/tabor', 'Pikomat', ico: 'fa-square' do %>
+      <%= menu_li '/onas', 'O Pikomatu', ico: 'fa-square' do %>
         <ul class="submenu">
-          <%= menu_lii '/',        'Hlavní stránka' %>
-          <%= menu_lii '/tabor',   'Tábory' %>
-          <%= menu_lii '/archiv',  'Archiv příkladů'  %>
-          <%= menu_lii '/fotky',   'Fotky'   %>
+          <%= menu_lii wiki_web_path('main'),               'Úvod' %>
+          <%= menu_lii wiki_web_path('index'),               'Hodnoty a cíle' %>
+          <%= menu_lii wiki_web_path('onas/organizatori'),   'Organizátoři' %>
+          <%= menu_lii wiki_web_path('onas/onas'),           'Kontakty'  %>
+          <%= menu_lii wiki_web_path('onas/historie'),        'Historie'   %>
+        </ul>
+      <% end %>
+      <%= menu_li '/onas', 'Zadání', ico: 'fa-edit' do %>
+        <ul class="submenu">
+          <%= menu_lii wiki_web_path('archiv/rocnik29/zad5'),    'Aktuální série' %>
+          <%= menu_lii wiki_web_path('archiv'),                  'Archiv příkladů' %>
+          <%= menu_lii wiki_web_path('onas/pravidla'),           'Pravidla'  %>
+          <%= menu_lii wiki_web_path('onas/faq'),                'Otázky a odpovědi'   %>
+        </ul>
+      <% end %>
+      <%= menu_li '/onas', 'Akce', ico: 'fa-search' do %>
+        <ul class="submenu">
+          <%= menu_lii wiki_web_path('tabor'),     'Tábory' %>
+          <%= menu_lii wiki_web_path('soustredeni'),   'Soustředění' %>
+          <%= menu_lii wiki_web_path('todo'),      'Ostatní'  %>
+        </ul>
+      <% end %>
+      <%= menu_li '/onas', 'Přihláška', ico: 'fa-book' do %>
+        <ul class="submenu">
+          <%= menu_lii :new_user_session,        'Přihlásit' %>
+          <%= menu_lii :new_user_session,   'Založit účet' %>
+          <%= menu_lii wiki_web_path('/tabor/2015/prihlaska'),  'Přáhláška na tábor'  %>
         </ul>
       <% end %>
       <% if user_signed_in?  %>
@@ -111,7 +141,7 @@
             <%= menu_lii :sosna_problems,      'Úlohy' %>
             <%= menu_lii :sosna_schools,       'Školy' %>
             <%= menu_lii :wiki_main,           'Wiki' %>
-            <%= menu_lii :wiki_web,            'Web' %>
+            <%#= menu_lii :wiki_web,            'Web' %>
             <%= menu_lii :wiki_web_edit,       'Web Edit'%>
           </ul>
         <% end %>

@@ -228,12 +228,12 @@ class GiwiController < ApplicationController
     # want to edit only one chapter
     @part = @edit.to_i
 
-    if text
+    if @text
      # parser = TracWiki.parser(math: true, merge: true,  no_escape: true, )
       heading = parser.headings[@part]
       if heading
         # edit only selected part (from @sline to @eline)
-        @text = text.split("\n").values_at(heading[:sline]-1 .. heading[:eline]-1).join("\n")
+        @text = @text.split("\n").values_at(heading[:sline]-1 .. heading[:eline]-1).join("\n")
         @sline = heading[:sline]
         @eline = heading[:eline]
       else

@@ -19,9 +19,12 @@ class Ability
     can :faq, :tep
     can :csrf, :tep
 
+    Rails::logger.fatal("can init")
     #wikis
     Giwi.giwis.each_value do |giwi|
       auth_name =  Giwi.auth_name(giwi.name)
+      Rails::logger.fatal("can read: #{auth_name} -> read: #{giwi.read}") 
+      Rails::logger.fatal("can show #{auth_name}") if !giwi.read.nil?   && (giwi.read   == :anon || user.has_role?(giwi.read))
       can :show,   auth_name if !giwi.read.nil?   && (giwi.read   == :anon || user.has_role?(giwi.read))
       can :update, auth_name if !giwi.update.nil? && (giwi.update == :anon || user.has_role?(giwi.update))
 

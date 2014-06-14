@@ -13,9 +13,7 @@ defaults: &defaults
     bare: true
     url: 'web'
     branch: edit
-    read:  :org
-    #update:  :org
-    #nogit: true
+    read:  :anon
     ext: '.wiki'
   web_edit:
     path: '/home/www/git/web.git'
@@ -39,7 +37,7 @@ local:
     bare: false
     branch: edit
     url: 'web'
-    read:  :org
+    read:  :anon
     update:  :org
     #nogit: true
     ext: '.wiki'
@@ -69,10 +67,8 @@ development:
     bare: true
     url: 'web'
     branch: edit
-    read:  :org
-    update: ''
-    #update:  :org
-    #nogit: true
+    read:  :anon
+    update: nil
     ext: '.wiki'
   web_edit:
     path: '/home/www/git/web.git'

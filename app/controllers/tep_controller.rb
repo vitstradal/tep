@@ -6,7 +6,8 @@ class TepController < ApplicationController
   include SosnaHelper
 
   def index;
-    # redirect_to(wiki_web_path(path: 'index'))
+    #redirect_to(wiki_web_path(path: 'index'))
+    redirect_to(wiki_web_path(path: 'main'))
   end
 
   authorize_resource :class => false
