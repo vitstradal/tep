@@ -26,10 +26,19 @@ class Sosna::SolverController < SosnaController
     @school ||= flash[:school] || Sosna::School.new
     @solver ||= flash[:solver] 
     if ! @solver 
-      @solver= Sosna::Solver.new(:email => current_user.nil? ? nil : current_user.email.downcase )
+      @solver= _prepare_new_solver
     end
     @schools = Sosna::School.all.load
     @agree = flash[:agree] || false
+  end
+  def _prepare_new_solver
+    return Sosna::Solver.new if current_user.nil?
+    last_solver =  Sosna::Solver.find_by_user_id(current_user.id)
+    return Sosna::Solver.new(:email => current_user.email.downcase) if last_solver.nil?
+    new_solver = last_solver.clone
+    delta = @annual.to_i - new_solver.annual.to_i
+    new_solver.grade_num = new_solver.grade_num.to_i + delta
+    return new_solver
   end
   #def new_tnx end
 
@@ -47,7 +56,7 @@ class Sosna::SolverController < SosnaController
     solver.valid?
     agree = ! params[:souhlasim].nil?
     solver.errors.add(:souhlasim, 'Je nutno souhlasit s podmínkami') if ! agree
-    solver.errors.add(:email, 'je již registrován u jiného řešitele') if Sosna::Solver.find_by_email(solver.email)
+    solver.errors.add(:email, 'je již registrován u jiného řešitele') if Sosna::Solver.where(email: solver.email, annual: @annual).exists?
     solver.errors.add(:email, 'neexistující adresa') if !solver.email.empty? && !email_valid_mx_record?(solver.email)
     solver.errors.add(:birth, 'jsi příliš stár') if !solver.birth.empty? && (Date.parse(solver.birth) + 17.years) < Date.today
 

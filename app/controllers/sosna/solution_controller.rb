@@ -204,7 +204,8 @@ class Sosna::SolutionController < SosnaController
 
   def user_index
 
-    @annual = params[:roc] || @config[:annual]
+    #@annual = params[:roc] || @config[:annual]
+    @annual = @config[:annual]
     @round  = params[:se]  || @config[:round]
     @breadcrumb = [[], _rounds_roc(@annual, @round) ]
 
@@ -212,9 +213,9 @@ class Sosna::SolutionController < SosnaController
 
     raise 'not logged' if current_user.nil?
 
-    @solver = Sosna::Solver.where(:user_id => current_user.id).take
+    @solver = Sosna::Solver.where(:user_id => current_user.id, :annual => @config[:annual]).take
     if ! @solver
-       add_alert "Pozor: zatím nejsi řešitelem, nejprve vyplň přihlašku!"
+       add_alert "Pozor: zatím nejsi letošním řešitelem, nejprve vyplň přihlašku!"
        return redirect_to :controller => :solver , :action => :new
     end
 

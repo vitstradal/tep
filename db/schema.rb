@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 9) do
+ActiveRecord::Schema.define(version: 10) do
 
   create_table "sessions", force: true do |t|
     t.string   "session_id", null: false
@@ -56,10 +56,10 @@ ActiveRecord::Schema.define(version: 9) do
     t.text     "comment"
     t.integer  "score"
     t.integer  "round_score"
-    t.integer  "rank"
-    t.integer  "rank_to"
-    t.integer  "class_rank"
-    t.integer  "class_rank_to"
+    t.text     "rank"
+    t.text     "rank_to"
+    t.text     "class_rank"
+    t.text     "class_rank_to"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -112,6 +112,7 @@ ActiveRecord::Schema.define(version: 9) do
     t.integer  "school_id"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "solution_form", default: "tep"
   end
 
   create_table "users", force: true do |t|

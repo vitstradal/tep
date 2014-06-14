@@ -140,7 +140,7 @@
             <%= menu_lii :sosna_solutions_org, 'Řešení řešitelů' %>
             <%= menu_lii :sosna_problems,      'Úlohy' %>
             <%= menu_lii :sosna_schools,       'Školy' %>
-            <%= menu_lii :wiki_main,           'Wiki' %>
+            <%= menu_lii :wiki_wiki,           'Wiki' %>
             <%#= menu_lii :wiki_web,            'Web' %>
             <%= menu_lii :wiki_web_edit,       'Web Edit'%>
           </ul>
@@ -208,20 +208,34 @@
 <%################################################################################## %>
 <%# akcni tlacitka %>
 <%################################################################################## %>
-     <%= yield :action_buttons %>
-         <div style='padding-left:12px' id="page-content-top2"></div>
+       <%= yield :action_buttons %>
+       <div style='padding-left:12px' id="page-content-top2"></div>
      </div><%#breadcrumb %>
    <% end %>
 
-<%################################################################################## %>
-<%# obsah stranky %>
-<%################################################################################## %>
 
    <div class="page-content">
 
      <div class="row">
        <div id="page-content-top" class="col-xs-12">
         <!-- page content goes here -->
+<%################################################################################## %>
+<%# alerty %>
+<%################################################################################## %>
+        <% if flash[:alerts] %>
+          <% flash[:alerts].each do |msg| %>
+            <div class="alert alert-danger"> <%= msg %> </div>
+          <% end %>
+        <% end %>
+        <% if flash[:success] %>
+          <% flash[:success].each do |msg| %>
+            <div class="alert alert-success"> <%=msg %> </div>
+          <% end %>
+        <% end %>
+
+<%################################################################################## %>
+<%# obsah stranky %>
+<%################################################################################## %>
         <%= yield %>
 
 
