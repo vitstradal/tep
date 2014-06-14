@@ -48,8 +48,8 @@ class GiwiController < ApplicationController
 
 
     base = url_for(action: :show, wiki: @wiki)
-    parser = TracWiki.parser(@text, _trac_wiki_options(base))
-    @html = parser.to_html
+    parser = TracWiki.parser(_trac_wiki_options(base))
+    @html = parser.to_html(@text)
     @headings = parser.headings
 
 
@@ -113,7 +113,7 @@ class GiwiController < ApplicationController
        id_from_heading: true,
        id_translit: true,
        no_escape: true,
-       raw_html: true,
+       allow_html: true,
        template_handler: self.method(:template_handler),
     }
   end
@@ -186,8 +186,8 @@ class GiwiController < ApplicationController
     print "part:#{@part}, text.size: #{text.size}\n"
 
     if text
-      parser = TracWiki.parser(text, math: true, merge: true,  no_escape: true, raw_html: true,)
-      parser.to_html
+      parser = TracWiki.parser(math: true, merge: true,  no_escape: true, allow_html: true,)
+      parser.to_html(text)
       heading = parser.headings[@part]
       print "headigns", pp(parser.headings)
       if heading
