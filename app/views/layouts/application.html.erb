@@ -50,13 +50,15 @@
 	  </a>
         </div>
       </div>
-      <div class="navbar-header pull-right" >
+      <div class="navbar-header navbar-buttons pull-right" >
+        <ul class="nav ace-nav">
         <% if user_signed_in?  %>
-          <%= ilink_to  current_user.email, '#', :ico => 'fa-user', :class=> 'navbar-brand' %>
-          <%= ilink_to  'Logout', :destroy_user_session , :ico => 'fa-sign-out', :class => 'navbar-brand' %>
-       <% else %> 
-         <%= ilink_to 'Přihlášení', :new_user_session , :ico => 'fa-user', :class=> 'navbar-brand' %> 
-       <% end %>
+          <li><%= ilink_to  current_user.email, '#', :ico => 'fa-user', :class=> 'btn btn-primary tep-transparent' %></li>
+          <li><%= ilink_to  'Logout', :destroy_user_session , :ico => 'fa-sign-out', :class => 'btn tep-transparent' %></li>
+        <% else %> 
+          <li><%= ilink_to 'Přihlášení', :new_user_session , :ico => 'fa-user', :class=> 'btn tep-transparent' %> </li>
+        <% end %>
+       </ul>
         <%#
         <div id="nav-search" class="nav-search pull-right">
           <form class="form-search">

@@ -31,15 +31,6 @@ class Sosna::SolverController < SosnaController
     @schools = Sosna::School.all.load
     @agree = flash[:agree] || false
   end
-  def _prepare_new_solver
-    return Sosna::Solver.new if current_user.nil?
-    last_solver =  Sosna::Solver.find_by_user_id(current_user.id)
-    return Sosna::Solver.new(:email => current_user.email.downcase) if last_solver.nil?
-    new_solver = last_solver.clone
-    delta = @annual.to_i - new_solver.annual.to_i
-    new_solver.grade_num = new_solver.grade_num.to_i + delta
-    return new_solver
-  end
   #def new_tnx end
 
   def create
@@ -140,5 +131,44 @@ class Sosna::SolverController < SosnaController
        #user.devise_mailer.confirmation_instructions(user).deliver
        devise_mailer.devise_mail(user, :confirmation_instructions).deliver
 
+  end
+  def _prepare_new_solver
+    return Sosna::Solver.new if current_user.nil?
+    last_solver =  Sosna::Solver.find_by_user_id(current_user.id)
+    return Sosna::Solver.new(:email => current_user.email.downcase) if last_solver.nil?
+    new_solver = last_solver.clone
+    delta = @annual.to_i - new_solver.annual.to_i
+    new_solver.grade_num = new_solver.grade_num.to_i + delta
+    new_solver.grade = _grade_plus(new_solver.grade,delta)
+    return new_solver
+  end
+  def _grade_plus(grade, delta)
+
+    cl =  %w(nila prima sekunda tercie kvarta kvinta sexta septima oktava)
+    return "#{$1}#{cl[delta+1]}#{$2}" if grade =~ /^(.*)prima(.*)$/i
+    return "#{$1}#{cl[delta+2]}#{$2}" if grade =~ /^(.*)sekunda(.*)$/i
+    return "#{$1}#{cl[delta+3]}#{$2}" if grade =~ /^(.*)terice(.*)$/i
+    return "#{$1}#{cl[delta+4]}#{$2}" if grade =~ /^(.*)kvarta(.*)$/i
+    return "#{$1}#{cl[delta+4]}#{$2}" if grade =~ /^(.*)qarta(.*)$/i
+    return "#{$1}#{cl[delta+5]}#{$2}" if grade =~ /^(.*)kvinta(.*)$/i
+    return "#{$1}#{cl[delta+6]}#{$2}" if grade =~ /^(.*)sexta(.*)$/i
+    return "#{$1}#{cl[delta+7]}#{$2}" if grade =~ /^(.*)septima(.*)$/i
+    return "#{$1}#{cl[delta+8]}#{$2}" if grade =~ /^(.*)okt.va(.*)$/i
+
+    ro = %w( i ii iii iv v vi vii viii ix )
+    if grade =~ /^([ixv]+)(.)/i
+      r, rest = $1, $2
+      ri = ro.index(r.downcase)
+      if ! ri.nil? 
+        r_plus = ro[ri+delta] 
+        return "#{r_plus.upcase}#{rest}" if ! r_plus.nil?
+      end
+    end
+
+    if grade =~ /^([^\d]*)(\d+)(.*)$/ 
+      prefix, id, rest = $1, $2, $3
+      return "#{prefix}#{id.to_i + delta}#{rest}"
+    end
+    return grade
   end
 end

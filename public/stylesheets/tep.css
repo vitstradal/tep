@@ -402,3 +402,9 @@ body.skin-2
 .tep-index-back {
   padding: 20px;
 }
+
+
+/* hack: buttony v navbaru maji byt 'bez ramecku' */
+.ace-nav > li > a.tep-transparent {
+  background-color: transparent !important;
+}
