@@ -27,7 +27,9 @@ class GiwiController < ApplicationController
     # @wiki, Giwi.can_read?
 
     return _handle_ls if @ls
-    return _handle_raw_file("#{@path}.#{fmt}", fmt) if %w(pdf png jpg jpeg gif).include? fmt
+    return _handle_csrf if fmt == 'csrf'
+    return _handle_special_edit(@path, fmt) if @edit && %w(svg).include?(fmt)
+    return _handle_raw_file("#{@path}.#{fmt}", fmt) if %w(pdf png jpg jpeg gif svg).include? fmt
     return redirect_to action: :show, path: @path + 'index',  wiki: @wiki if @path =~ /\/$/
     return redirect_to action: :show, path: 'index',  wiki: @wiki if ! @path
 
@@ -76,12 +78,14 @@ class GiwiController < ApplicationController
     text = params[:text]
     version = params[:version]
 
-    file = params[:file]
     data = params[:data]
+    fmt = params[:format]
+    return _handle_file_upload(data, "#{@path}.#{fmt}", nil, false) if data
+
+    file = params[:file]
     filename = params[:filename]
 
-    return _handle_file_upload(file.read, filename) if file
-    return _handle_file_upload(data, filename, false) if data
+    return _handle_file_upload(file.read, filename, file.original_filename ) if file
 
     pos = params[:pos]
 
@@ -106,6 +110,17 @@ class GiwiController < ApplicationController
 
   private
 
+
+  def _handle_special_edit(path, fmt)
+    if fmt == 'svg'
+       uri = url_for(wiki: @wiki, path: '/', :only_path => true).gsub(/\/+$/, '')
+      redirect_to "/pokusy/svg-edit-2.7.1/svg-editor.html?url=#{uri}/#{path}.#{fmt}"
+    end
+  end
+
+  def _handle_csrf
+    render json: {:csrf => form_authenticity_token.to_s  }
+  end
   def _handle_raw_file(path, fmt)
     @raw, @version = Giwi.get_giwi(@wiki).get_page(path)
     send_data @raw, :type => fmt, :disposition => 'inline'
@@ -156,22 +171,22 @@ class GiwiController < ApplicationController
     @html = 'not found'
   end
 
-  def _handle_file_upload(file, filename, redirect = true)
-    if filename =~ /\/$/ || filename == ''
-      ori = file.original_filename
-      filename += ori
+  def _handle_file_upload(data, filename, filename_orig, redirect = true)
+
+    if !filename_orig.nil? && ( filename =~ /\/$/ || filename == '' )
+      filename += filename_orig
     end
 
     raise "bad filename #{filename}" if filename =~ /\.\./
+    raise "bad filename #{filename}" if filename =~ /^\s*$/
 
-    text = file.read
-    Rails::logger.fatal("file:#{filename} text.size:#{text.size}, @path: #{@path}");
+    Rails::logger.fatal("file:#{filename} text.size:#{data.size}, @path: #{@path}");
 
     flash[:success] ||= []
     flash[:success].push("Soubor #{filename} uložen.")
 
     email = current_user.full_email
-    status = Giwi.get_giwi(@wiki).set_page(filename, text, '', email)
+    status = Giwi.get_giwi(@wiki).set_page(filename, data, '', email)
     Rails::logger.fatal("url::#{url_for(action: :show, wiki: @wiki, path: @path, ls: '.')}"); 
 
     return redirect_to url_for(action: :show, wiki: @wiki, path: @path, ls: '.') if redirect
@@ -210,7 +225,7 @@ class GiwiController < ApplicationController
     # want to edit only one chapter
     @part = @edit.to_i
 
-    if text
+    if @text
      # parser = TracWiki.parser(math: true, merge: true,  no_escape: true, )
       heading = parser.headings[@part]
       if heading

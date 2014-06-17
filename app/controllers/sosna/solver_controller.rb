@@ -26,7 +26,7 @@ class Sosna::SolverController < SosnaController
     @school ||= flash[:school] || Sosna::School.new
     @solver ||= flash[:solver] 
     if ! @solver 
-      @solver= Sosna::Solver.new(:email => current_user.nil? ? nil : current_user.email.downcase )
+      @solver= _prepare_new_solver
     end
     @schools = Sosna::School.all.load
     @agree = flash[:agree] || false
@@ -47,7 +47,7 @@ class Sosna::SolverController < SosnaController
     solver.valid?
     agree = ! params[:souhlasim].nil?
     solver.errors.add(:souhlasim, 'Je nutno souhlasit s podmínkami') if ! agree
-    solver.errors.add(:email, 'je již registrován u jiného řešitele') if Sosna::Solver.find_by_email(solver.email)
+    solver.errors.add(:email, 'je již registrován u jiného řešitele') if Sosna::Solver.where(email: solver.email, annual: @annual).exists?
     solver.errors.add(:email, 'neexistující adresa') if !solver.email.empty? && !email_valid_mx_record?(solver.email)
     solver.errors.add(:birth, 'jsi příliš stár') if !solver.birth.empty? && (Date.parse(solver.birth) + 17.years) < Date.today
 
@@ -131,5 +131,44 @@ class Sosna::SolverController < SosnaController
        #user.devise_mailer.confirmation_instructions(user).deliver
        devise_mailer.devise_mail(user, :confirmation_instructions).deliver
 
+  end
+  def _prepare_new_solver
+    return Sosna::Solver.new if current_user.nil?
+    last_solver =  Sosna::Solver.find_by_user_id(current_user.id)
+    return Sosna::Solver.new(:email => current_user.email.downcase) if last_solver.nil?
+    new_solver = last_solver.clone
+    delta = @annual.to_i - new_solver.annual.to_i
+    new_solver.grade_num = new_solver.grade_num.to_i + delta
+    new_solver.grade = _grade_plus(new_solver.grade,delta)
+    return new_solver
+  end
+  def _grade_plus(grade, delta)
+
+    cl =  %w(nila prima sekunda tercie kvarta kvinta sexta septima oktava)
+    return "#{$1}#{cl[delta+1]}#{$2}" if grade =~ /^(.*)prima(.*)$/i
+    return "#{$1}#{cl[delta+2]}#{$2}" if grade =~ /^(.*)sekunda(.*)$/i
+    return "#{$1}#{cl[delta+3]}#{$2}" if grade =~ /^(.*)terice(.*)$/i
+    return "#{$1}#{cl[delta+4]}#{$2}" if grade =~ /^(.*)kvarta(.*)$/i
+    return "#{$1}#{cl[delta+4]}#{$2}" if grade =~ /^(.*)qarta(.*)$/i
+    return "#{$1}#{cl[delta+5]}#{$2}" if grade =~ /^(.*)kvinta(.*)$/i
+    return "#{$1}#{cl[delta+6]}#{$2}" if grade =~ /^(.*)sexta(.*)$/i
+    return "#{$1}#{cl[delta+7]}#{$2}" if grade =~ /^(.*)septima(.*)$/i
+    return "#{$1}#{cl[delta+8]}#{$2}" if grade =~ /^(.*)okt.va(.*)$/i
+
+    ro = %w( i ii iii iv v vi vii viii ix )
+    if grade =~ /^([ixv]+)(.)/i
+      r, rest = $1, $2
+      ri = ro.index(r.downcase)
+      if ! ri.nil? 
+        r_plus = ro[ri+delta] 
+        return "#{r_plus.upcase}#{rest}" if ! r_plus.nil?
+      end
+    end
+
+    if grade =~ /^([^\d]*)(\d+)(.*)$/ 
+      prefix, id, rest = $1, $2, $3
+      return "#{prefix}#{id.to_i + delta}#{rest}"
+    end
+    return grade
   end
 end
