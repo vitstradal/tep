@@ -10,8 +10,7 @@
     <%= hidden_field_tag 'version', @version %>
     <% if @part %>
       <%= hidden_field_tag 'part', @part %>
-      <%= hidden_field_tag 'sline', @sline %>
-      <%= hidden_field_tag 'eline', @eline %>
+      <%= hidden_field_tag 'pos', @pos %>
     <% end %>
     <h1>Editace souboru '<%= @path %>'</h1>
 

@@ -83,14 +83,11 @@ class GiwiController < ApplicationController
     return _handle_file_upload(file.read, filename) if file
     return _handle_file_upload(data, filename, false) if data
 
-    sline = params[:sline]
-    eline = params[:eline]
-
-    sline = sline.to_i if ! sline.nil?
-    eline = eline.to_i if ! eline.nil?
+    pos = params[:pos]
 
     email = current_user.full_email
-    status = @giwi.set_page(@path + @giwi.ext, text, version, email, sline , eline)
+    XX fixme pos
+    status = @giwi.set_page(@path + @giwi.ext, text, version, email, pos)
 
     if status !=  Giwi::SETPAGE_OK
       if status ==  Giwi::SETPAGE_MERGE_OK
@@ -219,8 +216,7 @@ class GiwiController < ApplicationController
       if heading
         # edit only selected part (from @sline to @eline)
         @text = text.split("\n").values_at(heading[:sline]-1 .. heading[:eline]-1).join("\n")
-        @sline = heading[:sline]
-        @eline = heading[:eline]
+        @pos = "#{heading[:sline]}-#{heading[:eline]+1}"
       else
         # edit all document anyway
         @part = nil

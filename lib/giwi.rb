@@ -147,7 +147,7 @@ class Giwi
 
   # text_id aka version
   # if text is only part of file, sline, eline specifies which part (lines from sline to eline (including))
-  def set_page(path, text, commit_id, email = 'unknown', sline =nil, eline = nil)
+  def set_page(path, text, commit_id, email = 'unknown', pos=nil)
 
     cur_head = @repo.commits(@branch, 1).first
 
@@ -169,8 +169,8 @@ class Giwi
       cur_blob  = cur_tree / path
       text_blob_data = text_blob.data.force_encoding('utf-8')
 
-      if ! sline.nil? && ! eline.nil?
-        text = _patch_part(text, text_blob_data, sline, eline)
+      if ! pos.nil?
+        text = _patch_part(text, text_blob_data, pos)
       end
 
       if cur_blob.id != text_blob.id
@@ -220,11 +220,25 @@ class Giwi
 
 
   # replace in +text_orig+, lines from +sline+ to  +eline+ with +text+
-  # first line is 1 
-  def _patch_part(text_part, text_orig, sline, eline)
-      lines = text_orig.split("\n", -1)
-      lines[(sline -1) ..(eline-1)] = text_part.split("\n", -1)
+  # pos in form 3.0-44.20 "from start of line 3 to line 44 char 20"
+  # pos in form 3-44 "from start of line 3 to start line 44 (inc \n)"
+  # first line is 1
+  # 1.0-2.0 means first line  including '\n'
+  def _patch_part(part, text_orig, pos)
+
+      if pos =~ /\A(\d+)(:\.(\d+))?-(\d+)(?:.(\d+))?\Z/
+        bline, boff, eline, eoff = $1-1, $2||0, $3-1, $4||0
+        lines = text_orig.split("\n", -1)
+
+        pre_part = lines[bline][0 .. boff] || ''
+        post_part = lines[eline][eof .. -1] || ''
+
+        lines[bline .. eline] = pre_part + part + post_part
+
       lines.join("\n")
+      else
+        raise "bad pos (#{pos})"
+      end
   end
 
 #  ##### conf
@@ -284,13 +298,13 @@ class GiwiNoGit < Giwi
     [[], [], path]
   end
 
-  def set_page(path, text, commit_id, email = 'unknown', sline =nil, eline = nil)
+  def set_page(path, text, commit_id, email = 'unknown', pos = nil)
     path_fs = File.join(@path, path)
 
-    if ! sline.nil?
+    if ! pos.nil?
       begin
         text_old = File.read(path_fs)
-        text = _patch_part(text, text_old, sline, eline)
+        text = _patch_part(text, text_old, pos)
       rescue
         return SETPAGE_ERROR
       end
