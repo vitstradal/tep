@@ -25,12 +25,10 @@ defaults: &defaults
     #nogit: true
     ext: '.wiki'
 
-test:
-  <<: *defaults
 production:
   <<: *defaults
 
-local:
+local: &local
   <<: *defaults
   web:
     path: '/home/vitas/tmp/pikoweb/web'
@@ -79,3 +77,6 @@ development:
     update:  :org
     #nogit: true
     ext: '.wiki'
+
+test:
+  <<: *local

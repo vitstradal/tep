@@ -90,7 +90,6 @@ class GiwiController < ApplicationController
     pos = params[:pos]
 
     email = current_user.full_email
-    XX fixme pos
     status = @giwi.set_page(@path + @giwi.ext, text, version, email, pos)
 
     if status !=  Giwi::SETPAGE_OK
@@ -230,7 +229,7 @@ class GiwiController < ApplicationController
       heading = parser.headings[@part]
       if heading
         # edit only selected part (from @sline to @eline)
-        @text = text.split("\n").values_at(heading[:sline]-1 .. heading[:eline]-1).join("\n")
+        @text = @text.split("\n").values_at(heading[:sline]-1 .. heading[:eline]-1).join("\n")
         @pos = "#{heading[:sline]}-#{heading[:eline]+1}"
       else
         # edit all document anyway

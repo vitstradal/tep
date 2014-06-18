@@ -220,23 +220,36 @@ class Giwi
 
 
 
-  # replace in +text_orig+, lines from +sline+ to  +eline+ with +text+
-  # pos in form 3.0-44.20 "from start of line 3 to line 44 char 20"
-  # pos in form 3-44 "from start of line 3 to start line 44 (inc \n)"
+  # in +text_orig+ replace place defined by +pos+  with text +part+
+  # +pos+ in form '3.0-44.20' "from start of line 3 to line 44 char 20"
+  # +pos+ in form '3-44' "from start of line 3 to start line 44 (inc \n)"
+  # +pos+ in form '3.4' "insert at line 3 after char 4"
   # first line is 1
-  # 1.0-2.0 means first line  including '\n'
+  # 1-2 means first line  including '\n'
   def _patch_part(part, text_orig, pos)
 
-      if pos =~ /\A(\d+)(:\.(\d+))?-(\d+)(?:.(\d+))?\Z/
-        bline, boff, eline, eoff = $1-1, $2||0, $3-1, $4||0
+      if pos =~ /\A(\d+)(?:\.(\d+))?(?:-(\d+)(?:\.(\d+))?)?\Z/
+
+        bline, eline = $1.to_i-1,  ($3||$1).to_i-1
+        boff, eoff = ($2||0).to_i, ($4||$2||0).to_i
+
         lines = text_orig.split("\n", -1)
 
-        pre_part = lines[bline][0 .. boff] || ''
-        post_part = lines[eline][eof .. -1] || ''
+        # zacatek pocatecni radky
+        prefix  = ''
+        if boff > 0
+          prefix =  lines[bline][0 .. boff-1]
+          prefix ||= ''
+        end
 
-        lines[bline .. eline] = pre_part + part + post_part
+        # konec koncove radky 
+        endline = lines[eline] || ''
+        postfix = endline[eoff .. -1] || ''
 
-      lines.join("\n")
+        #Rails::logger.fatal("pos(#{pos}) bline(#{bline}) bof(#{boff}) bofzero(#{boff==0?1:0}) eline(#{eline}) eoff(#{eoff}) pre(#{prefix}) post(#{post_part})")
+
+        lines[bline .. eline] = prefix + part + postfix
+        lines.join("\n")
       else
         raise "bad pos (#{pos})"
       end

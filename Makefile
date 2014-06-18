@@ -40,3 +40,5 @@ dev:
 
 server:
 	script/rails server -e local --binding=localhost
+ttest:
+	rake test
