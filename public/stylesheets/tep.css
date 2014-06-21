@@ -240,12 +240,12 @@ body,
 
 /* pozadi  */
 body{
-  background-image: url('../images/f2b.jpg');
+  background-image: url('../images/tabule-bila.jpg');
 }
 body.skin-1,
 body.skin-2
 { /* cerna */
-  background-image: url('../images/f2.jpg');
+  background-image: url('../images/tabule.jpg');
 }
 
 /* hacky green skinu */
@@ -407,4 +407,14 @@ body.skin-2
 /* hack: buttony v navbaru maji byt 'bez ramecku' */
 .ace-nav > li > a.tep-transparent {
   background-color: transparent !important;
+}
+
+
+/* hack alternativni index pokusy */
+.bouda div.sidebar {
+width: 25%;
+}
+.bouda div.sidebar:before {
+background-color: transparent;
+border-style: none;
 }
