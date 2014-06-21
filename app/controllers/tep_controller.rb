@@ -5,6 +5,7 @@ class TepController < ApplicationController
   include ApplicationHelper
   include SosnaHelper
 
+  def pokusy; end
   def index;
     #redirect_to(wiki_web_path(path: 'index'))
     redirect_to(wiki_web_path(path: 'main'))

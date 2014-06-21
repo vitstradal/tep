@@ -3,167 +3,97 @@
 <% @no_sidebar  = true %>
 <% @tep_index = true %>
 
-<% if true %>
-<div class="row tep-index-menu">
-      <div class="clearfix" >
-        <div class="grid4" >
-          <div class="tep-index-header" >
-            <a href="<%=url_for '/'%>" class="xnavbar-brand"><i class="ace-icon fa fa-square"></i> O Pikomatupqj</a>
-          </div>
-          <div class="tep-index-arrow"></div>
-          <div class="tep-index-body" >
-            <ul class="xlist-unstyled xspaced">
-            <ul>
-               <li><a href="<%= url_for :wiki_web %>"><i class="fa fa-flag green"></i> Hodnoty a cíle</a></li>
-               <li><a href="<%= url_for :wiki_web %>"><i class="fa fa-flag green"></i> Oranizátoři</a></li>
-               <li><a href="<%= url_for :wiki_web %>"><i class="fa fa-flag green"></i> Kontakty</a></li>
-               <li><a href="<%= url_for :wiki_web %>"><i class="fa fa-flag green"></i> Historie</a></li>
-               <li><a href="<%= url_for :wiki_web %>"><i class="fa fa-flag green"></i> Píší o někom jiném</a></li>
-            </ul>
-          </div>
-        </div>
-        <div class="grid4" >
-          <div class="tep-index-header" >
-            <a href="<%=url_for '/'%>"><i class="ace-icon fa fa-edit"></i> Zadání</a>
-          </div>
-          <div class="tep-index-arrow"></div>
-          <div class="tep-index-body" >
-            <ul>
-               <li><a href="/web"><i class="fa fa-flag green"></i> Aktuální série</a></li>
-               <li><a href="/web"><i class="fa fa-flag green"></i> Archiv</a></li>
-               <li><a href="/web"><i class="fa fa-flag green"></i> Pravidla, pokyny a rady</a></li>
-            </ul>
-          </div>
-        </div>
-        <div class="grid4" >
-          <div class="tep-index-header" >
-            <a href="<%=url_for '/'%>"><i class="ace-icon fa fa-file"></i> Tábory</a>
-          </div>
-          <div class="tep-index-arrow"></div>
-          <div class="tep-index-body" >
-            <ul>
-             <li><a href="<%= url_for 'web' %>"><i class="fa fa-flag green"></i> 2014</a></li>
-             <li><a href="<%= url_for 'web' %>"><i class="fa fa-flag green"></i> 2013</a></li>
-             <li><a href="<%= url_for 'web' %>"><i class="fa fa-flag green"></i> 2012</a></li>
-             <li><a href="<%= url_for 'web' %>"><i class="fa fa-flag green"></i> 2011</a></li>
-             <li><a href="<%= url_for 'web' %>"><i class="fa fa-flag green"></i> Další...</a></li>
+<div class="bouda">
+  <div class="sidebar responsive x-menu-min" id="sidebar">
+    <ul class="nav nav-list">
+      <%= menu_li '/onas', 'O Pikomatu', ico: 'fa-square', cls: 'open active'  do %>
+        <ul class="submenu">
+          <%= menu_lii wiki_web_path('main'),               'Úvod' %>
+          <%= menu_lii wiki_web_path('index'),               'Hodnoty a cíle' %>
+          <%= menu_lii wiki_web_path('onas/organizatori'),   'Organizátoři' %>
+          <%= menu_lii wiki_web_path('onas/onas'),           'Kontakty'  %>
+          <%= menu_lii wiki_web_path('onas/historie'),        'Historie'   %>
+        </ul>
+      <% end %>
+    </ul>
+  </div>
+  <div class="sidebar responsive x-menu-min" id="sidebar">
+    <ul class="nav nav-list">
+      <%= menu_li '/onas', 'Zadání', ico: 'fa-edit', cls: 'open active' do %>
+        <ul class="submenu">
+          <%= menu_lii wiki_web_path('archiv/rocnik29/zad5'),    'Aktuální série' %>
+          <%= menu_lii wiki_web_path('archiv'),                  'Archiv příkladů' %>
+          <%= menu_lii wiki_web_path('onas/pravidla'),           'Pravidla'  %>
+          <%= menu_lii wiki_web_path('onas/faq'),                'Otázky a odpovědi'   %>
+          <%= menu_lii wiki_web_path('todo'),      '_'  %>
+        </ul>
+      <% end %>
+    </ul>
+  </div>
+  <div class="sidebar responsive x-menu-min" id="sidebar">
+    <ul class="nav nav-list">
+      <%= menu_li '/onas', 'Akce', ico: 'fa-search', cls: 'open active' do %>
+        <ul class="submenu">
+          <%= menu_lii wiki_web_path('tabor'),     'Tábory' %>
+          <%= menu_lii wiki_web_path('soustredeni'),   'Soustředění' %>
+          <%= menu_lii wiki_web_path('todo'),      'Ostatní'  %>
+          <%= menu_lii wiki_web_path('todo'),      '_'  %>
+          <%= menu_lii wiki_web_path('todo'),      '_'  %>
+        </ul>
+      <% end %>
+    </ul>
+  </div>
+  <div class="sidebar responsive x-menu-min" id="sidebar">
+    <ul class="nav nav-list">
+      <%= menu_li '/onas', 'Přihláška', ico: 'fa-book', cls: 'open active' do %>
+        <ul class="submenu">
+          <%= menu_lii :new_user_session,        'Přihlásit' %>
+          <%= menu_lii :new_user_session,   'Založit účet' %>
+          <%= menu_lii wiki_web_path('/tabor/2015/prihlaska'),  'Přáhláška na tábor'  %>
+          <%= menu_lii wiki_web_path('todo'),      '_'  %>
+          <%= menu_lii wiki_web_path('todo'),      '_'  %>
+        </ul>
+      <% end %>
+      <% if user_signed_in?  %>
+        <%= menu_li '#', 'Uživatel', ico: 'fa-user', cls: 'open active' do %>
+          <ul class="submenu">
+            <%= menu_lii :sosna_solutions_user,   'Moje řešení' %>
+            <%= menu_lii :edit_user_registration, 'Změna hesla' %>
+            <%= menu_lii :faq,                    'Nápověda'   %>
           </ul>
-          </div>
-        </div>
-        <div class="grid4" >
-          <div class="tep-index-header" >
-            <a href="<%=url_for '/'%>"><i class="ace-icon fa fa-camera"></i> Fotky</a>
-          </div>
-          <div class="tep-index-arrow"></div>
-          <div class="tep-index-body" >
-            <ul>
-               <li><a href="/web"><i class="fa fa-flag green"></i> Fotky</a></li>
-               <li><a href="/web"><i class="fa fa-flag green"></i> Fotky</a></li>
-               <li><a href="/web"><i class="fa fa-flag green"></i> Fotky</a></li>
-               <li><a href="/web"><i class="fa fa-flag green"></i> Fotky</a></li>
-               <li><a href="/web"><i class="fa fa-flag green"></i> a zase Fotky</a></li>
-            </ul>
-          </div>
-        </div>
-     </div>
+        <% end %>
+      <% else %>
+      <% end %>
+      <% if current_user && current_user.has_role?(:org) %>
+        <%= menu_li '#', 'Org', ico: 'fa-flag' do %>
+          <ul class="submenu">
+            <%= menu_lii :sosna_solvers,       'Řešitelé' %>
+            <%= menu_lii :sosna_solutions_org, 'Řešení řešitelů' %>
+            <%= menu_lii :sosna_problems,      'Úlohy' %>
+            <%= menu_lii :sosna_schools,       'Školy' %>
+            <%= menu_lii :wiki_wiki,           'Wiki' %>
+            <%#= menu_lii :wiki_web,            'Web' %>
+            <%= menu_lii :wiki_web_edit,       'Web Edit'%>
+          </ul>
+        <% end %>
+      <% end %>
+      <% if current_user && current_user.has_role?(:admin) %>
+        <%= menu_li '#', 'Admin', ico: 'fa-eye' do %>
+          <ul class="submenu">
+            <%= menu_lii :users_list,       'Uživatelé' %>
+            <%= menu_lii :sosna_configs,   'Konfigurace' %>
+          </ul>
+        <% end %>
+      <% end %>
+    </ul>
+  </div> <%# sidebar %>
+
 </div>
-<% else %>
-<img width="100%" height='200px' src='http://pikomat.ms.mff.cuni.cz/tabor/2013/pasy/pas4_2013.png'>
-<div class="tep-main row">
-  <div class="col-sm-3">
-    <div class="widget-box">
-      <div class="widget-header widget-header-flat"><h4><i class="fa fa-square"></i> O Pikomatu</h4></div>
-      <div class="widget-body">
-        <div class="widget-main">
-          <ul class="list-unstyled spaced">
-             <li><a href="<%= url_for :wiki_web %>"><i class="fa fa-flag green"></i> Hodnoty a cíle</a></li>
-             <li><a href="<%= url_for :wiki_web %>"><i class="fa fa-flag green"></i> Oranizátoři</a></li>
-             <li><a href="<%= url_for :wiki_web %>"><i class="fa fa-flag green"></i> Kontakty</a></li>
-             <li><a href="<%= url_for :wiki_web %>"><i class="fa fa-flag green"></i> Historie</a></li>
-             <li><a href="<%= url_for :wiki_web %>"><i class="fa fa-flag green"></i> Píší o někom jiném</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-sm-3">
-    <div class="widget-box">
-      <div class="widget-header widget-header-flat"><h4><i class="fa fa-edit"></i> Zadání</h4></div>
-      <div class="widget-body">
-        <div class="widget-main">
-          <ul class="list-unstyled spaced">
-             <li><a href="/web"><i class="fa fa-flag green"></i> Aktuální série</a></li>
-             <li><a href="/web"><i class="fa fa-flag green"></i> Archiv</a></li>
-             <li><a href="/web"><i class="fa fa-flag green"></i> Pravidla, pokyny a rady</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-sm-3">
-    <div class="widget-box">
-      <div class="widget-header widget-header-flat"><h4><i class="fa fa-fire"></i> Tábory</h4></div>
-      <div class="widget-body">
-        <div class="widget-main">
-          <ul class="list-unstyled spaced">
-             <li><a href="<%= url_for 'web' %>"><i class="fa fa-flag green"></i> 2014</a></li>
-             <li><a href="<%= url_for 'web' %>"><i class="fa fa-flag green"></i> 2013</a></li>
-             <li><a href="<%= url_for 'web' %>"><i class="fa fa-flag green"></i> 2012</a></li>
-             <li><a href="<%= url_for 'web' %>"><i class="fa fa-flag green"></i> 2011</a></li>
-             <li><a href="<%= url_for 'web' %>"><i class="fa fa-flag green"></i> Další...</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-  <div class="col-sm-3">
-    <div class="widget-box">
-      <div class="widget-header widget-header-flat"><h4><i class="fa fa-camera"></i> Fotky</h4></div>
-      <div class="widget-body">
-        <div class="widget-main">
-          <ul class="list-unstyled spaced">
-             <li><a href="/web"><i class="fa fa-flag green"></i> Fotky</a></li>
-             <li><a href="/web"><i class="fa fa-flag green"></i> Fotky</a></li>
-             <li><a href="/web"><i class="fa fa-flag green"></i> Fotky</a></li>
-             <li><a href="/web"><i class="fa fa-flag green"></i> Fotky</a></li>
-             <li><a href="/web"><i class="fa fa-flag green"></i> a zase Fotky</a></li>
-          </ul>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-<% end %>
-
-<% if false %>
-<% if current_user  %>
-
-  <p>Vítej v Tepu!</p>
-
-  <p>Jsi přihlášen jako <%= current_user.name %>  <%= current_user.last_name || current_user.email%>.</p>
-
-  <p>
-  Svá řešení můžeš nahrát <%= link_to 'zde', sosna_solutions_user_path %>.
-  Na tomto místě zároveň obdržíš svá opravená řešení.
-  Pokud nevíš jak to tu funguje, neváhej navštívit stránku <%= link_to 'Nápověda', faq_path %>.
-  </p>
-
-<% else %>
-
-  <p>Vítej v Tepu. Po přihlášení zde můžeš odevzdat svá elektronická řešení Pikomatu.
-  Pokud nejsi do Pikomatu přihlášený, vyplň prosím přihlášku, tím se zaregistruješ.
-  </p>
-
-<% end %>
-<% end %>
 
 
-<div style="padding:20px">
+<div style="padding:40px">
 
-
-
-
-<div class="row">
+<div style="padding-top:210px" class="row">
 <div class="col-sm-9">
 
 <div class="timeline-container">

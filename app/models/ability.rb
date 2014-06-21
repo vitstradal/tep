@@ -41,6 +41,8 @@ class Ability
     end
 
     if user.org?
+      can :pokusy, :tep
+
       can :index, Sosna::Solution
       can :show, Sosna::Solution
       can :download, Sosna::Solution
