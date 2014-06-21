@@ -78,7 +78,7 @@ class Giwi
     return nil if ! blob.is_a? Grit::Blob
 
     text = blob.data.force_encoding('utf-8').encode
-    return [ text, tree.id]
+    return [ text, blob.id]
   end
 
 
@@ -162,9 +162,9 @@ class Giwi
 
     if commit_id != ''
       # not new file
-      text_tree =  @repo.tree commit_id
-
-      text_blob = text_tree / path
+      #text_tree =  @repo.tree commit_id
+      #text_blob = text_tree / path
+      text_blob = @repo.blob commit_id
       raise "no path #{path}" if ! text_blob.is_a? Grit::Blob
       cur_blob  = cur_tree / path
       text_blob_data = text_blob.data.force_encoding('utf-8')

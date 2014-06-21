@@ -51,6 +51,8 @@ class GiwiController < ApplicationController
 
     base = url_for(action: :show, wiki: @wiki)
     parser = TracWiki.parser(_trac_wiki_options(base))
+    parser.env.atput('csrf', form_authenticity_token.to_s)
+    parser.env.atput('page_version', @version)
     @html = parser.to_html(@text)
     @headings = parser.headings
     @tep_index = parser.env.nil? ? false : parser.env.at('tep_index', nil).nil? ? false : true
@@ -75,7 +77,7 @@ class GiwiController < ApplicationController
     print "af authorize: :update #{@giwi.auth_name}\n"
 
     @path = params[:path]
-    text = params[:text]
+    text = params[:text_inline] || params[:text] + "\n"
     version = params[:version]
 
     data = params[:data]
@@ -128,6 +130,7 @@ class GiwiController < ApplicationController
   def _trac_wiki_options(base)
     { base: base,
        math: true,
+       #csrf: form_authenticity_token.to_s,
        merge: true,
        edit_heading: @editable,
        id_from_heading: true,
