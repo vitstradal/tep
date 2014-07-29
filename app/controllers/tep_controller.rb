@@ -7,7 +7,15 @@ class TepController < ApplicationController
 
   def pokusy; end
   def index;
-    #redirect_to(wiki_web_path(path: 'index'))
+    if ! current_user.nil?
+      if current_user.has_role? :admin
+        return redirect_to(wiki_web_path(path: 'org'))
+      elsif current_user.has_role? :org
+        return redirect_to(wiki_web_path(path: 'org'))
+      elsif current_user.has_role? :user
+        return redirect_to(wiki_web_path(path: 'user'))
+      end
+    end
     redirect_to(wiki_web_path(path: 'main'))
   end
 

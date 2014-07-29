@@ -291,7 +291,8 @@ body.skin-2
 /* logo pikomatu */
 
 .tep-index-menu {
- background-image:  url('http://pikomat.ms.mff.cuni.cz/tabor/2013/pasy/pas4_2013.png');
+ /*background-image:  url('http://pikomat.ms.mff.cuni.cz/tabor/2013/pasy/pas4_2013.png');
+  */
  background-position: 0px 40px;
  /*background-color: #D8EBF1; /*  peta 2 */
 }

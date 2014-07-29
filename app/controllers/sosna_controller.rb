@@ -26,7 +26,8 @@ class SosnaController < ApplicationController
   end
 
   def get_sorted_solvers(annual)
-      solvers = Sosna::Solver.includes(:school).where(annual: annual).load 
+      #solvers = Sosna::Solver.includes(:school).where(annual: annual).load 
+      solvers = Sosna::Solver.includes(:school).where(annual: annual).load.to_a 
       solvers.sort! { |a,b| (a.last_name != b.last_name ) ? strcoll(a.last_name, b.last_name) :
                                                             strcoll(a.name, b.name)
                     }
