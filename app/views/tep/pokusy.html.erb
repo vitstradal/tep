@@ -2,6 +2,72 @@
 
 <% @no_sidebar  = true %>
 <% @tep_index = true %>
+<div class="row tep-index-menu">
+  <div class="clearfix" >
+    <div class="grid4" >
+      <div class="tep-index-header" >
+        <%= ilink_to 'O Pikomatup', '/', :class=> 'xnavbar-brand', :ico => 'fa-square' %>
+      </div>
+      <div class="tep-index-arrow"></div>
+      <div class="tep-index-body" >
+         <ul class="xlist-unstyled xspaced">
+          <li><%= ilink_to 'Úvod', wiki_web_path('main')                       %></li>
+          <li><%= ilink_to 'Hodnoty a cíle', wiki_web_path('index')            %></li>
+          <li><%= ilink_to 'Organizátoři', wiki_web_path('onas/organizatori')  %></li>
+          <li><%= ilink_to 'Kontakty', wiki_web_path('onas/onas')              %></li>
+          <li><%= ilink_to 'Historie', wiki_web_path('onas/historie')          %></li>
+        </ul>
+      </div>
+    </div>
+    <div class="grid4" >
+      <div class="tep-index-header" >
+        <%= ilink_to 'O Pikomatup', '/', :class=> 'xnavbar-brand', :ico => 'fa-square' %>
+      </div>
+      <div class="tep-index-arrow"></div>
+      <div class="tep-index-body" >
+         <ul class="xlist-unstyled xspaced">
+          <%= menu_lii wiki_web_path('main'),               'Úvod' %>
+          <%= menu_lii wiki_web_path('index'),               'Hodnoty a cíle' %>
+          <%= menu_lii wiki_web_path('onas/organizatori'),   'Organizátoři' %>
+          <%= menu_lii wiki_web_path('onas/onas'),           'Kontakty'  %>
+          <%= menu_lii wiki_web_path('onas/historie'),        'Historie'   %>
+        </ul>
+      </div>
+    </div>
+    <div class="grid4" >
+      <div class="tep-index-header" >
+        <%= ilink_to 'O Pikomatup', '/', :class=> 'xnavbar-brand', :ico => 'fa-square' %>
+      </div>
+      <div class="tep-index-arrow"></div>
+      <div class="tep-index-body" >
+         <ul class="xlist-unstyled xspaced">
+          <%= menu_lii wiki_web_path('main'),               'Úvod' %>
+          <%= menu_lii wiki_web_path('index'),               'Hodnoty a cíle' %>
+          <%= menu_lii wiki_web_path('onas/organizatori'),   'Organizátoři' %>
+          <%= menu_lii wiki_web_path('onas/onas'),           'Kontakty'  %>
+          <%= menu_lii wiki_web_path('onas/historie'),        'Historie'   %>
+        </ul>
+      </div>
+    </div>
+    <div class="grid4" >
+      <div class="tep-index-header" >
+        <%= ilink_to 'O Pikomatup', '/', :class=> 'xnavbar-brand', :ico => 'fa-square' %>
+      </div>
+      <div class="tep-index-arrow"></div>
+      <div class="tep-index-body" >
+         <ul class="xlist-unstyled xspaced">
+          <%= menu_lii wiki_web_path('main'),               'Úvod' %>
+          <%= menu_lii wiki_web_path('index'),               'Hodnoty a cíle' %>
+          <%= menu_lii wiki_web_path('onas/organizatori'),   'Organizátoři' %>
+          <%= menu_lii wiki_web_path('onas/onas'),           'Kontakty'  %>
+          <%= menu_lii wiki_web_path('onas/historie'),        'Historie'   %>
+        </ul>
+      </div>
+    </div>
+  </div>
+</div>
+
+<% if false %>
 
 <div class="bouda">
   <div class="sidebar responsive x-menu-min" id="sidebar">
@@ -87,8 +153,8 @@
       <% end %>
     </ul>
   </div> <%# sidebar %>
-
-</div>
+</div> <%# bouda %>
+<%end%>
 
 
 <div style="padding:40px">

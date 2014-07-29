@@ -49,10 +49,16 @@ class GiwiController < ApplicationController
     @path = path_ext
 
 
-    base = url_for(action: :show, wiki: @wiki)
-    parser = TracWiki.parser(_trac_wiki_options(base))
+    parser = _get_parser
     parser.env.atput('csrf', form_authenticity_token.to_s)
     parser.env.atput('page_version', @version)
+    if current_user.nil?
+      parser.env.atput("is_anon", '1')
+    else
+      current_user.roles.each do |role|
+        parser.env.atput("is_#{role}", '1')
+      end
+    end
     @html = parser.to_html(@text)
     @headings = parser.headings
     @tep_index = parser.env.nil? ? false : parser.env.at('tep_index', nil).nil? ? false : true
@@ -112,6 +118,7 @@ class GiwiController < ApplicationController
   private
 
 
+
   def _handle_special_edit(path, fmt)
     if fmt == 'svg'
        uri = url_for(wiki: @wiki, path: '/', :only_path => true).gsub(/\/+$/, '')
@@ -122,15 +129,20 @@ class GiwiController < ApplicationController
   def _handle_csrf
     render json: {:csrf => form_authenticity_token.to_s  }
   end
+
   def _handle_raw_file(path, fmt)
     @raw, @version = Giwi.get_giwi(@wiki).get_page(path)
     send_data @raw, :type => fmt, :disposition => 'inline'
   end
 
-  def _trac_wiki_options(base)
+  def _get_parser
+    TracWiki.parser(_trac_wiki_options)
+  end
+
+  def _trac_wiki_options
+    base = url_for(action: :show, wiki: @wiki)
     { base: base,
        math: true,
-       #csrf: form_authenticity_token.to_s,
        merge: true,
        edit_heading: @editable,
        id_from_heading: true,
@@ -210,11 +222,11 @@ class GiwiController < ApplicationController
     @text, @version = @giwi.get_page(@path + @giwi.ext)
 
     base = url_for(action: :show, wiki: @wiki)
-    parser = TracWiki.parser(_trac_wiki_options(base))
+    parser = _get_parser
     if @text
       parser.to_html(@text)
       @used_templates = parser.used_templates
-      pp "used templates", @used_templates
+      #pp "used templates", @used_templates
     end
 
     if @edit == 'me'
@@ -228,7 +240,6 @@ class GiwiController < ApplicationController
     @part = @edit.to_i
 
     if @text
-     # parser = TracWiki.parser(math: true, merge: true,  no_escape: true, )
       heading = parser.headings[@part]
       if heading
         # edit only selected part (from @sline to @eline)

@@ -3,7 +3,7 @@ require 'digest/hmac'
 module ApplicationHelper
 
   def ilink_to(text = nil , url = nil, opt = nil, &block)
-    url, opt, text = opt, text, block if block_given?
+    url, opt, text = opt, text, capture(&block) if block_given?
     opt ||= {}
     ico = opt.delete(:ico)
     text = content_tag(:i, '', :class=> "ace-icon fa #{ico}") + " " + text if ! ico.nil?
