@@ -72,6 +72,7 @@ GEM
     i18n (0.6.9)
     iconv (1.0.4)
     json (1.8.1)
+    magick_title (0.2.0)
     mail (2.5.4)
       mime-types (~> 1.16)
       treetop (~> 1.4.8)
@@ -131,7 +132,7 @@ GEM
     thor (0.19.1)
     thread_safe (0.3.4)
     tilt (1.4.1)
-    trac-wiki (0.3.15)
+    trac-wiki (0.3.16)
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
@@ -153,11 +154,12 @@ DEPENDENCIES
   ffi-locale (~> 0.1.2)!
   grit (~> 2.5.0)!
   iconv
+  magick_title (>= 0.2.0)
   prawn (~> 0.13.2)
   rails
   role_model
   rubyzip
   sanitize
   sqlite3
-  trac-wiki (~> 0.3.15)
+  trac-wiki (~> 0.3.16)
   unicode_utils

@@ -3,9 +3,20 @@
 require 'trac-wiki'
 require 'iconv'
 require 'yaml'
+#require 'magick_title'
 
 class GiwiController < ApplicationController
   include SosnaHelper
+  def initialize
+     # https://github.com/citrus/magick_title
+     MagickTitle.options[:font_size] = 15
+     MagickTitle.options[:color] = '#000000'
+     MagickTitle.options[:font_path] = 'public/stylesheets/andulka'
+     MagickTitle.options[:font] = 'andulkabook-webfont.ttf'
+     MagickTitle.options[:font] = 'andulkabook-webfont.ttf'
+     MagickTitle.options[:destination] = 'public/mails'
+     super
+  end
 
   def show
 
@@ -153,7 +164,10 @@ class GiwiController < ApplicationController
     }
   end
 
-  def template_handler(tname, env)
+  def template_handler(tname, env, argv)
+
+    return _template_textimg(env, argv) if tname == 'textimg'
+
     part = 0
     if tname =~ /\A\//
       tname = $'
@@ -179,6 +193,10 @@ class GiwiController < ApplicationController
       return ret if part == 0
       part -= 1
     end
+  end
+  def _template_textimg(env, argv)
+    text = argv['00']
+    return MagickTitle.say(text).url
   end
 
   def _not_found
