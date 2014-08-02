@@ -18,7 +18,7 @@ module ApplicationHelper
       opt = text
       text = capture(&block)
     end
-    text = content_tag(:span, text, :class => 'sr-only')
+    text = content_tag(:span, text, :class => 'hidden-xs')
     ico = opt.delete(:ico);
     tag = opt[:href].nil? ? :button : :a
     opt[:type] ||=  'submit';
