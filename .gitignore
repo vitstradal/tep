@@ -9,3 +9,5 @@ log/*.log
 tmp/
 /tmp.*
 tags
+/Trash
+/public/mails

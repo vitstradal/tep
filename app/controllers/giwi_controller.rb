@@ -19,7 +19,6 @@ class GiwiController < ApplicationController
   end
 
   def show
-
     @wiki = params[:wiki] || 'main'
     @giwi = Giwi.get_giwi(@wiki)
     auth_name = @giwi.auth_name
@@ -196,7 +195,8 @@ class GiwiController < ApplicationController
   end
   def _template_textimg(env, argv)
     text = argv['00']
-    return MagickTitle.say(text).url
+    url = MagickTitle.say(text).url
+    return ActionController::Base.helpers.asset_path(url)
   end
 
   def _not_found
