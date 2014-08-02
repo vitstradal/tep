@@ -99,18 +99,19 @@ jsButton.prototype.draw = function() {
 }
 
 function jsSpace(id) {
-	this.id = id || null;
-	this.width = null;
+        this.id = id || null;
+        this.width = null;
 }
+
 jsSpace.prototype.draw = function() {
 	var span = document.createElement('span');
 	if (this.id) span.id = this.id;
 	span.appendChild(document.createTextNode(String.fromCharCode(160)));
 	span.className = 'jstSpacer';
 	if (this.width) span.style.marginRight = this.width+'px';
-	
+
 	return span;
-} 
+}
 
 function jsCombo(title, options, scope, fn, className) {
 	this.title = title || null;
@@ -173,12 +174,13 @@ jsToolBar.prototype = {
 	button: function(toolName) {
 		var tool = this.elements[toolName];
 		if (typeof tool.fn[this.mode] != 'function') return null;
+		if (toolName == 'help' && this.help_link == '') return null;
 		var b = new jsButton(tool.title, tool.fn[this.mode], this, 'jstb_'+toolName);
 		if (tool.icon != undefined) b.icon = tool.icon;
 		return b;
 	},
 	space: function(toolName) {
-		var tool = new jsSpace(toolName)
+		var tool = new jsSpace(toolName);
 		if (this.elements[toolName].width !== undefined)
 			tool.width = this.elements[toolName].width;
 		return tool;

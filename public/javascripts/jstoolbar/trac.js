@@ -1,6 +1,6 @@
 // Elements definition ------------------------------------
 
-// bold 
+// bold
 jsToolBar.prototype.elements.bold = {
         type: 'button',
         title: 'Bold',
@@ -46,7 +46,7 @@ jsToolBar.prototype.elements.h1 = {
         type: 'button',
         title: 'Heading 1',
         fn: {
-                wiki: function() { 
+                wiki: function() {
                   this.encloseLineSelection('= ', ' =',function(str) {
                     str = str.replace(/^=+\s+/, '')
                     return str;
@@ -58,7 +58,7 @@ jsToolBar.prototype.elements.h2 = {
         type: 'button',
         title: 'Heading 2',
         fn: {
-                wiki: function() { 
+                wiki: function() {
                   this.encloseLineSelection('== ', ' ==',function(str) {
                     str = str.replace(/^=+\.\s+/, '')
                     return str;
@@ -70,7 +70,7 @@ jsToolBar.prototype.elements.h3 = {
         type: 'button',
         title: 'Heading 3',
         fn: {
-                wiki: function() { 
+                wiki: function() {
                   this.encloseLineSelection('=== ', ' ===',function(str) {
                     str = str.replace(/^=+\s+/, '')
                     return str;
@@ -148,7 +148,7 @@ jsToolBar.prototype.elements.pre = {
         }
 }
 
-// math 
+// math
 jsToolBar.prototype.elements.math = {
         type: 'button',
         title: 'Math',
@@ -157,7 +157,7 @@ jsToolBar.prototype.elements.math = {
         }
 }
 
-// display math 
+// display math
 jsToolBar.prototype.elements.dmath = {
         type: 'button',
         title: 'Display Math',
@@ -213,5 +213,13 @@ jsToolBar.prototype.elements.save = {
 			this.textarea.form.submit();
 	    },
 	},
-        
+
+}
+
+jsToolBar.prototype.elements.help = {
+	type: 'button',
+	title: 'Help',
+	fn: {
+		wiki: function() { window.open(this.help_link, '', 'resizable=yes, location=no, width=380, height=640, menubar=no, status=no, scrollbars=yes') }
+	}
 }

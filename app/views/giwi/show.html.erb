@@ -13,12 +13,13 @@
       <%= hidden_field_tag 'pos', @pos %>
     <% end %>
     <h1>Editace souboru '<%= @path %>'</h1>
-
+    help_link: '<%= url_for(@giwi.help_link) %>'
     <%= text_area_tag :text, @text, class: 'span9 ctrl-enter-submit', id: 'textedit', cols: 100, rows: 25%>
     <%= button_tag  'Zpět',   :class=>'btn',            :ico => 'fa-reply', :href => url_for(path: @path)  %>
     <%= button_tag  'Uložit', :class=>'btn btn-danger', ico: 'fa-floppy-o'  %>
     <script>
                   var toolbar = new jsToolBar(document.getElementById('textedit'));
+                  <% if @giwi.help_link %>toolbar.help_link = '<%= url_for(@giwi.help_link) %>'; <% end %>
                   toolbar.draw();
    </script>
   <% end #form %>

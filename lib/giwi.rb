@@ -20,6 +20,7 @@ class Giwi
   attr_accessor :read
   attr_accessor :update
   attr_accessor :ext
+  attr_accessor :help_link
   @ext = ""
 
   mattr_accessor :giwis
