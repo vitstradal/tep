@@ -9,7 +9,7 @@ defaults: &defaults
     bare: false
     update:  :org
     update:  :org
-    help_link: '/wiki/tep/doc/wiki'
+    help_link: 'wiki/tep/doc/wiki#start'
   web:
     path: '/home/www/git/web.git'
     bare: true
@@ -17,7 +17,7 @@ defaults: &defaults
     branch: edit
     read:  :anon
     ext: '.wiki'
-    help_link: 'wiki/tep/doc/wiki'
+    help_link: 'wiki/tep/doc/wiki#start'
   web_edit:
     path: '/home/www/git/web.git'
     bare: true
@@ -27,7 +27,7 @@ defaults: &defaults
     update:  :org
     #nogit: true
     ext: '.wiki'
-    help_link: '/wiki/tep/doc/wiki'
+    help_link: '/wiki/tep/doc/wiki#start'
 
 production:
   <<: *defaults
