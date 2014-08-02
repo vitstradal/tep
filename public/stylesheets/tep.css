@@ -155,9 +155,9 @@ margin-left: 3em;
  *  hacks
  */
 table, th, td { 
- border: 1px solid black;
+ border: 1px solid #ccc;
 }
-.table td {
+.table td, td, th {
  padding: 4px;
 }
 
@@ -418,4 +418,12 @@ width: 25%;
 .bouda div.sidebar:before {
 background-color: transparent;
 border-style: none;
+}
+
+/* definiton listu */
+dd {
+  margin-left: 2em;
+}
+dl {
+  margin-bottom: 5px;
 }
