@@ -427,3 +427,13 @@ dd {
 dl {
   margin-bottom: 5px;
 }
+
+
+/* mail */
+.mailcrypt {
+  cursor:pointer;
+}
+
+a.mailcrypt {
+  font-size: 15px;
+}

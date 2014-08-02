@@ -112,7 +112,34 @@ jQuery(document).ready(function($) {
                 $($(this).data('submit-form')).submit();
         });
         $('.ace-input-file').ace_file_input({icon_remove: null, style: false});
+
+
+       // fakecrypted emails 
+       $('.mailcrypt').click(function () { 
+         var me = $(this);
+         var email = fakedecrypt(me.attr('id'));
+         var a= $('<a>');
+         a.text(email);
+         a.addClass('mailcrypt');
+         a.attr('href', "mailto:" + email);
+         me.after(a);
+         me.hide();
+       });
 });
+
+
+function fakedecrypt(x)
+{
+  var f = 'abcdefghijklmnopqrstuvwxyz512';
+  var t = 'pqrstuvwxyzabcdefghijklmno@.-';
+  var ret = '';
+  for(var i=0; i < x.length; i++) {
+    ret += t[f.indexOf(x[i])] || x[i];
+  }
+  return ret;
+
+}
+
 
 function focus_down(element, delta = 1) {
     var td  = $(element).closest('td');

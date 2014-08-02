@@ -166,6 +166,7 @@ class GiwiController < ApplicationController
   def template_handler(tname, env, argv)
 
     return _template_textimg(env, argv) if tname == 'textimg'
+    return _template_fakecrypt(env, argv) if tname == 'fakecrypt'
 
     part = 0
     if tname =~ /\A\//
@@ -192,6 +193,9 @@ class GiwiController < ApplicationController
       return ret if part == 0
       part -= 1
     end
+  end
+  def _template_fakecrypt(env, argv)
+    return argv['00'].tr('A-Z', 'L-ZA-K').tr('a-z', 'l-za-k').tr('@.-', '512')
   end
   def _template_textimg(env, argv)
     text = argv['00']
