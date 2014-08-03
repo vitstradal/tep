@@ -72,6 +72,7 @@ class GiwiController < ApplicationController
     @html = parser.to_html(@text)
     @headings = parser.headings
     @tep_index = parser.env.nil? ? false : parser.env.at('tep_index', nil).nil? ? false : true
+    @wide_display = parser.env.nil? ? false : parser.env.at('wide_display', nil).nil? ? false : true
 
     if @tep_index
       @no_sidebar = true
