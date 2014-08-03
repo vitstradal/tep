@@ -259,6 +259,14 @@
                     <i class="fa fa-envelope-o"></i>
                     <img src="/provedouci/rails/tep-dev/mails/pikomatpikomatmffcunicz_efcfb78f82c72359cdaa34abc07699a7c1944c3b.png"/>
                  </span> 
+          </small>
+          <% path = request.path[ url_for(:root).size .. -1 ].sub(/^web(ed)?/, '');
+            docroot =  '/home/www/html/';
+             ex = (File.file?(docroot + path + '.html'))
+           %> 
+           <% if ex %>
+             <a href="<%=path%>.html">old version</a>
+            <% end %> 
             <div class="pull-right">
               <div class="ace-settings-item" >
                                 <select id="skin-colorpicker" class="">
