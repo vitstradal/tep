@@ -128,7 +128,7 @@ GEM
     thread_safe (0.2.0)
       atomic (>= 1.1.7, < 2)
     tilt (1.4.1)
-    trac-wiki (0.3.11)
+    trac-wiki (0.3.14)
     treetop (1.4.15)
       polyglot
       polyglot (>= 0.3.1)
@@ -155,5 +155,5 @@ DEPENDENCIES
   rubyzip
   sanitize
   sqlite3
-  trac-wiki (~> 0.3.11)
+  trac-wiki (~> 0.3.12)
   unicode_utils
