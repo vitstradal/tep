@@ -2,25 +2,35 @@
 
 <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: {:class=>'form-horizontal'}) do |f| %> 
 
-  <div class="control-group">
-    <label class="control-label" for="solver_email">Email</label>
-    <div class="controls"><%= f.text_field :email %></div>
+  <div class="form-group">
+    <%= f.label :solver_email, "E-mail", :class =>  'col-sm-3 control-label no-padding-right'%>
+    <div class="col-sm-9">
+       <%= f.text_field :email , :class => 'input-xlarge'%>
+    </div>
   </div>
 
-  <div class="control-group">
-    <label class="control-label" for="solver_email">Heslo</label>
-    <div class="controls"><%= f.password_field :password %></div>
+  <div class="form-group">
+    <%= f.label :password, "Heslo", :class =>  'col-sm-3 control-label no-padding-right'%>
+    <div class="col-sm-9">
+       <%= f.password_field :password, :class=>'input-xlarge' %>
+    </div>
   </div>
 
   <% if devise_mapping.rememberable? -%>
-    <div class="control-group">
-      <label class="control-label" for="solver_email">Zapamatuj si mě</label>
-      <div class="controls"><%= f.check_box :remember_me %></div>
+    <div class="form-group">
+      <div class="col-sm-offset-3 col-sm-9">
+        <label class="control-label" for="solver_email">
+           <%= f.check_box :remember_me %>
+           Zapamatuj si mě
+         </label>
+      </div>
     </div>
   <% end -%>
 
-  <div class="control-group">
-    <div class="controls"><%= f.submit "Přihlásit" , :class=>'btn btn-primary' %></div>
+  <div class="form-group">
+    <div class="col-sm-offset-3 col-sm-9">
+      <%= f.submit "Přihlásit", :class=>'btn btn-info' %>
+    </div>
   </div>
 <% end %>
 
