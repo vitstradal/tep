@@ -3,6 +3,7 @@ use strict;
 use warnings;
 
 my ($file, $path) =  @ARGV;
+die "usage: $0 file.dat /path/to/fotos\n" if ! $file || ! $path;
 my %y = ();
 open F, '<', "$file" or die "cannt open $file";
 
@@ -11,11 +12,21 @@ while(my $r = <F>) {
   next if $r =~ /^\s*$/;
   my ($src, $desc, $cats) = split(m{\|}, $r);
   $desc =~ s/!$/! /;
-  $desc = "\"$desc\""  if $desc =~ /[:]|^\?$/;
+  $desc =~ s/~/ /g;
+  $desc =~ s/\&^/~/g;
+  $desc =~ s/\&;/,/g;
+  $desc =~ s/\&\[/{/g;
+  $desc =~ s/\&\]/}/g;
+  $desc =~ s/\&</(/g;
+  $desc =~ s/\&>/)/g;
+  $desc =~ s/\&%/#/g;
+  $desc =~ s/\&\&/&/g;
+  $desc = "'$desc'"  if $desc =~ /[":]|^\?$/;
   if( !$src && ( !$cats || $cats =~ /^-\.$/ ) ) {
     $y{title} = $desc;
   }
   elsif( !$src ) {
+    $cats =~ s/\.$//;
     $y{cats}->{$cats} = $desc;
   }
   else {

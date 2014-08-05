@@ -33,6 +33,11 @@ define({_table_html},  {
 _subtr(_subend($*))
 })
 
+define({_table_html_math},  {
+MATHTABLE
+_subtr(_subend($*))
+})
+
 dnl define({_subtr}, {patsubst({$*}, {<\(TR\|tr\)[^>]*>},    {) _trb(}   )})
 define({_subend},{patsubst({$*}, {</\(TR\|TD\|tr\|td\)>},{}          )})
 
@@ -256,14 +261,14 @@ define({_comma}, {&;})
 define({_semicolon}, { })
 define({_dots}, ...)
 define({_cdots}, {\cdots{}})
-define({_ldots}, {\ldotds{}})
+define({_ldots}, {\ldots{}})
 define({_bbackslash}, \\) dnl {<br>})
 define({_sup},          {^&[$1&]})
 define({_sub},          {_&[$1&]})
-define({_percent},      {\percent{}}) 	dnl {%})
+define({_percent},      {\%}) 	dnl {%})
 define({_over},         {\over{}}) 		dnl {/})
 define({_sqrt},         {\sqrt&[$1&]})  dnl {&radic;($1)})
-define({_sqrte},        {\sqrte{}}) 	dnl {&radic;})
+define({_sqrte},        {\sqrt&[&]}) 	dnl {&radic;})
 define({_root},         {\root{}}) 		dnl {<sup>$1</sup>&radic;})
 define({_of},           {\of{}}) 	        dnl {($1)})
 define({_ge},           {\ge{}}) 		dnl {&phi;}){&ge;})
@@ -287,7 +292,7 @@ define({_left},         {\left&<}) 	dnl {$1})
 define({_bigl},         {\bigl&<}) 	dnl {$1})
 define({_right},        {\right&>}) 	dnl {$1})
 define({_bigr},         {\bigr&>}) 	dnl {$1})
-define({_s},            {\s{}})             dnl { s})
+define({_s},            {s})             dnl { s})
 define({_S},            {\S{}})             dnl { S })
 define({_R},            {\R{}})             dnl {_htmlfont(b,R)})
 define({_N},            {\N{}})             dnl {_htmlfont(b,N)})
@@ -526,7 +531,9 @@ define({_begin_description}, {$1})
 
 define({_cline}, {_noalign($1)})
 
-define({_gr}, {&[_ex($1)&]})
+dnl define({_gr}, {&[_ex($1)&]})
+define({_gr}, {_ex($1)})
+define({_copy}, {_ex($1)})
 dnl %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
@@ -540,7 +547,7 @@ define({_ku}, {})
 define({_pozn}, {<p><b>Poznámka: </b>})
 define({_f}, {f{}})
 define({_Xof}, {Xof{}})
-define({_res}, {_vr($1)})
+define({_res}, {_ur($1)})
 define({_overline}, {$1})
 
 define({_cm}, { cm})
@@ -552,7 +559,7 @@ define({__pict_no}, {1})
 
 define({_pict}, {
   <p align="center">
-  <img alt="obrázek $1" src="__fdir/__base_jn()_{}__pict_no().gif"><p>
+  <img alt="obrázek $1" src="__fdir/__base_jn().{}__pict_no().png"><p>
   define({__pict_no}, incr(__pict_no))})
 
 define({_picts}, {_pict({$1 $2})})
@@ -568,9 +575,19 @@ dnl %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 dnl %% pikomat 15,16 specific
 
 
-define({_ul}, {<p><b>Úloha č. $1</b>:})
-define({_uloha}, {<p><b>Úloha č. $1</b>ifelse($2,,,{ _it($2)}):})
-define({_ur}, {<p><b>Úloha č. $1</b>:})
+define({_ul}, {<p><h3>Úloha č. $1</h3>
+
+})
+define({_uloha}, {<p><h3>Úloha č. $1:</h3>
+
+ifelse($2,,,{ _it($2)})
+
+})
+
+define({_ur}, {<p><h3>Úloha č. $1</h3>
+
+})
+
 define({_ulend}, {})
 define({_ad}, {})
 
@@ -665,7 +682,7 @@ dnl %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 dnl %% prechod na wiki
 
 define({_toc}, {})
-define({__rocnik_no}, {44})
+define({__rocnik_no}, {patsubst(__roc, ^0*)})
 define({_toc_ulohy_v_indexu}, {* [[archiv/__rocnik_dir()zad1|__rocnik_dir()]]})
 define({_arr_atput})
 define({_setno})
