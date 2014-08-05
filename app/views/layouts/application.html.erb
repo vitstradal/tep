@@ -261,13 +261,12 @@
                     <img src="<%= asset_path('/mails/pikomatpikomatmffcunicz_efcfb78f82c72359cdaa34abc07699a7c1944c3b.png')%>"/>
                  </span> 
           </small>
-          <br/>
-          <% path = request.path[ url_for(:root).size .. -1 ].sub(/^web(ed)?/, '');
+          <% path = request.path[ url_for(:root).size .. -1 ].sub(/^web(ed)?/, '').sub(/\.html$/,'');
             docroot =  '/home/www/html/';
              ex = (File.file?(docroot + path + '.html'))
            %> 
            <% if ex %>
-             <a href="http://pikomat.mff.cuni.cz/<%=path%>.html">retro verze.</a>
+             [<a href="http://pikomat.mff.cuni.cz/retro<%=path%>.html">retro verze</a>]
             <% end %> 
             <div class="pull-right">
               <div class="ace-settings-item" >
