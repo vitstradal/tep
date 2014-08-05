@@ -144,7 +144,8 @@
             <%= menu_lii :sosna_schools,       'Školy' %>
             <%= menu_lii :wiki_wiki,           'Wiki' %>
             <%#= menu_lii :wiki_web,            'Web' %>
-            <%= menu_lii :wiki_web_edit,       'Web Edit'%>
+            <%= menu_lii wiki_web_edit_path('index', :ls => '.'),       'Web Edit'%>
+            <%= menu_lii 'https://pikomat.mff.cuni.cz/sklep', 'Sklep' %>
           </ul>
         <% end %>
       <% end %>
