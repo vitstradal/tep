@@ -265,6 +265,7 @@
             docroot =  '/home/www/html/';
              ex = (File.file?(docroot + path + '.html'))
            %> 
+           params.path:'<%= params[:path]%>'
            <% if ex %>
              [<a href="http://pikomat.mff.cuni.cz/retro<%=path%>.html">retro verze</a>]
             <% end %> 

@@ -13,7 +13,8 @@ defaults: &defaults
   web:
     path: '/home/www/git/web.git'
     bare: true
-    url: 'web'
+    #url: 'web'
+    url: ''
     branch: edit
     read:  :anon
     ext: '.wiki'
@@ -38,7 +39,8 @@ local: &local
     path: '/home/vitas/tmp/pikoweb/web'
     bare: false
     branch: edit
-    url: 'web'
+    #url: 'web'
+    url: ''
     read:  :anon
     update:  :org
     #nogit: true
@@ -67,7 +69,8 @@ development:
   web:
     path: '/home/www/git/web.git'
     bare: true
-    url: 'web'
+    #url: 'web'
+    url: ''
     branch: edit
     read:  :anon
     update: nil

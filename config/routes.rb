@@ -71,8 +71,13 @@ Tep::Application.routes.draw do
      url = giwi.url
      route_name = "wiki_#{giwi.name}".to_sym
      route_name_post = "wiki_#{giwi.name}_post".to_sym
-     get  '/' + url + '(/*path)'       => 'giwi#show',      :as =>  route_name,      constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name}
-     post '/' + url + '(/*path)'       => 'giwi#update',    :as =>  route_name_post, constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name}
+     if url != ''
+      get  '/' + url + '(/*path)'       => 'giwi#show',      :as =>  route_name,      constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name}
+      post '/' + url + '(/*path)'       => 'giwi#update',    :as =>  route_name_post, constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name}
+     else
+      get  '/(*path)'       => 'giwi#show',      :as =>  route_name,      constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name}
+      post '/(*path)'       => 'giwi#update',    :as =>  route_name_post, constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name}
+    end
   end
 
   get '/pokusy'  =>  "tep#pokusy", :as => :pokusy

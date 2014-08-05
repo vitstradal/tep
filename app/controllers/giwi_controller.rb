@@ -28,6 +28,8 @@ class GiwiController < ApplicationController
     @editable = can? :update, auth_name
 
     @path = params[:path]
+    #print "path: #{@path}\n"
+
     @edit = params[:edit] || false
     @ls   = params[:ls]
     @part = false
@@ -52,9 +54,16 @@ class GiwiController < ApplicationController
 
     if ! @text
       path_idx  = @path + '/index'
-      return redirect_to(action: :show, wiki: @wiki, path: path_idx) if @giwi.file?(path_idx + @giwi.ext)
-      return _create_new_page_text if can? :update, auth_name
-      return _not_found
+      if @giwi.file?(path_idx + @giwi.ext)
+
+         @path = path_idx
+         path_ext = @path + @giwi.ext
+         @text, @version = @giwi.get_page(path_ext)
+
+      else
+        return _create_new_page_text if can? :update, auth_name
+        return _not_found
+      end
     end
     @path = path_ext
 
@@ -78,7 +87,7 @@ class GiwiController < ApplicationController
       @no_sidebar = true
       #@breadcrumb = nil
     end
-    print "tep_index:",  @tep_index
+    #print "tep_index:",  @tep_index
 
 
     if parser.headings.size > 3
@@ -91,7 +100,7 @@ class GiwiController < ApplicationController
     @giwi = Giwi.get_giwi(@wiki)
 
     authorize! :update, @giwi.auth_name
-    print "af authorize: :update #{@giwi.auth_name}\n"
+    #print "af authorize: :update #{@giwi.auth_name}\n"
 
     @path = params[:path]
     text = params[:text_inline] || params[:text] + "\n"
