@@ -28,7 +28,7 @@ class GiwiController < ApplicationController
     @editable = can? :update, auth_name
 
     @path = params[:path]
-    #print "path: #{@path}\n"
+    print "path: #{@wiki}:#{@path}\n"
 
     @edit = params[:edit] || false
     @ls   = params[:ls]

@@ -63,8 +63,6 @@ Tep::Application.routes.draw do
   get  '/reg/:token'                         => 'tep#user_finish_registration', :as => :user_finish_registration
 
 
-  # You can have the root of your site routed with "root"
-  # just remember to delete public/index.html.
   get  '/faq'                                => "tep#faq",                      :as => :faq
 
   Giwi.giwis.each_value do |giwi|
@@ -75,13 +73,15 @@ Tep::Application.routes.draw do
       get  '/' + url + '(/*path)'       => 'giwi#show',      :as =>  route_name,      constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name}
       post '/' + url + '(/*path)'       => 'giwi#update',    :as =>  route_name_post, constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name}
      else
-      get  '/(*path)'       => 'giwi#show',      :as =>  route_name,      constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name}
+      get  '/(*path)'       => 'giwi#show',      :as =>  route_name,      constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name, path: 'index'}
       post '/(*path)'       => 'giwi#update',    :as =>  route_name_post, constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name}
     end
   end
 
-  get '/pokusy'  =>  "tep#pokusy", :as => :pokusy
-  root :to => "tep#index", :as => :root
+  # You can have the root of your site routed with "root"
+  # just remember to delete public/index.html.
+  #get '/pokusy'  =>  "tep#pokusy", :as => :pokusy
+  root :to => "giwi#show", :as => :root
 
   # See how all your routes lay out with "rake routes"
 end
