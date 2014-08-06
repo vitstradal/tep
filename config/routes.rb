@@ -66,16 +66,22 @@ Tep::Application.routes.draw do
   get  '/faq'                                => "tep#faq",                      :as => :faq
 
   Giwi.giwis.each_value do |giwi|
+     next if giwi.name.to_s == 'main'
+     url = giwi.url
+     route_name = "wiki_#{giwi.name}".to_sym
+     print "wiki: #{route_name}\n"
+     route_name_post = "wiki_#{giwi.name}_post".to_sym
+     get  '/' + url + '(/*path)'       => 'giwi#show',      :as =>  route_name,      constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name}
+     post '/' + url + '(/*path)'       => 'giwi#update',    :as =>  route_name_post, constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name}
+  end
+  giwi = Giwi.get_giwi('main')
+  print "main\n"
+  if giwi
      url = giwi.url
      route_name = "wiki_#{giwi.name}".to_sym
      route_name_post = "wiki_#{giwi.name}_post".to_sym
-     if url != ''
-      get  '/' + url + '(/*path)'       => 'giwi#show',      :as =>  route_name,      constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name}
-      post '/' + url + '(/*path)'       => 'giwi#update',    :as =>  route_name_post, constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name}
-     else
-      get  '/(*path)'       => 'giwi#show',      :as =>  route_name,      constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name, path: 'index'}
-      post '/(*path)'       => 'giwi#update',    :as =>  route_name_post, constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name}
-    end
+     get  '/(*path)'       => 'giwi#show_root',      :as =>  route_name,      constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name, path: 'index'}
+     post '/(*path)'       => 'giwi#update_root',    :as =>  route_name_post, constrains: { path: /.*/ , wiki: giwi.name}, defaults: {wiki: giwi.name}
   end
 
   # You can have the root of your site routed with "root"

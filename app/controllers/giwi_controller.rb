@@ -18,6 +18,14 @@ class GiwiController < ApplicationController
      super
   end
 
+  def show_root ; 
+    show
+    render :show
+  end
+  def update_root 
+    update
+  end
+
   def show
     @wiki = params[:wiki] || 'main'
     @giwi = Giwi.get_giwi(@wiki)
@@ -160,7 +168,7 @@ class GiwiController < ApplicationController
   end
 
   def _trac_wiki_options
-    base = url_for(action: :show, wiki: @wiki)
+    base = (@wiki.to_s == 'main') ? url_for(:root) : url_for(action: :show, wiki: @wiki)
     { base: base,
        math: true,
        merge: true,

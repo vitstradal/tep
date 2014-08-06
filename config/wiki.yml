@@ -10,7 +10,7 @@ defaults: &defaults
     update:  :org
     update:  :org
     help_link: 'wiki/tep/doc/wiki#start'
-  web:
+  main:
     path: '/home/www/git/web.git'
     bare: true
     #url: 'web'
@@ -35,7 +35,7 @@ production:
 
 local: &local
   <<: *defaults
-  web:
+  main:
     path: '/home/vitas/tmp/pikoweb/web'
     bare: false
     branch: edit
@@ -66,7 +66,7 @@ local: &local
 
 development:
   <<: *defaults
-  web:
+  main:
     path: '/home/www/git/web.git'
     bare: true
     #url: 'web'

@@ -1,12 +1,20 @@
 <h1>Seznam souborů <%= @path_dir %></h1>
-<ul>
+<ul class="list-unstyled">
 <% @files.each do |file| %>
-  <li><%= link_to file[:name], path: file[:path] %>
+  <li><i class="fa <%= case file[:path]
+                       when /\.(jpg|gif|png)$/ ; 'fa-file-picture-o blue' 
+                       when /\.(wiki|txt)$/ ;    'fa-file-text-o green' 
+                       when /\.(html)$/ ;        'fa-file-code-o red' 
+                       when /\.(pdf)$/ ;         'fa-file-pdf-o red' 
+                       else                      'fa-file-o'
+                       end
+                     %>"></i>
+      <%= link_to file[:name], path: file[:path] %>
       <%= link_to '[Edit]', {path: file[:path], edit: :me} %>
    </li>
 <% end %>
 <% @dirs.each do |dir| %>
-  <li><%= link_to dir[:name] + '/', ls:'.', path: dir[:path] %>
+  <li><i class="fa fa-folder-o blue"></i> <%= link_to dir[:name] + '/', ls:'.', path: dir[:path] + '/index' %>
    </li>
 <% end %>
 </ul>
