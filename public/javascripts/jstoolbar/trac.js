@@ -19,6 +19,16 @@ jsToolBar.prototype.elements.em = {
         }
 }
 
+// em
+jsToolBar.prototype.elements.stroke = {
+        type: 'button',
+        title: 'Stroke',
+        fn: {
+                wiki: function() { this.singleTag("~~", "~~") }
+        }
+}
+
+
 // code
 jsToolBar.prototype.elements.em = {
         type: 'button',
