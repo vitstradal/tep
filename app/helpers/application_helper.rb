@@ -85,13 +85,16 @@ module ApplicationHelper
     end
   end
 
-  def url_for_root
-    if ! current_user.nil?
-      if current_user.has_role? :admin
+  def url_for_root(user = nil)
+    user ||= current_user
+    Rails::logger.fatal("user:#{pp(user)}");
+    
+    if ! user.nil?
+      if user.has_role? :admin
         return url_for (wiki_main_path(path: 'org'))
-      elsif current_user.has_role? :org
+      elsif user.has_role? :org
         return url_for(wiki_main_path(path: 'org'))
-      elsif current_user.has_role? :user
+      elsif user.has_role? :user
         return url_for(wiki_main_path(path: 'user'))
       end
     end

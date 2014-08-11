@@ -4,4 +4,12 @@ class ApplicationController < ActionController::Base
       sign_out :user
       redirect_to :new_user_session, :alert => exception.message
   end
+  include ApplicationHelper
+
+  def after_sign_in_path_for(resource)
+     ret =  url_for_root(resource)
+     Rails::logger.fatal("url:#{ret}");
+     return ret
+  end
+
 end
