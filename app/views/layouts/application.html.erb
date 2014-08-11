@@ -31,7 +31,7 @@
 
 </head>
 <%#  <body class="no-skin"> %>
-<body class="no-skin">
+<body class="<%= cookies['ace.skin'.to_sym] || 'no-skin fail'%>">
 
 <% if ENV['RAILS_ENV'] != 'production'  %>
 <img src="<%= asset_path 'images/devel-version.png'%>" style='pointer-events:none;z-index:99;position:fixed;bottom:0;right:0;border:0;'>
@@ -96,7 +96,7 @@
     <ul class="nav nav-list">
       <%= menu_li '/onas', 'O Pikomatu', ico: 'fa-square' do %>
         <ul class="submenu">
-          <%= menu_lii wiki_main_path('main'),               'Úvod' %>
+          <%= menu_lii wiki_main_path(''),               'Úvod' %>
           <%= menu_lii wiki_main_path('onas/organizatori'),   'Organizátoři' %>
           <%= menu_lii wiki_main_path('onas/onas'),           'Kontakty'  %>
           <%= menu_lii wiki_main_path('onas/historie'),        'Historie'   %>

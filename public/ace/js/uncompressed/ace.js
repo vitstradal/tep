@@ -1645,7 +1645,8 @@ ace.settings_skin = function($) {
 	//skin cookie tip
 
 	var body = $(document.body);
-	body.removeClass('no-skin skin-1 skin-2 skin-3');
+        //hack by vitas: own skin-green
+	body.removeClass('no-skin skin-1 skin-2 skin-3 skin-green');
 
 	//if(skin_class != 'skin-0') {
 		body.addClass(skin_class);
