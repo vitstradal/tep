@@ -54,7 +54,10 @@ class GiwiController < ApplicationController
 
     _breadcrumb_from_path(@path)
 
-    return _handle_edit if @edit
+    if @edit
+      _handle_edit
+      return render :show
+    end
 
     path_ext = @path + @giwi.ext
     @text, @version = @giwi.get_page(path_ext)
@@ -68,7 +71,7 @@ class GiwiController < ApplicationController
          @text, @version = @giwi.get_page(path_ext)
 
       else
-        return _create_new_page_text if can? :update, auth_name
+        return _create_new_page_text if  can? :update, auth_name
         return _not_found
       end
     end
@@ -225,6 +228,7 @@ class GiwiController < ApplicationController
 
   def _not_found
     @html = 'not found'
+    render :show
   end
 
   def _handle_file_upload(data, filename, filename_orig, redirect = true)
@@ -300,6 +304,7 @@ class GiwiController < ApplicationController
     @text = "= #{title.capitalize} =\n\n"
     @path = _to_ascii(@path)
     @edit = true
+    render :show
   end
   def _breadcrumb_from_path(path)
 

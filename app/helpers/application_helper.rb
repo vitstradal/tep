@@ -68,7 +68,7 @@ module ApplicationHelper
       @_level -= 1
 
        #li_cls.push('open')
-       li_cls.push('open active') if @_active
+       li_cls.push('open') if @_active
        @_active = false
     end
 
