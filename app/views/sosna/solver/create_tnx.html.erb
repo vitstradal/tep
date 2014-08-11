@@ -1,7 +1,7 @@
 <h1>Vítej Pikomaťáku!</h1>
 
 
-<% if current_user.admin? %>
+<% if current_user && current_user.admin? %>
   <p>Vytvořil jsi uživatele na jeho emailovou adresu
   <% if (params[:send_first]||'') == 'true'  %>
      <b>byl</b>
