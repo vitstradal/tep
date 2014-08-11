@@ -20,7 +20,6 @@ class GiwiController < ApplicationController
 
   def show_root ; 
     show
-    render :show
   end
   def update_root 
     update
@@ -101,6 +100,7 @@ class GiwiController < ApplicationController
     if parser.headings.size > 3
       @toc = parser.make_toc_html
     end
+    render :show
   end
 
   def update
