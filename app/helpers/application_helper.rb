@@ -68,7 +68,7 @@ module ApplicationHelper
       @_level -= 1
 
        #li_cls.push('open')
-       li_cls.push('open') if @_active
+       li_cls.push('open active') if @_active
        @_active = false
     end
 
@@ -83,6 +83,19 @@ module ApplicationHelper
          ico_tag + text_tag + a_extra
       end + li_extra
     end
+  end
+
+  def url_for_root
+    if ! current_user.nil?
+      if current_user.has_role? :admin
+        return url_for (wiki_main_path(path: 'org'))
+      elsif current_user.has_role? :org
+        return url_for(wiki_main_path(path: 'org'))
+      elsif current_user.has_role? :user
+        return url_for(wiki_main_path(path: 'user'))
+      end
+    end
+    return url_for(wiki_main_path(path: 'index'))
   end
 
   private

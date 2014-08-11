@@ -86,8 +86,8 @@ Tep::Application.routes.draw do
 
   # You can have the root of your site routed with "root"
   # just remember to delete public/index.html.
-  #get '/pokusy'  =>  "tep#pokusy", :as => :pokusy
-  root :to => "giwi#show", :as => :root
+  root :to => "giwi#show", :as => :root, defaults: {wiki: 'main', path: 'index'}
+  #root :to => "tep#index", :as => :root
 
   # See how all your routes lay out with "rake routes"
 end
