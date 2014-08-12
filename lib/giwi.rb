@@ -211,8 +211,9 @@ class Giwi
     comment = comment.force_encoding('ASCII-8BIT')
 
     actor = Grit::Actor.from_string(email)
+    actor_str = actor.to_s.force_encoding('ASCII-8BIT')
 
-    Rails::logger.fatal("comment:#{comment} actor:#{actor}, cur_head #{cur_head} branch#{@branch}")
+    Rails::logger.fatal("comment:#{comment} actor:#{actor_str}, cur_head #{cur_head} branch#{@branch}")
     index.commit(comment,  parents: [cur_head], actor: actor, last_tree: cur_head, head: @branch)
     return status
   end
