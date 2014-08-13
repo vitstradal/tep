@@ -12,6 +12,7 @@ class GiwiController < ApplicationController
      MagickTitle.options[:font_size] = 15
      MagickTitle.options[:color] = '#000000'
      MagickTitle.options[:font_path] = 'public/stylesheets/andulka'
+     MagickTitle.options[:background_alpha] = 'FF'
      MagickTitle.options[:font] = 'andulkabook-webfont.ttf'
      MagickTitle.options[:font] = 'andulkabook-webfont.ttf'
      MagickTitle.options[:destination] = 'public/mails'
