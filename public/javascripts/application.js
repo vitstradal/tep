@@ -167,7 +167,7 @@ jQuery(document).ready(function($) {
                         textarea.val(editor.getSession().getValue());
                 });
                 //textarea.closest('form').find('a[data-edit]').click(function () { editor_tool_button_click(this, editor); });
-                $('.btn').click(function () { editor_tool_button_click(this, editor); });
+                $('[data-edit]').click(function () { editor_tool_button_click(this, editor); });
 
      });
 });
