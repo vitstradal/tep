@@ -114,8 +114,8 @@ jQuery(document).ready(function($) {
         $('.ace-input-file').ace_file_input({icon_remove: null, style: false});
 
 
-       // fakecrypted emails 
-       $('.mailcrypt').click(function () { 
+       // fakecrypted emails
+       $('.mailcrypt').click(function () {
          var me = $(this);
          var email = fakedecrypt(me.attr('id'));
          var a= $('<a>');
@@ -125,8 +125,91 @@ jQuery(document).ready(function($) {
          me.after(a);
          me.hide();
        });
+
+      // https://gist.github.com/duncansmart/5267653
+      //$('textarea[data-editor]').each(function () {
+      $('textarea').each(function () {
+                var textarea = $(this);
+
+                //var mode = textarea.data('editor');
+                //var mode = 'tracwiki';
+                var mode;
+                mode = 'tracwiki';
+
+                var editDiv = $('<div>', {
+                        position: 'absolute',
+                        width: textarea.width(),
+                        height: textarea.height(),
+                        'class': textarea.attr('class')
+                }).insertBefore(textarea);
+
+
+                //textarea.css('visibility', 'hidden');
+                textarea.css('display', 'none');
+
+
+                var editor = ace.edit(editDiv[0]);
+                editor.renderer.setShowGutter(false);
+                editor.getSession().setValue(textarea.val());
+                editor.getSession().setMode("ace/mode/" + mode);
+
+                //editor.setTheme("ace/theme/twilight");
+                //ace.require("ace/ext/chromevox");
+
+                editor.setTheme("ace/theme/tomorrow");
+                editor.renderer.setShowGutter(true);
+                //editor.renderer.setShowInvisibles(true);
+
+                editor.commands.bindKeys({"ctrl-l":null, "ctrl-t":null, 'ctrl-r':null})
+
+                // copy back to textarea on form submit...
+                textarea.closest('form').submit(function () {
+                        textarea.val(editor.getSession().getValue());
+                });
+                //textarea.closest('form').find('a[data-edit]').click(function () { editor_tool_button_click(this, editor); });
+                $('.btn').click(function () { editor_tool_button_click(this, editor); });
+
+     });
 });
 
+
+function editor_tool_button_click(el, editor)
+{
+  editor_tool_action($(el).data('edit'), editor);
+}
+
+function editor_tool_action(action, editor)
+{
+  switch(action) {
+  case 'link':    return editor_wrap(editor, '[[', ']]');
+  case 'image':   return editor_wrap(editor, '[[Image(', ')]]');
+  case 'bold':    return editor_wrap(editor, '**', '**');
+  case 'italic':  return editor_wrap(editor, "''", "''");
+  case 'strike':  return editor_wrap(editor, "~~", "~~");
+  case 'code':    return editor_wrap(editor, "`", "`");
+  case 'math':    return editor_wrap(editor, "$", "$");
+  case 'dmath':   return editor_wrap(editor, "\n$$", "$$\n");
+  case 'h1':      return editor_wrap(editor, '=', '=');
+  case 'h2':      return editor_wrap(editor, '==', '===');
+  case 'h3':      return editor_wrap(editor, '===', '===');
+  case 'pre':     return editor_wrap(editor, "\n{{{\n", "\n}}}\n");
+  case 'ul':      return editor_wrap(editor, "* ");
+  case 'ol':      return editor_wrap(editor, "1. ");
+  case 'img':     return editor_wrap(editor, "[[Image(", ")]]");
+  case 'save':     return editor_wrap(editor, "[[Image(", ")]]");
+  default:
+          return editor_wrap(editor, '[[', ']]');
+  }
+}
+
+function editor_wrap(editor, pre, post) {
+  var txt = editor.session.getTextRange(editor.getSelectionRange());
+  post = post ||'';
+  pre = pre ||'';
+  editor.insert( pre +txt+ post);
+  editor.navigateLeft(post.length);
+  editor.focus();
+}
 
 function fakedecrypt(x)
 {

@@ -12,15 +12,48 @@
       <%= hidden_field_tag 'part', @part %>
       <%= hidden_field_tag 'pos', @pos %>
     <% end %>
-    <h1>Editace souboru '<%= @path %>'</h1>
-    <%= text_area_tag :text, @text, class: 'span9 ctrl-enter-submit', id: 'textedit', cols: 100, rows: 25%>
+    <%# <h1>Editace souboru '<%= @path % >'</h1> %>
+    <div class="btn-toolbar">
+      <div class="btn-group">
+       <a class="btn btn-xs btn-white btn-info" data-edit="bold" title="Bold (Ctrl/Cmd+B)"> <i class=" ace-icon fa fa-bold"></i> </a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="italic" title="Italic (Ctrl/Cmd+I)"> <i class=" ace-icon fa fa-italic"></i> </a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="strike" title="Strikethrough"> <i class=" ace-icon fa fa-strikethrough"></i> </a>
+      </div>
+      <div class="btn-group">
+       <a class="btn btn-xs btn-white btn-info" data-edit="ol" title="math"> <i class=" ace-icon fa fa-list-ol"></i> </a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="ul" title="math"> <i class=" ace-icon fa fa-list-ul"></i> </a>
+      </div>
+      <div class="btn-group">
+       <a class="btn btn-xs btn-white btn-info" data-edit="h1" title="math">h1</a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="h2" title="math">h2</a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="h3" title="math">h3</a>
+      </div>
+      <div class="btn-group">
+       <a class="btn btn-xs btn-white btn-info" data-edit="math" title="math"> <i class=" ace-icon fa fa-dollar"></i> </a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="dmath" title="dmath"> <i class=" ace-icon fa fa-dollar"></i><i class=" ace-icon fa fa-dollar"></i> </a>
+      </div>
+      <div class="btn-group">
+       <a class="btn btn-xs btn-white btn-info" data-edit="link" title="dmath"> <i class=" ace-icon fa fa-chain"></i></a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="image" title="dmath"> <i class=" ace-icon fa fa-image"></i></a>
+      </div>
+      <div class="btn-group">
+       <a class="btn btn-xs btn-white btn-info" data-edit="back" title="dmath">  <i class="fa fa-ban"></i> </a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="save" title="dmath"> <i class=" ace-icon fa fa-floppy-o"></i></a>
+       <a class="btn btn-xs btn-white btn-warning" data-edit="save" title="dmath"> <i class=" ace-icon fa fa-floppy-o"></i></a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="preview" title="dmath"> <i class=" ace-icon fa fa-eye"></i></a>
+      </div>
+    </div>
+    <%= text_area_tag :text, @text, class: 'span9 ctrl-enter-submit', id: 'textedit', cols: 100, rows: 24%>
     <%= button_tag  'Zpět',   :class=>'btn',            :ico => 'fa-reply', :href => url_for(path: @path)  %>
     <%= button_tag  'Uložit', :class=>'btn btn-danger', ico: 'fa-floppy-o'  %>
-    <script>
+
+     <% if false %>
+      <script>
                   var toolbar = new jsToolBar(document.getElementById('textedit'));
                   <% if @giwi.help_link %>toolbar.help_link = '<%= url_for(:root) + @giwi.help_link %>'; <% end %>
                   toolbar.draw();
-   </script>
+     </script>
+    <% end %>
   <% end #form %>
   <% if @used_templates %>
     Templates:

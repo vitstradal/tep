@@ -275,6 +275,7 @@ class GiwiController < ApplicationController
       #pp "used templates", @used_templates
     end
 
+    @wide_display = true
     if @edit == 'me'
        @edit = true
        return
