@@ -437,3 +437,12 @@ dl {
 a.mailcrypt {
   font-size: 15px;
 }
+
+
+/* **** 
+ * obrazek v emailu v novince
+ */
+.mailcrypt img { 
+   background: transparent;
+   border: none;
+}

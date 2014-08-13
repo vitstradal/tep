@@ -12,6 +12,7 @@ class GiwiController < ApplicationController
      MagickTitle.options[:font_size] = 15
      MagickTitle.options[:color] = '#000000'
      MagickTitle.options[:font_path] = 'public/stylesheets/andulka'
+     MagickTitle.options[:background_alpha] = '00'
      MagickTitle.options[:font] = 'andulkabook-webfont.ttf'
      MagickTitle.options[:font] = 'andulkabook-webfont.ttf'
      MagickTitle.options[:destination] = 'public/mails'
@@ -191,11 +192,7 @@ class GiwiController < ApplicationController
     return _template_textimg(env, argv) if tname == 'textimg'
     return _template_fakecrypt(env, argv) if tname == 'fakecrypt'
     return _template_include(env, argv) if tname == 'include'
-    template_path = '.template/' + tname + @giwi.ext
-    text, _ = @giwi.get_page(template_path)
 
-    # not found
-    return nil if text.nil?
 
     part = 0
     if tname =~ /\A\//
@@ -225,8 +222,8 @@ class GiwiController < ApplicationController
   end
   def _template_include(env, argv)
     path =  argv['00']
-    text, _ = @giwi.get_page(path)
-    return nil if text.nil?
+    text, _ = @giwi.get_page(path + @giwi.ext)
+    return "no such page (#{path})" if text.nil?
     return text
   end
   def _template_fakecrypt(env, argv)
