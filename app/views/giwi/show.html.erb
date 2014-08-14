@@ -8,6 +8,7 @@
 
    <%= form_tag({:path =>  @path}, {id: 'edit-form'})  do %>
     <%= hidden_field_tag 'version', @version %>
+    <%= hidden_field_tag 'edit', '' %>
     <% if @part %>
       <%= hidden_field_tag 'part', @part %>
       <%= hidden_field_tag 'pos', @pos %>
@@ -37,13 +38,21 @@
        <a class="btn btn-xs btn-white btn-info" data-edit="image" title="dmath"> <i class=" ace-icon fa fa-image"></i></a>
       </div>
       <div class="btn-group">
-       <a class="btn btn-xs btn-white btn-info" data-edit="back" title="dmath">  <i class="fa fa-ban"></i> </a>
-       <a class="btn btn-xs btn-white btn-info" data-edit="save" title="dmath"> <i class=" ace-icon fa fa-floppy-o"></i></a>
-       <a class="btn btn-xs btn-white btn-warning" data-edit="save" title="dmath"> <i class=" ace-icon fa fa-floppy-o"></i></a>
-       <a class="btn btn-xs btn-white btn-info" data-edit="preview" title="dmath"> <i class=" ace-icon fa fa-eye"></i></a>
+       <a class="btn btn-xs btn-white btn-info" href="<%= url_for path: @path %>" xdata-edit="cancel" title="cancel">  <i class="fa fa-ban"></i> </a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="save-stay" title="save and stay"> <i class=" ace-icon fa fa-floppy-o"></i></a>
+       <a class="btn btn-xs btn-white btn-warning" data-edit="save" title="save and show"> <i class=" ace-icon fa fa-floppy-o"></i></a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="preview" title="preview"> <i class=" ace-icon fa fa-eye"></i></a>
       </div>
     </div>
-    <%= text_area_tag :text, @text, class: 'span9 ctrl-enter-submit', id: 'textedit', cols: 100, rows: 24%>
+    <div class="row">
+      <div class="textarea-container col-xs-6">
+        <%= text_area_tag :text, @text, style:'float:left', class: 'span9 ctrl-enter-submit', id: 'textedit', cols: 100, rows: 24%>
+      </div>
+      <div class="col-xs-6">
+        <div style="float:left" id="preview-div"></div>
+      </div>
+    </div>
+    <div style="clear:both"></div>
     <%= button_tag  'Zpět',   :class=>'btn',            :ico => 'fa-reply', :href => url_for(path: @path)  %>
     <%= button_tag  'Uložit', :class=>'btn btn-danger', ico: 'fa-floppy-o'  %>
 

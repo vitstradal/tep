@@ -135,12 +135,14 @@ jQuery(document).ready(function($) {
                 //var mode = 'tracwiki';
                 var mode;
                 mode = 'tracwiki';
+                var cont = $(this).closest('.textarea-container');
 
                 var editDiv = $('<div>', {
                         position: 'absolute',
-                        width: textarea.width(),
-                        height: textarea.height(),
-                        'class': textarea.attr('class')
+                        width: cont.width(),
+                        height: cont.height(),
+                        'float': 'left',
+                        'class': cont.attr('class')
                 }).insertBefore(textarea);
 
 
@@ -152,6 +154,7 @@ jQuery(document).ready(function($) {
                 editor.renderer.setShowGutter(false);
                 editor.getSession().setValue(textarea.val());
                 editor.getSession().setMode("ace/mode/" + mode);
+                editor.getSession().setUseWrapMode(true);
 
                 //editor.setTheme("ace/theme/twilight");
                 //ace.require("ace/ext/chromevox");
@@ -166,19 +169,19 @@ jQuery(document).ready(function($) {
                 textarea.closest('form').submit(function () {
                         textarea.val(editor.getSession().getValue());
                 });
-                //textarea.closest('form').find('a[data-edit]').click(function () { editor_tool_button_click(this, editor); });
-                $('[data-edit]').click(function () { editor_tool_button_click(this, editor); });
+                //.find('a[data-edit]').click(function () { editor_tool_button_click(this, editor); });
+                var form = textarea.closest('form'); 
+                $('[data-edit]').click(function () { editor_tool_button_click(this, editor, form); });
 
      });
 });
 
-
-function editor_tool_button_click(el, editor)
+function editor_tool_button_click(el, editor, form)
 {
-  editor_tool_action($(el).data('edit'), editor);
+  editor_tool_action($(el).data('edit'), editor, form);
 }
 
-function editor_tool_action(action, editor)
+function editor_tool_action(action, editor, form)
 {
   switch(action) {
   case 'link':    return editor_wrap(editor, '[[', ']]');
@@ -196,12 +199,50 @@ function editor_tool_action(action, editor)
   case 'ul':      return editor_wrap(editor, "* ");
   case 'ol':      return editor_wrap(editor, "1. ");
   case 'img':     return editor_wrap(editor, "[[Image(", ")]]");
-  case 'save':     return editor_wrap(editor, "[[Image(", ")]]");
+  case 'save':    return editor_save(editor, form, false);
+  case 'save-stay':return editor_save(editor, form, true);
+  case 'cancel':  return editor_cancel(editor, form);
+  case 'preview': return editor_preview(editor, form);
   default:
           return editor_wrap(editor, '[[', ']]');
   }
 }
 
+function editor_cancel(editor, form, stay)
+{
+  var action = form.attr('action');
+}
+
+function editor_save(editor, form, stay)
+{
+  if( stay) {
+    $(form).find('[name=edit]').val('1');
+    console.log('save stay', $(form).find('[name=edit]').val());
+  }
+  form.submit();
+}
+
+
+function editor_preview(editor, form)
+{
+  
+   var action = form.attr('action');
+   var wiki = editor.getSession().getValue();
+   console.log("action", action);
+   $.ajax({
+     url: action,
+     type: 'POST',
+     headers: {
+       'X-Transaction': 'POST Example',
+       'X-CSRF-Token': $('meta[name="csrf-token"]').attr('content')
+     },
+     data: { preview: wiki},
+     success: function (data, textStatus, jqXHR) {
+       console.log("data", data, "status", textStatus, jqXHR);
+       $('#preview-div').html(data['html']||'error');
+     }
+   });
+}
 function editor_wrap(editor, pre, post) {
   var txt = editor.session.getTextRange(editor.getSelectionRange());
   post = post ||'';

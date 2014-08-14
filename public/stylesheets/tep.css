@@ -446,3 +446,8 @@ a.mailcrypt {
    background: transparent;
    border: none;
 }
+
+/* pokusy s ace-editorem */
+.ace_editor {
+  float: left;
+}

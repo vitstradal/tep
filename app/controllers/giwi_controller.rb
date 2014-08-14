@@ -46,6 +46,7 @@ class GiwiController < ApplicationController
 
     # @wiki, Giwi.can_read?
 
+    return _handle_preview(params[:preview])  if ! params[:preview].nil?
     return _handle_ls if @ls
     return _handle_csrf if fmt == 'csrf'
     return _handle_special_edit(@path, fmt) if @edit && %w(svg).include?(fmt)
@@ -114,6 +115,8 @@ class GiwiController < ApplicationController
     authorize! :update, @giwi.auth_name
     #print "af authorize: :update #{@giwi.auth_name}\n"
 
+    return _handle_preview(params[:preview]) if ! params[:preview].nil?
+
     @path = params[:path]
     text = params[:text_inline] || params[:text] + "\n"
     version = params[:version]
@@ -144,7 +147,9 @@ class GiwiController < ApplicationController
       end
     end
 
-    redirect_to action: :show, wiki: @wiki, path: @path
+    edit = (params[:edit]||'') == '' ? nil : params[:part] || 'me' 
+
+    redirect_to action: :show, wiki: @wiki, path: @path, edit: edit
   end
 
   private
@@ -238,6 +243,13 @@ class GiwiController < ApplicationController
   def _not_found
     @html = 'not found'
     render :show
+  end
+
+  def _handle_preview(wiki)
+    
+     parser = _get_parser
+     html = parser.to_html(wiki)
+     render :json => { :html => html }
   end
 
   def _handle_file_upload(data, filename, filename_orig, redirect = true)
