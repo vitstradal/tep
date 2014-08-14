@@ -62,6 +62,7 @@ class GiwiController < ApplicationController
     end
 
     path_ext = @path + @giwi.ext
+    Rails::logger.fatal("path:#{path_ext}")
     @text, @version = @giwi.get_page(path_ext)
 
     if ! @text

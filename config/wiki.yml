@@ -3,12 +3,13 @@
 
 defaults: &defaults
   piki:
-    path: '/home/vitas/tmp/piki'
+    path: '/home/www/git/piki.git'
     url: 'piki'
     read:  :org
-    bare: false
+    bare: true
     update:  :org
     update:  :org
+    ext: '.wiki'
     help_link: 'wiki/tep/doc/wiki#start'
   main:
     path: '/home/www/git/web.git'
@@ -30,11 +31,17 @@ defaults: &defaults
     ext: '.wiki'
     help_link: '/wiki/tep/doc/wiki#start'
 
-production:
-  <<: *defaults
 
 local: &local
   <<: *defaults
+  piki:
+    path: '/home/vitas/git/piki'
+    url: 'piki'
+    read:  :org
+    bare: false
+    update:  :org
+    update:  :org
+    help_link: 'wiki/tep/doc/wiki#start'
   main:
     path: '/home/vitas/tmp/pikoweb/web'
     bare: false
@@ -64,26 +71,11 @@ local: &local
     nogit: true
     ext: '.wiki'
 
-development:
-  <<: *defaults
-  main:
-    path: '/home/www/git/web.git'
-    bare: true
-    #url: 'web'
-    url: ''
-    branch: edit
-    read:  :anon
-    update: nil
-    ext: '.wiki'
-  web_edit:
-    path: '/home/www/git/web.git'
-    bare: true
-    url: 'webed'
-    branch: edit
-    read:  :org
-    update:  :org
-    #nogit: true
-    ext: '.wiki'
-
 test:
   <<: *local
+
+development:
+  <<: *defaults
+
+production:
+  <<: *defaults
