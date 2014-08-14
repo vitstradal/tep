@@ -2,9 +2,9 @@
 ---
 
 defaults: &defaults
-  wiki:
+  piki:
     path: '/home/vitas/tmp/piki'
-    url: 'wiki'
+    url: 'piki'
     read:  :org
     bare: false
     update:  :org
