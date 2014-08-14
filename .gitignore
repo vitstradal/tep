@@ -1,6 +1,6 @@
 .bundle
 public/js
-public/fotky
+public/data
 *.swp
 db/*.sqlite3
 db/lidi29*.yml
