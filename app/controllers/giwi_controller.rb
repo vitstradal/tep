@@ -36,7 +36,7 @@ class GiwiController < ApplicationController
     @editable = can? :update, auth_name
 
     @path = params[:path]
-    print "path: #{@wiki}:#{@path}\n"
+    #print "path: #{@wiki}:#{@path}\n"
 
     @edit = params[:edit] || false
     @ls   = params[:ls]
@@ -339,20 +339,27 @@ class GiwiController < ApplicationController
              }]
 
     path.split('/').each do |part|
-      if cur_path 
+      if cur_path
         cur_path +=  '/' + part
       else
         cur_path = part
       end
+      url = if @wiki == 'main'
+                 wiki_main_path(cur_path)
+            else
+                 url_for(action: :show, wiki:@wiki, path: cur_path)
+            end
       bread.push({
                   name: part.capitalize.gsub(/_/, ' '),
-                  url: url_for(action: :show, wiki:@wiki, path: cur_path),
+                  #url: url_for(action: :show, wiki:@wiki, path: cur_path),
+                  url: url
+                  #url: wiki_main_path(path: cur_path),
                 })
     end
-    if bread.size > 0 
+    if bread.size > 0
       bread[-1][:active] = true
     end
-    @breadcrumb = [ bread ] 
+    @breadcrumb = [ bread ]
   end
 
 end

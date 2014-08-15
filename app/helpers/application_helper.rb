@@ -49,12 +49,12 @@ module ApplicationHelper
 
     url =  url_for(uri)
 
-    ico_tag = opt[:ico].nil? ? '' : content_tag(:i, '', { :class => "menu-icon fa #{opt[:ico]}"})
+    ico_tag = opt[:ico].nil? ? ''.html_safe : content_tag(:i, '', { :class => "menu-icon fa #{opt[:ico]}"})
 
     text_tag = @_level == 2 ? text : content_tag(:span, text, { :class => 'menu-text' }  )
 
     li_extra = ''
-    a_extra = ''
+    a_extra = ''.html_safe
     a_cls = nil
 
     if block_given?
@@ -67,20 +67,19 @@ module ApplicationHelper
           capture(&block)
       @_level -= 1
 
-       #li_cls.push('open')
-       li_cls.push('open active') if @_active
-       @_active = false
+      li_cls.push('open active') if @_active
+      @_active = false
     end
 
     if _my_current_page?(url)
-      #print "set active\n"
+      print "set active#{url}\n"
       li_cls.push('active')
       @_active = true
     end
 
     content_tag(:li, { :class => li_cls.join(' ') } ) do
       content_tag(:a, {:class => a_cls, :href => url}) do
-         ico_tag + text_tag + a_extra
+          ico_tag  + text_tag + a_extra 
       end + li_extra
     end
   end
@@ -114,7 +113,7 @@ module ApplicationHelper
       his_uri += '/'
       cur_uri += '/'
       ret = cur_uri[0,his_uri.size] == his_uri
-      #print "cur: #{cur_uri} cur_ori #{cur_ori}, his: #{his_uri}, ret: #{ret}\n"
+      print "cur: #{cur_uri} cur_ori #{cur_ori}, his: #{his_uri}, ret: #{ret}\n"
       return ret;
   end
 end
