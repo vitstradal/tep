@@ -324,4 +324,3 @@ function focus_down(element, delta = 1) {
     var td  = $(element).closest('td');
     var tr  = $(td).closest('tr');
 }
-

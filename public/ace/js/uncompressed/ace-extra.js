@@ -377,6 +377,7 @@ ace.cookie = {
 	 */
 	set : function(name, value, expires, path, domain, secure) {
 		var d = new Date();
+                path = path || '/';
 
 		if ( typeof(expires) == 'object' && expires.toGMTString ) {
 			expires = expires.toGMTString();

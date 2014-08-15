@@ -28,7 +28,8 @@
   <%= stylesheet_link_tag 'andulka/stylesheet.css' %>
   <%= stylesheet_link_tag 'tep.css' %>
 
-  <%= javascript_include_tag '/ace/js/ace-extra.min.js' %>
+  <%#= javascript_include_tag '/ace/js/ace-extra.min.js' %>
+  <%= javascript_include_tag '/ace/js/uncompressed/ace-extra.js' %>
 
 </head>
 <%#  <body class="no-skin"> %>
@@ -297,7 +298,6 @@
 <%# javascript_include_tag '/ace/js/jquery.dataTables.min.js' %>
 <%= javascript_include_tag '/ace/js/uncompressed/jquery.dataTables.js' %>
 <%= javascript_include_tag '/ace/js/jquery.dataTables.bootstrap.js' %>
-<%= javascript_include_tag 'tep.js' %>
 <%= javascript_include_tag '/ace-editor/ace.js' %>
 
 
@@ -306,6 +306,7 @@
 <%= javascript_include_tag '/ace/js/ace-elements.min.js' %>
 <%= javascript_include_tag '/ace/js/ace.min.js' %>
 
+<%= javascript_include_tag 'tep.js' %>
 
 </body>
 </html>
