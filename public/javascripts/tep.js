@@ -168,11 +168,11 @@ jQuery(document).ready(function($) {
                 editor.commands.bindKeys({
                                 'ctrl-b':       function () { editor_tool_action('bold', editor, form ); },
                                 'ctrl-i':       function () { editor_tool_action('italic', editor, form ); },
-                                //'ctrl-$':       function () { editor_tool_action('math', editor, form ); },
+                                //'ctrl-$':     function () { editor_tool_action('math', editor, form ); },
+                                'ctrl-escape':  function () { editor_cancel(editor, form);  },
                                 'ctrl-enter':   function () { editor_save(editor, form, false);  },
                                 'shift-enter':  function () { editor_save(editor, form, true);  },
-                                'ctrl-k':       function () { editor_preview(editor, form);  },
-                                'ctrl-e':       function () { editor_cancel(editor, form);  },
+                                'alt-enter':    function () { editor_preview(editor, form);  },
                                 'ctrl-l':null,
                                 'ctrl-t':null,
                                 'ctrl-r':null,
@@ -242,9 +242,13 @@ function init_icons(editor) {
        }
 }
 
-function editor_cancel(editor, form, stay)
+function editor_cancel(editor, form)
 {
-  $(form).find('.editor-cancel').click();
+  //console.log('editor cancel');
+  $(form).find('.editorcancel').each(function (i, el) { 
+    console.log('editor cancel');
+    window.location =  $(el).attr('href');
+  });
 }
 
 function editor_save(editor, form, stay)
