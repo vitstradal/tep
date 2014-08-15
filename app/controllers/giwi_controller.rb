@@ -344,8 +344,9 @@ class GiwiController < ApplicationController
       else
         cur_path = part
       end
-      url = if @wiki == 'main'
-                 wiki_main_path(cur_path)
+      #Rails::logger.fatal("wiki (#{@wiki}) is main #{ @wiki.to_s == 'main' ? 'yes' : 'no'}");
+      url = if @wiki.to_s == 'main'
+                 wiki_main_path(path: cur_path)
             else
                  url_for(action: :show, wiki:@wiki, path: cur_path)
             end
