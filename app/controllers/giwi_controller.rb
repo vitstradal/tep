@@ -106,6 +106,7 @@ class GiwiController < ApplicationController
     if parser.headings.size > 3
       @toc = parser.make_toc_html
     end
+    return render :json => { :html =>  @html } if params[:format] == 'json'
     render :show
   end
 

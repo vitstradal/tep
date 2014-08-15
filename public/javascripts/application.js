@@ -128,6 +128,7 @@ jQuery(document).ready(function($) {
 
       // https://gist.github.com/duncansmart/5267653
       //$('textarea[data-editor]').each(function () {
+      init_icons();
       $('textarea').each(function () {
                 var textarea = $(this);
 
@@ -163,14 +164,25 @@ jQuery(document).ready(function($) {
                 editor.renderer.setShowGutter(true);
                 //editor.renderer.setShowInvisibles(true);
 
-                editor.commands.bindKeys({"ctrl-l":null, "ctrl-t":null, 'ctrl-r':null})
+                var form = textarea.closest('form'); 
+                editor.commands.bindKeys({
+                                'ctrl-b':       function () { editor_tool_action('bold', editor, form ); },
+                                'ctrl-i':       function () { editor_tool_action('italic', editor, form ); },
+                                //'ctrl-$':       function () { editor_tool_action('math', editor, form ); },
+                                'ctrl-enter':   function () { editor_save(editor, form, false);  },
+                                'shift-enter':  function () { editor_save(editor, form, true);  },
+                                'ctrl-k':       function () { editor_preview(editor, form);  },
+                                'ctrl-e':       function () { editor_cancel(editor, form);  },
+                                'ctrl-l':null,
+                                'ctrl-t':null,
+                                'ctrl-r':null,
+                              })
 
                 // copy back to textarea on form submit...
-                textarea.closest('form').submit(function () {
+                form.submit(function () {
                         textarea.val(editor.getSession().getValue());
                 });
                 //.find('a[data-edit]').click(function () { editor_tool_button_click(this, editor); });
-                var form = textarea.closest('form'); 
                 $('[data-edit]').click(function () { editor_tool_button_click(this, editor, form); });
 
      });
@@ -189,6 +201,8 @@ function editor_tool_action(action, editor, form)
   case 'bold':    return editor_wrap(editor, '**', '**');
   case 'italic':  return editor_wrap(editor, "''", "''");
   case 'strike':  return editor_wrap(editor, "~~", "~~");
+  case 'sup':  return editor_wrap(editor, "^", "^");
+  case 'sub':  return editor_wrap(editor, ",,", ",,");
   case 'code':    return editor_wrap(editor, "`", "`");
   case 'math':    return editor_wrap(editor, "$", "$");
   case 'dmath':   return editor_wrap(editor, "\n$$", "$$\n");
@@ -203,14 +217,34 @@ function editor_tool_action(action, editor, form)
   case 'save-stay':return editor_save(editor, form, true);
   case 'cancel':  return editor_cancel(editor, form);
   case 'preview': return editor_preview(editor, form);
+  case 'help':    return editor_show_url(editor, form.find('[data-help-url]').data('help-url'));
+  case 'icons':   return editor_show_url(editor, form.find('[data-icons-url]').data('icons-url')); 
   default:
           return editor_wrap(editor, '[[', ']]');
   }
 }
 
+function init_icons(editor) {
+       console.log("init_icoshow");
+       if( editor ) { 
+               $('.icoshow').click(function () {
+                 var c = $(this).find('span').text();
+                 console.log("icoshow", c);
+                 editor_wrap(editor, '{{ico ' + c + '}}');
+               });
+       }
+       else {
+
+               $('.icoshow').click(function () {
+                 console.log("icoshow");
+                 $(this).find('span').removeClass('hide');
+               });
+       }
+}
+
 function editor_cancel(editor, form, stay)
 {
-  var action = form.attr('action');
+  $(form).find('.editor-cancel').click();
 }
 
 function editor_save(editor, form, stay)
@@ -222,6 +256,21 @@ function editor_save(editor, form, stay)
   form.submit();
 }
 
+function editor_show_url(editor, url)
+{
+   console.log("show_url", url);
+   if( ! url ) { 
+     console.log("no url: no way");
+     return;
+   }
+   $.get(
+     url,
+     function (data, textStatus, jqXHR) {
+       $('#preview-div').html(data['html']||'error');
+       init_icons(editor);
+     }
+   );
+}
 
 function editor_preview(editor, form)
 {
@@ -238,7 +287,7 @@ function editor_preview(editor, form)
      },
      data: { preview: wiki},
      success: function (data, textStatus, jqXHR) {
-       console.log("data", data, "status", textStatus, jqXHR);
+       //console.log("data", data, "status", textStatus, jqXHR);
        $('#preview-div').html(data['html']||'error');
      }
    });
@@ -248,7 +297,9 @@ function editor_wrap(editor, pre, post) {
   post = post ||'';
   pre = pre ||'';
   editor.insert( pre +txt+ post);
-  editor.navigateLeft(post.length);
+  if( post.length) {
+    editor.navigateLeft(post.length);
+  }
   editor.focus();
 }
 
