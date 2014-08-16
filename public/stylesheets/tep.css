@@ -462,6 +462,7 @@ a.mailcrypt {
  * error hlasky ve formurali
  */
 .help-inline {
+  padding-left: 1em;
   color: red;
 }
 
