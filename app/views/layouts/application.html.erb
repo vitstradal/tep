@@ -114,17 +114,17 @@
       <% end %>
       <%= menu_li '/onas', 'Akce', ico: 'fa-search' do %>
         <ul class="submenu">
-          <%= menu_lii wiki_main_path('tabor'),     'Tábory' %>
-          <%= menu_lii wiki_main_path('soustredeni'),   'Soustředění' %>
+          <%= menu_lii wiki_main_path('tabor'),        'Tábory' %>
+          <%= menu_lii wiki_main_path('soustredeni'),  'Soustředění' %>
           <%= menu_lii wiki_main_path('setkani'),      'Setkání'  %>
-          <%= menu_lii wiki_main_path('fotky'),      'Fotky'  %>
+          <%= menu_lii wiki_main_path('fotky'),        'Fotky'  %>
         </ul>
       <% end %>
       <%= menu_li '/onas', 'Přihláška', ico: 'fa-book' do %>
         <ul class="submenu">
           <%= menu_lii :new_user_session,        'Přihlásit' %>
           <%= menu_lii :sosna_solver_new,        'Nový řešitel' %>
-          <%= menu_lii wiki_main_path('tabor/2015/prihlaska'),  'Přáhláška na tábor'  %>
+          <%= menu_lii wiki_main_path('prihlaska'),  'Přáhláška na tábor'  %>
         </ul>
       <% end %>
       <% if user_signed_in?  %>
