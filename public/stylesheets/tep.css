@@ -456,3 +456,12 @@ a.mailcrypt {
 .skin-2 .navbar {
   background-color: #3A5147; /* //#00BE67; */
 }
+
+
+/*******************
+ * error hlasky ve formurali
+ */
+.help-inline {
+  color: red;
+}
+
