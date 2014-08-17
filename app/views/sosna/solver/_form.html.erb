@@ -4,37 +4,42 @@
   <% if is_edit %>
           <%= f.hidden_field :id %>
   <% end %>
-  <label class="control-label" for="solver_name">Jméno a Příjmení</label>
-  <div class="controls">
+
+
+  <div class="form-group">
+    <%= f.label :solver_name, "Jméno a Příjmení", :class =>  'col-sm-3 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @solver, :email %>">
           <%= f.text_field :name %>
           <%= f.text_field :last_name %>
           <%= form_error @solver, :name, :last_name %>
+    </div>
   </div>
-</div>
 
-<div class="<%= form_error_class @solver, :email %>">
-  <label class="control-label" for="solver_email">Email</label>
-  <div class="controls"><%= f.text_field :email %><%= form_error @solver, :email %></div>
-</div>
-
-<div class="<%= form_error_class @solver, :street, :num %>">
-  <label class="control-label" for="solver_street">Ulice a č.p.</label>
-  <div class="controls">
-          <%= f.text_field :street %>
-          <%= f.text_field :num, :class=>'input-mini'%>
-          <%= form_error @solver, :street, :num %>
+  <div class="form-group">
+    <%= f.label :solver_email, "Email", :class =>  'col-sm-3 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @solver, :email %>">
+      <%= f.text_field :email %>
+      <%= form_error @solver, :email %>
+    </div>
   </div>
-</div>
 
-<div class="<%= form_error_class @solver, :psc, :city%>">
-  <label class="control-label" for="solver_psc">PSČ a Město</label>
-  <div class="controls">
-          <%= f.text_field :psc, :class=>'input-mini'%>
-          <%= f.text_field :city %>
-          <%= form_error @solver, :psc, :city %>
+  <div class="form-group">
+    <%= f.label :solver_street, "Ulice a č.p.", :class =>  'col-sm-3 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @solver, :street %>">
+     <%= f.text_field :street %>
+     <%= f.text_field :num, :class=>'input-mini'%>
+     <%= form_error @solver, :street, :num %>
+   </div>
+ </div>
+
+  <div class="form-group">
+    <%= f.label :solver_street, "PSČ a Město", :class =>  'col-sm-3 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @solver, :psc, :city %>">
+      <%= f.text_field :psc, :class=>'input-mini'%>
+      <%= f.text_field :city %>
+      <%= form_error @solver, :psc, :city %>
+    </div>
   </div>
-</div>
-<hr>
 
 <noscript>
 <div class='alert'>
@@ -43,9 +48,9 @@ Pokud škola v seznamu není, vyberte položku 'Jiná škola', a vyplňte název
 </div>
 </noscript>
 
-<div class="<%= form_error_class @solver, :skola %>">
-  <label class="control-label" for="school">Škola</label>
-  <div class="controls">
+  <div class="form-group">
+    <%= f.label :solver_school, "Škola", :class =>  'col-sm-3 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @solver, :school %>">
        <%= select :school, :id,
                options_for_select(
                        [['Vyber školu', :none]] +
@@ -58,44 +63,48 @@ Pokud škola v seznamu není, vyberte položku 'Jiná škola', a vyplňte název
                        )
          %>
         <%= form_error @solver, :skola %>
+    </div>
   </div>
-</div>
 
 
-<%# <div id='school_div' class='hide'> %>
-<div id='school_div' >
+ <div id='school_div' >
 <%= fields_for @school do |sf| %>
-<div class="<%= form_error_class @school, :name %>">
-  <label class="control-label" for="school_nazev">Název školy.</label>
-  <div class="controls">
-          <%= sf.text_field :name %>
-          <%= form_error @school, :name %>
+  <div class="form-group">
+    <%= f.label :school_name, "Jméno školy", :class =>  'col-sm-3 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @school, :name %>">
+      <%= sf.text_field :name %>
+      <%= form_error @school, :name %>
+    </div>
   </div>
-</div>
-<div class="control-group">
-  <label class="control-label" for="school_nazev">Ulice a č.p.</label>
-  <div class="controls">
+
+  <div class="form-group">
+    <%= f.label :solver_nazev, "Ulice a č.p.", :class =>  'col-sm-3 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @school, :street, :num %>">
           <%= sf.text_field :street  %>
           <%= sf.text_field :num, :class=>'input-mini'%>
           <%= form_error @school, :street, :num %>
+    </div>
   </div>
-</div>
-<div class="<%= form_error_class @school, :psc, :city%>">
-  <label class="control-label" for="_nazev">PSČ a Město</label>
-  <div class="controls">
+
+  <div class="form-group">
+    <%= f.label :solver_nazev, "PSČ a Město", :class =>  'col-sm-3 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @school, :psc, :city %>">
           <%= sf.text_field :psc, :class=>'input-mini'%>
           <%= sf.text_field :city %>
           <%= form_error @school, :psc, :city %>
+    </div>
   </div>
-</div>
+
 <% end %>
+
 </div>
 
 <hr>
 
-<div class="control-group">
-  <label class="control-label" for="solver_where_to_send">Koresponenci zasílejte</label>
-  <div class="controls">
+  <div class="form-group">
+    <%= f.label :solver_where_to_send, "Koresponenci zasílejte", :class =>  'col-sm-3 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @solver, :where_to_send %>">
+
        <%= select_tag "sosna_solver[where_to_send]",
                options_for_select([['domů', 'home'],
                                    ['do školy', 'school'],
@@ -104,11 +113,12 @@ Pokud škola v seznamu není, vyberte položku 'Jiná škola', a vyplňte název
                                    ],
                                    @solver.where_to_send)
          %>
+    </div>
   </div>
-</div>
-<div class="control-group">
-  <label class="control-label" for="solver_solution_form">Můj preferovaný způsob zasílání řešení</label>
-  <div class="controls">
+
+  <div class="form-group">
+    <%= f.label :solver_name, "Můj preferovaný způsob zasílání řešení", :class =>  'col-sm-3 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @solver, :solution_form %>">
        <%= select_tag "sosna_solver[solution_form]",
                options_for_select([['elektronicky (Tep)', 'tep'],
                                    ['poštou, papírově',   'paper'],
@@ -116,49 +126,46 @@ Pokud škola v seznamu není, vyberte položku 'Jiná škola', a vyplňte název
                                    ],
                                    @solver.where_to_send)
          %>
+    </div>
   </div>
-</div>
 
+  <div class="form-group">
+    <%= f.label :solver_finish_year, "Odpovídající ročník", :class =>  'col-sm-3 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @solver, :finish_year, :grade %>">
 
-<div class="<%= form_error_class @solver, :finish_year, :grade%>">
-  <label class="control-label" for="_nazev">Odpovídající ročník</label>
-  <div class="controls">
      <%#= f.text_field :grade_num, :class=>'input-mini' %>
      <%= f.select(:grade_num, options_for_select((1..9), @solver.grade_num) , {}, {:class=> 'input-mini'}) %>
      Třída (6.A, prima, ...)
      <%= f.text_field :grade, :class=>'input-mini' %>
      <%= form_error @solver, :finish_year, :grade%>
+    </div>
   </div>
-</div>
 
-<div class="<%= form_error_class @solver, :birth %>">
-  <label class="control-label" for="_nazev">Datum narození</label>
-  <div class="controls">
-     <%= f.text_field :birth %>
-     <%= form_error @solver, :birth %>
+  <div class="form-group">
+    <%= f.label :solver_finish_year, "Datum narozeni", :class =>  'col-sm-3 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @solver, :birth %>">
+      <%= f.text_field :birth %>
+      <%= form_error @solver, :birth %>
+    </div>
   </div>
-</div>
 
-
-
-<div class="control-group">
-  <label class="control-label" for="_nazev">Pohlaví</label>
-
-  <div class="controls">
-    <label class="radio inline">
-      <%= f.radio_button :sex, :male , :checked=> true %> řešitel
-    </label>
-    <label class="radio inline">
-      <%= f.radio_button :sex, :female %> řešitelka
-    </label>
+  <div class="form-group">
+    <%= f.label :solver_sex, "Pohlaví", :class =>  'col-sm-3 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @solver, :sex %>">
+      <label class="radio inline">
+        <%= f.radio_button :sex, :male , :checked=> true %> řešitel
+      </label>
+      <label class="radio inline">
+        <%= f.radio_button :sex, :female %> řešitelka
+      </label>
+     </div>
   </div>
-</div>
 
 <hr>
 
 <% if ! is_edit %>
-  <div class="<%= form_error_class @solver, :souhlasim %>">
-    <div class="controls">
+  <div class="form-group">
+    <div class="col-sm-offset-3 col-sm-9 <%= form_error_class @solver, :souhlasim %>">
      <label class="checkbox" for="souhlasim"> <%= check_box_tag 'souhlasim', '1', @agree %>
          Souhlasím se <a href="#souhlas">zpracováním osobních údajů</a>
          <%= form_error @solver, :souhlasim %>
@@ -168,8 +175,8 @@ Pokud škola v seznamu není, vyberte položku 'Jiná škola', a vyplňte název
 <% end %>
 
 <% if !current_user.nil? && current_user.admin?  %>
-  <div class="control-group">
-    <div class="controls">
+  <div class="form-group">
+    <div class="col-sm-offset-3 col-sm-9 <%= form_error_class @solver, :send_first %>">
      <label class="checkbox" for="send_first"> <%= check_box_tag 'send_first', '1' %>
          Zaslat uvítací email 
      </label>
@@ -178,14 +185,15 @@ Pokud škola v seznamu není, vyberte položku 'Jiná škola', a vyplňte název
 <% end %>
 
 
-<div class="control-group">
-  <div class="controls">
-  <% if is_edit %>
-     <%= f.submit :class=>'btn btn-primary', :value=>'Uložit' %></div>
-  <% else %>
-     <%= f.submit :class=>'btn btn-primary', :value=>'Přihlásit se do Pikomatu' %></div>
-  <% end %>
-</div>
+  <div class="form-group">
+    <div class="col-sm-offset-3 col-sm-9">
+      <% if is_edit %>
+        <%= f.submit :class=>'btn btn-primary', :value=>'Uložit' %>
+      <% else %>
+        <%= f.submit :class=>'btn btn-primary', :value=>'Přihlásit se do Pikomatu' %>
+      <% end %>
+    </div>
+  </div>
 
 
 <% end %>

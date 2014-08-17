@@ -61,7 +61,9 @@ class Sosna::SolverController < SosnaController
       school = Sosna::School.find(school_id)
     end
 
+
     if school.nil? || school.invalid? || solver.errors.count > 0
+        add_alert "Pozor: ve formuláři jsou chyby"
         school.id = -1 if school_id == 'jina'
         flash[:solver] = solver
         flash[:school] = school
