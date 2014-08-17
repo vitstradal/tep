@@ -354,11 +354,15 @@ body.skin-2
 .tep-index-header p {
   margin: 0px;
 }
-.tep-index-header a {
+
+.tep-index-header a,
+.tep-index-header span
+{
   display: block;
   text-align: center;
   padding: 10px;
   vertical-align: middle;
+  color: #428BCA;
 }
 
 
@@ -451,3 +455,18 @@ a.mailcrypt {
 .ace_editor {
   float: left;
 }
+
+
+.skin-2 .navbar {
+  background-color: #3A5147; /* //#00BE67; */
+}
+
+
+/*******************
+ * error hlasky ve formurali
+ */
+.help-inline {
+  padding-left: 1em;
+  color: red;
+}
+

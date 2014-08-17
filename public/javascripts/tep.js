@@ -201,8 +201,9 @@ function editor_tool_action(action, editor, form)
   case 'bold':    return editor_wrap(editor, '**', '**');
   case 'italic':  return editor_wrap(editor, "''", "''");
   case 'strike':  return editor_wrap(editor, "~~", "~~");
-  case 'sup':  return editor_wrap(editor, "^", "^");
-  case 'sub':  return editor_wrap(editor, ",,", ",,");
+  case 'comment': return editor_wrap(editor, "{{# ", "}}");
+  case 'sup':     return editor_wrap(editor, "^", "^");
+  case 'sub':     return editor_wrap(editor, ",,", ",,");
   case 'code':    return editor_wrap(editor, "`", "`");
   case 'math':    return editor_wrap(editor, "$", "$");
   case 'dmath':   return editor_wrap(editor, "\n$$", "$$\n");

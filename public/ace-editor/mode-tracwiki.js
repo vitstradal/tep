@@ -7,37 +7,53 @@ var TextHighlightRules = require("./text_highlight_rules").TextHighlightRules;
 var TracwikiHighlightRules = function() {
     this.$rules = {
         "start" : [
-            {
+            {   // heading
                 token : "markup.heading",
-                regex : "==*",
+                regex : "^==*",
                 next  : "heading"
             },
-            {
+            {   // strike
                 token : "string",
-                regex : /''[^']*''/,
+                regex : /~~[^~]*~~/,
             },
-            {
+            {   // inline pre
                 token : "string",
                 regex : /`[^`]*`/,
             },
-            {
+            {   //sub
+                token : "string",
+                regex : /,,[^,]*,,/,
+            },
+            {   // inline math
+                token : "string",
+                regex : /\$[^$]*\$/,
+            },
+            {   // sup
+                token : "string",
+                regex : /\^[^^]*\^/,
+            },
+            {   // italic
+                token : "string",
+                regex : /''[^']*''/,
+            },
+            {   // bold
                 token : "string",
                 regex : /\*\*[^*]*\*\*/,
             },
-            {
+            {   //table
                 token : "string",
                 regex : /^\|\|.+/
             },
-            {
+            {   // li ul
                 token : "keyword",
-                regex : /^[\*]+|[#]+/
+                regex : /^\s*[\*#].*/
             },
-            {
+            {   //pre
                 token : "keyword",
                 regex : /^\{\{\{$/,
                 next : 'pre'
             },
-            {
+            {   // text
                 token : "text",
                 regex : "."
             }
