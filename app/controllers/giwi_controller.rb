@@ -95,6 +95,8 @@ class GiwiController < ApplicationController
     @headings = parser.headings
     @tep_index = parser.env.nil? ? false : parser.env.at('tep_index', nil).nil? ? false : true
     @wide_display = parser.env.nil? ? false : parser.env.at('wide_display', nil).nil? ? false : true
+    @redirect_to = parser.env.nil? ? nil : parser.env.at('redirect_to', nil)
+    return _handle_redirect(@redirect_to) if ! @redirect_to.nil?
 
     if @tep_index
       @no_sidebar = true
@@ -115,24 +117,20 @@ class GiwiController < ApplicationController
     @giwi = Giwi.get_giwi(@wiki)
 
     authorize! :update, @giwi.auth_name
-    #print "af authorize: :update #{@giwi.auth_name}\n"
 
-    return _handle_preview(params[:preview]) if ! params[:preview].nil?
-
-    @path = params[:path]
-    text = params[:text_inline] || params[:text] + "\n"
-    version = params[:version]
-
-    data = params[:data]
     fmt = params[:format]
-    return _handle_file_upload(data, "#{@path}.#{fmt}", nil, false) if data
-
     file = params[:file]
     filename = params[:filename]
+    version = params[:version]
+    @path = params[:path]
+    data = params[:data]
+    pos = params[:pos]
 
+    return _handle_preview(params[:preview]) if ! params[:preview].nil?
+    return _handle_file_upload(data, "#{@path}.#{fmt}", nil, false) if data
     return _handle_file_upload(file.read, filename, file.original_filename ) if file
 
-    pos = params[:pos]
+    text = params[:text_inline] || params[:text] + "\n"
 
     email = current_user.full_email
     status = @giwi.set_page(@path + @giwi.ext, text, version, email, pos)
@@ -156,7 +154,12 @@ class GiwiController < ApplicationController
 
   private
 
-
+  def _handle_redirect(redir)
+    Rails::logger.fatal("redir:#{redir}")
+    return redirect_to url_for(redir) if redir =~ /^\//
+    return redirect_to wiki_main_path(redir) if @wiki.to_s == 'main'
+    return redirect_to url_for(action: :show, wiki: @wiki, path: redir)
+  end
 
   def _handle_special_edit(path, fmt)
     if fmt == 'svg'
