@@ -33,7 +33,8 @@ module SosnaHelper
   end
 
   def email_valid_mx_record?(email)
-      mail_servers = Resolv::DNS.open.getresources(email.split('@').last, Resolv::DNS::Resource::IN::MX)
+      #mail_servers = Resolv::DNS.open.getresources(email.split('@').last, Resolv::DNS::Resource::IN::MX)
+      mail_servers = Resolv::DNS.open.getresources(email.split('@').last.force_encoding('ASCII-8BIT'), Resolv::DNS::Resource::IN::MX)
       return false if mail_servers.empty?
       true
   end
