@@ -272,24 +272,24 @@
             <% end %> 
             <div class="pull-right">
               <div class="ace-settings-item" >
-                                A<select id="skin-colorpicker" class="">
-                                    <%= options_for_select(
-                                        [ [ '#438EB9', { 'data-skin' : 'no-skin'} ],
-                                          [ '#222A2D', { 'data-skin' : 'skin-1'} ],
-                                          [ '#C6487E', { 'data-skin' : 'skin-2'} ],
-                                          [ '#D0D0D0', { 'data-skin' : 'skin-3'} ],
-                                          [ 'green', { 'data-skin' : 'skin-green'} ],
-                                          []
-                                        ], case cookies['ace.skin'.to_sym] || 'no-skin'
-                                           when 'no-skin' ; '#438EB9'
-                                           when 'skin-1'  ; '#222A2D'
-                                           when 'skin-2'  ; '#C6487E'
-                                           when 'skin-3'  ; '#D0D0D0'
-                                           when 'skin-green'  ; 'green'
-                                           else '#438EB9'
-                                           end
-                                         )
+                                <select id="skin-colorpicker" class="">
+                                    <%  selected = case cookies['ace.skin'.to_sym] || 'no-skin'
+                                                   when 'no-skin' ; '#438EB9'
+                                                   when 'skin-1'  ; '#222A2D'
+                                                   when 'skin-2'  ; '#C6487E'
+                                                   when 'skin-3'  ; '#D0D0D0'
+                                                   when 'skin-green'  ; 'green'
+                                                   else '#438EB9'
+                                                   end
                                      %>
+
+                                    <%= options_for_select(
+                                        [ [ '#438EB9', { 'data-skin' => 'no-skin'} ],
+                                          [ '#222A2D', { 'data-skin' => 'skin-1'} ],
+                                          [ '#C6487E', { 'data-skin' => 'skin-2'} ],
+                                          [ '#D0D0D0', { 'data-skin' => 'skin-3'} ],
+                                          [ 'green', { 'data-skin' => 'skin-green'} ],
+                                        ], selected) %>
                                 </select>
               </div>
            </div>
