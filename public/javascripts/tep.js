@@ -2,8 +2,6 @@
 // This file is automatically included by javascript_include_tag :defaults
 
 jQuery(document).ready(function($) {
-        console.log('baf');
-
 
         // data tables 
 	jQuery.extend( jQuery.fn.dataTableExt.oSort, {
@@ -56,7 +54,6 @@ jQuery(document).ready(function($) {
               }
             });
         });
-        console.log('baf');
         $('#school_id').change(function (){
                 if('jina' == $(this).val()) {
                   $('#school_div').show(400);
@@ -67,8 +64,8 @@ jQuery(document).ready(function($) {
         });
 
         var sch = $('#school_id');
-        console.log('schval:', sch.val());
-        if( sch.length == 1 && sch.val() == 'none' ) {
+        //console.log('schval:', sch.val());
+        if( sch.length == 1 && sch.val() != 'jina' ) {
           $('#school_div').hide();
         }
 
