@@ -171,7 +171,7 @@ class GiwiController < ApplicationController
 
   def _handle_raw_file(path, fmt)
     @raw, @version = Giwi.get_giwi(@wiki).get_page(path)
-    send_data @raw, :type => fmt, :disposition => 'inline'
+    send_data @raw, :type => fmt.to_sym, :disposition => 'inline'
   end
 
   def _get_parser
