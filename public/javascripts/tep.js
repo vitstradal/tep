@@ -226,18 +226,18 @@ function editor_tool_action(action, editor, form)
 }
 
 function init_icons(editor) {
-       console.log("init_icoshow");
+       //console.log("init_icoshow");
        if( editor ) { 
                $('.icoshow').click(function () {
                  var c = $(this).find('span').text();
-                 console.log("icoshow", c);
+                 //console.log("icoshow", c);
                  editor_wrap(editor, '{{ico ' + c + '}}');
                });
        }
        else {
 
                $('.icoshow').click(function () {
-                 console.log("icoshow");
+                 //console.log("icoshow");
                  $(this).find('span').removeClass('hide');
                });
        }
@@ -247,7 +247,7 @@ function editor_cancel(editor, form)
 {
   //console.log('editor cancel');
   $(form).find('.editorcancel').each(function (i, el) { 
-    console.log('editor cancel');
+    //console.log('editor cancel');
     window.location =  $(el).attr('href');
   });
 }
@@ -256,16 +256,16 @@ function editor_save(editor, form, stay)
 {
   if( stay) {
     $(form).find('[name=edit]').val('1');
-    console.log('save stay', $(form).find('[name=edit]').val());
+    //console.log('save stay', $(form).find('[name=edit]').val());
   }
   form.submit();
 }
 
 function editor_show_url(editor, url)
 {
-   console.log("show_url", url);
+   //console.log("show_url", url);
    if( ! url ) { 
-     console.log("no url: no way");
+     //console.log("no url: no way");
      return;
    }
    $.get(
@@ -282,7 +282,7 @@ function editor_preview(editor, form)
   
    var action = form.attr('action');
    var wiki = editor.getSession().getValue();
-   console.log("action", action);
+   //console.log("action", action);
    $.ajax({
      url: action,
      type: 'POST',
