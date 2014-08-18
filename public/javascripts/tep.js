@@ -94,14 +94,6 @@ jQuery(document).ready(function($) {
             return isOk;
         });
     });
-	$('.updownkeys input[type=text]').keydown(function (e) {
-	   if (e.key == 'Down' ) {
-	     focus_down(this, 1);
-	   }
-	   if (e.key == 'Up' ) {
-	     focus_down(this, -1);
-	   }
-	});
 
         /* nojs-in:  show when no js, so hide when js enabled */
         $('.nojs-in').removeClass('nojs-in');
@@ -127,7 +119,7 @@ jQuery(document).ready(function($) {
        });
 
       // https://gist.github.com/duncansmart/5267653
-      //$('textarea[data-editor]').each(function () {
+      // turn textarea into ace-ecitor
       init_icons();
       $('textarea').each(function () {
                 var textarea = $(this);
@@ -187,6 +179,10 @@ jQuery(document).ready(function($) {
 
      });
 });
+
+/*************************************
+ * ace-edior support functions
+ */
 
 function editor_tool_button_click(el, editor, form)
 {
@@ -297,6 +293,7 @@ function editor_preview(editor, form)
      }
    });
 }
+
 function editor_wrap(editor, pre, post) {
   var txt = editor.session.getTextRange(editor.getSelectionRange());
   post = post ||'';
@@ -308,6 +305,10 @@ function editor_wrap(editor, pre, post) {
   editor.focus();
 }
 
+
+/**********************************************
+ * email anitspam show
+ */
 function fakedecrypt(x)
 {
   var f = 'abcdefghijklmnopqrstuvwxyz512';
@@ -321,7 +322,3 @@ function fakedecrypt(x)
 }
 
 
-function focus_down(element, delta = 1) {
-    var td  = $(element).closest('td');
-    var tr  = $(td).closest('tr');
-}
