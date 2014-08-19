@@ -3,6 +3,11 @@
 
 jQuery(document).ready(function($) {
 
+        $('.ace-file-input').ace_file_input()
+                            .on('change', function () {
+                                    $(this).closest('form').submit();
+                             });
+
         // data tables 
 	jQuery.extend( jQuery.fn.dataTableExt.oSort, {
 	    "locale-pre": function ( a ) {
