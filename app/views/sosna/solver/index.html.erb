@@ -14,8 +14,10 @@
    <th>Adresa</th>
  </tr>
 <% @solvers.each do |s| %>
-  <tr>
-    <td><%= link_to s.id, :action => :show, :id => s.id %></a></td>
+  <tr <%if s.is_test_solver%> class="warning"<%end%>>
+    <td>
+       <%= link_to s.id, :action => :show, :id => s.id %></a>
+       <%if s.is_test_solver %> <i title="TESTOVACÍ ŘEŠITEL" class="fa fa-crosshairs"></i> <% end %></td>
     <td>
        <% if s.user %>
          <% if !s.user_email_consistent? %><span title="řešitel nemá stejný email jako jeho uživatel">!!!</span><% end %>
@@ -28,9 +30,9 @@
          NONE!!!!!!
        <% end %>
     </td>
-    <td><%= s.name %></td>
+    <td>
+        <%= s.name %></td>
     <td><%= s.last_name %></td>
-    
     <td>
       <% if s.school %>
          <% sch = s.school %>

@@ -61,8 +61,10 @@
    </thead>
    <tbody>
   <% @solvers.each do |solver| %>
-    <tr>
-      <td><%= solver.id  %></td>
+    <tr <%if solver.is_test_solver%> class="warning"<%end%>>
+      <td>
+         <%= solver.id  %>
+         <%if solver.is_test_solver %> <i title="TESTOVACÍ ŘEŠITEL" class="fa fa-crosshairs"></i> <% end %></td>
       <td><%= link_to solver.full_name, { controller: :solver, action: :show, id: solver.id }  %></td>
       <td><%= solver.school.nil? ? '-' : solver.school.short %></td>
       <% @problems.each do |pr| %>
@@ -144,6 +146,7 @@
     <b>o</b> opravené řešení;
     <span class='bg-green box'>&nbsp;</span> -- došlé řešení je obodované a pokud je elektronické, tak i nahrána oprava;
     <span class='bg-red box'>&nbsp;</span> -- obodováná nedošlá úloha, nebo neobodována došlá úloha, nebo chybí el. oprava.
+    <i title="Testovací řešitel" class="fa fa-crosshairs"></i> -- Testovací řešitel, nebude ve výsledkovách (snad)</td>
   </div>
 
 

@@ -1,5 +1,5 @@
 
-<%= form_for @solver, :url => { :action => (is_edit ? :update : :create) },  :method => :post, :html => {:class=>'form-horizontal'} do |f| %>
+<%= form_for @solver, :url => { :action => (is_edit ? :update : :create) },  :method => (is_edit ? :patch : :post), :html => {:class=>'form-horizontal'} do |f| %>
 <div class="<%= form_error_class @solver, :name, :last_name%>">
   <% if is_edit %>
           <%= f.hidden_field :id %>
@@ -178,7 +178,14 @@ Pokud škola v seznamu není, vyberte položku 'Jiná škola', a vyplňte název
   <div class="form-group">
     <div class="col-sm-offset-3 col-sm-9 <%= form_error_class @solver, :send_first %>">
      <label class="checkbox" for="send_first"> <%= check_box_tag 'send_first', '1' %>
-         Zaslat uvítací email 
+         Zaslat uvítací email
+     </label>
+    </div>
+  </div>
+  <div class="form-group">
+    <div class="col-sm-offset-3 col-sm-9 <%= form_error_class @solver, :is_test_solver %>">
+     <label class="checkbox" for="sosna_solver_is_test_solver"> <%= f.check_box :is_test_solver %>
+         Testovací uživatel (nebude ve výsledkovkách)
      </label>
     </div>
   </div>
