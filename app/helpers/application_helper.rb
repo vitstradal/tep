@@ -113,7 +113,7 @@ module ApplicationHelper
       his_uri += '/'
       cur_uri += '/'
       ret = cur_uri[0,his_uri.size] == his_uri
-      print "cur: #{cur_uri} cur_ori #{cur_ori}, his: #{his_uri}, ret: #{ret}\n"
+      #print "cur: #{cur_uri} cur_ori #{cur_ori}, his: #{his_uri}, ret: #{ret}\n"
       return ret;
   end
 end
