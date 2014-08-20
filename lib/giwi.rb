@@ -256,42 +256,6 @@ class Giwi
         raise "bad pos (#{pos})"
       end
   end
-
-#  ##### conf
-#  def self.get_repo(wiki)
-#    @@giwis ||= {}
-#    repo =  @@giwis[wiki.to_sym][:repo]
-#
-#    return repo if repo
-#
-#    puts "REPO #{wiki}(#{path}) CREATE"
-#    path= @@giwis[wiki.to_sym][:path]
-#
-#    return @@giwis[wiki.to_sym][:repo] = Grit::Repo.new(path)
-#  end
-# obsolete?
-#  def self.update_part text, part
-#    head, part, tail = _split_to_parts(text, part)
-#    return head + text + tail
-#  end
-#  def _split_to_parts text, from, to
-#    from, to = part.split(/-/,2)
-#    from = from.to_i
-#    to = to.to_i
-#
-#    from = 0 if from < 0
-#    from = parts.size if from > parts.size
-#
-#    to = from + 1 if from > to
-#    to = parts.size if from > parts.size
-#
-#    parts = text.split(/\n/);
-#    head = parts[0    ... from].join
-#    mid  = parts[from ... to].join
-#    tail = parts[to   ... parts.size].join
-#
-#    return head, part, tail
-#  end
 end
 
 class GiwiNoGit < Giwi
