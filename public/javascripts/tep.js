@@ -37,6 +37,14 @@ jQuery(document).ready(function($) {
 //					{ "sType": "numstr", "aTargets": [ 1 ] },
 			        ],
         });
+        /********************************************************
+         * fotky
+         */
+        $('.foto img').click(function (ev) {
+           ev.preventDefault();
+           $(this).closest('.fotos').find('.foto').removeClass('foto-big');
+           $(this).closest('.foto').addClass('foto-big');
+        });
         $('.fotofilter').click(function (){
             $(".fotofilter").removeClass('label-success');
             $(this).addClass('label-success');
@@ -54,6 +62,8 @@ jQuery(document).ready(function($) {
               }
             });
         });
+
+
         $('#school_id').change(function (){
                 if('jina' == $(this).val()) {
                   $('#school_div').show(400);

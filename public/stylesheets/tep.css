@@ -147,6 +147,15 @@ margin-left: 3em;
   background-color:rgba(0,0,0, 0.5);
 }
 
+.foto.foto-big img {
+  height: 720px;
+  width: 1024px;
+}
+
+.foto.foto-big {
+  clear: both;
+}
+
 .fotofilter {
   cursor: pointer;
 }
@@ -469,4 +478,5 @@ a.mailcrypt {
   padding-left: 1em;
   color: red;
 }
+
 
