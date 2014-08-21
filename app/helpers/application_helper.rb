@@ -72,7 +72,7 @@ module ApplicationHelper
     end
 
     if _my_current_page?(url)
-      print "set active#{url}\n"
+      #print "set active#{url}\n"
       li_cls.push('active')
       @_active = true
     end
@@ -86,7 +86,7 @@ module ApplicationHelper
 
   def url_for_root(user = nil)
     user ||= current_user
-    Rails::logger.fatal("user:#{pp(user)}");
+    #Rails::logger.fatal("user:#{pp(user)}");
     
     if ! user.nil?
       if user.has_role? :admin

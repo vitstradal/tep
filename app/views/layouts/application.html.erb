@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <link rel="shortcut icon" type="image/x-icon" href="<%= url_for '/images/ikonka32.ico' %>" />
+  <link rel="shortcut icon" type="image/x-icon" href="<%= asset_path 'images/ikonka32.ico' %>" />
   <!-- use the following meta to force IE use its most up to date rendering engine -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -113,7 +113,7 @@
           <%#= menu_lii wiki_main_path('onas/faq'),                'Otázky a odpovědi'   %>
         </ul>
       <% end %>
-      <%= menu_li '/onas', 'Akce', ico: 'fa-search' do %>
+      <%= menu_li '/onas', 'Akce', ico: 'fa-bomb' do %>
         <ul class="submenu">
           <%= menu_lii wiki_main_path('tabor'),        'Tábory' %>
           <%= menu_lii wiki_main_path('soustredeni'),  'Soustředění' %>
