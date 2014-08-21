@@ -76,7 +76,7 @@ class TepController < ApplicationController
   def user_finish_registration
       token = params[:token]
       @user = User.find_by_reset_password_token(token)
-      print "user:", pp(@user)
+      #print "user:", pp(@user)
   end
 
 
@@ -92,7 +92,7 @@ class TepController < ApplicationController
         user.roles.delete role
       end
       user.save
-      print pp user
+      #print pp user
     else
       print pp User.valid_roles
       print 'no role', role
