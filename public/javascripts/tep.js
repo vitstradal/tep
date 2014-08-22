@@ -190,14 +190,32 @@ jQuery(document).ready(function($) {
                         textarea.val(editor.getSession().getValue());
                 });
                 //.find('a[data-edit]').click(function () { editor_tool_button_click(this, editor); });
-                $('[data-edit]').click(function () { editor_tool_button_click(this, editor, form); });
+                $('a[data-edit]').click(function () {      editor_tool_button_click( this, editor, form); });
+                $('input[data-edit]').change(function () { editor_tool_button_switch(this, editor, form); });
+                $('input[data-edit]').each(function (i, el) { editor_tool_button_switch(el, editor, form); });
 
      });
 });
 
+
 /*************************************
  * ace-edior support functions
  */
+
+function editor_tool_button_switch(el, editor, form)
+{
+  var on = $(el).is(':checked');
+  var action = $(el).data('edit');
+  console.log("editor_tool_button_switch");
+  switch(action) {
+  case 'vi':
+     var kb = on ? 'ace/keyboard/vim' : 'ace/keyboard/textarea';
+     editor.setKeyboardHandler(kb);
+     editor.focus();
+     ace.data.set('vi', on ? 'on' : 'off' );
+     break;
+  }
+}
 
 function editor_tool_button_click(el, editor, form)
 {
