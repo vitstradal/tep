@@ -49,7 +49,7 @@ class Sosna::SolverController < SosnaController
     solver.errors.add(:souhlasim, 'Je nutno souhlasit s podmínkami') if ! agree
     solver.errors.add(:email, 'je již registrován u jiného řešitele') if Sosna::Solver.where(email: solver.email, annual: @annual).exists?
     solver.errors.add(:email, 'neexistující adresa') if !solver.email.empty? && !email_valid_mx_record?(solver.email)
-    solver.errors.add(:birth, 'jsi příliš stár') if !solver.birth.empty? && (Date.parse(solver.birth) + 17.years) < Date.today
+    solver.errors.add(:birth, 'jsi příliš stár') if solver.errors[:birth].blank? && !solver.birth.empty? && (Date.parse(solver.birth) + 17.years) < Date.today
 
     case school_id
      when 'none'
