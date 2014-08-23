@@ -1,3 +1,9 @@
+# activerecord.errors.models.user.attributes.name.blank
+# activerecord.errors.models.user.blank
+# activerecord.errors.messages.blank
+# errors.attributes.name.blank
+# errors.messages.blank
+
 cs:
   unauthorized:
    #default: "Nemáš oprávnění pro tuto stránku."
@@ -8,25 +14,28 @@ cs:
       blank: "nemůže být prázdné"
       date:   "není ve formátu: DD.MM.YYYY"
       email:  "není platný formát emailové adresy"
+      too_long: "je příliš dlouhé (max. %{count} znaků)"
 
-  fields:
+    attributes:
+      password:
+        too_short: "je příliš krátké  (min. %{count} znaků)"
+      current_password: 
+        invalid: "není správně"
+
+  attributes:
+    current_password: "Současné heslo"
+    password: "Heslo"
+    password_confirmation: "Zopakované heslo"
+    name: 'Jméno'
+    last_name: 'Příjmení'
+    email: 'E-mail'
     last_name: "příjmení"
     name: "jméno"
     num: "číslo domu"
     birth: "datum narození"
     city: "město"
-    email: "email"
     psc: "PSČ"
-    password: 'Heslo'
 
-    password_confirmation: "BUUU"
-    current_confirmation: "BEEEE"
-
-  activerecord:
-    attributes:
-      user:
-        current_password: "Součastné heslo"
-        password_confirmation: "Zopakované heslo"
 
 
   date:
