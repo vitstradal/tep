@@ -45,7 +45,7 @@ jQuery(document).ready(function($) {
         /********************************************************
          * fotky
          */
-        $('.foto img').click(function (ev) {
+        $('.xfoto img').click(function (ev) {
            ev.preventDefault();
            $(this).closest('.fotos').find('.foto').removeClass('foto-big');
            $(this).closest('.foto').addClass('foto-big');
