@@ -95,6 +95,7 @@ class GiwiController < ApplicationController
     @headings = parser.headings
     @tep_index = parser.env.nil? ? false : parser.env.at('tep_index', nil).nil? ? false : true
     @wide_display = parser.env.nil? ? false : parser.env.at('wide_display', nil).nil? ? false : true
+    @foto_gallery = parser.env.nil? ? false : parser.env.at('foto_gallery', nil).nil? ? false : true
     @redirect_to = parser.env.nil? ? nil : parser.env.at('redirect_to', nil)
     return _handle_redirect(@redirect_to) if ! @redirect_to.nil?
 

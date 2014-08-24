@@ -107,6 +107,11 @@ margin-left: 3em;
 	background-color: #ffa0a0;
 }
 
+.foto-modal img {
+  width: 400;
+  height: auto;
+}
+
 /************************
  *  math hack
  */
