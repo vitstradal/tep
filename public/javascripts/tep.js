@@ -1,6 +1,8 @@
 // Place your application-specific JavaScript functions and classes here
 // This file is automatically included by javascript_include_tag :defaults
 
+var foto_cat = '';
+
 jQuery(document).ready(function($) {
 
         $('.ace-file-input').ace_file_input()
@@ -45,10 +47,37 @@ jQuery(document).ready(function($) {
         /********************************************************
          * fotky
          */
-        $('.xfoto img').click(function (ev) {
+        $('button[data-foto-dir]').click(function (ev) {
+          var src = $(this).closest('.modal').find('img').attr('src');
+          var foto = $('a[href="'+src+'"]').closest('.foto');
+
+          var dir = $(this).data('foto-dir');
+
+          var cat = $('.fotofilter.label-success').attr('id');
+          cat = cat === null || cat == 'ff-all' ? null : '.' + cat;
+          //console.log('cat', cat);
+
+          var next =( dir ==  'next' ) ?  foto.nextAll(cat):
+                                          foto.prevAll(cat);
+          next.first().find('img').click();
+        });
+        $('.foto img').click(function (ev) {
            ev.preventDefault();
-           $(this).closest('.fotos').find('.foto').removeClass('foto-big');
-           $(this).closest('.foto').addClass('foto-big');
+           $('#myModal').modal('show')
+                        .on('hide.bs.modal', function () { set_hash(foto_cat); });
+           var bigimg = $(this).closest('a').attr('href');
+           var imgid = $(this).closest('.foto').attr('id');
+           var title = $(this).closest('.foto').find('span').text();
+           $('#myModal img').attr('src', bigimg)
+                            .css('height', '500px')
+                            .css('widht', 'auto');
+           $('#myModal a').attr('href', bigimg);
+           $('#myModal .modal-title').text(title);
+
+           var cat = $('.fotofilter.label-success').attr('id');
+           cat = cat === null || cat == 'ff-all' ? '' :  cat.substr(3);
+
+           set_hash(cat, imgid);
         });
         $('.fotofilter').click(function (){
             $(".fotofilter").removeClass('label-success');
@@ -57,6 +86,7 @@ jQuery(document).ready(function($) {
             console.log("select", id);
             if( id == 'ff-all' ) {
               $("span.foto").show();
+              set_hash('');
               return;
             }
             $("span.foto").each(function (i, el) {
@@ -66,6 +96,20 @@ jQuery(document).ready(function($) {
                 $(el).hide();
               }
             });
+            set_hash(id.substr(3));
+        });
+        $('.fotos').first().each( function () {
+           var hash = get_hash();
+           var filter = hash[0];
+           var imgid = hash[1];
+           console.log("hash:", filter, imgid);
+           if( filter && filter != '' ) {
+             console.log("click:", '#ff-' + filter);
+             $('#ff-' +  filter ).click();
+           }
+           if( imgid )  {
+              $('[id="' + imgid + '"]').find('img').click();
+           }
         });
 
 
@@ -197,6 +241,19 @@ jQuery(document).ready(function($) {
      });
 });
 
+/* f otogal */
+function set_hash(cat, img)
+{
+   foto_cat = cat;
+   window.location.hash = (cat || '') + ( img ?  ':' + img : '');
+}
+
+
+function get_hash()
+{
+   var hash = window.location.hash.substr(1).split(':');
+   return hash; 
+}
 
 /*************************************
  * ace-edior support functions

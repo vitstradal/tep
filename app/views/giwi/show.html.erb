@@ -119,6 +119,27 @@
   <%else%>
     <pre><%=@text%></pre>
   <%end%>
+
+  <% if @foto_gallery %>
+        <div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+              <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal"><span aria-hidden="true">&times;</span><span class="sr-only">Close</span></button>
+                <button type="button" class="close" data-foto-dir="next"><span aria-hidden="true">&gt;</span><span class="sr-only">Left</span></button>
+                <button type="button" class="close" data-foto-dir="prev"><span aria-hidden="true">&lt;</span><span class="sr-only">Right</span></button>
+                <h4 class="modal-title" id="myModalLabel">Modal title</h4>
+              </div>
+              <div class="modal-body foto-modal">
+                <a href="#">
+                  <img id='foto-gallery-view' src="xxx.jpg"/>
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+  <% end %>
+
 <%end%>
 
 
