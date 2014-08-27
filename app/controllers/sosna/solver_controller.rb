@@ -6,6 +6,7 @@ class Sosna::SolverController < SosnaController
 
   def index
     load_config
+    @annual = params[:annual] || @annual
     @solvers = get_sorted_solvers(@annual)
   end
 
