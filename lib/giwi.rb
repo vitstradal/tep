@@ -1,5 +1,6 @@
 # encoding: utf-8
-require 'grit'
+#require 'grit'
+require 'rugged'
 require 'pp'
 require 'diff3'
 
@@ -32,10 +33,10 @@ class Giwi
     config.each do |wiki, opts|
       wiki = wiki.to_sym
       if opts["nogit"]
-        print "giki setup: #{wiki} (GiwiNoGit)\n";
+        #print "giki setup: #{wiki} (GiwiNoGit)\n";
         @@giwis[wiki] = GiwiNoGit.new(wiki, opts)
       else
-        print "giki setup: #{wiki} (Giwi)\n";
+        #print "giki setup: #{wiki} (Giwi)\n";
         @@giwis[wiki] = Giwi.new(wiki, opts)
       end
     end
@@ -59,7 +60,8 @@ class Giwi
     @ext = ''
     options.each_pair {|k,v| send("#{k}=", v) }
     @name = wiki_name.to_sym
-    @repo = Grit::Repo.new(@path, is_bare: @bare) if ! @nogit
+    #@repo = Grit::Repo.new(@path, is_bare: @bare) if ! @nogit
+    @repo = Rugged::Repository.new(@path) if ! @nogit
   end
 
   # public methods (api)
@@ -70,61 +72,62 @@ class Giwi
   # path/index.wiki
   def get_page(path, raw = false)
 
-    #head = @repo.commits.first
-    #tree = head.tree @branch
+    blob = _get_path_obj(path)
 
-    tree = @repo.tree @branch
-    blob = tree / path
+    return nil if blob.nil? || blob.type != :blob
 
-    return nil if ! blob.is_a? Grit::Blob
+    text = blob.content
+    text = text.force_encoding('utf-8').encode
 
-    text = blob.data.force_encoding('utf-8').encode
-    return [ text, blob.id]
+    return [ text, blob.oid]
   end
 
 
   # r: [ files, -- files in path dir
   #      dirs,  -- dirs in path dir
   #      path, -- normalized path
-  #    ] 
+  #    ]
   def get_ls(path)
-    #repo = @repo
-    #head = repo.commits.first
-    #tree = head.tree @branch
-
-    tree = @repo.tree @branch
-
-    #strip trailing /
-    path.sub! /[\/]*$/, ''
 
     # find dir
     while !path.empty?
-      tdir = tree / path
-      break if tdir.is_a?(Grit::Tree)
+      #print "B1#{path}\n"
+      tdir_h = _get_path_obj_h(path)
+      #print "B2\n"
+      break if !tdir_h.nil? && tdir_h[:type] == :tree
       # strip last conponent to /
       path.sub! /(^|\/)[^\/]*$/, ''
     end
 
     if path.empty?
-      tdir = tree
+      #print "B22\n"
+      tdir = _get_path_obj('')
+      #print "B23#{pp(tdir)}\n"
     else
+      #print "B23#{pp(tdir_h)}\n"
+      tdir = @repo.lookup tdir_h[:oid]
       path += '/'
     end
-    print "path:", path, "\n"
-    print "tdir:", tdir, "\n"
 
-    files = tdir.blobs.map do |b|
-            { path: "#{path}#{b.name}", name: b.name, siz: b.size }
+    print "B3 #{path}\n"
+
+    files = []
+    dirs = []
+
+    tdir.each_blob do |b|
+            pp b
+            files.push({ path: "#{path}#{b[:name]}", name: b[:name], siz: 0 })
     end
-    dirs = tdir.trees.map do |t|
-            { path: "#{path}#{t.name}", name: t.name}
+    tdir.each_tree do |t|
+            dirs.push({ path: "#{path}#{t[:name]}", name: t[:name]})
     end
+
     if !path.empty?
       dirs.push( { path: path.sub(/(^|\/)[^\/]*\/$/, ''),
                    name: '..'} )
     end
-
-    [files, dirs, path]
+    pp [files, dirs, path]
+    return [files, dirs, path]
   end
 
   def file?(path)
@@ -138,43 +141,31 @@ class Giwi
     return st[:isdir]
   end
   def stat(path)
-    #head = @repo.commits.first
-    #tree = head.tree @branch
-    tree = @repo.tree @branch
-    blob = tree / path
-    return nil if  blob.nil?
-    return { :isdir => blob.is_a?(Grit::Tree) }
+    obj = _get_path_obj path
+    return nil if  obj.nil?
+    return { :isdir => obj.type == :tree}
   end
 
   # text_id aka version
   # if text is only part of file, sline, eline specifies which part (lines from sline to eline (including))
-  def set_page(path, text, commit_id, email = 'unknown', pos=nil)
-
-    cur_head = @repo.commits(@branch, 1).first
-
-    #print "commit_id: #{commit_id}\n"
-    #text_head = @repo.commit(commit_id)
-    #cur_head = @repo.commits.first
-    #cur_tree = cur_head.tree @branch
-
-    cur_tree = @repo.tree @branch
+  def set_page(path, text, oid, email = 'unknown', pos=nil)
 
     status = SETPAGE_OK
 
-    if commit_id != ''
-      # not new file
-      #text_tree =  @repo.tree commit_id
-      #text_blob = text_tree / path
-      text_blob = @repo.blob commit_id
-      raise "no path #{path}" if ! text_blob.is_a? Grit::Blob
-      cur_blob  = cur_tree / path
-      text_blob_data = text_blob.data.force_encoding('utf-8')
+    if oid != ''
+
+      cur_blob_h  = _get_path_obj_h(path)
+
+      text_blob = @repo.lookup oid
+      raise "no path #{path}" if text_blob.type != :blob
+
+      text_blob_data = text_blob.content.force_encoding('utf-8')
 
       if ! pos.nil?
         text = _patch_part(text, text_blob_data, pos)
       end
 
-      if cur_blob.id != text_blob.id
+      if cur_blob_h[:oid] != text_blob.oid
         # collision: try append diff
         status = SETPAGE_MERGE_OK
         lmine = 'me'
@@ -191,16 +182,21 @@ class Giwi
           when Diff3::MERGE_FAIL
            # total fall back (never happens)
            status = SETPAGE_MERGE_DIFF
-           diff = Grit::Commit.diff(@repo, text_blob.id, cur_blob.id).map {|d| d.diff}.join
+           diff = "FÜX:ME"
+           # diff Grit::Commit.diff(@repo, text_blob.id, cur_blob.id).map {|d| d.diff}.join #FIXME
            newtext = text + "\n= Collision =\n{{{\n#{diff}\n}}}\n"
         end
         text = newtext
       end
     end
 
-    index = Grit::Index.new(@repo)
-    index.read_tree(cur_tree.id)
-    index.add(path, text)
+    index = @repo.index
+    text_oid = @repo.write(text, :blob);
+    cur_tree = _get_cur_tree
+    #pp("repo.head.target.tree",repo.head.target.tree )
+    index.read_tree(cur_tree)
+    #index.read_tree(repo.head.target.tree )
+    index.add(:path => path, :oid => text_oid, :mode  => 0100644 )
 
     if path =~ /\.(wiki|txt)$/
       fstline = text.each_line.first.chomp.strip
@@ -210,16 +206,119 @@ class Giwi
     end
     comment = comment.force_encoding('ASCII-8BIT')
 
-    actor = Grit::Actor.from_string(email)
-    actor_str = actor.to_s.force_encoding('ASCII-8BIT')
-
-    Rails::logger.fatal("comment:#{comment} actor:#{actor_str}, cur_head #{cur_head} branch#{@branch}")
-    index.commit(comment,  parents: [cur_head], actor: actor, last_tree: cur_head, head: @branch)
+    options = {
+        :tree => index.write_tree(@repo),
+        :autor =>  { :email => email,
+                     :time  => Time.now,
+                   },
+        :message => comment,
+        :parents => [ repo.head.target ].compact,
+        :update_ref => 'HEAD',
+    }
+    Rugged::Commit.create(@repo, options)
+    #Rails::logger.fatal("options:#{pp(options)}");
     return status
+
+#    cur_head = @repo.commits(@branch, 1).first
+#
+#    cur_tree = @repo.tree @branch
+#
+#    status = SETPAGE_OK
+#
+#    if commit_id != ''
+#      # not new file
+#      #text_tree =  @repo.tree commit_id
+#      #text_blob = text_tree / path
+#      text_blob = @repo.blob commit_id
+#      raise "no path #{path}" if ! text_blob.is_a? Grit::Blob #FIXME
+#      cur_blob  = cur_tree / path
+#      text_blob_data = text_blob.data.force_encoding('utf-8')
+#
+#      if ! pos.nil?
+#        text = _patch_part(text, text_blob_data, pos)
+#      end
+#
+#      if cur_blob.id != text_blob.id
+#        # collision: try append diff
+#        status = SETPAGE_MERGE_OK
+#        lmine = 'me'
+#        lorig = 'original'
+#        lyour = 'your-concurent-editor'
+#        newtext, diff3_status = Diff3.diff3(lmine, text,
+#                                            lorig, text_blob_data,
+#                                            lyour, cur_blob.data.force_encoding('utf-8'))
+#
+#        case diff3_status
+#          when Diff3::MERGE_COLLISONS
+#           status = SETPAGE_MERGE_COLLISONS
+#
+#          when Diff3::MERGE_FAIL
+#           # total fall back (never happens)
+#           status = SETPAGE_MERGE_DIFF
+#           diff = Grit::Commit.diff(@repo, text_blob.id, cur_blob.id).map {|d| d.diff}.join #FIXME
+#           newtext = text + "\n= Collision =\n{{{\n#{diff}\n}}}\n"
+#        end
+#        text = newtext
+#      end
+#    end
+#
+#    index = Grit::Index.new(@repo) #FIXME
+#    index.read_tree(cur_tree.id)
+#    index.add(path, text)
+#
+#    if path =~ /\.(wiki|txt)$/
+#      fstline = text.each_line.first.chomp.strip
+#      comment = "file: #{path} head: #{fstline}"
+#    else
+#      comment = "file: #{path}"
+#    end
+#    comment = comment.force_encoding('ASCII-8BIT')
+#
+#    actor = Grit::Actor.from_string(email) #FIXME
+#    actor_str = actor.to_s.force_encoding('ASCII-8BIT')
+#
+#    Rails::logger.fatal("comment:#{comment} actor:#{actor_str}, cur_head #{cur_head} branch#{@branch}")
+#    index.commit(comment,  parents: [cur_head], actor: actor, last_tree: cur_head, head: @branch)
+#    return status
   end
 
   private
 
+  def _get_cur_tree
+
+    branch = @repo.branches[@branch]
+    return nil if branch.nil?
+
+    return branch.target.tree
+
+  end
+
+  def _get_path_obj_h(path = '')
+    #print "A1#{path}\n";
+
+    tree = _get_cur_tree
+    return nil if tree.nil?
+
+    # FIXME
+    return {:oid => tree.oid, :type => :tree } if path.empty?
+
+    begin
+      obj_h = tree.path(path)
+    rescue
+      obj_h = nil
+    end
+    return obj_h
+  end
+
+  def _get_path_obj(path)
+
+    obj_h = _get_path_obj_h(path)
+    return nil if obj_h.nil?
+    #print "obj.oid:#{obj_h[:oid]}\n"
+
+    obj = repo.lookup obj_h[:oid]
+    return obj
+  end
 
 
   # in +text_orig+ replace place defined by +pos+  with text +part+
@@ -261,7 +360,7 @@ end
 class GiwiNoGit < Giwi
   def stat(path)
     path_fs = File.join(@path, path)
-    print "fs: #{path_fs}\n"
+    #print "fs: #{path_fs}\n"
     return nil if ! File.exists?(path_fs)
     st = File.stat(path_fs)
     return nil if st.nil?
