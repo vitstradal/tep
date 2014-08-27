@@ -55,8 +55,8 @@
 <span class="icon-bar"></span>
 </button>
 
-     <div class="navbar-header">
-        <div class="tep-navbar-brand" >
+     <div class="navbar-header pull-left">
+        <div class="tep-navbar-brand hidden-xs" >
           <a href="<%=url_for_root%>" class="navbar-brand " >
 	     <img src="<%= asset_path '/images/logo-vw290.png'%>" width="290px"/> 
 	  </a>
@@ -103,9 +103,11 @@
 <%################################################################################## %>
 
 <div class="main-container <%if !@wide_display%>container<%end%> <% if @tep_index %>tep-index<% end %>" id="main-container">
-  <% if ! @no_sidebar %>
+  <%# if ! @no_sidebar %>
+  <% if  true %>
   <div class="sidebar responsive
-        <%if @wide_display%>menu-min<%end%>"
+        <%if @wide_display%>menu-min<%end%>
+        <%if @no_sidebar %>hide<%end%>"
         id="sidebar">
     <ul class="nav nav-list">
       <%= menu_li '/onas', 'O Pikomatu', ico: 'fa-square' do %>
@@ -326,6 +328,11 @@
 
 
 <script type="text/javascript"> ace.vars['base'] = '/ace'; </script>
+<script type="text/javascript"> 
+   $('#menu-toggler').click( function () {
+      $('.sidebar').removeClass('hide');
+   });
+</script>
 
 <%= javascript_include_tag '/ace/js/ace-elements.min.js' %>
 <%= javascript_include_tag '/ace/js/ace.min.js' %>
