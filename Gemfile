@@ -2,6 +2,7 @@ source 'http://rubygems.org'
 
 gem 'activerecord-session_store'
 gem 'rails'
+gem 'rugged'
 #gem 'rails-i18n'
 gem 'devise', '~> 3.1.1'
 gem 'devise-i18n'
