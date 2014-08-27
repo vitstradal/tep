@@ -83,7 +83,7 @@ jQuery(document).ready(function($) {
             $(".fotofilter").removeClass('label-success');
             $(this).addClass('label-success');
             var id = $(this).attr('id');
-            console.log("select", id);
+            //console.log("select", id);
             if( id == 'ff-all' ) {
               $("span.foto").show();
               set_hash('');
@@ -102,9 +102,9 @@ jQuery(document).ready(function($) {
            var hash = get_hash();
            var filter = hash[0];
            var imgid = hash[1];
-           console.log("hash:", filter, imgid);
+           //console.log("hash:", filter, imgid);
            if( filter && filter != '' ) {
-             console.log("click:", '#ff-' + filter);
+             //console.log("click:", '#ff-' + filter);
              $('#ff-' +  filter ).click();
            }
            if( imgid )  {
@@ -205,9 +205,6 @@ jQuery(document).ready(function($) {
                 var editor = ace.edit(editDiv[0]);
                 editor.renderer.setShowGutter(false);
                 editor.getSession().setValue(textarea.val());
-                var o = editor.getSession().getValue();
-                var t = textarea.val();
-                console.log("i.len", t.length, t.substr(-10), "o.len", o.length, o.substr(-10));
                 editor.getSession().setMode("ace/mode/" + mode);
                 editor.getSession().setUseWrapMode(true);
 
@@ -219,6 +216,7 @@ jQuery(document).ready(function($) {
                 //editor.renderer.setShowInvisibles(true);
 
                 var form = textarea.closest('form');
+
                 editor.commands.bindKeys({
                                 'ctrl-b':       function () { editor_tool_action('bold', editor, form ); },
                                 'ctrl-i':       function () { editor_tool_action('italic', editor, form ); },
@@ -232,11 +230,19 @@ jQuery(document).ready(function($) {
                                 'ctrl-r':null,
                               })
 
+                var pos_str = form.find('input[name=cursor]').val();
+                if( pos_str ) {
+                   var pos = pos_str.split(/:/);
+                   console.log('cursor', pos);
+                   editor.moveCursorTo(pos[0], pos[1]);
+                 }
+
                 // copy back to textarea on form submit...
                 form.submit(function () {
                         var oo = editor.getSession().getValue();
-                        console.log("oo.len:", oo.length, oo.substr(-10));
+                        //console.log("oo.len:", oo.length, oo.substr(-10));
                         textarea.val(editor.getSession().getValue());
+                        //save_cursor(editor, form);
                 });
                 //.find('a[data-edit]').click(function () { editor_tool_button_click(this, editor); });
                 $('a[data-edit]').click(function () {      editor_tool_button_click( this, editor, form); });
@@ -261,14 +267,14 @@ function get_hash()
 }
 
 /*************************************
- * ace-edior support functions
+ * ace-editor support functions
  */
 
 function editor_tool_button_switch(el, editor, form)
 {
   var on = $(el).is(':checked');
   var action = $(el).data('edit');
-  console.log("editor_tool_button_switch");
+  //console.log("editor_tool_button_switch");
   switch(action) {
   case 'vi':
      var kb = on ? 'ace/keyboard/vim' : 'ace/keyboard/textarea';
@@ -347,9 +353,15 @@ function editor_save(editor, form, stay)
 {
   if( stay) {
     $(form).find('[name=edit]').val('1');
-    //console.log('save stay', $(form).find('[name=edit]').val());
+    save_cursor(editor, form);
   }
   form.submit();
+}
+
+function save_cursor(editor,form) {
+  var pos = editor.getCursorPosition();
+  //console.log("save_cursor", pos);
+  $(form).find('input[name=cursor]').val(pos.row + ":" + (pos.column ||0));
 }
 
 function editor_show_url(editor, url)

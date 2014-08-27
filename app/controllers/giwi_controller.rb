@@ -29,6 +29,7 @@ class GiwiController < ApplicationController
   def show
     @wiki = params[:wiki] || 'main'
     @giwi = Giwi.get_giwi(@wiki)
+    @cursor = params[:cursor]
     auth_name = @giwi.auth_name
 
     authorize! :show, auth_name
@@ -150,7 +151,7 @@ class GiwiController < ApplicationController
 
     edit = (params[:edit]||'') == '' ? nil : params[:part] || 'me' 
 
-    redirect_to action: :show, wiki: @wiki, path: @path, edit: edit
+    redirect_to action: :show, cursor: params[:cursor], wiki: @wiki, path: @path, edit: edit
   end
 
   private
