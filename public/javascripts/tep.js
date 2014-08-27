@@ -205,6 +205,9 @@ jQuery(document).ready(function($) {
                 var editor = ace.edit(editDiv[0]);
                 editor.renderer.setShowGutter(false);
                 editor.getSession().setValue(textarea.val());
+                var o = editor.getSession().getValue();
+                var t = textarea.val();
+                console.log("i.len", t.length, t.substr(-10), "o.len", o.length, o.substr(-10));
                 editor.getSession().setMode("ace/mode/" + mode);
                 editor.getSession().setUseWrapMode(true);
 
@@ -215,7 +218,7 @@ jQuery(document).ready(function($) {
                 editor.renderer.setShowGutter(true);
                 //editor.renderer.setShowInvisibles(true);
 
-                var form = textarea.closest('form'); 
+                var form = textarea.closest('form');
                 editor.commands.bindKeys({
                                 'ctrl-b':       function () { editor_tool_action('bold', editor, form ); },
                                 'ctrl-i':       function () { editor_tool_action('italic', editor, form ); },
@@ -231,6 +234,8 @@ jQuery(document).ready(function($) {
 
                 // copy back to textarea on form submit...
                 form.submit(function () {
+                        var oo = editor.getSession().getValue();
+                        console.log("oo.len:", oo.length, oo.substr(-10));
                         textarea.val(editor.getSession().getValue());
                 });
                 //.find('a[data-edit]').click(function () { editor_tool_button_click(this, editor); });

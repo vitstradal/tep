@@ -154,7 +154,7 @@ class Giwi
 
     if oid != ''
 
-      cur_blob_h  = _get_path_obj_h(path)
+      cur_blob  = _get_path_obj(path)
 
       text_blob = @repo.lookup oid
       raise "no path #{path}" if text_blob.type != :blob
@@ -165,16 +165,20 @@ class Giwi
         text = _patch_part(text, text_blob_data, pos)
       end
 
-      if cur_blob_h[:oid] != text_blob.oid
+      if cur_blob.oid != text_blob.oid
         # collision: try append diff
         status = SETPAGE_MERGE_OK
         lmine = 'me'
         lorig = 'original'
         lyour = 'your-concurent-editor'
+
+        cur_blob_data = cur_blob.content.force_encoding('utf-8')
+
+        #print "cb:#{cur_blob_data.sub(/[\n\r]/s, '-')}, text:#{text_blob_data.sub(/[\n\r]/s, '-')}\n"
+
         newtext, diff3_status = Diff3.diff3(lmine, text,
                                             lorig, text_blob_data,
-                                            lyour, cur_blob.data.force_encoding('utf-8'))
-
+                                            lyour, cur_blob_data)
         case diff3_status
           when Diff3::MERGE_COLLISONS
            status = SETPAGE_MERGE_COLLISONS
