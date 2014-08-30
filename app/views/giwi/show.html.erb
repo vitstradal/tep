@@ -9,6 +9,7 @@
    <%= form_tag({:path =>  @path}, {id: 'edit-form'})  do %>
     <%= hidden_field_tag 'version', @version %>
     <%= hidden_field_tag 'edit', '' %>
+    <%= hidden_field_tag 'cursor', @cursor %>
     <% if @part %>
       <%= hidden_field_tag 'part', @part %>
       <%= hidden_field_tag 'pos', @pos %>

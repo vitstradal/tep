@@ -29,6 +29,7 @@ class GiwiController < ApplicationController
   def show
     @wiki = params[:wiki] || 'main'
     @giwi = Giwi.get_giwi(@wiki)
+    @cursor = params[:cursor]
     auth_name = @giwi.auth_name
 
     authorize! :show, auth_name
@@ -131,7 +132,7 @@ class GiwiController < ApplicationController
     return _handle_file_upload(data, "#{@path}.#{fmt}", nil, false) if data
     return _handle_file_upload(file.read, filename, file.original_filename ) if file
 
-    text = params[:text_inline] || params[:text] + "\n"
+    text = params[:text_inline] || params[:text]
 
     email = current_user.full_email
     status = @giwi.set_page(@path + @giwi.ext, text, version, email, pos)
@@ -140,7 +141,7 @@ class GiwiController < ApplicationController
       if status ==  Giwi::SETPAGE_MERGE_OK
          add_alert "Pozor: při editaci nastala kolize, ale podařilo se jí automaticky vyřešit"
       elsif status ==  Giwi::SETPAGE_MERGE_COLLISONS
-         add_alert "Pozor: při editaci nastala kolize, kolize je vyznačena v textu, editací uveďte soubor do rozumného stavu"
+         add_alert "Pozor: při editaci nastala kolize, kolize je vyznačena v textu, editací uveď soubor do rozumného stavu"
       elsif status ==  Giwi::SETPAGE_MERGE_DIFF
          add_alert "Pozor: při editaci nastala kolize, rozdíl verzí byl připojen na konec souboru"
       else
@@ -150,7 +151,7 @@ class GiwiController < ApplicationController
 
     edit = (params[:edit]||'') == '' ? nil : params[:part] || 'me' 
 
-    redirect_to action: :show, wiki: @wiki, path: @path, edit: edit
+    redirect_to action: :show, cursor: params[:cursor], wiki: @wiki, path: @path, edit: edit
   end
 
   private
