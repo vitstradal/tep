@@ -1,25 +1,34 @@
 %id;Příjmení;Jméno;Škola;Datum;<% @problems.each do |pr| %>u<%=pr.problem_no%>;<% end %><% @problems.each do |pr| %>B<%=pr.problem_no%>;<% end %>Pen;Reason
-<% @solvers.each do |solver| 
-  %><%= solver.id 
-  %>;<%= solver.last_name
-  %>;<%= solver.name
-  %>;<%= solver.school.nil? ? '' : solver.school.short
-  %>;;<% @problems.each do |pr| 
-   %><% sol_arr = @solutions_by_solver[solver.id]  
-   %><% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  
-   %><% if sol.filename
-         %>E<%
-        end 
-   %><% if sol.has_paper_mail
-         %>P<%
-        end 
-   %>;<%
- end %><% @problems.each do |pr| 
-   %><% sol_arr = @solutions_by_solver[solver.id]  
-   %><% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  
-   %><% if sol.score
-         %><%=sol.score%><%
-        end 
-   %>;<%
- end %><% pen = @penalisations_by_solver[solver.id]  %><%= pen.score || '' %>;<%= pen.title||'' %>
-<% end %>
+<% @solvers.each do |solver|  %><%=
+   pen = @penalisations_by_solver[solver.id]
+   by = @problems.map do |pr| 
+         sol_arr = @solutions_by_solver[solver.id]  
+         sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  
+         res = ''
+         res += 'E' if sol.filename
+         res += 'P' if sol.has_paper_mail
+         res
+   end.join
+
+   body = @problems.map do |pr| 
+                sol_arr = @solutions_by_solver[solver.id]  
+                sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  
+                if sol.score.nil? || sol.score == ''
+                  '-'
+                else 
+                   sol.score
+                end 
+   end.join(';')
+
+  #id   pr jm sch by body pen+reason
+  "%03i;%s;%s;%s;;%s;%s;%s;%s\n" % [
+                        solver.id,
+                        solver.last_name,
+                        solver.name,
+                        solver.school.nil? ? '' : solver.school.short,
+                        by,
+                        body,
+                        pen.score,
+                        pen.title,
+                      ]
+%><% end %>
