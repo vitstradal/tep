@@ -1,0 +1,31 @@
+% id; příjmení; jméno; ročník; třída; flagy; dat. nar.; ulice,psč,město,stát; škola; mail
+% flagy: s/k - posílat domů / do školy;
+%        f/m - pohlaví;
+%        0-9 - kolik let už řešil Pikomat;
+%        -/! - máme všechny údaje / něco chybí;
+%        -/! - má / nemá souhlas se zpracováním;
+<% @solvers.map do |solver|  %><%=
+    flagy = [
+            solver.is_test_solver ?  'T' : solver.where_to_send == 'home' ? 's' : 'k',
+            solver.sex == 'male' ? 'm' : 'f',
+            '?',
+            '-', # ma vse
+            '-', # souhlas se zpracovanim
+    ].join
+  
+    #id   Pr;Jm;ro;ro;fl;br;ul;me;psc;sch;mail
+    "%03i;%s;%s;%s;%s;%s;%s;%s;%s;%05s;%s;%s\n" % [
+      solver.id,
+      solver.last_name,
+      solver.name,
+      solver.grade_num,
+      solver.grade,
+      flagy,
+      solver.birth,
+      "#{solver.street} #{solver.num}",
+      solver.psc,
+      solver.city,
+      solver.school.short,
+      solver.email,
+    ]
+%><% end %>
