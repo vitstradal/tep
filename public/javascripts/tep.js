@@ -63,10 +63,15 @@ jQuery(document).ready(function($) {
         });
         $('.foto img').click(function (ev) {
            ev.preventDefault();
+           var foto = $(this).closest('.foto');
+           var imgid = foto.attr('id');
            $('#myModal').modal('show')
-                        .on('hide.bs.modal', function () { set_hash(foto_cat); });
+                        .on('hide.bs.modal', function () {
+                                                       set_hash(foto_cat);
+                                                       //console.log("top", foto.offset().top );
+                                                       //$('body').scrollTop( foto.offset().top );
+                                               });
            var bigimg = $(this).closest('a').attr('href');
-           var imgid = $(this).closest('.foto').attr('id');
            var title = $(this).closest('.foto').find('span').text();
            $('#myModal img').attr('src', bigimg)
                             .css('height', '500px')

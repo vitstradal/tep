@@ -109,8 +109,6 @@ class Giwi
       path += '/'
     end
 
-    print "B3 #{path}\n"
-
     files = []
     dirs = []
 
@@ -216,11 +214,12 @@ class Giwi
                      :time  => Time.now,
                    },
         :message => comment,
-        :parents => [ repo.head.target ].compact,
-        :update_ref => 'HEAD',
+        :parents => [ _get_cur_target ].compact,
+        :update_ref => 'refs/heads/' + @branch,
     }
+        #:parents => [ repo.head.target ].compact,
     Rugged::Commit.create(@repo, options)
-    #Rails::logger.fatal("options:#{pp(options)}");
+    Rails::logger.fatal("options:#{pp(options)}");
     return status
 
 #    cur_head = @repo.commits(@branch, 1).first
@@ -287,6 +286,13 @@ class Giwi
   end
 
   private
+
+  def _get_cur_target
+    branch = @repo.branches[@branch]
+    return nil if branch.nil?
+    return branch.target
+
+  end
 
   def _get_cur_tree
 

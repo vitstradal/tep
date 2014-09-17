@@ -81,7 +81,6 @@ class GiwiController < ApplicationController
     end
     @path = path_ext
 
-
     parser = _get_parser
     parser.env.atput('csrf', form_authenticity_token.to_s)
     parser.env.atput('page_version', @version)
