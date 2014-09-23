@@ -8,6 +8,13 @@ class Sosna::SolverController < SosnaController
     load_config
     @annual = params[:annual] || @annual
     @solvers = get_sorted_solvers(@annual)
+    respond_to do |format|
+      format.html
+      format.pik do
+         headers['Content-Disposition'] = "attachment; filename=lidi-roc#{@annual}.pik"
+         headers['Content-Type'] = "text/plain; charset=UTF-8";
+      end
+    end
   end
 
   def delete

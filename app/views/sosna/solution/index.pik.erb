@@ -1,22 +1,21 @@
 %id;Příjmení Jméno               ;Ro;;<% @problems.each do |pr| %><%=pr.problem_no%><% end %>
-<% @solvers.each do |solver| 
-  %><%= '%03i' % solver.id
-  %>;<%='%-29s' % "#{solver.last_name} #{solver.name}"
-  %>;<%= '%-2s' % solver.grade_num
-  %>;;<% @problems.each do |pr| 
-   %><% sol_arr = @solutions_by_solver[solver.id]  
-   %><% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  
-   %><% if sol.score.nil? || sol.score == ''
-          %>-<%
-        else 
-          %><%= sol.score%><%
-        end 
-   %><%
- end %><%
- %><% pen = @penalisations_by_solver[solver.id]
- %><% if pen.score.nil? || pen.score == ''
-          %>-<%
-      else
-          %><%= pen.score%><%
-      end  %>
-<% end %>
+<% @solvers.each do |solver|  %><%=
+   pen = @penalisations_by_solver[solver.id]
+   body = @problems.map do |pr| 
+                sol_arr = @solutions_by_solver[solver.id]  
+                sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  
+                if sol.score.nil? || sol.score == ''
+                  '-'
+                else 
+                   sol.score
+                end 
+   end.join
+
+   #%id;PříJm;Grad;body pen
+  "%03i;%-29s;%-2s;%s%s\n" % [ solver.id,
+                               "#{solver.last_name} #{solver.name}",
+                               solver.grade_num,
+                               body,
+                               pen
+                             ]
+%><% end %>

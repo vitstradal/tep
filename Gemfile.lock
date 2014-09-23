@@ -1,14 +1,4 @@
 GIT
-  remote: https://github.com/gitlabhq/grit.git
-  revision: 42297cdcee16284d2e4eff23d41377f52fc28b9d
-  ref: 42297cdcee16284d2e4eff23d41377f52fc28b9d
-  specs:
-    grit (2.5.0)
-      diff-lcs (~> 1.1)
-      mime-types (~> 1.15)
-      posix-spawn (~> 0.3.6)
-
-GIT
   remote: https://github.com/k3rni/ffi-locale.git
   revision: 0803965fac68b8bc949195fc33069b2342c842a3
   specs:
@@ -66,7 +56,6 @@ GEM
     devise-encryptable (0.2.0)
       devise (>= 2.1.0)
     devise-i18n (0.11.0)
-    diff-lcs (1.2.5)
     erubis (2.7.0)
     ffi (1.9.3)
     hashery (2.1.1)
@@ -160,9 +149,9 @@ DEPENDENCIES
   devise-encryptable
   devise-i18n
   ffi-locale (~> 0.1.2)!
-  grit (~> 2.5.0)!
   iconv
   magick_title (>= 0.2.0)
+  posix-spawn
   prawn (~> 0.13.2)
   rails
   role_model
