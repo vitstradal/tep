@@ -1,0 +1,26 @@
+%Id;Přijmení       ;Jméno          ;Roč;Roč     ;Flags;Naroz     ;Adresa;Škola;email;Kam;Jak;Sex
+<% @solvers.each do |solver| 
+  %><%= '%03i' % solver.id
+  %>;<%='%-15s' % "#{solver.last_name}"
+  %>;<%='%-15s' % "#{solver.name}"
+  %>;<%= '%3s' % solver.grade_num
+  %>;<%= '%-8s' % solver.grade
+  %>;<%= '%s%s---' % [ solver.where_to_send == 'home' ? 's' :'k',  solver.sex == 'male' ? 'm' : 'f']
+  %>;<%= '%10s' % solver.birth
+  %>;<%= '%s' % solver.address
+  %>;<%= '%-4s' % solver.school.short
+  %>;<%= '%s' % solver.email
+  %>;<%= '%s' % solver.where_to_send
+  %>;<%= '%s' % solver.solution_form
+  %>;<%= '%s' % solver.sex
+%>
+<%end %>
+<%# 343;Adámková;Klárka;8;R3.A;sf0--;25.4.2000;Vinohradská 75,120 00,Praha 2,;GJKP;xadak01@gjk.cz
+  # % flagy: s/k - pos�lat dom� / do �koly;
+  # %        f/m - pohlav�;
+  # %        0-9 - kolik let u� �e�il Pikomat;
+  # %        -/! - m�me v�echny �daje / n�co chyb�;
+  # %        -/! - m� / nem� souhlas se zpracov�n�m;
+  %>
+
+
