@@ -90,6 +90,7 @@ class Giwi
   def get_ls(path)
 
     # find dir
+    path ||= ''
     while !path.empty?
       #print "B1#{path}\n"
       tdir_h = _get_path_obj_h(path)
