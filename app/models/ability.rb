@@ -62,6 +62,7 @@ class Ability
       can :index, Sosna::Solver
       can :show, Sosna::Solver
       can :update, Sosna::Solver
+      can :labels, Sosna::Solver
 
       can :index, Sosna::School
       can :show, Sosna::School

@@ -17,6 +17,11 @@ class Sosna::SolverController < SosnaController
     end
   end
 
+  def labels
+    @solvers = get_sorted_solvers(@annual)
+    render :formats => [:pdf]
+  end
+
   def delete
      id = params[:id]
      u = Sosna::Solver.find(id)
