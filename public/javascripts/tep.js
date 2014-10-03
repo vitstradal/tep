@@ -185,7 +185,7 @@ jQuery(document).ready(function($) {
       // https://gist.github.com/duncansmart/5267653
       // turn textarea into ace-ecitor
       init_icons();
-      $('textarea').each(function () {
+      $('textarea.aceeditor').each(function () {
                 var textarea = $(this);
 
                 //var mode = textarea.data('editor');

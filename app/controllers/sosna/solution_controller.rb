@@ -4,6 +4,8 @@ require 'fileutils'
 #require 'rubygems'
 require 'zip'
 require 'tempfile'
+require 'prawn'
+require 'prawn/templates'
 
 class Sosna::SolutionController < SosnaController
 
