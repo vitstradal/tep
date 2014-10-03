@@ -1,0 +1,21 @@
+
+<%= form_tag sosna_solver_labels_path(:format => :pdf), :method => :get do %>
+
+  <div class="form-group">
+    <%= text_area_tag 'opt', "l:10\nt:10\nw:50\nh:30\ndx:3\ndy:3\ns:10", cols: 80, rows: 10 %>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-9">
+     <label class="checkbox" for="dbg">
+       <%= check_box_tag 'dbg', '1', false %> Rámečky a zaměřovací kříže 
+     </label>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <div class="col-sm-9">
+      <%= submit_tag 'Generuj labels.pdf', :class=>'btn btn-primary' %>
+    </div>
+  </div>
+<% end %>

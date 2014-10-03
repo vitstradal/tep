@@ -17,6 +17,21 @@ class Sosna::SolverController < SosnaController
     end
   end
 
+  def labels
+    respond_to do |format|
+      format.html
+      format.pdf do
+         @opt = {}
+         params[:opt].split(/\s*;\s*|\s+/).each do |o| 
+           @opt[$1.to_sym] = $2 if o =~ /^\s*(\w+)\s*:(\S*)/
+         end
+         @dbg = params[:dbg]
+         @solvers = get_sorted_solvers(@annual)
+         render :formats => [:pdf]
+       end
+    end
+  end
+
   def delete
      id = params[:id]
      u = Sosna::Solver.find(id)

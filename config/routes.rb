@@ -38,6 +38,7 @@ Tep::Application.routes.draw do
   post '/sosna/problem/new_round'            => 'sosna/problem#new_round',      :as => :sosna_problem_new_round
   post '/sosna/problem/:id/delete'           => 'sosna/problem#delete',         :as => :sosna_problem_delete
 
+  get  '/sosna/solvers/labels'                => 'sosna/solver#labels',         :as => :sosna_solver_labels
   get  '/sosna/solvers(/:annual)'             => 'sosna/solver#index',           :as => :sosna_solvers
   #get  '/sosna/solvers'                      => 'sosna/solver#index',           :as => :sosna_solvers
   get  '/sosna/solver(/:id)'                 => 'sosna/solver#show',            :as => :sosna_solver
