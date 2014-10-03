@@ -61,28 +61,25 @@ jQuery(document).ready(function($) {
                                           foto.prevAll(cat);
           next.first().find('img').click();
         });
+
+        $('#foto-modal').on('hide.bs.modal', function () { set_hash(foto_cat); });
+
         $('.foto img').click(function (ev) {
            ev.preventDefault();
            var foto = $(this).closest('.foto');
-           var imgid = foto.attr('id');
-           $('#myModal').modal('show')
-                        .on('hide.bs.modal', function () {
-                                                       set_hash(foto_cat);
-                                                       //console.log("top", foto.offset().top );
-                                                       //$('body').scrollTop( foto.offset().top );
-                                               });
            var bigimg = $(this).closest('a').attr('href');
            var title = $(this).closest('.foto').find('span').text();
-           $('#myModal img').attr('src', bigimg)
+           $('#foto-modal').modal('show');
+           $('#foto-modal img').attr('src', bigimg)
                             .css('height', '500px')
                             .css('widht', 'auto');
-           $('#myModal a').attr('href', bigimg);
-           $('#myModal .modal-title').text(title);
+           $('#foto-modal a').attr('href', bigimg);
+           $('#foto-modal .modal-title').text(title);
 
            var cat = $('.fotofilter.label-success').attr('id');
            cat = cat === null || cat == 'ff-all' ? '' :  cat.substr(3);
 
-           set_hash(cat, imgid);
+           set_hash(cat, foto);
         });
         $('.fotofilter').click(function (){
             $(".fotofilter").removeClass('label-success');
@@ -258,10 +255,17 @@ jQuery(document).ready(function($) {
 });
 
 /* f otogal */
-function set_hash(cat, img)
+function set_hash(cat, img_el)
 {
    foto_cat = cat;
-   window.location.hash = (cat || '') + ( img ?  ':' + img : '');
+   var hash = cat || '';
+
+   if( img_el )  {
+       //scroll to image
+       $('html, body').scrollTop( img_el.offset().top );
+       hash +=  ':' + img_el.attr('id');
+   }
+   window.location.hash = hash;
 }
 
 
