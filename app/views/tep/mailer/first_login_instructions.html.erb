@@ -1,8 +1,13 @@
 <p>Vítej pikomaťáku!</p>
 
-<p>Tento e-mail ti přišel, protože tě někdo (pravděpodoboně ty) přihlásil do soutěže Pikomat.</p>
+<% if @resource.org? %>
 
-<p>Pokud chceš řešení odesílat elektronicky, dokonči registraci pomocí následujícího linku:</p>
+  <p>Tento e-mail ti přišel, protože si o tobě někdo myslí (možná i ty), že chceš organizovat Pikomat.</p>
+  <p>Registraci dokončíš pomocí tohoto linku:</p>
+<% else %>
+  <p>Tento e-mail ti přišel, protože tě někdo (pravděpodoboně ty) přihlásil do soutěže Pikomat.</p>
+  <p>Pokud chceš řešení odesílat elektronicky, dokonči registraci pomocí následujícího linku:</p>
+<% end %>
 
 <p><%= link_to 'Dokončit registraci', user_finish_registration_url(:token => @resource.reset_password_token) %></p>
 

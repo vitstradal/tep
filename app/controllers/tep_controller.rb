@@ -97,7 +97,8 @@ class TepController < ApplicationController
       print pp User.valid_roles
       print 'no role', role
     end
-    redirect_to :users_list
+    #redirect_to :users_list
+    redirect_to(user_show_path(id: user.id))
   end
 
 end

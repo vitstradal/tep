@@ -26,6 +26,16 @@
 
 
 <hr>
+<%= form_for @user, url: user_role_change_path(@user.id), :html => {:class => 'form-inline' } do |f| %>
+    <%= @user.roles.to_a.join(',') %>
+    <%= f.hidden_field :id %>
+    <%= select_tag :role, 
+       options_for_select( User.valid_roles.reverse.map { |r| (@user.has_role? r) ? "-#{r}" : "+#{r}" }),
+       :class => 'input-small'
+       %>
+    <%= f.submit value: 'Přidat/odebrat skupinu'%>
+<% end %>
+<hr>
 
 <%= form_tag user_action_path(@user.id, :send_first_email), html: {:class=>'form-horizontal'} do %>
          <%= submit_tag 'Poslat uvítací email', :class=>'btn btn-danger'%>
