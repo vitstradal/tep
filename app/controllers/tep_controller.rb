@@ -3,7 +3,7 @@ require 'pp'
 class TepController < ApplicationController
 
   include ApplicationHelper
-  include SosnaHelper
+
 
   def pokusy; end
   def index;
@@ -100,5 +100,4 @@ class TepController < ApplicationController
     #redirect_to :users_list
     redirect_to(user_show_path(id: user.id))
   end
-
 end

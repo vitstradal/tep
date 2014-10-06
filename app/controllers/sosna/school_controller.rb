@@ -1,7 +1,7 @@
 # encoding: utf-8
 class Sosna::SchoolController < SosnaController
 
-  include SosnaHelper
+  include ApplicationHelper
 
   def show
     @school = Sosna::School.find params[:id]

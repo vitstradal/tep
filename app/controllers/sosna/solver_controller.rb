@@ -2,7 +2,7 @@
 require 'ffi-locale'
 class Sosna::SolverController < SosnaController
 
-  include SosnaHelper
+  include ApplicationHelper
 
   def index
     load_config

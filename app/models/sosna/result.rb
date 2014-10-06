@@ -1,5 +1,5 @@
 class Sosna::Result < ActiveRecord::Base
-  include SosnaHelper
+  include ApplicationHelper
   belongs_to :solver
 
   def rank_multi?

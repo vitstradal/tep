@@ -1,7 +1,7 @@
 # encoding: utf-8
 class Sosna::ProblemController < SosnaController
 
-  include SosnaHelper
+  include ApplicationHelper
 
   def index
       @problems = Sosna::Problem.order('annual desc, round desc,  problem_no asc').load

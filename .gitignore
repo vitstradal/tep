@@ -11,3 +11,6 @@ tmp/
 tags
 /Trash
 /public/mails
+/public/fotky
+/.yardoc
+/doc

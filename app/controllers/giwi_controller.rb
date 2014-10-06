@@ -6,7 +6,7 @@ require 'yaml'
 #require 'magick_title'
 
 class GiwiController < ApplicationController
-  include SosnaHelper
+  include ApplicationHelper
   def initialize
      # https://github.com/citrus/magick_title
      MagickTitle.options[:font_size] = 15
