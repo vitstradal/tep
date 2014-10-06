@@ -1,5 +1,5 @@
 require 'pp'
-class SosnaController < TepController
+class SosnaController < ApplicationController
 
   authorize_resource
 

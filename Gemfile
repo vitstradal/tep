@@ -17,7 +17,6 @@ gem 'prawn-templates'
 gem 'prawnto'
 gem 'iconv'
 gem 'sanitize'
-gem 'yard'
 gem 'unicode_utils'
 gem 'magick_title', '>= 0.2.0' 
 

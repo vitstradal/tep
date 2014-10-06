@@ -1,0 +1,2 @@
+module Sosna::ProblemHelper
+end

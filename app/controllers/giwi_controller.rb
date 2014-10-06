@@ -5,7 +5,7 @@ require 'iconv'
 require 'yaml'
 #require 'magick_title'
 
-class GiwiController < TepController
+class GiwiController < ApplicationController
   include SosnaHelper
   def initialize
      # https://github.com/citrus/magick_title

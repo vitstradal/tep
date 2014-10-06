@@ -1,20 +1,9 @@
 # encoding: utf-8
 require 'pp'
-class TepController < ActionController::Base
-  include TepHelper
+class TepController < ApplicationController
+
+  include ApplicationHelper
   include SosnaHelper
-
-  protect_from_forgery
-  rescue_from CanCan::AccessDenied do |exception|
-      sign_out :user
-      redirect_to :new_user_session, :alert => exception.message
-  end
-
-  def after_sign_in_path_for(resource)
-     ret =  url_for_root(resource)
-     Rails::logger.fatal("url:#{ret}");
-     return ret
-  end
 
   def pokusy; end
   def index;

@@ -42,9 +42,3 @@ server:
 	script/rails server -e local --binding=localhost
 ttest:
 	rake test
-
-
-
-.PHONY: doc
-doc:
-	yard -r Readme.md -m markdown
