@@ -139,6 +139,7 @@ GEM
     unicode_utils (1.4.0)
     warden (1.2.3)
       rack (>= 1.0)
+    yard (0.8.7.4)
 
 PLATFORMS
   ruby
@@ -164,3 +165,4 @@ DEPENDENCIES
   sqlite3
   trac-wiki (~> 0.3.19)
   unicode_utils
+  yard

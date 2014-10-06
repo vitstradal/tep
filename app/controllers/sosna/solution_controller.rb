@@ -10,7 +10,7 @@ require 'prawn/templates'
 class Sosna::SolutionController < SosnaController
 
   include SosnaHelper
-  include ActionView::Helpers::NumberHelper 
+  include ActionView::Helpers::NumberHelper
   UPLOAD_DIR = "public/uploads/"
 
   def index
