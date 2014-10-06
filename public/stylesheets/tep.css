@@ -483,3 +483,10 @@ a.mailcrypt {
   padding-left: 1em;
   color: red;
 }
+
+/*******************
+ * vyhledavaci formular vice centrovany
+ */
+.form-search {
+  margin-top: 10px;
+}

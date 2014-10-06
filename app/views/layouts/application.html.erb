@@ -62,8 +62,25 @@
 	  </a>
         </div>
       </div>
+    <%################################################################################## %>
+    <%# search %>
+    <%################################################################################## %>
       <div class="navbar-header navbar-buttons pull-right" >
         <ul class="nav ace-nav">
+        <li>
+     <div id="nav-search" class="nav-search navbar-header navbar-buttons pull-right">
+       <form action="//duckduckgo.com/" class="form-search">
+         <span class="input-icon">
+           <input type="hidden" name="sites" value="pikomat.mff.cuni.cz"></input>
+           <input type="hidden" name="kl" value="cz-cs"></input>
+           <input type="hidden" name="k1" value="-1"></input>
+           <input type="hidden" name="kj" value="#438EB9"></input>
+           <input id="nav-search-input" class="nav-search-input" type="text" name="q" autocomplete="off" placeholder="Hledej ..."></input>
+           <i class="ace-icon fa fa-search nav-search-icon"></i>
+          </span>
+       </form>
+     </div>
+        </li>
         <% if user_signed_in?  %>
           <li><%= ilink_to  current_user.email, '#', :ico => 'fa-user', :class=> 'btn btn-primary tep-transparent' %></li>
           <li><%= ilink_to  'Logout', :destroy_user_session , :ico => 'fa-sign-out', :class => 'btn tep-transparent' %></li>
@@ -82,6 +99,8 @@
         </div>
         %>
      </div>
+
+
     <% if false %> 
     <div class="navbar-buttons navbar-header pull-right ">
       <ul class="nav ace-nav">
