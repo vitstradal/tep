@@ -22,6 +22,8 @@ class Sosna::SolverController < SosnaController
       format.html
       format.pdf do
          @opt = {}
+         @envelope= params[:envelope]
+         @prawnto_options = { :prawn => {:page_size => 'C5', :page_layout => :landscape, }} if @envelope;
          params[:opt].split(/\s*;\s*|\s+/).each do |o| 
            @opt[$1.to_sym] = $2 if o =~ /^\s*(\w+)\s*:(\S*)/
          end

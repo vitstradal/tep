@@ -1,35 +1,93 @@
 
-<%= form_tag sosna_solver_labels_path(:format => :pdf), :method => :get do %>
+<div class="tabbable">
 
-  <div class="form-group">
-    <%= text_area_tag 'opt', "l:10\nt:10\nw:50\nh:30\ndx:3\ndy:3\ns:10", cols: 80, rows: 10 %>
-  </div>
+  <ul id="myTab" class="nav nav-tabs">
+     <li class="active"> <a href="#envelops" data-toggle="tab">Obálky</a> </li>
+     <li> <a href="#labels" data-toggle="tab">Štítky</a> </li>
+  </ul>
 
-  <div class="form-group">
-    <div class="col-sm-9">
-     <label class="checkbox" for="dbg">
-       <%= check_box_tag 'dbg', '1', false %> Rámečky a zaměřovací kříže 
-     </label>
+  <div class="tab-content">
+    <div class="tab-pane in active" id="envelops">
+      <%= form_tag sosna_solver_labels_path(:format => :pdf), :method => :get , :class=> 'form-horizontal' do %>
+      
+        <%= hidden_field_tag :envelope, 1%>
+
+        <div class="form-group">
+          <div class="col-sm-12">
+            <%= text_area_tag 'opt', "pl:20\npt:20\nal:120\nat:80\np:C5", cols: 80, rows: 5 %>
+          </div>
+        </div>
+      
+        <div class="form-group">
+          <div class="col-sm-9">
+           <label class="checkbox" for="dbg">
+             <%= check_box_tag 'dbg', '1', false %> Rámečky a zaměřovací kříže 
+           </label>
+          </div>
+        </div>
+      
+        <div class="form-group">
+          <div class="col-sm-9">
+            <p><b>Legenda:</b>
+                <code>lp</code> adresa pikomatu od leveho okraje
+                <code>tp</code> adresa pikmmatu od horniho okraje
+                <code>la</code> adresat od horniho okraje
+                <code>ta</code> adresat od spodniho okraje
+                <code>sp</code> velikost fontu (pikomat)
+                <code>sa</code> velikost fontu (adresat)
+                <code>p</code> paper  C5, C4, ...
+            </p>
+          </div>
+        </div>
+      
+        <div class="form-group">
+          <div class="col-sm-9">
+            <%= submit_tag 'Generuj obalky.pdf', :class=>'btn btn-primary' %>
+          </div>
+        </div>
+      <% end %>
+
+    </div>
+
+    <div class="tab-pane" id="labels">
+
+      <%= form_tag sosna_solver_labels_path(:format => :pdf), :method => :get , :class=> 'form-horizontal' do %>
+      
+        <div class="form-group">
+          <div class="col-sm-12">
+            <%= text_area_tag 'opt', "l:10\nt:10\nw:50\nh:30\ndx:3\ndy:3\ns:10", cols: 80, rows: 7 %>
+          </div>
+        </div>
+      
+        <div class="form-group">
+          <div class="col-sm-9">
+           <label class="checkbox" for="dbg">
+             <%= check_box_tag 'dbg', '1', false %> Rámečky a zaměřovací kříže 
+           </label>
+          </div>
+        </div>
+      
+        <div class="form-group">
+          <div class="col-sm-9">
+            <p><b>Legenda:</b>
+                <code>l</code> od levého okraj;
+                <code>t</code> od hora (top);
+                <code>w</code> šířka (width);
+                <code>h</code> výška (height);
+                <code>dx</code> mezera vodorovná;
+                <code>dy</code> mezera svislá;
+                <code>s</code> velikost fontu (v pt=1/72in=0.3mm), ostaní jsou v milimetrech.
+            </p>
+          </div>
+        </div>
+      
+        <div class="form-group">
+          <div class="col-sm-9">
+            <%= submit_tag 'Generuj labels.pdf', :class=>'btn btn-primary' %>
+          </div>
+        </div>
+      <% end %>
     </div>
   </div>
-
-  <div class="form-group">
-    <div class="col-sm-9">
-      <p><b>Legenda:</b>
-          <code>l</code> od levého okraj;
-          <code>t</code> od hora (top);
-          <code>w</code> šířka (width);
-          <code>h</code> výška (height);
-          <code>dx</code> mezera vodorovná;
-          <code>dy</code> mezera svislá;
-          <code>s</code> velikost fontu (v pt=1/72in=0.3mm), ostaní jsou v milimetrech.
-          </p>
-  </div>
-
-  <div class="form-group">
-    <div class="col-sm-9">
-      <%= submit_tag 'Generuj labels.pdf', :class=>'btn btn-primary' %>
-    </div>
-  </div>
-<% end %>
+</div>
 
