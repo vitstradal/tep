@@ -29,3 +29,8 @@
 <% end %>
 </table>
 
+<hr>
+
+<%= form_tag user_new_path, html: {:class=>'form-horizontal'} do %>
+         <%= submit_tag 'Nový uživatel', :class=>'btn btn-danger'%>
+<% end %>
