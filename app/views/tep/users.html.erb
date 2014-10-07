@@ -1,33 +1,43 @@
-<h1>Uživatelé</h1>
-<table class="table table-bordered">
-<tr>
-        <th>Id</th>
-        <th>Email</th>
-        <th>Jméno</th>
-        <th>Příjmení</th>
-        <th>Role</th>
-</tr>
-<% @users.each do |user|  %>
-<tr>
+<h1>Uživatelé <% if @role %> : <%=@role%> <% end %></h1>
 
-   <td> <%= link_to user.id, user_show_path(user.id) %> </td>
-   <td> <%= user.email %> </td>
-   <td> <%= user.name %> </td>
-   <td> <%= user.last_name %> </td>
-   <td>
-        <%= form_for user, url: user_role_change_path(user.id), :html => {:class => 'form-inline' } do |f| %>
-            <%= user.roles.to_a.join(',') %>
-            <%= f.hidden_field :id %>
-            <%= select_tag :role, 
-               options_for_select( User.valid_roles.reverse.map { |r| (user.has_role? r) ? "-#{r}" : "+#{r}" }),
-               :class => 'input-small'
-               %>
-            <%= f.submit value: '!'%>
-        <% end %>
-   </td>
-</tr>
-<% end %>
-</table>
+<% role_sym = (@role || :all).to_sym %>
+
+<div class="tabbable">
+  <ul id="myTab" class="nav nav-tabs">
+     <li <%=class_active_if :all == role_sym %>> <%= link_to 'all', users_list_path(role:nil) %></a>
+     <% User.valid_roles.each do  |r| %>
+       <li <%=class_active_if r == role_sym %> ><%= link_to r, users_list_path(role:r) %></li>
+     <% end %>
+  </ul>
+
+  <div class="tab-content">
+    <div class="tab-pane in active">
+      <table class="table table-bordered">
+      <tr>
+              <th>Id</th>
+              <th>Email</th>
+              <th>Jméno</th>
+              <th>Příjmení</th>
+              <th>Role</th>
+      </tr>
+      <% @users.each do |user|  %>
+      <tr>
+      
+         <td> <%= link_to user.id, user_show_path(user.id) %> </td>
+         <td> <%= user.email %> </td>
+         <td> <%= user.name %> </td>
+         <td> <%= user.last_name %> </td>
+         <td>
+              <%= form_for user, url: user_role_change_path(user.id), :html => {:class => 'form-inline' } do |f| %>
+                  <%= user.roles.to_a.join(',') %>
+              <% end %>
+         </td>
+      </tr>
+      <% end %>
+      </table>
+    </div>
+  </div>
+</div>
 
 <hr>
 

@@ -183,4 +183,7 @@ module ApplicationHelper
       #print "cur: #{cur_uri} cur_ori #{cur_ori}, his: #{his_uri}, ret: #{ret}\n"
       return ret;
   end
+  def class_active_if(cond)
+     return 'class="active"'.html_safe if cond
+  end
 end

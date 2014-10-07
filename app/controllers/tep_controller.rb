@@ -23,8 +23,14 @@ class TepController < ApplicationController
   def faq; end
 
   def users
-    @users = User.all.load
-    #print 'sign:', sign("ahoj")
+    @role = params[:role] 
+    if @role
+       mask = User.mask_for @role.to_sym
+       @users = User.where('roles_mask & ? > 0', mask)
+    else
+      @users = User.all.load
+    end
+    
   end
 
   def user
