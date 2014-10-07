@@ -1,5 +1,8 @@
 class Sosna::Solution < ActiveRecord::Base
+
+  #fixme: helpery asi nepatri do modelu, ale tady se pozivat 'translit', tak so  stim?
   include ApplicationHelper
+
   belongs_to :solver
   belongs_to :problem
   def owner?(user)
