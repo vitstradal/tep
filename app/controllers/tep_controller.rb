@@ -5,7 +5,7 @@ class TepController < ApplicationController
   include ApplicationHelper
 
 
-  def pokusy; end
+  def access; end
   def index;
     if ! current_user.nil?
       if current_user.has_role? :admin

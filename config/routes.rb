@@ -57,8 +57,9 @@ Tep::Application.routes.draw do
   post '/sosna/config/update'                => 'sosna/config#update',          :as => :sosna_config_update
 
   # tep
-  get  '/users(/:role)'                         => 'tep#users',                    :as => :users_list
-  post '/user/new'                            => 'tep#user_new',                 :as => :user_new
+  get  '/access'                             => 'tep#access',                   :as => :access_denied
+  get  '/users(/:role)'                      => 'tep#users',                    :as => :users_list
+  post '/user/new'                           => 'tep#user_new',                 :as => :user_new
   get  '/user/:id/show'                      => 'tep#user',                     :as => :user_show
   patch '/user/:id/update'                   => 'tep#user_update',              :as => :user_update
   post  '/user/:id/delete'                   => 'tep#user_delete',              :as => :user_delete
