@@ -17,7 +17,13 @@ class Sosna::SolverController < SosnaController
     end
   end
 
+  def tep_emails
+    @annual = params[:annual] || @annual
+    @solvers = Sosna::Solver.where solution_form: 'tep', annual: @annual, is_test_solver: false
+  end
+
   def labels
+    @annual = params[:annual] || @annual
     respond_to do |format|
       format.html
       format.pdf do
@@ -73,10 +79,15 @@ class Sosna::SolverController < SosnaController
     solver.valid?
     agree = ! params[:souhlasim].nil?
     solver.errors.add(:souhlasim, 'Je nutno souhlasit s podmínkami') if ! agree
-    solver.errors.add(:email, 'je již registrován u jiného řešitele') if Sosna::Solver.where(email: solver.email, annual: @annual).exists?
+    solver.errors.add(:email, 'je již registrován u jiného řešitele') if Sosna::Solver.where(email: solver.email, annual: @annual).exists? && !solver.email.empty?
     solver.errors.add(:email, 'neexistující adresa') if !solver.email.empty? && !email_valid_mx_record?(solver.email)
     solver.errors.add(:birth, 'jsi příliš stár') if solver.errors[:birth].blank? && !solver.birth.empty? && (Date.parse(solver.birth) + 17.years) < Date.today
-    solver.errors.add(:birth, 'nemůže být prázdné') if solver.birth.blank? && ( current_user.nil? ||  !current_user.admin?  )
+    solver.errors.add(:email, 'adresa nemůže být prázdná') if solver.email.empty?
+
+    not_admin =  current_user.nil? ||  !current_user.admin?
+    if not_admin
+      solver.errors.add(:birth, 'nemůže být prázdné') if solver.birth.blank? 
+    end
 
     case school_id
      when 'none'
