@@ -5,6 +5,33 @@ var foto_cat = '';
 
 jQuery(document).ready(function($) {
 
+        // anketa zvyrazneni
+        $('div.anketa').each(function (ii, div) {
+           //var stat = {};
+           var $table = $(div).next();
+           $table.find('td').each(function (i,td) {
+             var $td = $(td);
+             var txt = $td.text();
+             var c =  $td.index();
+             var r =  $td.parent().index();
+             var dostat;
+             switch(txt) {
+             case 'y': $td.addClass('anketa-yes'); break;
+             case 'n': $td.addClass('anketa-no'); break;
+             case '?': $td.addClass('anketa-maybe'); break;
+             //default:  dostat = false;
+             }
+             //stat[c] = stat[c] || {};
+             //if( dostat ) {
+             //        stat[c][txt] = stat[c][txt] || 0;
+             //        stat[c][txt]++;
+             //}
+             //console.log("td", txt, c, r);
+          });
+          //console.log("stat", stat);
+        });
+        
+
         $('.ace-file-input').ace_file_input()
                             .on('change', function () {
                                     $(this).closest('form').submit();
@@ -436,5 +463,6 @@ function fakedecrypt(x)
   return ret;
 
 }
+
 
 

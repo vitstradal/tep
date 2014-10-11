@@ -490,6 +490,7 @@ a.mailcrypt {
 .form-search {
   margin-top: 10px;
 }
+
 /****
  * historie diff
  */
@@ -498,4 +499,20 @@ a.mailcrypt {
 }
 .diff-deletion {
   background-color: #ff8080;
+}
+
+/**********************************
+ * anketni tabulka
+ */
+
+.anketa-no {
+  background-color: #FF9999;
+}
+
+.anketa-yes {
+  background-color: #99FF99;
+}
+
+.anketa-maybe {
+  background-color: #FFFF99;
 }

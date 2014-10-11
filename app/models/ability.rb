@@ -13,6 +13,7 @@ class Ability
     can :create, Sosna::Solver
     can :create_tnx, Sosna::Solver
     can :user_finish_registration, :tep
+    can :access,           :tep
 
     # tep
     can :index, :tep
@@ -63,6 +64,7 @@ class Ability
       can :show, Sosna::Solver
       can :update, Sosna::Solver
       can :labels, Sosna::Solver
+      can :tep_emails, Sosna::Solver
 
       can :index, Sosna::School
       can :show, Sosna::School
