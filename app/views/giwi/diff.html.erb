@@ -6,13 +6,18 @@
 <h1>Diff</h1>
 <pre>
 <% @diff_lines.each do |line| %><%
-   o = line[:line_origin] 
-   if o == :addition || o == :deletion 
+   o = line[:line_origin]
+   if o == :addition || o == :deletion
     %><span class="diff-<%=o%>"><%= line[:content]%></span><%
    elsif o == :file_header  && line[:content] =~ /^diff --git a\/(\S*)/
-    %><%= $1 + ":\n" %><%
-   elsif o == :context 
+    path = $1
+    %><%= link_to "#{path}", url_for(wiki: @wiki, path: path)  %> <%= link_to  url_for(path: @path, edit: 'me') do %><span class="fa fa-edit"></span><% end %>:
+<%
+   elsif o == :context
     %><%= line[:content] -%><%
+   elsif o == :hunk_header
+    %>---
+<%
    end
 end %>
 </pre>
