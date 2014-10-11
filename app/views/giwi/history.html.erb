@@ -10,7 +10,7 @@
     <%= time.strftime('%Y-%m-%d %H:%M:%S') %>
     <% title = h[:files].map{|f| f[:new_file]}.join || 'nofile'%>
     <% title = 'nofile' if title.nil? || title.empty?%>
-    <% dbg = pp h %>
+    <% dbg = h.pretty_inspect %>
     <%= link_to  url_for(path: @path) , {:title =>  dbg} do %> <span class="fa fa-file-o"></span>  <% end %>
     <%= link_to  url_for(path: @path, edit: 'me') , {:title =>  dbg} do %> <span class="fa fa-edit"></span>  <% end %>
     <%= link_to title, url_for(path: @path, :diff => h[:commit]) , {:title =>  dbg} %>
