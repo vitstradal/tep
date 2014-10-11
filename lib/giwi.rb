@@ -209,8 +209,8 @@ class Giwi
     end
     comment = comment.force_encoding('ASCII-8BIT')
 
-    name = email
-    name = $1 if email =~ /^(.*)\s*<\S*@\S*>$/
+    name = ''
+    name, email = [$1, $2] if email =~ /^(.*)\s*<(\S*@\S*)>$/
 
     options = {
         :tree => index.write_tree(@repo),
