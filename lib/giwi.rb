@@ -209,10 +209,14 @@ class Giwi
     end
     comment = comment.force_encoding('ASCII-8BIT')
 
+    name = email
+    name = $1 if email =~ /^(.*)\s*<\S*@\S*>$/
+
     options = {
         :tree => index.write_tree(@repo),
-        :autor =>  { :email => email,
-                     :time  => Time.now,
+        :author =>  { :email => email,
+                      :time  => Time.now,
+                      :name => name,
                    },
         :message => comment,
         :parents => [ _get_cur_target ].compact,
