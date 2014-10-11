@@ -41,6 +41,8 @@ class GiwiController < ApplicationController
 
     @edit = params[:edit] || false
     @ls   = params[:ls]
+    @history  = params[:history]
+    @diff  = params[:diff]
     @part = false
 
     fmt = params[:format]
@@ -49,6 +51,8 @@ class GiwiController < ApplicationController
 
     return _handle_preview(params[:preview])  if ! params[:preview].nil?
     return _handle_ls if @ls
+    return _handle_history if @history
+    return _handle_diff if @diff
     return _handle_csrf if fmt == 'csrf'
     return _handle_special_edit(@path, fmt) if @edit && %w(svg).include?(fmt)
     return _handle_raw_file("#{@path}.#{fmt}", fmt) if %w(pdf png jpg jpeg gif svg).include? fmt
@@ -111,6 +115,17 @@ class GiwiController < ApplicationController
     end
     return render :json => { :html =>  @html } if params[:format] == 'json'
     render :show
+  end
+
+  def _handle_diff
+    @giwi = Giwi.get_giwi(@wiki)
+    @diff_lines = @giwi.get_diff(@diff)
+    return render :diff
+  end
+  def _handle_history
+    @giwi = Giwi.get_giwi(@wiki)
+    @history = @giwi.get_history
+    return render :history
   end
 
   def update

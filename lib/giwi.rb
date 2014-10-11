@@ -114,7 +114,7 @@ class Giwi
     dirs = []
 
     tdir.each_blob do |b|
-            pp b
+            #pp b
             files.push({ path: "#{path}#{b[:name]}", name: b[:name], siz: 0 })
     end
     tdir.each_tree do |t|
@@ -125,7 +125,7 @@ class Giwi
       dirs.push( { path: path.sub(/(^|\/)[^\/]*\/$/, ''),
                    name: '..'} )
     end
-    pp [files, dirs, path]
+    #pp [files, dirs, path]
     return [files, dirs, path]
   end
 
@@ -203,7 +203,7 @@ class Giwi
 
     if path =~ /\.(wiki|txt)$/
       fstline = text.each_line.first.chomp.strip
-      comment = "file: #{path} head: #{fstline}"
+      comment = "#{fstline}"
     else
       comment = "file: #{path}"
     end
@@ -222,68 +222,40 @@ class Giwi
     Rugged::Commit.create(@repo, options)
     Rails::logger.fatal("options:#{pp(options)}");
     return status
+  end
 
-#    cur_head = @repo.commits(@branch, 1).first
-#
-#    cur_tree = @repo.tree @branch
-#
-#    status = SETPAGE_OK
-#
-#    if commit_id != ''
-#      # not new file
-#      #text_tree =  @repo.tree commit_id
-#      #text_blob = text_tree / path
-#      text_blob = @repo.blob commit_id
-#      raise "no path #{path}" if ! text_blob.is_a? Grit::Blob #FIXME
-#      cur_blob  = cur_tree / path
-#      text_blob_data = text_blob.data.force_encoding('utf-8')
-#
-#      if ! pos.nil?
-#        text = _patch_part(text, text_blob_data, pos)
-#      end
-#
-#      if cur_blob.id != text_blob.id
-#        # collision: try append diff
-#        status = SETPAGE_MERGE_OK
-#        lmine = 'me'
-#        lorig = 'original'
-#        lyour = 'your-concurent-editor'
-#        newtext, diff3_status = Diff3.diff3(lmine, text,
-#                                            lorig, text_blob_data,
-#                                            lyour, cur_blob.data.force_encoding('utf-8'))
-#
-#        case diff3_status
-#          when Diff3::MERGE_COLLISONS
-#           status = SETPAGE_MERGE_COLLISONS
-#
-#          when Diff3::MERGE_FAIL
-#           # total fall back (never happens)
-#           status = SETPAGE_MERGE_DIFF
-#           diff = Grit::Commit.diff(@repo, text_blob.id, cur_blob.id).map {|d| d.diff}.join #FIXME
-#           newtext = text + "\n= Collision =\n{{{\n#{diff}\n}}}\n"
-#        end
-#        text = newtext
-#      end
-#    end
-#
-#    index = Grit::Index.new(@repo) #FIXME
-#    index.read_tree(cur_tree.id)
-#    index.add(path, text)
-#
-#    if path =~ /\.(wiki|txt)$/
-#      fstline = text.each_line.first.chomp.strip
-#      comment = "file: #{path} head: #{fstline}"
-#    else
-#      comment = "file: #{path}"
-#    end
-#    comment = comment.force_encoding('ASCII-8BIT')
-#
-#    actor = Grit::Actor.from_string(email) #FIXME
-#    actor_str = actor.to_s.force_encoding('ASCII-8BIT')
-#
-#    Rails::logger.fatal("comment:#{comment} actor:#{actor_str}, cur_head #{cur_head} branch#{@branch}")
-#    index.commit(comment,  parents: [cur_head], actor: actor, last_tree: cur_head, head: @branch)
-#    return status
+  def get_history(opts = {})
+    commit =  @repo.head.target
+    history = []
+    count = 1
+    while commit.parents.size > 0 && count < 500
+      parent = commit.parents[0]
+      diff = parent.diff(commit)
+
+      files = []
+      diff.deltas.each do |d|
+        files.push({ :new_file =>  d.new_file[:path],
+                     :old_file => d.old_file[:path],
+                     :binary =>  d.binary
+                   })
+      end
+      history.push({ :message => commit.message, :commit => commit.oid, :files =>  files , :author =>  commit.author})
+      commit = parent
+      count += 1
+    end
+    return history
+  end
+
+  def get_diff(commit_oid)
+    commit =  @repo.lookup(commit_oid)
+    parent = commit.parents[0]
+    diff = parent.diff(commit)
+    #pp diff.deltas
+    return diff.each_line.map do |l|
+            { content: l.content.force_encoding('utf-8').encode, 
+              line_origin: l.line_origin,
+            }
+    end
   end
 
   private
@@ -401,6 +373,15 @@ class GiwiNoGit < Giwi
     end
     File.write(path_fs, text)
     return SETPAGE_OK
+  end
+
+  def get_history
+    []
+  end
+
+  def get_diff(path, old_ver, new_ver)
+
+    []
   end
 
 end

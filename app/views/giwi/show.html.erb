@@ -148,6 +148,7 @@
 <% if ! @edit && @editable %>
   <% content_for :action_buttons do %>
     <div class="pull-right">
+      <%= button_tag 'Historie', :class=>'btn btn-primary', :href => url_for(path: @path, :history => '.'), ico: 'fa-university' %>
       <%= button_tag 'Seznam stránek', :class=>'btn btn-primary', :href => url_for(path: @path, :ls => '.'), ico: 'fa-list' %>
       <%= button_tag 'Edit', :accesskey => 'e', :class=>'btn btn-danger', :href => url_for(path: @path, :edit => 'me'), ico: 'fa-edit' %>
     </div>

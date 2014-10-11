@@ -42,6 +42,7 @@ local: &local
     update:  :org
     update:  :org
     help_link: 'wiki/tep/doc/wiki#start'
+    ext: '.wiki'
   main:
     path: '/home/vitas/tmp/pikoweb/web'
     bare: false

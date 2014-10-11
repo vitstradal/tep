@@ -1,0 +1,18 @@
+
+<div class="pull-right">
+  <%= button_tag 'Historie', :class=>'btn btn-primary', :href => url_for(path: @path, :history => '.'), ico: 'fa-university' %>
+</div>
+
+<h1>Diff</h1>
+<pre>
+<% @diff_lines.each do |line| %><%
+   o = line[:line_origin] 
+   if o == :addition || o == :deletion 
+    %><span class="diff-<%=o%>"><%= line[:content]%></span><%
+   elsif o == :file_header  && line[:content] =~ /^diff --git a\/(\S*)/
+    %><%= $1 + ":\n" %><%
+   elsif o == :context 
+    %><%= line[:content] -%><%
+   end
+end %>
+</pre>

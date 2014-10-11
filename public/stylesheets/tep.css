@@ -490,3 +490,12 @@ a.mailcrypt {
 .form-search {
   margin-top: 10px;
 }
+/****
+ * historie diff
+ */
+.diff-addition {
+  background-color: #80ff80;
+}
+.diff-deletion {
+  background-color: #ff8080;
+}
