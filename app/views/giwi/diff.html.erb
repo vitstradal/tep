@@ -12,7 +12,7 @@
 <%
    elsif o == :file_header  && line[:content] =~ /^diff --git a\/(\S*)/
     path = $1
-    %><%= link_to "#{path}", url_for(wiki: @wiki, path: path)  %> <%= link_to  url_for(wiki:@wiki, path: path, edit: 'me') do %><span class="fa fa-edit"></span><% end %>:
+    %><%= link_to url_for(wiki: @wiki, path: path) do  %><%= path%> <span class="fa fa-file-o"></span><% end %> <%= link_to  url_for(wiki:@wiki, path: path, edit: 'me') do %><span class="fa fa-edit"></span><% end %>:
 <%
    elsif o == :context
     %><%= line[:content] -%><%
