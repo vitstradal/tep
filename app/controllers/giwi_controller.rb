@@ -36,7 +36,8 @@ class GiwiController < ApplicationController
 
     authorize! :show, auth_name
 
-    @editable = can? :update, auth_name
+    @can_update = can? :update, auth_name
+    @editable = @can_update
 
     @path = params[:path]
     #print "path: #{@wiki}:#{@path}\n"
@@ -51,19 +52,22 @@ class GiwiController < ApplicationController
 
     # @wiki, Giwi.can_read?
 
-    return _handle_preview(params[:preview])  if ! params[:preview].nil?
-    return _handle_ls if @ls
-    return _handle_history if @history
-    return _handle_diff if @diff
-    return _handle_csrf if fmt == 'csrf'
-    return _handle_special_edit(@path, fmt) if @edit && %w(svg).include?(fmt)
+    if @can_update
+      return _handle_preview(params[:preview])  if ! params[:preview].nil?
+      return _handle_ls if @ls
+      return _handle_history if @history
+      return _handle_diff if @diff
+      return _handle_csrf if fmt == 'csrf'
+      return _handle_special_edit(@path, fmt) if @edit && %w(svg).include?(fmt)
+    end
+
     return _handle_raw_file("#{@path}.#{fmt}", fmt) if %w(pdf png jpg jpeg gif svg).include? fmt
     return redirect_to action: :show, path: @path + 'index',  wiki: @wiki if @path =~ /\/$/
     return redirect_to action: :show, path: 'index',  wiki: @wiki if ! @path
 
     _breadcrumb_from_path(@path)
 
-    if @edit
+    if @edit && @can_update
       _handle_edit
       return render :show
     end
@@ -81,7 +85,7 @@ class GiwiController < ApplicationController
          @text, @version = @giwi.get_page(path_ext)
 
       else
-        return _create_new_page_text if  can? :update, auth_name
+        return _create_new_page_text if  @can_update
         return _not_found
       end
     end
@@ -115,7 +119,7 @@ class GiwiController < ApplicationController
     if parser.headings.size > 3
       @toc = parser.make_toc_html
     end
-    return render :json => { :html =>  @html } if params[:format] == 'json'
+    return render :json => { :html =>  @html } if params[:format] == 'json' && @can_update
     render :show
   end
 
@@ -165,7 +169,7 @@ class GiwiController < ApplicationController
       end
     end
 
-    edit = (params[:edit]||'') == '' ? nil : params[:part] || 'me' 
+    edit = (params[:edit]||'') == '' ? nil : params[:part] || 'me'
 
     redirect_to action: :show, cursor: params[:cursor], wiki: @wiki, path: @path, edit: edit
   end
@@ -256,7 +260,7 @@ class GiwiController < ApplicationController
       nm =  now.next_month
 
       conn = Faraday.new('https://pikomat.mff.cuni.cz')
-      resp = conn.get('/sklep/index.php/apps/ownhacks/calendar-10.php', start: now.strftime('%s'), end: nm.strftime('%s'))
+      resp = conn.get('/sklep/index.php/apps/ownhacks/calendar-22.php', start: now.strftime('%s'), end: nm.strftime('%s'))
       json = JSON.load(resp.body)
       #"/sklep/index.php/apps/ownhacks/calendar-10.php?start=#{now.strftime('%s')}&end=#{nm.strftime('%s')}\n" +
       json.map do |item|
@@ -289,7 +293,7 @@ class GiwiController < ApplicationController
   end
 
   def _handle_preview(wiki)
-    
+
      parser = _get_parser
      html = parser.to_html(wiki)
      render :json => { :html => html }
@@ -311,7 +315,7 @@ class GiwiController < ApplicationController
 
     email = current_user.full_email
     status = Giwi.get_giwi(@wiki).set_page(filename, data, '', email)
-    Rails::logger.fatal("url::#{url_for(action: :show, wiki: @wiki, path: @path, ls: '.')}"); 
+    Rails::logger.fatal("url::#{url_for(action: :show, wiki: @wiki, path: @path, ls: '.')}");
 
     return redirect_to url_for(action: :show, wiki: @wiki, path: @path, ls: '.') if redirect
     render text: 'tnx'
