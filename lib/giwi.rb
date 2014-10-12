@@ -238,12 +238,19 @@ class Giwi
 
       files = []
       diff.deltas.each do |d|
-        files.push({ :new_file =>  d.new_file[:path],
-                     :old_file => d.old_file[:path],
+        files.push({ :new_file =>  d.new_file[:path].force_encoding('utf-8').encode,
+                     :old_file => d.old_file[:path].force_encoding('utf-8').encode,
                      :binary =>  d.binary
                    })
       end
-      history.push({ :message => commit.message, :commit => commit.oid, :files =>  files , :author =>  commit.author})
+
+      message = commit.message.force_encoding('utf-8').encode
+      author = commit.author
+      email = author[:email].force_encoding('utf-8').encode
+      name = author[:name].force_encoding('utf-8').encode
+      time = author[:time]
+
+      history.push({ :message => message, :commit => commit.oid, :files =>  files , :author =>  { :email => email, :name => name, :time => time} })
       commit = parent
       count += 1
     end

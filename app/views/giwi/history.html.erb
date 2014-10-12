@@ -8,7 +8,7 @@
     <% author = h[:author] %>
     <% time =   author[:time] %>
     <%= time.strftime('%Y-%m-%d %H:%M:%S') %>
-    <% title = h[:files].map{|f| f[:new_file]}.join || 'nofile'%>
+    <% title = h[:files].map{|f| f[:new_file].force_encoding('utf-8').encode(invalid: :replace)}.join || 'nofile'%>
     <% title = 'nofile' if title.nil? || title.empty?%>
     <% dbg = h.pretty_inspect %>
     <%= link_to  url_for(path: @path) , {:title =>  dbg} do %> <span class="fa fa-file-o"></span>  <% end %>
