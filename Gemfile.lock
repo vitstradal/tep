@@ -57,6 +57,8 @@ GEM
       devise (>= 2.1.0)
     devise-i18n (0.11.2)
     erubis (2.7.0)
+    faraday (0.9.0)
+      multipart-post (>= 1.2, < 3)
     ffi (1.9.5)
     hashery (2.1.1)
     hike (1.2.3)
@@ -70,6 +72,7 @@ GEM
     mini_portile (0.6.0)
     minitest (5.4.2)
     multi_json (1.10.1)
+    multipart-post (2.0.0)
     nokogiri (1.6.3.1)
       mini_portile (= 0.6.0)
     nokogumbo (1.1.12)
@@ -149,6 +152,7 @@ DEPENDENCIES
   devise (~> 3.1.1)
   devise-encryptable
   devise-i18n
+  faraday
   ffi-locale (~> 0.1.2)!
   iconv
   magick_title (>= 0.2.0)

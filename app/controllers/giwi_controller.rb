@@ -1,7 +1,9 @@
 # encoding: utf-8
 
 require 'trac-wiki'
+require 'faraday'
 require 'iconv'
+require 'json'
 require 'yaml'
 #require 'magick_title'
 
@@ -218,6 +220,7 @@ class GiwiController < ApplicationController
     return _template_textimg(env, argv) if tname == 'textimg'
     return _template_fakecrypt(env, argv) if tname == 'fakecrypt'
     return _template_include(env, argv) if tname == 'include'
+    return _template_calendar(env, argv) if tname == 'owncalendar'
 
 
     part = 0
@@ -246,6 +249,25 @@ class GiwiController < ApplicationController
       part -= 1
     end
   end
+
+  def _template_calendar(env, argv)
+    begin
+      now  = Date.today
+      nm =  now.next_month
+
+      conn = Faraday.new('https://pikomat.mff.cuni.cz')
+      resp = conn.get('/sklep/index.php/apps/ownhacks/calendar-10.php', start: now.strftime('%s'), end: nm.strftime('%s'))
+      json = JSON.load(resp.body)
+      #"/sklep/index.php/apps/ownhacks/calendar-10.php?start=#{now.strftime('%s')}&end=#{nm.strftime('%s')}\n" +
+      json.map do |item|
+          "* **#{item['start']}** #{item['title']}\n"
+      end.join
+    rescue
+      ''
+    end
+
+  end
+
   def _template_include(env, argv)
     path =  argv['00']
     text, _ = @giwi.get_page(path + @giwi.ext)
