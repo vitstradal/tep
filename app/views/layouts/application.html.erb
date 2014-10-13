@@ -82,7 +82,7 @@
      </div>
         </li>
         <% if user_signed_in?  %>
-          <li><%= ilink_to  current_user.email, '#', :ico => 'fa-user', :class=> 'btn btn-primary tep-transparent' %></li>
+          <li><%= ilink_to  current_user.email, '#', :ico => 'fa-user', :class=> 'label-user btn btn-primary tep-transparent' %></li>
           <li><%= ilink_to  'Logout', :destroy_user_session , :ico => 'fa-sign-out', :class => 'btn tep-transparent' %></li>
         <% else %> 
           <li><%= ilink_to 'Přihlášení', :new_user_session , :ico => 'fa-user', :class=> 'btn tep-transparent' %> </li>

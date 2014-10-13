@@ -134,6 +134,17 @@ class GiwiController < ApplicationController
     return render :history
   end
 
+  # aktualizace stranky
+  # @param version verze (git-id) ze ktre se pri editaci vychazi
+  # @param file pokud jde o upload
+  # @param preview pozadovano je pouze preview, hodnota je wikitext, navrat bude json {html=>'..'}
+  # @param data obsah ukladaneho souboru, ale v parametru (pro
+  # @param text text aktualizovaneho textu
+  # @param pos pozice puvodniho textu v originale (ve verzi `version`), format pozice:
+  #   `pos` in form `3.0-44.20` "from start of line 3 to line 44 char 20";
+  #   `pos` in form `3-44` "from start of line 3 to start line 44 (inc \n)"; 
+  #   `pos` in form `3.4` "insert at line 3 after char 4";
+  #
   def update
     @wiki = params[:wiki] || 'main'
     @giwi = Giwi.get_giwi(@wiki)

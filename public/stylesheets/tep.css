@@ -516,3 +516,7 @@ a.mailcrypt {
 .anketa-maybe {
   background-color: #FFFF99;
 }
+
+.hand {
+  cursor: pointer;
+}

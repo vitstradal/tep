@@ -2,35 +2,103 @@
 // This file is automatically included by javascript_include_tag :defaults
 
 var foto_cat = '';
+//var anketa_states = [ 'fa-square-o', 'fa-check-square-o', 'fa-plus-square-o', 'fa-minus-square-o',  ];
+var anketa_states = [ 'fa-circle-o', 'fa-smile-o', 'fa-meh-o', 'fa-frown-o',  ];
+var anketa_td_class = [ 'anketa-nic', 'anketa-yes', 'anketa-maybe', 'anketa-no',  ];
+var anketa_txt =    [ ' ', 'y', '?', 'n' ];
 
 jQuery(document).ready(function($) {
 
         // anketa zvyrazneni
         $('div.anketa').each(function (ii, div) {
-           //var stat = {};
+           var pos = parseInt($(this).data('lineno')||0) + 2;
+           var ver = $(this).data('version');
+           var stat = {};
            var $table = $(div).next();
+           console.log("csrf", $('meta[name=csrf-token]').attr('content'));
+           $table.find('td').first().each(function (i,td) {
+             $(this).addClass('hand');
+             $(td).prepend( $('<span class="fa fa-lg fa-plus-square-o">&nbsp;</span>'));
+             $(this).click(function () {
+
+               var $tr = $table.find('.edit-row');
+               if( $tr.length > 0  ) {
+                 $tr.toggle();
+                 return;
+               }
+
+               $tr = $('<tr class="edit-row">');
+               var user = ($('.label-user').text() || "anon").replace(/@.*/, '').replace(/ /, '');
+
+               $tr.append($('<td><input type="text" value="' + uc_first(user) + '"/></td>'));
+               for (var k in stat ) {
+                 var $quad =$("<span class='fa fa-circle-o'></span>");
+                 var $td = $('<td data-state="0">').append($quad);
+                 $td.click(function (but) {
+                   var $this = $(this);
+                   var state = (parseInt($this.data('state')||0) + 1)%4;
+                   $this.find('span').attr('class', 'hand fa ' + anketa_states[state]);
+                   $this.data('state', state);
+                   $this.attr('class', anketa_td_class[state]);
+                 });
+                 $tr.append($td);
+               }
+
+               var $csrf = $('<input type="hidden" name="authenticity_token">').val($('meta[name=csrf-token]').attr('content'));
+               var $pos = $('<input type="hidden" name="pos">').val(pos);
+               var $ver = $('<input type="hidden" name="version">').val(ver);
+               var $text = $('<input type="hidden" name="text">');
+               var $form = $('<form method="POST">').append($csrf).append($pos).append($text).append($ver);
+               $form.append( $('<button type="submit" class="btn btn-danger">save</button>'));
+               $form.submit(function () {
+                 var $tr = $(this).closest('tr');
+                 var row = '|| ' + ($tr.find('input').val() || '???' );
+                 $tr.find('td[data-state]').each(function () { row +=  ' || ' + anketa_txt[parseInt($(this).data('state')||0)] });
+                 row += " ||\n";
+                 $text.val(row);
+                 console.log('row:', row);
+               });
+               $tr.append($('<td>').append($form));
+               $table.find('tr').first().after($tr);
+              }); /* click */
+           });
            $table.find('td').each(function (i,td) {
              var $td = $(td);
              var txt = $td.text();
              var c =  $td.index();
              var r =  $td.parent().index();
-             var dostat;
+             var dostat = true;
              switch(txt) {
-             case 'y': $td.addClass('anketa-yes'); break;
-             case 'n': $td.addClass('anketa-no'); break;
-             case '?': $td.addClass('anketa-maybe'); break;
-             //default:  dostat = false;
+               case 'y': $td.addClass('anketa-yes'); break;
+               case 'n': $td.addClass('anketa-no'); break;
+               case '?': $td.addClass('anketa-maybe'); break;
+               default:  dostat = false;
              }
-             //stat[c] = stat[c] || {};
-             //if( dostat ) {
-             //        stat[c][txt] = stat[c][txt] || 0;
-             //        stat[c][txt]++;
-             //}
-             //console.log("td", txt, c, r);
+             if( dostat ) {
+                     stat[c] = stat[c] || {};
+                     stat[c][txt] = stat[c][txt] || 0;
+                     stat[c][txt]++;
+             }
           });
+          var tab = [];
           //console.log("stat", stat);
+          var $tr = $('<tr>').append('<td>&sum;</td>');
+          for (var k in stat ) {
+            var ret ='';
+            var ry = stat[k]['y'] || 0;
+            var rn = stat[k]['n'] || 0;
+            var rm = stat[k]['?'] || 0;
+            //ret = "<span class='anketa-yes'>" + ry + "</span>/<span class='anketa-maybe'>" + rm + "</span>/<span class='anketa-no'>" + rn + "</span>";
+            ret = ry + "/" + rm + "/" + rn;
+            var $td = $('<td>');
+            $td.html(ret);
+            $tr.append($td);
+            tab[k] = ret;
+          }
+          $table.append($tr);
+          console.log('tab', tab);
         });
-        
+
 
         $('.ace-file-input').ace_file_input()
                             .on('change', function () {
@@ -464,5 +532,8 @@ function fakedecrypt(x)
 
 }
 
+function uc_first(s) {
+    return s.charAt(0).toUpperCase() + s.slice(1);
+}
 
 
