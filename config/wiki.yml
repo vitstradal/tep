@@ -44,7 +44,7 @@ local: &local
     help_link: 'wiki/tep/doc/wiki#start'
     ext: '.wiki'
   main:
-    path: '/home/vitas/tmp/pikoweb/web'
+    path: '/home/vitas/git/web'
     bare: false
     branch: edit
     #url: 'web'
@@ -54,7 +54,7 @@ local: &local
     #nogit: true
     ext: '.wiki'
   web_edit:
-    path: '/home/vitas/tmp/pikoweb/web'
+    path: '/home/vitas/git/web'
     bare: true
     url: 'webed'
     branch: edit
