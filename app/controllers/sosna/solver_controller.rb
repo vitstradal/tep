@@ -140,6 +140,9 @@ class Sosna::SolverController < SosnaController
     id = params[:id]
     @solver = id ? Sosna::Solver.find(id) : Sosna::Solver.new
     @school = @solver.school
+    if id
+     @solutions = Sosna::Solution.where(:solver_id => id).all
+    end
     new
   end
 

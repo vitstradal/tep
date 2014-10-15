@@ -18,5 +18,12 @@
     <%= submit_tag  'Smazat řešitele (nebude žádné "jsi si jistý?")', :class=>'btn btn-danger' %></div>
   <% end %>
 <% else %>
-    <%= submit_tag  'Smazat řešitele může adm', :class=>'btn disabled' %></div>
+    <%= submit_tag  'Smazat řešitele může adm', :class=>'btn btn-disabled' %></div>
 <% end %>
+
+<hr>
+
+<hr>
+
+<%= link_to 'Nahraj řešení manuálně', sosna_solutions_user_url(@annual, @round, @solver.id), :class => 'btn btn-primary' %>
+

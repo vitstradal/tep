@@ -12,7 +12,7 @@ Tep::Application.routes.draw do
   get  '/sosna/solver/tnx'                   => 'sosna/solver#create_tnx',      :as => :sosna_solver_create_tnx
 
   # user:
-  get  '/sosna/solutions/user(/:roc(/:se))'  => 'sosna/solution#user_index',    :as => :sosna_solutions_user
+  get  '/sosna/solutions/user(/:roc(/:se(/:id)))' => 'sosna/solution#user_index',    :as => :sosna_solutions_user
   patch '/sosna/solution/upload'             => 'sosna/solution#upload',        :as => :sosna_solution_upload
   post '/sosna/solution/upload_rev'         => 'sosna/solution#upload_rev',   :as => :sosna_solution_upload_rev
   get  '/sosna/solution/:id/down'            => 'sosna/solution#download',      :as => :sosna_solution_download

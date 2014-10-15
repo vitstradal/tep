@@ -5,6 +5,7 @@
 <% deadline = deadline_time @config, @round %>
 <% is_current_annual = @config[:annual] == @annual %>
 <% show_nahrat = is_current_annual && !deadline.nil? && deadline >=  Time.now %>
+<% show_nahrat = true if current_user.admin? %>
 <% max_size = Rails.configuration.sosna_user_solution_max_size %>
 
 <table class="table table-bordered">

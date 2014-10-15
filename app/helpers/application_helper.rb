@@ -110,12 +110,13 @@ module ApplicationHelper
     end
   end
   def deadline_time(cfg, round, ignore_show = false)
+    pravek = Time.parse('1975-04-15')
     if ! ignore_show
       s = cfg["show#{round}".to_sym]
-      return nil if ! s || s != 'yes'
+      return  pravek if ! s || s != 'yes'
     end
     t = cfg["deadline#{round}".to_sym]
-    return nil if ! t
+    return pravek if ! t
     return Time.parse(t) + 1.day - 1
   end
 

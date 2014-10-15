@@ -208,6 +208,7 @@ class Sosna::SolutionController < SosnaController
 
     #@annual = params[:roc] || @config[:annual]
     @annual = @config[:annual]
+    solver_id = @config[:annual]
     @round  = params[:se]  || @config[:round]
     @breadcrumb = [[], _rounds_roc(@annual, @round) ]
 
@@ -215,7 +216,11 @@ class Sosna::SolutionController < SosnaController
 
     raise 'not logged' if current_user.nil?
 
-    @solver = Sosna::Solver.where(:user_id => current_user.id, :annual => @config[:annual]).take
+    if solver_id
+      @solver = Sosna::Solver.find(solver_id)
+    else 
+      @solver = Sosna::Solver.where(:user_id => current_user.id, :annual => @config[:annual]).take
+    end
     if ! @solver
        add_alert "Pozor: zatím nejsi letošním řešitelem, nejprve vyplň přihlašku!"
        return redirect_to :controller => :solver , :action => :new
@@ -231,44 +236,47 @@ class Sosna::SolutionController < SosnaController
 
     # find solution
     solution = Sosna::Solution.find(solution_id) or raise RuntimeError, "bad solution id: #{solution_id}"
+
+    is_owner = solution.owner?(current_user)
+    authorize! :upload_org, Sosna::Solution if ! is_owner
+
     if !solution
       add_alert "Špatné číslo řešení"
-      return redirect_to :action => :user_index
+      return redirect_to sosna_solutions_user_url(roc, se, solver.id)
     end
     problem, solver  = solution.problem, solution.solver
     se = problem.round
     roc = problem.annual
 
     if problem.annual.to_s != @config[:annual] || deadline_time(@config, problem.round) < Time.now
-      pp solution.problem.annual != @config[:annual]
-      pp @config[:annual]
-      pp solution.problem.annual
-      pp deadline_time(@config, solution.problem.round)
-      add_alert "Řešení není možné odevdat"
-      return redirect_to :action => :user_index, roc: roc, se: se
+      if is_owner
+        pp solution.problem.annual != @config[:annual]
+        pp @config[:annual]
+        pp solution.problem.annual
+        pp deadline_time(@config, solution.problem.round)
+        add_alert "Řešení není možné odevdat"
+        return redirect_to sosna_solutions_user_url(roc, se, solver.id)
+      end
     end
 
-    if !solution.owner? current_user
-        authorize! :upload_org, Sosna::Solution
-    end
 
     if solution_file.nil?
       solution.filename = nil
       solution.filename_orig = nil
       solution.save
       add_success "Soubor smazán"
-      return redirect_to :action => :user_index, roc: roc, se: se
+      return redirect_to sosna_solutions_user_url(roc, se, solver.id)
     end
 
     if solution_file.original_filename !~ /\.pdf$/
       add_alert 'Pozor: pouze soubory ve formátu PDF'
-      return redirect_to :action => :user_index, roc: roc, se: se
+      return redirect_to sosna_solutions_user_url(roc, se, solver.id)
     end
 
     max_size =  Rails.configuration.sosna_user_solution_max_size || (20 * 1024 * 1024)
     if solution_file.size > max_size
       add_alert "Soubor je příliš velký (větší než #{number_to_human_size max_size})."
-      return redirect_to :action => :user_index, roc: roc, se: se
+      return redirect_to sosna_solutions_user_url(roc, se, solver.id)
     end
 
 
@@ -286,7 +294,8 @@ class Sosna::SolutionController < SosnaController
     solution.filename_orig = solution_file.original_filename
     solution.save
     add_success 'Soubor úspěšně nahrán'
-    redirect_to :action => :user_index, roc: roc, se: se
+
+    redirect_to sosna_solutions_user_url(roc, se, solver.id)
   end
 
   # pocitani vysledku
