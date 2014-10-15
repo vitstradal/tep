@@ -48,5 +48,23 @@
 <hr>
 
 <%= form_tag user_delete_path(id:@user.id) do %>
-   <%= submit_tag  'Smazat uživatele (nebude žádné "jsi si jistý?")', :class=>'btn btn-danger' %></div>
+   <%= submit_tag  'Smazat uživatele (nebude žádné "jsi si jistý?")', :class=>'btn btn-danger' %>
 <% end %>
+
+<hr>
+
+<% @resource = @user %>
+<h2>Náhled mailů pro tohoto uživatele</h2>
+
+<h3>tep/mailer/first_login_instructions.html.erb</h3>
+<div class="well"> <%= render file: 'tep/mailer/first_login_instructions.html.erb' %></div>
+
+<h3>tep/mailer/reset_password_instructions.html.erb</h3>
+<div class="well"> <%= render file: 'tep/mailer/reset_password_instructions.html.erb' %></div>
+
+<h3>tep/mailer/unlock_instructions.html.erb</h3>
+<div class="well"> <%= render file: 'tep/mailer/unlock_instructions.html.erb' %></div>
+
+<h3>confirmation_instructions.html.erb</h3>
+<div class="well"> <%= render file: 'tep/mailer/confirmation_instructions.html.erb' %></div>
+

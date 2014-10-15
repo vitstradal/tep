@@ -69,6 +69,7 @@ class Sosna::SolverController < SosnaController
   def create
     load_config
     params.require(:sosna_solver).permit!
+    is_admin =  !current_user.nil? && current_user.admin?
 
     school_id =  params[:school].delete :id
     send_first =  true
@@ -82,7 +83,7 @@ class Sosna::SolverController < SosnaController
     solver.errors.add(:email, 'je již registrován u jiného řešitele') if Sosna::Solver.where(email: solver.email, annual: @annual).exists? && !solver.email.empty?
     solver.errors.add(:email, 'neexistující adresa') if !solver.email.empty? && !email_valid_mx_record?(solver.email)
     solver.errors.add(:birth, 'jsi příliš stár') if solver.errors[:birth].blank? && !solver.birth.empty? && (Date.parse(solver.birth) + 17.years) < Date.today
-    solver.errors.add(:email, 'adresa nemůže být prázdná') if solver.email.empty?
+    solver.errors.add(:email, 'adresa nemůže být prázdná') if !is_admin && solver.email.empty?
 
     not_admin =  current_user.nil? ||  !current_user.admin?
     if not_admin
