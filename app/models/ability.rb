@@ -19,6 +19,8 @@ class Ability
     can :index, :tep
     can :faq, :tep
     can :csrf, :tep
+    can :die, :tep
+    can :error, :tep
 
     Rails::logger.fatal("can init")
     #wikis

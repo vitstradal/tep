@@ -92,6 +92,15 @@ class TepController < ApplicationController
       #print "user:", pp(@user)
   end
 
+  def error
+    @errid = "ERR-#{rand(1000000)}"
+    Rails::logger.fatal(@errid);
+    render :layout => nil
+  end
+
+  def die 
+    0/0
+  end
 
   def user_role_change
     user = User.find params[:user][:id];

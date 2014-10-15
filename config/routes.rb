@@ -67,8 +67,11 @@ Tep::Application.routes.draw do
   post  '/user/:id/action/:what'             => 'tep#user_action',              :as => :user_action
   get  '/reg/:token'                         => 'tep#user_finish_registration', :as => :user_finish_registration
 
+  get  '/die'                                => 'tep#die', :as => :tep_die
+
 
   get  '/faq'                                => "tep#faq",                      :as => :faq
+  get  '/500'                                => "tep#error",                    :as => :error
 
   Giwi.giwis.each_value do |giwi|
      next if giwi.name.to_s == 'main'

@@ -11,8 +11,12 @@ Tep::Application.configure do
 
 
   # Show full error reports and disable caching
-  config.consider_all_requests_local       = true
+  #config.consider_all_requests_local       = true
+  config.consider_all_requests_local       = false
   config.action_controller.perform_caching = false
+
+  # added 
+  config.exceptions_app = self.routes
 
   # Do not compress assets
   config.assets.compress = false
