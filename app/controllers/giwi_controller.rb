@@ -274,7 +274,7 @@ class GiwiController < ApplicationController
       resp = conn.get('/sklep/index.php/apps/ownhacks/calendar-22.php', start: now.strftime('%s'), end: nm.strftime('%s'))
       json = JSON.load(resp.body)
       #"/sklep/index.php/apps/ownhacks/calendar-10.php?start=#{now.strftime('%s')}&end=#{nm.strftime('%s')}\n" +
-      json.map do |item|
+      json.sort {|a,b| a['start'] <=> b['start'] }.map do |item|
           "* **#{item['start']}** #{item['title']}\n"
       end.join
     rescue
