@@ -9,7 +9,7 @@
   <p>Pokud chceš řešení odesílat elektronicky, dokonči registraci pomocí následujícího linku:</p>
 <% end %>
 
-<p><%= link_to 'Dokončit registraci', user_finish_registration_url(:token => @resource.reset_password_token) %></p>
+<p><%= link_to 'Dokončit registraci', user_finish_registration_url(:token => @resource.reset_password_token || 'fake') %></p>
 
 
 <p>Na tvoji účast v soutěži se těší organizátoři Pikomatu MFF UK.</p>
