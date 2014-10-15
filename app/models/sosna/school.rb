@@ -7,6 +7,6 @@ class Sosna::School < ActiveRecord::Base
   end
 
   def long
-     "#{name}, #{street} #{num}, #{psc} #{city}"
+     "#{city}, #{name}, #{street} #{num}, #{psc} "
   end
 end
