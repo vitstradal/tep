@@ -216,8 +216,12 @@
             <% end %>
             </div>
           <% else # problem_no %>
-            <%= button_tag "Editovat body", :class=> 'btn btn-danger', ico: 'fa-th', href: url_for(action: 'edit', roc: @annual, se: @round)  %>
+            <div class="btn-group">
+              <%= button_tag "Editovat body", :class=> 'btn btn-danger', ico: 'fa-th', href: url_for(action: 'edit', roc: @annual, se: @round)  %>
+              <%= button_tag "Editovat papíry", :class=> 'btn btn-danger', ico: 'fa-file-text', href: url_for(action: 'edit', roc: @annual, se: @round, paper: 'yes')  %>
+            </div>
             <p>Pro nahrání opraveného řešení vyber úlohu:
+
               <% @problems.each do |pr| %>
                 <%= link_to "ul#{pr.problem_no}", { action: :index, roc: @annual, se: @round, ul: pr.problem_no , anchor: 'upload' } %>,
               <% end %></p>

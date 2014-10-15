@@ -2,15 +2,18 @@
 
 <% if @resource.org? %>
 
-  <p>Tento e-mail ti přišel, protože si o tobě někdo myslí (možná i ty), že chceš organizovat Pikomat.</p>
-  <p>Registraci dokončíš pomocí tohoto linku:</p>
+  <p>Tento e-mail ti přišel, protože tě někdo (pravděpodoboně ty) přihlásil do soutěže Pikomat.</p>
+  <p>Pro dokončení registrace použij následující odkaz:</p>
+  <p>Pokud jsi již registrovaný, tento mail je ti poslán z důvodu nutnosti
+     aktualizase údajů a potvrzení souhlasu o zpracování osobních udajů na další
+     ročník Pikomatu. Prosím, přihlaš se tedy na svůj účet na Pikomatu
+     a aktualizuj údaje. Tímto se přihlásíš do dalšího ročníku Pikomatu.</p>
 <% else %>
   <p>Tento e-mail ti přišel, protože tě někdo (pravděpodoboně ty) přihlásil do soutěže Pikomat.</p>
   <p>Pokud chceš řešení odesílat elektronicky, dokonči registraci pomocí následujícího linku:</p>
 <% end %>
 
 <p><%= link_to 'Dokončit registraci', user_finish_registration_url(:token => @resource.reset_password_token) %></p>
-
 
 <p>Na tvoji účast v soutěži se těší organizátoři Pikomatu MFF UK.</p>
 
