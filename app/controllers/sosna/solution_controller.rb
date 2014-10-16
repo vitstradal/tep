@@ -208,7 +208,7 @@ class Sosna::SolutionController < SosnaController
 
     #@annual = params[:roc] || @config[:annual]
     @annual = @config[:annual]
-    solver_id = @config[:annual]
+    solver_id = params[:id]
     @round  = params[:se]  || @config[:round]
     @breadcrumb = [[], _rounds_roc(@annual, @round) ]
 
@@ -220,6 +220,7 @@ class Sosna::SolutionController < SosnaController
       @solver = Sosna::Solver.find(solver_id)
     else 
       @solver = Sosna::Solver.where(:user_id => current_user.id, :annual => @config[:annual]).take
+      @solver_is_current_user = true
     end
     if ! @solver
        add_alert "Pozor: zatím nejsi letošním řešitelem, nejprve vyplň přihlašku!"

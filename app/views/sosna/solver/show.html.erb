@@ -13,6 +13,17 @@
 <% end %>
 <hr>
 
+
+
+<hr>
+
+<%= link_to 'Nahraj řešení manuálně', sosna_solutions_user_url(@annual, @round, @solver.id), :class => 'btn btn-primary' %>
+
+<hr>
+<hr>
+<hr>
+<hr>
+
 <% if can? :delete, Sosna::Solver %>
   <%= form_tag sosna_solver_delete_path(id:@solver.id) do %>
     <%= submit_tag  'Smazat řešitele (nebude žádné "jsi si jistý?")', :class=>'btn btn-danger' %></div>
@@ -20,10 +31,3 @@
 <% else %>
     <%= submit_tag  'Smazat řešitele může adm', :class=>'btn btn-disabled' %></div>
 <% end %>
-
-<hr>
-
-<hr>
-
-<%= link_to 'Nahraj řešení manuálně', sosna_solutions_user_url(@annual, @round, @solver.id), :class => 'btn btn-primary' %>
-
