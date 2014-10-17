@@ -144,7 +144,7 @@ margin-left: 3em;
   bottom: 0;
   padding-left: 0.5em;
   overflow: visible;
-  clean: left;
+  clear: left;
   color: white;
   font-family: arial,sans-serif;
   font-size: 13px;
@@ -521,7 +521,6 @@ a.mailcrypt {
   cursor: pointer;
 }
 
-
 #foto-modal .modal-lg {
  width: 99%;
  margin-top: 0;
@@ -533,12 +532,18 @@ height: 100%;
 }
 .foto-over {
   position:fixed;
-  /* background-color:rgba(0,0,0, 0.5); */
-  color: white;
+  background-color:rgba(255,255,255, 0.4);
+  /* color: white; */
   right: 20px;
   left: 20px;
-  font-size: 25px;
+  font-size: 25pt;
+}
+.foto-over .modal-title {
+  /*float: right;*/
+  margin-right: 1em;
+  margin-left: 1em;
 }
 .foto-over .close {
-  font-size: 25px;
+  font-size: 25pt;
+  margin: 5px;
 }
