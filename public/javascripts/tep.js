@@ -165,9 +165,14 @@ jQuery(document).ready(function($) {
            var bigimg = $(this).closest('a').attr('href');
            var title = $(this).closest('.foto').find('span').text();
            $('#foto-modal').modal('show');
+           $('#foto-modal').height(  $(window).height() );
+           var wh = $(window).height() - 10;
+           $('#foto-modal .modal-content').height(wh);
+           var hh = $('#foto-modal .modal-title').height();
+           console.log('h', wh , hh);
            $('#foto-modal img').attr('src', bigimg)
-                            .css('height', '500px')
-                            .css('widht', 'auto');
+                            .css('height', wh - 50)
+                            .css('width', 'auto');
            $('#foto-modal a').attr('href', bigimg);
            $('#foto-modal .modal-title').text(title);
 

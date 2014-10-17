@@ -204,6 +204,22 @@ class Sosna::SolutionController < SosnaController
     redirect_to :action =>  :index, :roc => roc, :se => se, :ul => ul
   end
 
+  #
+  # [URL]    +/sosna/solutions/user(/:roc(/:se(/:id)))+
+  # [+roc+]  ročník 
+  # [+se+]   serie 
+  # [+id+]   id solvera, pokud není pokusí se najít letošního řešitele,
+  #          přihlášeného uživatele; je nutné mít +:org+
+  #
+  # do templaty:
+  #
+  # [+@annual+] rok
+  # [+@solver+] +Sosna::Solver+
+  # [+@is_current+] *true* když se je aktualní ročník a serie
+  # [+@solver_is_current_user+] *true* když, se dívá uživatel dívá na sebe
+  # [+@problems]  pole +Sosna::Problem+ úloh dané série
+  # [+@solutions_by_solver]  +{ solver.id => { problem.problem_no => solution }}+
+  #
   def user_index
 
     #@annual = params[:roc] || @config[:annual]
@@ -217,8 +233,10 @@ class Sosna::SolutionController < SosnaController
     raise 'not logged' if current_user.nil?
 
     if solver_id
+      authorize! :user_index_org, Sosna::Solution
       @solver = Sosna::Solver.find(solver_id)
     else 
+      
       @solver = Sosna::Solver.where(:user_id => current_user.id, :annual => @config[:annual]).take
       @solver_is_current_user = true
     end
@@ -475,6 +493,8 @@ class Sosna::SolutionController < SosnaController
     end
     penalisations_by_solver
   end
+
+  # { solver.id => { problem.problem_no => solution }}
   def _solutions_by_solver(solvers, problems)
     solutions = Sosna::Solution.where( :solver_id  => solvers.map{ |s| s.id },
                                        :problem_id => problems.map { |p| p.id },

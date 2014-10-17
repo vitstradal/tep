@@ -22,6 +22,26 @@ class Sosna::SolverController < SosnaController
     @solvers = Sosna::Solver.where solution_form: 'tep', annual: @annual, is_test_solver: false
   end
 
+  def dup
+    solver_id = params[:id]
+    annual = params[:annual] || @annual
+
+    solver = Sosna::Solver.find(solver_id)
+    if solver.nil?
+      add_alert "no such solver #{solver_id}"
+      redirect_to sosna_solver_show(solver_id);
+    end
+    if solver.annual == annual
+      add_alert "stejny rocnik pro duplikaci"
+      redirect_to sosna_solver_show(solver_id);
+    end
+
+    solver_dup = solver.dup;
+    solver_dup.annual = annual
+    solver_dup.save
+    redirect_to sosna_solver_url(solver_dup.id);
+  end
+
   def labels
     @annual = params[:annual] || @annual
     respond_to do |format|

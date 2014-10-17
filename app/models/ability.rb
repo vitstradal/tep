@@ -56,6 +56,7 @@ class Ability
       can :downall, Sosna::Solution
       can :update_scores, Sosna::Solution
       can :upload_rev, Sosna::Solution
+      can :user_index_org, Sosna::Solution
 
       can :index, Sosna::Problem
       can :show, Sosna::Problem
@@ -64,6 +65,7 @@ class Ability
 
       can :index, Sosna::Solver
       can :show, Sosna::Solver
+      can :dup, Sosna::Solver
       can :update, Sosna::Solver
       can :labels, Sosna::Solver
       can :tep_emails, Sosna::Solver

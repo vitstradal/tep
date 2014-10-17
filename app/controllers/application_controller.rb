@@ -3,6 +3,7 @@ class ApplicationController < ActionController::Base
   rescue_from CanCan::AccessDenied do |exception|
       #sign_out :user
       redirect_to :access_denied
+      #render :access_denied
   end
   include ApplicationHelper
 
