@@ -193,7 +193,6 @@
             <div class="btn-group">
                <%= button_tag "Editovat body", :class=> 'btn btn-danger', ico: 'fa-th', href: url_for(action: 'edit', roc: @annual, se: @round, ul: @problem_no)  %>
                <%= button_tag "Editovat papíry", :class=> 'btn btn-danger', ico: 'fa-file-text', href: url_for(action: 'edit', roc: @annual, se: @round, ul: @problem_no, paper: 'yes')  %>
-               <%= button_tag "Editovat penalizaci", :class=> 'btn btn-danger', ico: 'fa-thumbs-down', href: url_for(action: 'edit', roc: @annual, se: @round, ul: @problem_no, penalisation: 'yes' )  %>
             </div>
             <hr>
             <%= form_tag({:action => :upload_rev} , :multipart => true , :class => 'form-inline') do %>
@@ -219,6 +218,7 @@
             <div class="btn-group">
               <%= button_tag "Editovat body", :class=> 'btn btn-danger', ico: 'fa-th', href: url_for(action: 'edit', roc: @annual, se: @round)  %>
               <%= button_tag "Editovat papíry", :class=> 'btn btn-danger', ico: 'fa-file-text', href: url_for(action: 'edit', roc: @annual, se: @round, paper: 'yes')  %>
+              <%= button_tag "Editovat penalizaci", :class=> 'btn btn-danger', ico: 'fa-thumbs-down', href: url_for(action: 'edit', roc: @annual, se: @round, ul: @problem_no, penalisation: 'yes' )  %>
             </div>
             <p>Pro nahrání opraveného řešení vyber úlohu:
 
