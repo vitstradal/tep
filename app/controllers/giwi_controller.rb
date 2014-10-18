@@ -268,10 +268,11 @@ class GiwiController < ApplicationController
   def _template_calendar(env, argv)
     begin
       now  = Date.today
-      nm =  now.next_month
+      nm =  now.next_month((argv['mon']||1).to_i)
+      cal =  argv['cal'] || 'resitel'
 
       conn = Faraday.new('https://pikomat.mff.cuni.cz')
-      resp = conn.get('/sklep/index.php/apps/ownhacks/calendar-22.php', start: now.strftime('%s'), end: nm.strftime('%s'))
+      resp = conn.get('/sklep/index.php/apps/ownhacks/calendar-22.php', cal: cal ,start: now.strftime('%s'), end: nm.strftime('%s'))
       json = JSON.load(resp.body)
       #"/sklep/index.php/apps/ownhacks/calendar-10.php?start=#{now.strftime('%s')}&end=#{nm.strftime('%s')}\n" +
       json.sort {|a,b| a['start'] <=> b['start'] }.map do |item|
