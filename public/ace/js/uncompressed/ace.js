@@ -541,10 +541,13 @@ ace.handle_side_menu = function($) {
 		}
 
 		//if not open and visible, let's open it and make it visible
+
+                // vitas: close active submenu, when open other
+                var close_active = true;
 		if( sub.scrollHeight == 0 ) {
 		  $(parent_ul).find('> .open > .submenu').each(function() {
 			//close all other open submenus except for the active one
-			if(this != sub && !$(this.parentNode).hasClass('active')) {
+			if(this != sub && (close_active || !$(this.parentNode).hasClass('active'))) {
 				height_change -= this.scrollHeight;
 				ace.submenu.hide(this, duration);
 			}
