@@ -328,7 +328,7 @@ function editor_tool_button_switch($el, editor, form)
   //console.log("editor_tool_button_switch");
   switch(action) {
   case 'vi':
-     var kb = on ? 'ace/keyboard/vim' : 'ace/keyboard/textarea';
+     var kb = on ? 'ace/keyboard/vim' : '';
      editor.setKeyboardHandler(kb);
      editor.focus();
      ace.data.set('vi', on ? 'on' : 'off' );
@@ -336,9 +336,9 @@ function editor_tool_button_switch($el, editor, form)
   }
 }
 
-function editor_tool_button_click(el, editor, form)
+function editor_tool_button_click($el, editor, form)
 {
-  editor_tool_action($(el).data('edit'), editor, form);
+  editor_tool_action($el.data('edit'), editor, form);
 }
 
 function editor_tool_action(action, editor, form)
@@ -548,7 +548,7 @@ function _init_textarea_with_ace($textarea) {
                 //save_cursor(editor, form);
         });
         //.find('a[data-edit]').click(function () { editor_tool_button_click($textarea, editor); });
-        $('a[data-edit]').click(function () {      editor_tool_button_click($textarea, editor, form); });
-        $('input[data-edit]').change(function () { editor_tool_button_switch($textarea, editor, form); });
+        $('a[data-edit]').click(function () {      editor_tool_button_click($(this), editor, form); });
+        $('input[data-edit]').change(function () { editor_tool_button_switch($(this), editor, form); });
         $('input[data-edit]').each(function (i, el) { editor_tool_button_switch($(el), editor, form); });
 }
