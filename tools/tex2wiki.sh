@@ -11,17 +11,27 @@ if [ -z "$1" ] ; then
 fi
 
 TEX="$1"
+ROC="$2"
 U8="${TEX%.tex}.u8"
 WIKI="${TEX%.tex}.wiki"
 BASE_JN=`basename $TEX| sed 's!\.\(u8\|il2\)$!!'`
 
 if [ -z "$ROC" ] ; then
         REALPATH="`realpath $TEX`"
+        echo "$REALPATH"
         ROC=`echo $REALPATH| sed -n 's/.*rocnik\([0-9][0-9]\).*/\1/p'|sed 's/^0*//'`
 fi
 
+if [ -z "$ROC" ] ; then
+
+        echo "cannt determine ROC, specify as 2nd argument:"
+        echo "usage: $0 zad1.tex ROC"
+        exit
+fi
+
+
 FDIR="archiv/rocnik$ROC"
-echo "dir: '$FDIR'"
+echo "archive dir: '$FDIR'"
 
 perl -pne 's#\\m#\\meter#g' "$TEX" |
 "$HPPDIR/ttm8"  -d "$HPPDIR/texmac.u8.ttm"  |
@@ -101,4 +111,4 @@ m4 -D "__fdir=$FDIR" -D "__roc=$ROC" -D "__base_jn=$BASE_JN" "$M4_TO_WI_M4" -  |
      print;
    }' > "$WIKI"
 
-echo "result: $TEX -> $WIKI done"
+echo "done: $TEX -> $WIKI"
