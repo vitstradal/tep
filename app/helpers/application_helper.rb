@@ -94,7 +94,7 @@ module ApplicationHelper
       elsif user.has_role? :org
         return url_for(wiki_main_path(path: 'org'))
       elsif user.has_role? :user
-        return url_for(wiki_main_path(path: 'index'))
+        return url_for(wiki_main_path(path: 'usr'))
       end
     end
     return url_for(wiki_main_path(path: 'index'))
