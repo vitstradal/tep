@@ -22,7 +22,7 @@ class User < ActiveRecord::Base
 
   # declare the valid roles -- do not change the order if you add more
   # roles later, always append them at the end!
-  roles :admin, :org, :user, :guest, :sklep
+  roles :admin, :org, :user, :guest, :sklep, :morg
 
   before_create do
     roles << :user

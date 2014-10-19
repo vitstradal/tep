@@ -5,39 +5,38 @@ defaults: &defaults
   piki:
     path: '/home/www/git/piki.git'
     url: 'piki'
-    read:  :org
     bare: true
-    update:  :org
-    update:  :org
     ext: '.wiki'
     help_link: 'wiki/tep/doc/wiki#start'
+    read:   :org
+    update: :org
   main:
     path: '/home/www/git/web.git'
     bare: true
     #url: 'web'
     url: ''
     branch: edit
-    read:  :anon
     ext: '.wiki'
     help_link: 'wiki/tep/doc/wiki#start'
+    read:  :anon
+    update: NULL
   web_edit:
     path: '/home/www/git/web.git'
     bare: true
     url: 'webed'
     branch: edit
-    read:  :org
-    update:  :org
     #nogit: true
     ext: '.wiki'
     help_link: '/wiki/tep/doc/wiki#start'
+    read:   :org
+    update: :morg
   wikuk:
     url: 'wikuk'
     path: '/home/pikomat/wikuk'
-    read:  :org
-    update:  :org
     nogit: true
     ext: '.wiki'
-
+    read:   :org
+    update: :org
 
 local: &local
   <<: *defaults
@@ -46,37 +45,25 @@ local: &local
     url: 'piki'
     read:  :org
     bare: false
-    update:  :org
-    update:  :org
     help_link: 'wiki/tep/doc/wiki#start'
     ext: '.wiki'
+    update: :org
+    update: :org
   main:
     path: '/home/vitas/git/web'
     bare: false
     branch: edit
-    #url: 'web'
     url: ''
-    read:  :anon
-    update:  :org
-    #nogit: true
     ext: '.wiki'
+    read:   :anon
+    update: :org
   web_edit:
     path: '/home/vitas/git/web'
     bare: true
     url: 'webed'
     branch: edit
-    read:  :org
-    update:  :org
-    #nogit: true
-    ext: '.wiki'
-  webfs:
-    url: 'webfs'
-    path: '/home/vitas/tmp/pikoweb/web'
-    #bare: true
-    #branch: edit
-    read:  :org
-    update:  :org
-    nogit: true
+    read:    :org
+    update:  :morg
     ext: '.wiki'
 
 test:

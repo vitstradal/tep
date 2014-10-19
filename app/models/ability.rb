@@ -22,18 +22,6 @@ class Ability
     can :die, :tep
     can :error, :tep
 
-    Rails::logger.fatal("can init")
-    #wikis
-    Giwi.giwis.each_value do |giwi|
-      auth_name =  Giwi.auth_name(giwi.name)
-      Rails::logger.fatal("can read: #{auth_name} -> read: #{giwi.read}") 
-      Rails::logger.fatal("can show #{auth_name}") if !giwi.read.nil?   && (giwi.read   == :anon || user.has_role?(giwi.read))
-      can :show,   auth_name if !giwi.read.nil?   && (giwi.read   == :anon || user.has_role?(giwi.read))
-      can :update, auth_name if !giwi.update.nil? && (giwi.update == :anon || user.has_role?(giwi.update))
-
-      #print "can :update, #{auth_name}\n" if !giwi.update.nil? && user.has_role?(giwi.update)
-      #print "can :read, #{auth_name}\n" if !giwi.read.nil? && user.has_role?(giwi.read)
-    end
     #can :update, :giwi, if: :can_update?
 
     if user.user?
@@ -54,31 +42,44 @@ class Ability
       can :upload_org, Sosna::Solution
       can :update, Sosna::Solution
       can :downall, Sosna::Solution
-      can :update_scores, Sosna::Solution
       can :upload_rev, Sosna::Solution
       can :user_index_org, Sosna::Solution
 
       can :index, Sosna::Problem
       can :show, Sosna::Problem
-      can :update, Sosna::Problem
-      can :new_round, Sosna::Problem
 
       can :index, Sosna::Solver
       can :show, Sosna::Solver
       can :dup, Sosna::Solver
-      can :update, Sosna::Solver
       can :labels, Sosna::Solver
       can :tep_emails, Sosna::Solver
 
       can :index, Sosna::School
       can :show, Sosna::School
-      can :update, Sosna::School
       can :new, Sosna::School
 
       can :index, Sosna::School
+
+    end
+
+    # master-org, or more-org, 
+    if user.morg?
+
+      can :new_round, Sosna::Problem
+
+      can :update, Sosna::Solver
       can :update, Sosna::School
 
+      can :update, Sosna::Problem
+      can :update_scores, Sosna::Solution
 
+      can :update_papers, Sosna::Solution
+      can :update_penalisations, Sosna::Solution
+      can :update_results, Sosna::Solution
+
+      can :delete, Sosna::Solver
+      can :delete, Sosna::School
+      can :delete, Sosna::Problem
     end
 
     if user.admin?
@@ -92,13 +93,13 @@ class Ability
 
       can :index,  Sosna::Config
       can :update, Sosna::Config
-      can :delete, Sosna::Solver
-      can :delete, Sosna::School
-      can :delete, Sosna::Problem
+    end
 
-      can :update_papers, Sosna::Solution
-      can :update_penalisations, Sosna::Solution
-      can :update_results, Sosna::Solution
+    # Wikis
+    Giwi.giwis.each_value do |giwi|
+      auth_name =  Giwi.auth_name(giwi.name)
+      can :show,   auth_name if !giwi.read.nil?   && (giwi.read   == :anon || user.has_role?(giwi.read))
+      can :update, auth_name if !giwi.update.nil? && (giwi.update == :anon || user.has_role?(giwi.update))
     end
 
   end
