@@ -552,7 +552,7 @@ height: 100%;
  */
 .secret-menu-toggler {
   position: fixed;
-  border: 1px solid rgba(0,0,0,.2);
+  /* border: 1px solid rgba(0,0,0,.2); */
   margin-left: 31px;
   margin-top: 35px;
   width: 21px;
