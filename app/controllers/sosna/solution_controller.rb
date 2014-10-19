@@ -11,7 +11,8 @@ class Sosna::SolutionController < SosnaController
 
   include ApplicationHelper
   include ActionView::Helpers::NumberHelper 
-  UPLOAD_DIR = "public/uploads/"
+  #UPLOAD_DIR = "public/uploads/"
+  UPLOAD_DIR = "var/uploads/"
 
   def index
     _prepare_solvers_problems_solutions

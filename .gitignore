@@ -2,7 +2,7 @@
 public/js
 public/data
 *.swp
-db/*.sqlite3
+/var/db/*.sqlite3
 db/lidi29*.yml
 db/skoly29.yml
 log/*.log
@@ -16,3 +16,7 @@ tags
 /doc
 /ovvp
 /Trash
+/var/uploads/*.zip
+/var/uploads/*.tmpl
+/var/uploads/*.pdf
+/var/uploads/*.ext

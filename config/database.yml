@@ -14,19 +14,19 @@ development:
 # for running on localhost 
 local:
   adapter: sqlite3
-  database: db/local.sqlite3
+  database: var/db/local.sqlite3
   pool: 5
   timeout: 5000
 
 
 test:
   adapter: sqlite3
-  database: db/test.sqlite3
+  database: var/db/test.sqlite3
   pool: 5
   timeout: 5000
 
 production:
   adapter: sqlite3
-  database: db/production.sqlite3
+  database: var/db/production.sqlite3
   pool: 5
   timeout: 5000
