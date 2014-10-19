@@ -8,6 +8,12 @@ var anketa_td_class = [ 'anketa-nic', 'anketa-yes', 'anketa-maybe', 'anketa-no',
 var anketa_txt =    [ ' ', 'y', '?', 'n' ];
 
 jQuery(document).ready(function($) {
+        //hack: menu na spodni kosticku
+        $('.secret-menu-toggler').click(function (ev) {
+          ev.preventDefault();
+	  $('#sidebar').toggleClass('hide');
+	  $('#main-content-id').toggleClass('main-content');
+        });
 
         // anketa zvyrazneni
         $('div.anketa').each(function (ii, div) {

@@ -57,6 +57,7 @@
 
      <div class="navbar-header pull-left">
         <div class="tep-navbar-brand hidden-xs" >
+          <% if @no_sidebar %><div class="secret-menu-toggler"></div><%end%>
           <a href="<%=url_for_root%>" class="navbar-brand " >
 	     <img src="<%= asset_path '/images/logo-vw290.png'%>" width="290px"/> 
 	  </a>
@@ -122,8 +123,6 @@
 <%################################################################################## %>
 
 <div class="main-container <%if !@wide_display%>container<%end%> <% if @tep_index %>tep-index<% end %>" id="main-container">
-  <%# if ! @no_sidebar %>
-  <% if  true %>
   <div class="sidebar responsive
         <%if @wide_display%>menu-min<%end%>
         <%if @no_sidebar %>hide<%end%>"
@@ -199,13 +198,8 @@
       <i class="ace-icon fa fa-angle-double-left" data-icon1="ace-icon fa fa-angle-double-left" data-icon2="ace-icon fa fa-angle-double-right"></i>
     </div>
   </div> <%# sidebar %>
-  <% end # no_sidebar %>
 
-  <% if @no_sidebar %>
-    <div>
-  <% else %>
-    <div class="main-content">
-  <% end %>
+  <div id='main-content-id'  <%if ! @no_sidebar%>class="main-content"<% end %>>
 
 <%################################################################################## %>
 <%# cesta %>
