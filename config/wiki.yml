@@ -30,6 +30,13 @@ defaults: &defaults
     #nogit: true
     ext: '.wiki'
     help_link: '/wiki/tep/doc/wiki#start'
+  wikuk:
+    url: 'wikuk'
+    path: '/home/pikomat/wikuk'
+    read:  :org
+    update:  :org
+    nogit: true
+    ext: '.wiki'
 
 
 local: &local

@@ -368,7 +368,21 @@ class GiwiNoGit < Giwi
   end
 
   def get_ls(path)
-    [[], [], path]
+    while !path.empty?
+      break if File.directory?(File.join(@path, path))
+      path.sub! /(^|\/)[^\/]*$/, ''
+    end
+    dirs = []
+    files = []
+    dir = File.join(@path, path)
+    Dir.entries(dir).each do |entry|
+      next if entry =~ /^\.$/
+      full = "#{path}/#{entry}"
+      fs_full = File.join(dir, entry);
+      files.push({path: full, name:entry, size:File.size(fs_full)})  if File.file?(fs_full)
+      dirs.push({path: full, name:entry})  if File.directory?(fs_full)
+    end
+    [files, dirs, path]
   end
 
   def set_page(path, text, commit_id, email = 'unknown', pos = nil)
