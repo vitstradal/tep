@@ -122,7 +122,7 @@ jQuery(document).ready(function($) {
             "numstr-asc":  function ( a, b ) { return a - b; },
             "numstr-desc": function ( a, b ) { return b - a; },
 	} );
- 
+
 /*
  */
         $('.datatable').dataTable({
@@ -283,75 +283,11 @@ jQuery(document).ready(function($) {
       // turn textarea into ace-ecitor
       init_icons();
       $('textarea.aceeditor').each(function () {
-                var textarea = $(this);
 
-                //var mode = textarea.data('editor');
-                //var mode = 'tracwiki';
-                var mode;
-                mode = 'tracwiki';
-                var cont = $(this).closest('.textarea-container');
+                var $textarea = $(this);
+                _init_textarea_with_ace($textarea);
+      });
 
-                var editDiv = $('<div>', {
-                        position: 'absolute',
-                        width: cont.width(),
-                        height: cont.height(),
-                        'float': 'left',
-                        'class': cont.attr('class')
-                }).insertBefore(textarea);
-
-
-                //textarea.css('visibility', 'hidden');
-                textarea.css('display', 'none');
-
-
-                var editor = ace.edit(editDiv[0]);
-                editor.renderer.setShowGutter(false);
-                editor.getSession().setValue(textarea.val());
-                editor.getSession().setMode("ace/mode/" + mode);
-                editor.getSession().setUseWrapMode(true);
-
-                //editor.setTheme("ace/theme/twilight");
-                //ace.require("ace/ext/chromevox");
-
-                editor.setTheme("ace/theme/tomorrow");
-                editor.renderer.setShowGutter(true);
-                //editor.renderer.setShowInvisibles(true);
-
-                var form = textarea.closest('form');
-
-                editor.commands.bindKeys({
-                                'ctrl-b':       function () { editor_tool_action('bold', editor, form ); },
-                                'ctrl-i':       function () { editor_tool_action('italic', editor, form ); },
-                                //'ctrl-$':     function () { editor_tool_action('math', editor, form ); },
-                                'ctrl-escape':  function () { editor_cancel(editor, form);  },
-                                'ctrl-enter':   function () { editor_save(editor, form, false);  },
-                                'shift-enter':  function () { editor_save(editor, form, true);  },
-                                'alt-enter':    function () { editor_preview(editor, form);  },
-                                'ctrl-l':null,
-                                'ctrl-t':null,
-                                'ctrl-r':null,
-                              })
-
-                var pos_str = form.find('input[name=cursor]').val();
-                if( pos_str ) {
-                   var pos = pos_str.split(/:/);
-                   console.log('cursor', pos);
-                   editor.moveCursorTo(pos[0], pos[1]);
-                 }
-
-                // copy back to textarea on form submit...
-                form.submit(function () {
-                        var oo = editor.getSession().getValue();
-                        //console.log("oo.len:", oo.length, oo.substr(-10));
-                        textarea.val(editor.getSession().getValue());
-                        //save_cursor(editor, form);
-                });
-                //.find('a[data-edit]').click(function () { editor_tool_button_click(this, editor); });
-                $('a[data-edit]').click(function () {      editor_tool_button_click( this, editor, form); });
-                $('input[data-edit]').change(function () { editor_tool_button_switch(this, editor, form); });
-                $('input[data-edit]').each(function (i, el) { editor_tool_button_switch(el, editor, form); });
-
-     });
 });
 
 /* f otogal */
@@ -379,10 +315,10 @@ function get_hash()
  * ace-editor support functions
  */
 
-function editor_tool_button_switch(el, editor, form)
+function editor_tool_button_switch($el, editor, form)
 {
-  var on = $(el).is(':checked');
-  var action = $(el).data('edit');
+  var on = $el.is(':checked');
+  var action = $el.data('edit');
   //console.log("editor_tool_button_switch");
   switch(action) {
   case 'vi':
@@ -491,7 +427,7 @@ function editor_show_url(editor, url)
 
 function editor_preview(editor, form)
 {
-  
+
    var action = form.attr('action');
    var wiki = editor.getSession().getValue();
    //console.log("action", action);
@@ -542,3 +478,71 @@ function uc_first(s) {
 }
 
 
+function _init_textarea_with_ace($textarea) {
+
+        //var mode = textarea.data('editor');
+        //var mode = 'tracwiki';
+        var mode;
+        mode = 'tracwiki';
+        var cont = $textarea.closest('.textarea-container');
+
+        var editDiv = $('<div>', {
+                position: 'absolute',
+                width: cont.width(),
+                height: cont.height(),
+                'float': 'left',
+                'class': cont.attr('class')
+        }).insertBefore($textarea);
+
+
+        //textarea.css('visibility', 'hidden');
+        $textarea.css('display', 'none');
+
+
+        var editor = ace.edit(editDiv[0]);
+        editor.renderer.setShowGutter(false);
+        editor.getSession().setValue($textarea.val());
+        editor.getSession().setMode("ace/mode/" + mode);
+        editor.getSession().setUseWrapMode(true);
+
+        //editor.setTheme("ace/theme/twilight");
+        //ace.require("ace/ext/chromevox");
+
+        editor.setTheme("ace/theme/tomorrow");
+        editor.renderer.setShowGutter(true);
+        //editor.renderer.setShowInvisibles(true);
+
+        var form = $textarea.closest('form');
+
+        editor.commands.bindKeys({
+                        'ctrl-b':       function () { editor_tool_action('bold', editor, form ); },
+                        'ctrl-i':       function () { editor_tool_action('italic', editor, form ); },
+                        //'ctrl-$':     function () { editor_tool_action('math', editor, form ); },
+                        'ctrl-escape':  function () { editor_cancel(editor, form);  },
+                        'ctrl-enter':   function () { editor_save(editor, form, false);  },
+                        'shift-enter':  function () { editor_save(editor, form, true);  },
+                        'alt-enter':    function () { editor_preview(editor, form);  },
+                        'ctrl-l':null,
+                        'ctrl-t':null,
+                        'ctrl-r':null,
+                      })
+
+        var pos_str = form.find('input[name=cursor]').val();
+        if( pos_str ) {
+           var pos = pos_str.split(/:/);
+           console.log('cursor', pos);
+           editor.moveCursorTo(pos[0], pos[1]);
+         }
+
+        // copy back to $textarea on form submit...
+        form.submit(function () {
+                var oo = editor.getSession().getValue();
+                //console.log("oo.len:", oo.length, oo.substr(-10));
+                $textarea.val(editor.getSession().getValue());
+                //save_cursor(editor, form);
+        });
+        //.find('a[data-edit]').click(function () { editor_tool_button_click($textarea, editor); });
+        $('a[data-edit]').click(function () {      editor_tool_button_click($textarea, editor, form); });
+        $('input[data-edit]').change(function () { editor_tool_button_switch($textarea, editor, form); });
+        $('input[data-edit]').each(function (i, el) { editor_tool_button_switch($(el), editor, form); });
+}
