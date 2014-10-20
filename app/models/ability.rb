@@ -59,6 +59,7 @@ class Ability
       can :new, Sosna::School
 
       can :index, Sosna::School
+      can :update_scores, Sosna::Solution
 
     end
 
@@ -71,7 +72,6 @@ class Ability
       can :update, Sosna::School
 
       can :update, Sosna::Problem
-      can :update_scores, Sosna::Solution
 
       can :update_papers, Sosna::Solution
       can :update_penalisations, Sosna::Solution
