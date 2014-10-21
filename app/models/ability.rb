@@ -22,6 +22,9 @@ class Ability
     can :die, :tep
     can :error, :tep
 
+    can :index, :aesop
+    #can :index, :aesop
+
     #can :update, :giwi, if: :can_update?
 
     if user.user?

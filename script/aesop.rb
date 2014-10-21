@@ -42,8 +42,7 @@ def print_round(annual, round)
   #event = "pikomat.rocnik.#{annual}.serie.#{round}"
   event = "pikomat.#{annual}"
 
-  solvers = Sosna::Solver.where(annual: annual)
-  
+  solvers = Sosna::Solver.where(annual: annual, is_test_solver: false) 
   ex = []
   ex << ['version',     1]
   ex << ['year',        year]
@@ -71,7 +70,13 @@ def print_round(annual, round)
       rank = res.rank
       points = res.score
     end
-    finish_year = solver.finish_year || ( year + 1 + maturity_grade - solver.grade_num.to_i )
+
+    if solver.grade_num.nil?
+      finish_year = '?'
+    else
+      finish_year = solver.finish_year || ( year + 1 + maturity_grade - solver.grade_num.to_i )
+      finish_year = "#{finish_year}:#{solver.grade_num}"
+    end
   
     spam_flag = 'Y'
     spam_date = solver.created_at.strftime('%Y-%m-%d')

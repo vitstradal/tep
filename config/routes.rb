@@ -10,6 +10,7 @@ Tep::Application.routes.draw do
   get  '/sosna/solver/new'                   => 'sosna/solver#new',             :as => :sosna_solver_new
   post '/sosna/solver/create'                => 'sosna/solver#create',          :as => :sosna_solver_anon_create
   get  '/sosna/solver/tnx'                   => 'sosna/solver#create_tnx',      :as => :sosna_solver_create_tnx
+  get  '/sosna/aesop/index'                  => 'sosna/aesop#index',            :as => :sosna_aesop_index
 
   # user:
   get  '/sosna/solutions/user(/:roc(/:se(/:id)))' => 'sosna/solution#user_index',    :as => :sosna_solutions_user

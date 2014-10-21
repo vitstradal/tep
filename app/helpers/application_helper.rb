@@ -187,4 +187,23 @@ module ApplicationHelper
   def class_active_if(cond)
      return 'class="active"'.html_safe if cond
   end
+
+  def load_config
+    @config  =  { annual:20,
+                  round: 1,
+                  show_revisions: 'no',
+                }
+    Sosna::Config.all.load.each {|c| @config[c.key.to_sym] =  c.value}
+    @annual = @config[:annual]
+    @round = @config[:round]
+  end
+
+  def get_sorted_solvers(annual)
+      #solvers = Sosna::Solver.includes(:school).where(annual: annual).load 
+      solvers = Sosna::Solver.includes(:school).where(annual: annual).load.to_a 
+      solvers.sort! { |a,b| (a.last_name != b.last_name ) ? strcoll(a.last_name, b.last_name) :
+                                                            strcoll(a.name, b.name)
+                    }
+      solvers.sort! { |a,b| strcollf(a.last_name, b.last_name) || strcollf(a.name, b.name) || 0 }
+  end
 end
