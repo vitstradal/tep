@@ -77,12 +77,14 @@ class Ability
       can :update_penalisations, Sosna::Solution
       can :update_results, Sosna::Solution
 
-      can :delete, Sosna::Solver
-      can :delete, Sosna::School
-      can :delete, Sosna::Problem
     end
 
     if user.admin?
+
+      can :delete, Sosna::Solver
+      can :delete, Sosna::School
+      can :delete, Sosna::Problem
+
       can :users,            :tep
       can :user,             :tep
       can :user_new,         :tep
