@@ -164,6 +164,8 @@ class GiwiController < ApplicationController
     return _handle_file_upload(file.read, filename, file.original_filename ) if file
 
     text = params[:text_inline] || params[:text]
+    text.gsub!(/\r\n?/,"\n")
+    text += "\n" if text[-1] != "\n"
 
     email = current_user.full_email
     status = @giwi.set_page(@path + @giwi.ext, text, version, email, pos)
@@ -370,7 +372,7 @@ class GiwiController < ApplicationController
       heading = parser.headings[@part]
       if heading
         # edit only selected part (from @sline to @eline)
-        @text = @text.split("\n").values_at(heading[:sline]-1 .. heading[:eline]-1).join("\n")
+        @text = @text.split("\n").values_at(heading[:sline]-1 .. heading[:eline]-1).join("\n") + "\n"
         @pos = "#{heading[:sline]}-#{heading[:eline]+1}"
       else
         # edit all document anyway
