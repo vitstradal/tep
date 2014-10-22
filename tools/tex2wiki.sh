@@ -42,7 +42,7 @@ m4 -D "__fdir=$FDIR" -D "__roc=$ROC" -D "__base_jn=$BASE_JN" "$M4_TO_WI_M4" -  |
 
      s#<hr>#----#i;
      s#^\s+=#=#;
-     s#~# #gi;
+     s#\&\^#~#gi;
      s#<!--(.*)-->#{{\# $1}}#gi;
      s#</?p>##gi;
      s#^<h(\d)>(.*)</h\d>#("="x$1) . $2 . ("="x$1)#gie;
