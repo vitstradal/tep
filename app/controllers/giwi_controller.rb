@@ -183,8 +183,9 @@ class GiwiController < ApplicationController
     end
 
     edit = (params[:edit]||'') == '' ? nil : params[:part] || 'me'
+    cursor = (params[:cursor]||'') == '' ? nil : params[:cursor]
 
-    redirect_to action: :show, cursor: params[:cursor], wiki: @wiki, path: @path, edit: edit
+    redirect_to action: :show,  wiki: @wiki, path: @path, cursor: cursor, edit: edit
   end
 
   private

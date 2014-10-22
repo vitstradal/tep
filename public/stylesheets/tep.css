@@ -558,3 +558,9 @@ height: 100%;
   width: 21px;
   height: 21px;
 }
+
+/* unknown macro */
+.unkmacro {
+  font-weight: bold;
+  color: red;
+}
