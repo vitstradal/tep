@@ -22,6 +22,9 @@ class Ability
     can :die, :tep
     can :error, :tep
 
+    can :index, :aesop
+    #can :index, :aesop
+
     #can :update, :giwi, if: :can_update?
 
     if user.user?
@@ -59,6 +62,7 @@ class Ability
       can :new, Sosna::School
 
       can :index, Sosna::School
+      can :update_scores, Sosna::Solution
 
     end
 
@@ -71,18 +75,19 @@ class Ability
       can :update, Sosna::School
 
       can :update, Sosna::Problem
-      can :update_scores, Sosna::Solution
 
       can :update_papers, Sosna::Solution
       can :update_penalisations, Sosna::Solution
       can :update_results, Sosna::Solution
 
-      can :delete, Sosna::Solver
-      can :delete, Sosna::School
-      can :delete, Sosna::Problem
     end
 
     if user.admin?
+
+      can :delete, Sosna::Solver
+      can :delete, Sosna::School
+      can :delete, Sosna::Problem
+
       can :users,            :tep
       can :user,             :tep
       can :user_new,         :tep

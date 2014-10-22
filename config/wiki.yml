@@ -25,7 +25,7 @@ defaults: &defaults
     bare: true
     #url: 'web'
     url: ''
-    branch: edit
+    branch: master
     ext: '.wiki'
     help_link: 'wiki/tep/doc/wiki#start'
     templates: 'tepmac'
@@ -36,7 +36,7 @@ defaults: &defaults
     templates: 'tepmac'
     bare: true
     url: 'webed'
-    branch: edit
+    branch: master
     #nogit: true
     ext: '.wiki'
     help_link: '/wiki/tep/doc/wiki#start'
@@ -76,7 +76,7 @@ local: &local
   main:
     path: '/home/vitas/git/web'
     bare: false
-    branch: edit
+    branch: master
     url: ''
     ext: '.wiki'
     read:   :anon
@@ -85,7 +85,7 @@ local: &local
     path: '/home/vitas/git/web'
     bare: true
     url: 'webed'
-    branch: edit
+    branch: master
     read:    :org
     update:  :morg
     ext: '.wiki'

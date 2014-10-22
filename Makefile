@@ -46,3 +46,7 @@ ttest:
 doc:
 	yardoc -r Readme.md -m markdown
 	#yardoc -m markdown -r Readme.md
+
+aesop:
+	rails  r  -e production script/aesop.rb
+	@echo now please: mv ovvp.* ovvp/
