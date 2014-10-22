@@ -86,10 +86,12 @@
     <ul>
     <% @used_templates.sort.each do |template,defined| %>
       <% next if template =~ /^\// %>
-      <% path = ".template/" + template %>
+      <% path =  template %>
+      templates: '<%= @giwi.templates %>'
+      url: '<%= @giwi.url %>'
 
-      <li><%= link_to template, path: path %>
-          <%= link_to "[edit]", path: path , edit: 'me'%> : <%= defined %>,</li>
+      <li><%= link_to template, wiki_tepmac_url(path) %>
+          <%= link_to "[edit]", wiki_tepmac_url(path , edit: 'me')%> : <%= defined %>,</li>
     <% end %>
     </ul>
   <% end %>

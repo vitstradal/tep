@@ -77,6 +77,7 @@ local: &local
     path: '/home/vitas/git/web'
     bare: false
     branch: master
+    templates: 'tepmac'
     url: ''
     ext: '.wiki'
     read:   :anon
@@ -84,6 +85,7 @@ local: &local
   web_edit:
     path: '/home/vitas/git/web'
     bare: true
+    templates: 'tepmac'
     url: 'webed'
     branch: master
     read:    :org
