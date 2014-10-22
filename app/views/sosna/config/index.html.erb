@@ -15,7 +15,7 @@
     <div class="controls"><%= text_field :config, :round,  value: @config[:round] %></div>
   </div>
 
-  <div class="control-group"><label class="control-label">Zobrazit opravené řešení</label>
+  <div class="control-group"><label class="control-label">Zobrazit opravené řešení aktuální série (řešení předchozích sérií budou zobrazeny bez ohledu na tuto hodnotu)</label>
     <div class="controls"><%= select_tag 'config[show_revisions]', options_for_select(["yes","no"], @config[:show_revisions]) %></div>
   </div>
 
