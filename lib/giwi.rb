@@ -22,6 +22,7 @@ class Giwi
   attr_accessor :update
   attr_accessor :ext
   attr_accessor :help_link
+  attr_accessor :templates
   @ext = ""
 
   mattr_accessor :giwis

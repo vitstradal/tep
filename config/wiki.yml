@@ -6,6 +6,16 @@ defaults: &defaults
     path: '/home/www/git/piki.git'
     url: 'piki'
     bare: true
+    templates: 'tepmac'
+    ext: '.wiki'
+    help_link: 'wiki/tep/doc/wiki#start'
+    read:   :org
+    update: :org
+  tepmac:
+    path: '/home/www/git/tepmac.git'
+    url: 'tepmac'
+    templates: 'tepmac'
+    bare: true
     ext: '.wiki'
     help_link: 'wiki/tep/doc/wiki#start'
     read:   :org
@@ -18,10 +28,12 @@ defaults: &defaults
     branch: edit
     ext: '.wiki'
     help_link: 'wiki/tep/doc/wiki#start'
+    templates: 'tepmac'
     read:  :anon
     update: NULL
   web_edit:
     path: '/home/www/git/web.git'
+    templates: 'tepmac'
     bare: true
     url: 'webed'
     branch: edit
@@ -32,6 +44,7 @@ defaults: &defaults
     update: :morg
   wikuk:
     url: 'wikuk'
+    templates: 'tepmac'
     path: '/home/pikomat/wikuk'
     nogit: true
     ext: '.wiki'
@@ -43,6 +56,17 @@ local: &local
   piki:
     path: '/home/vitas/git/piki'
     url: 'piki'
+    read:  :org
+    templates: 'tepmac'
+    bare: false
+    help_link: 'wiki/tep/doc/wiki#start'
+    ext: '.wiki'
+    update: :org
+    update: :org
+  tepmac:
+    path: '/home/vitas/git/tepmac'
+    url: 'tepmac'
+    templates: 'tepmac'
     read:  :org
     bare: false
     help_link: 'wiki/tep/doc/wiki#start'

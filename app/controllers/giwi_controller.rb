@@ -243,9 +243,15 @@ class GiwiController < ApplicationController
       tname = $'
       part = 1
     end
+    giwi = @giwi
+    if @giwi.templates
+      giwi = Giwi.get_giwi(@giwi.templates)
+      template_path = tname + giwi.ext
+    else
+      template_path = '.template/' + tname + giwi.ext
+    end
 
-    template_path = '.template/' + tname + @giwi.ext
-    text, _ = @giwi.get_page(template_path)
+    text, _ = giwi.get_page(template_path)
 
     # not found
     return nil if text.nil?

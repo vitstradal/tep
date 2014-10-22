@@ -143,6 +143,25 @@ class Sosna::SolutionController < SosnaController
 #      @solution = Sosna::Solution.find params[:id]
 #  end
 
+  #
+  # - URL   
+  #```
+  #  /sosna/solutions/user(/:roc(/:se(/:id)))+
+  #```
+  # - `roc`  ročník 
+  # - `serie` 
+  # - `bla`   id solvera, pokud není pokusí se najít letošního řešitele,
+  #          přihlášeného uživatele; je nutné mít +:org+
+  #
+  # do templaty:
+  #
+  # @param @annual rok
+  # @param @solver+] +Sosna::Solver+
+  # @param @is_current+] *true* když se je aktualní ročník a serie
+  # @param @solver_is_current_user+] *true* když, se dívá uživatel dívá na sebe
+  # @param @problems]  pole +Sosna::Problem+ úloh dané série
+  # @param @solutions_by_solver]  +{ solver.id => { problem.problem_no => solution }}+
+  #
   def downall
     want_rev = ! params[:rev].nil?
     problems = _problems_from_roc_se_ul
@@ -207,19 +226,19 @@ class Sosna::SolutionController < SosnaController
 
   #
   # [URL]    +/sosna/solutions/user(/:roc(/:se(/:id)))+
-  # [+roc+]  ročník 
-  # [+se+]   serie 
-  # [+id+]   id solvera, pokud není pokusí se najít letošního řešitele,
+  # @param roc  ročník 
+  # @param  serie 
+  # @param   id solvera, pokud není pokusí se najít letošního řešitele,
   #          přihlášeného uživatele; je nutné mít +:org+
   #
   # do templaty:
   #
-  # [+@annual+] rok
-  # [+@solver+] +Sosna::Solver+
-  # [+@is_current+] *true* když se je aktualní ročník a serie
-  # [+@solver_is_current_user+] *true* když, se dívá uživatel dívá na sebe
-  # [+@problems]  pole +Sosna::Problem+ úloh dané série
-  # [+@solutions_by_solver]  +{ solver.id => { problem.problem_no => solution }}+
+  # @param @annual rok
+  # @param @solver+] +Sosna::Solver+
+  # @param @is_current+] *true* když se je aktualní ročník a serie
+  # @param @solver_is_current_user+] *true* když, se dívá uživatel dívá na sebe
+  # @param @problems]  pole +Sosna::Problem+ úloh dané série
+  # @param @solutions_by_solver]  +{ solver.id => { problem.problem_no => solution }}+
   #
   def user_index
 

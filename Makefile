@@ -44,5 +44,5 @@ ttest:
 	rake test
 .PHONY: doc
 doc:
-	yardoc -r Readme.md
+	yardoc -r Readme.md -m markdown
 	#yardoc -m markdown -r Readme.md
