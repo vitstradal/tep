@@ -75,7 +75,8 @@ def print_round(annual, round)
       finish_year = '?'
     else
       finish_year = solver.finish_year || ( year + 1 + maturity_grade - solver.grade_num.to_i )
-      finish_year = "#{finish_year}:#{solver.grade_num}"
+      #finish_year = "#{finish_year}:#{solver.grade_num}"
+      finish_year = "#{finish_year}"
     end
   
     spam_flag = 'Y'
