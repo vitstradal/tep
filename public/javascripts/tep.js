@@ -8,12 +8,6 @@ var anketa_td_class = [ 'anketa-nic', 'anketa-yes', 'anketa-maybe', 'anketa-no',
 var anketa_txt =    [ ' ', 'y', '?', 'n' ];
 
 jQuery(document).ready(function($) {
-        //hack: menu na spodni kosticku
-        $('.secret-menu-toggler').click(function (ev) {
-          ev.preventDefault();
-	  $('#sidebar').toggleClass('hide');
-	  $('#main-content-id').toggleClass('main-content');
-        });
 
         // anketa zvyrazneni
         $('div.anketa').each(function (ii, div) {
@@ -336,9 +330,9 @@ function editor_tool_button_switch($el, editor, form)
   }
 }
 
-function editor_tool_button_click($el, editor, form)
+function editor_tool_button_click(el, editor, form)
 {
-  editor_tool_action($el.data('edit'), editor, form);
+  editor_tool_action($(el).data('edit'), editor, form);
 }
 
 function editor_tool_action(action, editor, form)
@@ -362,6 +356,7 @@ function editor_tool_action(action, editor, form)
   case 'ul':      return editor_wrap(editor, "* ");
   case 'ol':      return editor_wrap(editor, "1. ");
   case 'img':     return editor_wrap(editor, "[[Image(", ")]]");
+  case 'table':   return editor_table(editor);
   case 'save':    return editor_save(editor, form, false);
   case 'save-stay':return editor_save(editor, form, true);
   case 'cancel':  return editor_cancel(editor, form);
@@ -369,6 +364,7 @@ function editor_tool_action(action, editor, form)
   case 'help':    return editor_show_url(editor, form.find('[data-help-url]').data('help-url'));
   case 'icons':   return editor_show_url(editor, form.find('[data-icons-url]').data('icons-url')); 
   default:
+          console.log("unknown action", action);
           return editor_wrap(editor, '[[', ']]');
   }
 }
@@ -452,6 +448,57 @@ function editor_preview(editor, form)
    });
 }
 
+function editor_table(editor) {
+  var txt = editor.session.getTextRange(editor.getSelectionRange());
+  if( txt == '' ) {
+     txt = "\n||= title1 =||= title1 =||\n|| A1       || A2       ||\n|| B1       || B2       ||\n";
+  }
+  else {
+    
+     var rows = txt.trim().split("\n");
+     var table = [];
+     var align = [];
+     var maxs  = [];
+     for(var i=0; i < rows.length; i++ ) {
+        table[i] = [];
+        align[i] = [];
+        var row = rows[i];
+        var cells = row.split(/\|\|/);
+        cells.shift();
+        cells.pop();
+        console.log("row", row, cells);
+        for(var j=0; j < cells.length;j++) {
+          var cell = cells[j];
+          console.log("tab", i,j, cell);
+          if( cell.charAt(0) == '=' && cell.substr(-1) == '=' ) {
+             align[i][j] = 'h';
+             cell = cell.substr(1,cell.length - 2);
+          }
+          cell = cell.trim();
+          table[i][j] = cell;
+          cell_length = cell.length;
+          if( (maxs[j] || 0) < cell_length ) {
+              maxs[j] = cell_length;
+          }
+        }
+     }
+     txt = '';
+     for(var i=0; i < table.length; i++ ) {
+       var row = table[i];
+       txt += "\n||";
+       for(var j=0; j < row.length; j++) {
+          var cell = table[i][j];
+          var spcs = "                          ".substr(0, maxs[j] + 4 - cell.length );
+          var ch = align[i][j] == 'h' ? '=' : ' ';
+          txt += ch +  cell + spcs + ch +'||';
+       }
+     }
+     txt = "\n" + txt + "\n\n"
+  }
+  editor.insert( txt );
+  editor.focus();
+}
+
 function editor_wrap(editor, pre, post) {
   var txt = editor.session.getTextRange(editor.getSelectionRange());
   post = post ||'';
@@ -501,12 +548,36 @@ function _init_textarea_with_ace($textarea) {
         }).insertBefore($textarea);
 
 
+var $consoleEl = $('<div>HU</div>', {
+                       position: 'absolute',
+                       width: '550px',
+                       height: '80px',
+                       'float': 'left',
+                       border: '1px solid black',
+                       'class': 'textarea-container col-xs-6'
+                       });
+
+/*
+$('.cmdline').append($consoleEl);
+
+var cli = ace.edit($consoleEl[0]);
+        cli.renderer.setShowGutter(true);
+        cli.getSession().setValue('AHOOJ');
+        cli.getSession().setMode("ace/mode/tracwiki");
+        cli.setTheme("ace/theme/tomorrow");
+*/
+//        cmdLine.getSession().setUseWrapMode(true);
+//        cmdLine.setTheme("ace/theme/tomorrow");
+//        cmdLine.renderer.setShowGutter(true);
+
+//editDiv.append($consoleEl);
+//consoleEl.style.cssText = "position:fixed; bottom:1px; right:0;//border:1px solid #baf; z-index:100";
+
+
         //textarea.css('visibility', 'hidden');
         $textarea.css('display', 'none');
 
-
         var editor = ace.edit(editDiv[0]);
-        editor.renderer.setShowGutter(false);
         editor.getSession().setValue($textarea.val());
         editor.getSession().setMode("ace/mode/" + mode);
         editor.getSession().setUseWrapMode(true);

@@ -20,7 +20,11 @@
        <a class="btn btn-xs btn-white btn-info" data-edit="bold" title="Bold (CtrlB)"> <i class=" ace-icon fa fa-bold"></i> </a>
        <a class="btn btn-xs btn-white btn-info" data-edit="italic" title="Italic (Ctrl+I)"> <i class=" ace-icon fa fa-italic"></i> </a>
        <a class="btn btn-xs btn-white btn-info" data-edit="strike" title="Strikethrough"> <i class=" ace-icon fa fa-strikethrough"></i> </a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="code" title="Code"> <i class="ace-icon fa fa-keyboard-o"></i> </a>
        <a class="btn btn-xs btn-white btn-info" data-edit="comment" title="Comment out"> <i class=" ace-icon fa fa-slack"></i> </a>
+      </div>
+      <div class="btn-group">
+         <a class="btn btn-xs btn-white btn-info" data-edit="table" title="Table"> <i class="ace-icon fa fa-table"></i> </a>
       </div>
       <div class="btn-group">
        <a class="btn btn-xs btn-white btn-info" data-edit="sub" title="subscript"> <i class=" ace-icon fa fa-subscript"></i> </a>
@@ -54,6 +58,13 @@
        <a class="btn btn-xs btn-white btn-info" data-edit="preview" title="preview (Alt-Enter)"> <i class=" ace-icon fa fa-eye"></i></a>
       </div>
     </div>
+    <%#
+    <div class="row">
+      <div class="textarea-container col-xs-6">
+        <div class="cmdline" style="width:1400px;height:40px">huu</div>
+      </div>
+    </div>
+    %>
     <div class="row">
       <div class="textarea-container col-xs-6">
         <%= text_area_tag :text, @text, style:'float:left', class: 'span9 aceeditor ctrl-enter-submit', id: 'textedit', cols: 100, rows: 24%>
