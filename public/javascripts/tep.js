@@ -485,15 +485,15 @@ function editor_table(editor) {
      txt = '';
      for(var i=0; i < table.length; i++ ) {
        var row = table[i];
-       txt += "\n||";
+       txt += "||";
        for(var j=0; j < row.length; j++) {
           var cell = table[i][j];
           var spcs = "                          ".substr(0, maxs[j] + 4 - cell.length );
           var ch = align[i][j] == 'h' ? '=' : ' ';
           txt += ch +  cell + spcs + ch +'||';
        }
+       txt += "\n";
      }
-     txt = "\n" + txt + "\n\n"
   }
   editor.insert( txt );
   editor.focus();
