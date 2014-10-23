@@ -1,43 +1,54 @@
 <h1>Seznam souborů <%= @path_dir %></h1>
-<ul class="list-unstyled">
-<% @files.each do |file| %>
-  <li><i class="fa <%= case file[:path]
-                       when /\.(jpg|gif|png)$/ ; 'fa-file-picture-o blue' 
-                       when /\.(wiki|txt)$/ ;    'fa-file-text-o green' 
-                       when /\.(html)$/ ;        'fa-file-code-o red' 
-                       when /\.(pdf)$/ ;         'fa-file-pdf-o red' 
-                       else                      'fa-file-o'
-                       end
-                     %>"></i>
-      <%= link_to file[:name], path: file[:path] %>
-      <%= link_to '[Edit]', {path: file[:path], edit: :me} %>
-   </li>
-<% end %>
-<% @dirs.each do |dir| %>
-  <li><i class="fa fa-folder-o blue"></i> <%= link_to dir[:name] + '/', ls:'.', path: dir[:path] + '/index' %>
-   </li>
-<% end %>
-</ul>
+
+<div class="row">
+  <ul class="list-unstyled">
+    <div class="col-sm-6">
+      <% if @files.size > 0 %>
+        <% @files.each do |file| %>
+          <li><i class="fa <%= case file[:path]
+                             when /\.(jpg|gif|png)$/ ; 'fa-file-picture-o blue' 
+                             when /\.(wiki|txt)$/ ;    'fa-file-text-o green' 
+                             when /\.(html)$/ ;        'fa-file-code-o red' 
+                             when /\.(pdf)$/ ;         'fa-file-pdf-o red' 
+                             else                      'fa-file-o'
+                             end
+                           %>"></i>
+            <%= link_to file[:name], path: file[:path] %>
+            <%= link_to '[Edit]', {path: file[:path], edit: :me} %>
+           </li>
+        <% end %>
+      <% end %>
+    </div>
+    <% if @dirs.size > 0 %>
+      <div class="col-sm-6">
+        <% @dirs.each do |dir| %>
+          <li><i class="fa fa-folder-o blue"></i> <%= link_to dir[:name] + '/', ls:'.', path: dir[:path] + '/index' %>
+          </li>
+        <% end %>
+      </div>
+    <% end %>
+  </ul>
+</div>
 
 
+<hr>
 <%= form_tag url_for(:action => :show, :wiki => @wiki) , method: :get do%>
-  <button type='submit' class='btn btn-success'>Nový soubor</button>
-  <%= text_field_tag :path, @path_dir %>
+  <button type='submit' class='btn btn-success'><i class="fa fa-file-o"></i> Nový soubor</button>
+  <%= text_field_tag :path, @path_dir, placeholder: 'soubor.wiki' %>
 <% end%>
 
-path:<%= @path %>
-<%= form_tag url_for(:action => :update, :path => @path, :wiki => @wiki), :multipart => true, :method =>  :post do%>
+<hr>
+<%= form_tag url_for(:action => :update, :path => @path, :wiki => @wiki), :multipart => true, :class => 'form-inline', :method =>  :post do%>
 
-  <button type='submit' class='btn btn-success'>Nahrát soubor</button>
-  <%= text_field_tag :filename, @path_dir %>
-  <%= file_field_tag :file %>
-  <%= hidden_field_tag :path, @path_dir %>
+  <div class="form-group"> 
+    <button type='submit' class='btn btn-success'><i class="fa fa-cloud-upload"></i> Nahrát soubor</button>
+  </div>
+  <div class="form-group"> 
+    <%= text_field_tag :filename, @path_dir ,  placeholder: "Nazev-po-nahrani.jpg"%>
+  </div>
+  <div class="form-group"> 
+    <%= file_field_tag :file, :class => 'xace-file-input' %>
+    <%= hidden_field_tag :path, @path_dir %>
+  </div>
 <% end%>
-
-
-
-
-
-
-
 

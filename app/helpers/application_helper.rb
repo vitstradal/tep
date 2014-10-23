@@ -90,9 +90,9 @@ module ApplicationHelper
     
     if ! user.nil?
       if user.has_role? :admin
-        return url_for (wiki_main_path(path: 'org'))
+        return url_for (wiki_piki_path(path: 'org'))
       elsif user.has_role? :org
-        return url_for(wiki_main_path(path: 'org'))
+        return url_for(wiki_piki_path(path: 'org'))
       elsif user.has_role? :user
         return url_for(wiki_main_path(path: 'usr'))
       end
