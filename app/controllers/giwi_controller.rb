@@ -95,7 +95,7 @@ class GiwiController < ApplicationController
     parser.at_callback = Proc.new do |key,env|
       case key
         when 'csrf'
-          env.nocache!
+          env['nocache'] = '1'
           form_authenticity_token.to_s
         when 'page_version'
           @version
@@ -294,10 +294,10 @@ class GiwiController < ApplicationController
       resp = conn.get('/sklep/index.php/apps/ownhacks/calendar-22.php', cal: cal ,start: now.strftime('%s'), end: nm.strftime('%s'))
       json = JSON.load(resp.body)
       #"/sklep/index.php/apps/ownhacks/calendar-10.php?start=#{now.strftime('%s')}&end=#{nm.strftime('%s')}\n" +
+      env['nocache'] = '1'
       json.sort {|a,b| a['start'] <=> b['start'] }.map do |item|
           "* **#{item['start']}** #{item['title']}\n"
       end.join
-      env.nocache!
     rescue
       ''
     end
@@ -305,7 +305,7 @@ class GiwiController < ApplicationController
   end
 
   def _template_include(env, argv)
-    env.nocache!
+    env['nocache'] = '1'
     path =  argv['00']
     text, _ = @giwi.get_page(path + @giwi.ext)
     return "no such page (#{path})" if text.nil?
