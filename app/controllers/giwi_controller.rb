@@ -92,15 +92,25 @@ class GiwiController < ApplicationController
     @path = path_ext
 
     parser = _get_parser
-    parser.env.atput('csrf', form_authenticity_token.to_s)
-    parser.env.atput('page_version', @version)
-    if current_user.nil?
-      parser.env.atput("is_anon", '1')
-    else
-      current_user.roles.each do |role|
-        parser.env.atput("is_#{role}", '1')
+    parser.at_callback = Proc.new do |key,env|
+      case key
+        when 'csrf'
+          env.nocache!
+          form_authenticity_token.to_s
+        when 'page_version'
+          @version
+        else nil
       end
     end
+
+#    if current_user.nil?
+#      parser.env.atput("is_anon", '1')
+#    else
+#      current_user.roles.each do |role|
+#        parser.env.atput("is_#{role}", '1')
+#      end
+#    end
+
     @html = parser.to_html(@text)
     @headings = parser.headings
     @tep_index = parser.env.nil? ? false : parser.env.at('tep_index', nil).nil? ? false : true
@@ -287,6 +297,7 @@ class GiwiController < ApplicationController
       json.sort {|a,b| a['start'] <=> b['start'] }.map do |item|
           "* **#{item['start']}** #{item['title']}\n"
       end.join
+      env.nocache!
     rescue
       ''
     end
@@ -294,6 +305,7 @@ class GiwiController < ApplicationController
   end
 
   def _template_include(env, argv)
+    env.nocache!
     path =  argv['00']
     text, _ = @giwi.get_page(path + @giwi.ext)
     return "no such page (#{path})" if text.nil?
