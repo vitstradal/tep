@@ -9,6 +9,11 @@ var anketa_txt =    [ ' ', 'y', '?', 'n' ];
 
 jQuery(document).ready(function($) {
 
+        $('.secret-menu-toggler').click(function () {
+          $('#sidebar').toggleClass('hide');
+          $('#main-content-id').toggleClass('main-content');
+        });
+
         // anketa zvyrazneni
         $('div.anketa').each(function (ii, div) {
            var pos = parseInt($(this).data('lineno')||0) + 2;
