@@ -593,6 +593,7 @@ var cli = ace.edit($consoleEl[0]);
 
         editor.commands.bindKeys({
                         'ctrl-b':       function () { editor_tool_action('bold', editor, form ); },
+                        'ctrl-e':       function () { editor_tool_action('table', editor, form ); },
                         'ctrl-i':       function () { editor_tool_action('italic', editor, form ); },
                         //'ctrl-$':     function () { editor_tool_action('math', editor, form ); },
                         'ctrl-escape':  function () { editor_cancel(editor, form);  },

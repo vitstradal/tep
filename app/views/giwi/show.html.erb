@@ -17,35 +17,35 @@
     <%# <h1>Editace souboru '<%= @path % >'</h1> %>
     <div class="btn-toolbar">
       <div class="btn-group">
-       <a class="btn btn-xs btn-white btn-info" data-edit="bold" title="Bold (CtrlB)"> <i class=" ace-icon fa fa-bold"></i> </a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="bold" title="Bold (Ctrl+B)"> <i class=" ace-icon fa fa-bold"></i> </a>
        <a class="btn btn-xs btn-white btn-info" data-edit="italic" title="Italic (Ctrl+I)"> <i class=" ace-icon fa fa-italic"></i> </a>
        <a class="btn btn-xs btn-white btn-info" data-edit="strike" title="Strikethrough"> <i class=" ace-icon fa fa-strikethrough"></i> </a>
        <a class="btn btn-xs btn-white btn-info" data-edit="code" title="Code"> <i class="ace-icon fa fa-keyboard-o"></i> </a>
        <a class="btn btn-xs btn-white btn-info" data-edit="comment" title="Comment out"> <i class=" ace-icon fa fa-slack"></i> </a>
       </div>
       <div class="btn-group">
-         <a class="btn btn-xs btn-white btn-info" data-edit="table" title="Table"> <i class="ace-icon fa fa-table"></i> </a>
+         <a class="btn btn-xs btn-white btn-info" data-edit="table" title="TablE Ctrl+E"> <i class="ace-icon fa fa-table"></i> </a>
       </div>
       <div class="btn-group">
        <a class="btn btn-xs btn-white btn-info" data-edit="sub" title="subscript"> <i class=" ace-icon fa fa-subscript"></i> </a>
        <a class="btn btn-xs btn-white btn-info" data-edit="sup" title="superscript"> <i class=" ace-icon fa fa-superscript"></i> </a>
       </div>
       <div class="btn-group">
-       <a class="btn btn-xs btn-white btn-info" data-edit="ol" title="math"> <i class=" ace-icon fa fa-list-ol"></i> </a>
-       <a class="btn btn-xs btn-white btn-info" data-edit="ul" title="math"> <i class=" ace-icon fa fa-list-ul"></i> </a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="ol" title="Ordered list"> <i class=" ace-icon fa fa-list-ol"></i> </a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="ul" title="List"> <i class=" ace-icon fa fa-list-ul"></i> </a>
       </div>
       <div class="btn-group">
-       <a class="btn btn-xs btn-white btn-info" data-edit="h1" title="math">h1</a>
-       <a class="btn btn-xs btn-white btn-info" data-edit="h2" title="math">h2</a>
-       <a class="btn btn-xs btn-white btn-info" data-edit="h3" title="math">h3</a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="h1" title="Header 1">h1</a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="h2" title="Header 2">h2</a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="h3" title="Header 3">h3</a>
       </div>
       <div class="btn-group">
-       <a class="btn btn-xs btn-white btn-info" data-edit="math" title="math"> <i class=" ace-icon fa fa-dollar"></i> </a>
-       <a class="btn btn-xs btn-white btn-info" data-edit="dmath" title="dmath"> <i class=" ace-icon fa fa-dollar"></i><i class=" ace-icon fa fa-dollar"></i> </a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="math" title="Inline math"> <i class=" ace-icon fa fa-dollar"></i> </a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="dmath" title="Display math"> <i class=" ace-icon fa fa-dollar"></i><i class=" ace-icon fa fa-dollar"></i> </a>
       </div>
       <div class="btn-group">
-       <a class="btn btn-xs btn-white btn-info" data-edit="link" title="link"> <i class=" ace-icon fa fa-chain"></i></a>
-       <a class="btn btn-xs btn-white btn-info" data-edit="image" title="image"> <i class=" ace-icon fa fa-image"></i></a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="link" title="Link"> <i class=" ace-icon fa fa-chain"></i></a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="image" title="Image"> <i class=" ace-icon fa fa-image"></i></a>
       </div>
       <div class="btn-group">
        <a class="btn btn-xs btn-white btn-info" data-edit="help" data-help-url="<%= wiki_piki_path('jakna/wiki', format: 'json') %>" title="help"> <i class=" ace-icon fa fa-life-ring"></i></a>
@@ -53,9 +53,9 @@
       </div>
       <div class="btn-group">
        <a class="editorcancel btn btn-xs btn-white btn-info" href="<%= url_for path: @path %>" title="cancel (ctrl-escape)">  <i class="fa fa-ban"></i> </a>
-       <a class="btn btn-xs btn-white btn-info" data-edit="save-stay" title="save and stay (Shift-Enter)"> <i class=" ace-icon fa fa-floppy-o"></i></a>
-       <a class="btn btn-xs btn-white btn-warning" data-edit="save" title="save and show (Ctrl-Enter)"> <i class=" ace-icon fa fa-floppy-o"></i></a>
-       <a class="btn btn-xs btn-white btn-info" data-edit="preview" title="preview (Alt-Enter)"> <i class=" ace-icon fa fa-eye"></i></a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="save-stay" title="Save and stay (Shift-Enter)"> <i class=" ace-icon fa fa-floppy-o"></i></a>
+       <a class="btn btn-xs btn-white btn-warning" data-edit="save" title="Save and show (Ctrl-Enter)"> <i class=" ace-icon fa fa-floppy-o"></i></a>
+       <a class="btn btn-xs btn-white btn-info" data-edit="preview" title="Preview (Alt-Enter)"> <i class=" ace-icon fa fa-eye"></i></a>
       </div>
     </div>
     <%#
