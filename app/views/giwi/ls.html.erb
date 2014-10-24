@@ -33,7 +33,7 @@
 
 <hr>
 <%= form_tag url_for(:action => :show, :wiki => @wiki) , method: :get do%>
-  <button type='submit' class='btn btn-success'><i class="fa fa-file-o"></i> Nový soubor</button>
+  <button type='submit' class='btn btn-success'><i class="fa fa-file-o"></i> Nová stránka</button>
   <%= text_field_tag :path, @path_dir, placeholder: 'soubor.wiki' %>
 <% end%>
 
