@@ -103,20 +103,13 @@ class GiwiController < ApplicationController
       end
     end
 
-#    if current_user.nil?
-#      parser.env.atput("is_anon", '1')
-#    else
-#      current_user.roles.each do |role|
-#        parser.env.atput("is_#{role}", '1')
-#      end
-#    end
-
     @html = parser.to_html(@text)
     @headings = parser.headings
     @tep_index = parser.env.nil? ? false : parser.env.at('tep_index', nil).nil? ? false : true
     @wide_display = parser.env.nil? ? false : parser.env.at('wide_display', nil).nil? ? false : true
     @foto_gallery = parser.env.nil? ? false : parser.env.at('foto_gallery', nil).nil? ? false : true
     @redirect_to = parser.env.nil? ? nil : parser.env.at('redirect_to', nil)
+    @nocache = parser.env.nil? ? nil : parser.env.at('nocache', nil)
     return _handle_redirect(@redirect_to) if ! @redirect_to.nil?
 
     if @tep_index
@@ -406,6 +399,7 @@ class GiwiController < ApplicationController
     @text = "= #{title.capitalize} =\n\n"
     @path = _to_ascii(@path)
     @edit = true
+    @wide_display = true
     render :show
   end
   def _breadcrumb_from_path(path)
