@@ -114,39 +114,56 @@ def cross(pdf, o, omm)
   pdf.fill_color '000000'
 end
 
-
-#pdf.stroke_axis if @dbg
-
 pdf.font_families.update( 'andulka' => { :normal => 'public/stylesheets/andulka/andulkabook-webfont.ttf',
                                          :bold   => 'public/stylesheets/andulka/andulkabook-bold-webfont.ttf',
                                        })
 pdf.font 'andulka'
 
+addrs = []
+@solvers.each do |solver|
+    schoo_name = nil
+    school = solver.school
+    if solver.where_to_send == 'home'
+      street, city, psc = [ "#{solver.street} #{solver.num}", "#{solver.city}", "#{solver.psc} " ]
+    else
+      school_name, street, city, psc = [ "#{school.name}",  "#{school.street} #{school.num}", "#{school.city}", "#{school.psc} " ]
+    end
+    title = "#{solver.sex == 'female' ? "Řešitelka" : "Řešitel"} Pikomatu MFF UK"
+    addrs.push( {full: solver.full_name, title: title, street: street, school_name: school_name, city:city, psc: psc})
+end
+@schools.each do |school|
+    school_name, street, city, psc = [ "#{school.name}",  "#{school.street} #{school.num}", "#{school.city}", "#{school.psc} " ]
+    title = nil
+    addrs.push({full: nil, title: title, street: street, school_name: school_name, city:city, psc: psc})
+end
+
 
 if @envelope
   #####################################################
   # nakresli obalky
-  @solvers.each do |solver|
+  pdf.text "count: #{@solvers.size}" if @dbg
+  addrs.each do |addr|
     cross pdf,o, omm if @dbg
     pdf.font_size = o[:ps]
     psc_y = 0 
+    name = nil
     pdf.bounding_box([o[:al], ph - o[:at]],:width => o[:w], :height => o[:h] ) do
-      pdf.text "<b>#{solver.sex == 'female' ? "Řešitelka" : "Řešitel"} Pikomatu MFF UK</b>", :inline_format => true
-      pdf.text "#{solver.full_name}"
-      pdf.text "#{solver.street} #{solver.num}"
+      pdf.text "<b>#{addr[:title]}</b>", :inline_format => true if addr[:title]
+      pdf.text "#{addr[:full]}" if addr[:school_name]
+      pdf.text  addr[:school_name] if addr[:school_name]
+      pdf.text  addr[:street]
       psc_y = pdf.cursor
-      pdf.text "#{solver.city}"
+      pdf.text addr[:city]
       pdf.stroke_bounds if @dbg
     end
     pdf.bounding_box([o[:al] - 20.mm, psc_y  - o[:h] + ph - o[:at]],:width => 20.mm - 1.mm, :height => o[:ps] ) do
-      pdf.text "#{solver.psc} ", :align => :right
+      pdf.text addr[:psc] , :align => :right
       pdf.stroke_bounds if @dbg
     end
 
     pdf.font_size = o[:as]
     pdf.bounding_box([o[:pl], ph - o[:pt]],:width => o[:w], :height => o[:h] ) do
       pdf.text "<b>Pikomat MFF UK</b>", :inline_format => true, :align => :center
-      #pdf.text "Pikomat MFF UK", :inline_format => true, :align => :center
       pdf.text "KPMS MFF UK", :align => :center
       pdf.text "Sokolovská 83, 186 75 Praha 8", :align => :center
       pdf.stroke_bounds if @dbg
