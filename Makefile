@@ -50,3 +50,5 @@ doc:
 aesop:
 	rails  r  -e production script/aesop.rb
 	@echo now please: mv ovvp.* ovvp/
+ctags:
+	ctags -R app config

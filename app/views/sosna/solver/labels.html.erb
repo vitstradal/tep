@@ -17,15 +17,7 @@
             <%= text_area_tag 'opt', "pl:20\npt:20\nal:120\nat:80\np:C5", cols: 80, rows: 5 %>
           </div>
         </div>
-      
-        <div class="form-group">
-          <div class="col-sm-9">
-           <label class="checkbox" for="dbg">
-             <%= check_box_tag 'dbg', '1', false %> Rámečky a zaměřovací kříže 
-           </label>
-          </div>
-        </div>
-      
+
         <div class="form-group">
           <div class="col-sm-9">
             <p><b>Legenda:</b>
@@ -39,6 +31,30 @@
             </p>
           </div>
         </div>
+      
+        <div class="form-group">
+          <div class="col-sm-9">
+           <label class="checkbox" for="dbg">
+             <%= check_box_tag 'dbg', '1', false %> Rámečky a zaměřovací kříže 
+           </label>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-sm-9">
+           <label class="checkbox" for="obalkovani"> <%= check_box_tag 'obalkovani', '1', true %> Obálkování
+                 (jen ti co mají
+                   <code>solution_form</code> nastavený na <code>paper</code>).
+           </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-9">
+           <label class="checkbox" for="skoly"> <%= check_box_tag 'skoly', '1', false %> Školy, které mají nastavené <code>want_paper</code>.
+           </label>
+          </div>
+        </div>
+      
       
         <div class="form-group">
           <div class="col-sm-9">

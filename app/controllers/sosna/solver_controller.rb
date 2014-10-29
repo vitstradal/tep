@@ -7,7 +7,7 @@ class Sosna::SolverController < SosnaController
   def index
     load_config
     @annual = params[:annual] || @annual
-    @solvers = get_sorted_solvers(@annual)
+    @solvers = get_sorted_solvers(annual: @annual)
     respond_to do |format|
       format.html
       format.pik do
@@ -56,7 +56,11 @@ class Sosna::SolverController < SosnaController
          @prawnto_options = { :prawn => {:page_size => @opt[:p] || 'C5', :page_layout => :landscape, }} if @envelope;
 
          @dbg = params[:dbg]
-         @solvers = get_sorted_solvers(@annual)
+         where = {annual: @annual, is_test_solver: false} 
+         where.merge!({ solution_form: 'paper' }) if params[:obalkovani]
+         @solvers = get_sorted_solvers(where)
+         @schools = []
+         @schools = Sosna::School.where(want_paper: true) if params[:skoly]
          render :formats => [:pdf]
        end
     end

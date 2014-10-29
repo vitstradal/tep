@@ -348,7 +348,7 @@ class Sosna::SolutionController < SosnaController
     add_alert "generovani je zatim trosku alfa, anjoy #{roc} #{se}"
 
     # resitele
-    solvers = get_sorted_solvers(roc).to_a
+    solvers = get_sorted_solvers(annual: roc).to_a
 
     # vysledky (budou zmeneny)
     results_by_solver = _get_results_by_solver(solvers, roc, se)
@@ -666,7 +666,7 @@ class Sosna::SolutionController < SosnaController
 
   def _prepare_solvers_problems_solutions
     load_config
-    @solvers = get_sorted_solvers(@annual)
+    @solvers = get_sorted_solvers(annual: @annual)
     @problems = _problems_from_roc_se_ul
     @solutions_by_solver = _solutions_by_solver @solvers, @problems
     @penalisations_by_solver = _penalisations_by_solver @solvers
