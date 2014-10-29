@@ -49,6 +49,7 @@ Tep::Application.routes.draw do
   post '/sosna/solver/:id/delete'            => 'sosna/solver#delete',          :as => :sosna_solver_delete
 
   get  '/sosna/schools'                      => 'sosna/school#index',           :as => :sosna_schools
+  get  '/sosna/schools/pik'                  => 'sosna/school#index_pik',       :as => :sosna_schools_pik
   get  '/sosna/school/new'                   => 'sosna/school#new',             :as => :sosna_school_new
   get  '/sosna/school/:id/show'              => 'sosna/school#show',            :as => :sosna_school
   patch '/sosna/school/update'               => 'sosna/school#update',          :as => :sosna_school_update

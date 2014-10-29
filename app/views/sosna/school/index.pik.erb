@@ -1,0 +1,14 @@
+% ZSKU;ZŠ Kuncova;;;;;;Kuncova 1580,15500,Praha 5,;;
+%
+<% @schools.map do |school|  %><%=
+    #id   Pr;Jm;ro;ro;fl;br;ul,psc,mes,st;sch;mail
+    "%s;%s;;;;;;%s %s,%s,%s,%s;; "% [
+     school.short,
+     school.name,
+     school.street,
+     school.num,
+     school.psc,
+     school.city,
+     school.state,
+    ]
+%><% end %>

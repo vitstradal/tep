@@ -9,6 +9,13 @@ class Sosna::SchoolController < SosnaController
 
   def index
     @schools =  Sosna::School.all.load
+    respond_to do |format|
+      format.html
+      format.pik do
+         headers['Content-Disposition'] = "attachment; filename=skoly-roc#{@annual}.pik"
+         headers['Content-Type'] = "text/plain; charset=UTF-8";
+      end
+    end
   end
 
   def delete
