@@ -6,6 +6,7 @@
    <th>Zkr.</th>
    <th>Universal ID</th>
    <th>Jméno</th>
+   <th>Pap</th>
    <th>Adresa</th>
  </tr>
 <% @schools.each do |sch| %>
@@ -14,6 +15,7 @@
     <td><%= sch.short%></td>
     <td><%= sch.universal_id %> </td>
     <td><%= sch.name %></td>
+    <td><%= sch.want_paper ? 'Y' : ' ' %></td>
     <td><%= sch.address %> </td>
   </tr>
 <% end %>

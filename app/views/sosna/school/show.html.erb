@@ -52,6 +52,13 @@
       <div class="controls"> <%= f.text_field :universal_id %> </div>
     </div>
 
+        <div class="form-group">
+          <div class="col-sm-9">
+           <label class="checkbox" for="skoly"> <%= f.check_box :want_paper  %> Chce zasílat papírové zadání (<code>want_paper</code>), bude se generovat obálka.
+           </label>
+          </div>
+        </div>
+
     <div class="control-group">
        <div class="controls">
         <%= f.submit 'Uložit', :class=>'btn btn-primary'%>

@@ -121,7 +121,7 @@ pdf.font 'andulka'
 
 addrs = []
 @solvers.each do |solver|
-    schoo_name = nil
+    school_name = nil
     school = solver.school
     if solver.where_to_send == 'home'
       street, city, psc = [ "#{solver.street} #{solver.num}", "#{solver.city}", "#{solver.psc} " ]
@@ -149,7 +149,7 @@ if @envelope
     name = nil
     pdf.bounding_box([o[:al], ph - o[:at]],:width => o[:w], :height => o[:h] ) do
       pdf.text "<b>#{addr[:title]}</b>", :inline_format => true if addr[:title]
-      pdf.text "#{addr[:full]}" if addr[:school_name]
+      pdf.text "#{addr[:full]}" if addr[:full]
       pdf.text  addr[:school_name] if addr[:school_name]
       pdf.text  addr[:street]
       psc_y = pdf.cursor

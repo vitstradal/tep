@@ -57,10 +57,10 @@ class Sosna::SolverController < SosnaController
 
          @dbg = params[:dbg]
          where = {annual: @annual, is_test_solver: false} 
-         where.merge!({ solution_form: 'paper' })if ! params[:obalkovani].nil?
+         where.merge!({ solution_form: 'paper' }) if params[:obalkovani]
          @solvers = get_sorted_solvers(where)
          @schools = []
-         @schools = Sosna::School.all
+         @schools = Sosna::School.where(want_paper: true) if params[:skoly]
          render :formats => [:pdf]
        end
     end
