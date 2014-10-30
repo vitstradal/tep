@@ -22,5 +22,5 @@
 </table>
 
 
-<%= link_to 'Nová škola', :sosna_school_new %>
-<%= link_to 'skoly.pik', :sosna_school, format: :pik %>
+<%= link_to 'Nová škola', :sosna_school_new, :class => 'btn btn-success' %>
+<%= link_to 'skoly.pik', sosna_schools_url(format: 'pik'), {:class => 'btn btn-primary'}  %>
