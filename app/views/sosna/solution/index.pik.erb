@@ -1,6 +1,6 @@
-%id;Příjmení Jméno               ;Ro;;<% @problems.each do |pr| %><%=pr.problem_no%><% end %>
+%id;Příjmení Jméno               ;Ro;<% @problems.each do |pr| %><%=pr.problem_no%><% end %>p
 <% @solvers.each do |solver|  %><%=
-   pen = @penalisations_by_solver[solver.id]
+   pen = @penalisations_by_solver[solver.id].score || '-'
    body = @problems.map do |pr| 
                 sol_arr = @solutions_by_solver[solver.id]  
                 sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  

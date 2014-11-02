@@ -15,15 +15,17 @@ class Sosna::SolutionController < SosnaController
   UPLOAD_DIR = "var/uploads/"
 
   def index
-    _prepare_solvers_problems_solutions
-    _load_index
     respond_to do |format|
       format.html
+        _prepare_solvers_problems_solutions
+        _load_index
       format.csv do
+         _prepare_solvers_problems_solutions(false)
          ul = @problem_no.nil? ?  '' : "-ul#{@problem_no}"
          headers['Content-Disposition'] = "attachment; filename=lidi-roc#{@annual}-se#{@round}#{ul}.csv"
       end
       format.pik do
+         _prepare_solvers_problems_solutions(false)
          ul = @problem_no.nil? ?  '' : "_#{@problem_no}"
          headers['Content-Disposition'] = "attachment; filename=body#{@annual}_#{@round}#{ul}.pik"
          headers['Content-Type'] = "text/plain; charset=UTF-8";
@@ -664,9 +666,11 @@ class Sosna::SolutionController < SosnaController
     return roc, se, ul
   end
 
-  def _prepare_solvers_problems_solutions
+  def _prepare_solvers_problems_solutions(want_test = true)
     load_config
-    @solvers = get_sorted_solvers(annual: @annual)
+    where = { annual: @annual}
+    where.merge!({is_test_solver: false }) if ! want_test
+    @solvers = get_sorted_solvers(where)
     @problems = _problems_from_roc_se_ul
     @solutions_by_solver = _solutions_by_solver @solvers, @problems
     @penalisations_by_solver = _penalisations_by_solver @solvers
