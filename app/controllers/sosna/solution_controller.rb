@@ -15,24 +15,38 @@ class Sosna::SolutionController < SosnaController
   UPLOAD_DIR = "var/uploads/"
 
   def index
+    _prepare_solvers_problems_solutions
+    _load_index
+  end
+
+  def lidi
+    _prepare_solvers_problems_solutions(false)
+    ul = @problem_no.nil? ?  '' : "_#{@problem_no}"
     respond_to do |format|
-      format.html
-        _prepare_solvers_problems_solutions
-        _load_index
       format.csv do
-         _prepare_solvers_problems_solutions(false)
-         ul = @problem_no.nil? ?  '' : "-ul#{@problem_no}"
          headers['Content-Disposition'] = "attachment; filename=lidi-roc#{@annual}-se#{@round}#{ul}.csv"
       end
       format.pik do
-         _prepare_solvers_problems_solutions(false)
-         ul = @problem_no.nil? ?  '' : "_#{@problem_no}"
          headers['Content-Disposition'] = "attachment; filename=body#{@annual}_#{@round}#{ul}.pik"
          headers['Content-Type'] = "text/plain; charset=UTF-8";
       end
     end  
-
   end
+
+  def vysl
+    _prepare_solvers_problems_solutions(false)
+    respond_to do |format|
+      format.wiki do
+         headers['Content-Disposition'] = "inline; filename=vysl#{@annual}_#{@round}.wiki"
+         headers['Content-Type'] = "text/plain; charset=UTF-8";
+      end
+      format.pik do
+         headers['Content-Disposition'] = "attachment; filename=vysl#{@annual}_#{@round}.pik"
+         headers['Content-Type'] = "text/plain; charset=UTF-8";
+      end
+    end  
+  end
+
   def edit
     _prepare_solvers_problems_solutions
     @want_edit_paper = @want_edit = @want_edit_penalisation = false
@@ -679,6 +693,9 @@ class Sosna::SolutionController < SosnaController
       @want_sous = true
       @solvers = @solvers.select { |solver| @results_by_solver[solver.id].class_rank < 10 }
     end
+  end
+
+  def _prepare_solvers_by_ranks
   end
 
   def _problems_from_roc_se_ul

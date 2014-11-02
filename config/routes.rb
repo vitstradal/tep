@@ -22,9 +22,14 @@ Tep::Application.routes.draw do
   #get  '/sosna/solution/:id/down_rev(/:ori)'=> 'sosna/solution#download_rev', :as => :sosna_solution_download_rev
 
   # org:
+  get  '/sosna/solutions/lidi(/:roc(/:se(/:ul)))' => 'sosna/solution#lidi',         :as => :sosna_solutions_lidi
+  get  '/sosna/solutions/vysl(/:roc(/:se(/:ul)))' => 'sosna/solution#vysl',         :as => :sosna_solutions_vysl
+
   get  '/sosna/solutions/:roc/:se/edit'      => 'sosna/solution#edit',          :as => :sosna_solutions_edit2
   get  '/sosna/solutions/:roc/:se/:ul/edit'  => 'sosna/solution#edit',          :as => :sosna_solutions_edit
-  get  '/sosna/solutions(/:roc(/:se(/:ul)))' => 'sosna/solution#index',         :as => :sosna_solutions_org
+
+  get  '/sosna/solutions(/:roc(/:se(/:ul)))'       => 'sosna/solution#index',        :as => :sosna_solutions_org
+
   post '/sosna/solutions/update_scores'      => 'sosna/solution#update_scores', :as => :sosna_solutions_update_scores
   post '/sosna/solutions/update_papers'      => 'sosna/solution#update_papers', :as => :sosna_solutions_update_papers
   post '/sosna/solutions/update_penalisations'=>'sosna/solution#update_penalisations', :as => :sosna_solutions_update_penalisations

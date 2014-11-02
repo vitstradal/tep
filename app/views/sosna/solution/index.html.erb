@@ -166,12 +166,12 @@
                         opravy v .zip
               <% end %>
 
-              <%= link_to( { format: 'csv'}, { :class=> 'btn btn-primary'} ) do %>
+              <%= link_to( sosna_solutions_lidi_url(format: 'csv'), { :class=> 'btn btn-primary'} ) do %>
                         <i class="fa fa-table"></i>
                         řešitelé .csv
               <% end %>
 
-              <%= link_to( { format: 'pik'}, { :class=> 'btn btn-primary'} ) do %>
+              <%= link_to( sosna_solutions_lidi_url(format: 'pik'), { :class=> 'btn btn-primary'} ) do %>
                         <i class="fa fa-th"></i>
                         body.pik
               <% end %>

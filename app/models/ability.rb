@@ -39,6 +39,8 @@ class Ability
 
       can :index, Sosna::Solution
       can :show, Sosna::Solution
+      can :lidi, Sosna::Solution
+      can :vysl, Sosna::Solution
       can :download, Sosna::Solution
       can :download_org, Sosna::Solution
       can :upload, Sosna::Solution

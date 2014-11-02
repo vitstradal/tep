@@ -32,7 +32,7 @@ module ApplicationHelper
     end
   end
   def menu_lii(uri, text = nil, opt = {} ,  &block)
-     opt.merge! ({:lii => true})
+     opt.merge! lii: true
      menu_li uri, text, opt, &block
   end
 

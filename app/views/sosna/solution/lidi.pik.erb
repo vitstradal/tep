@@ -1,4 +1,4 @@
-%id;Příjmení Jméno               ;Ro;<% @problems.each do |pr| %><%=pr.problem_no%><% end %>p
+%id;Příjmení Jméno               ;Ro;;<% @problems.each do |pr| %><%=pr.problem_no%><% end %>p
 <% @solvers.each do |solver|  %><%=
    pen = @penalisations_by_solver[solver.id].score || '-'
    body = @problems.map do |pr| 
@@ -12,7 +12,7 @@
    end.join
 
    #%id;PříJm;Grad;body pen
-  "%03i;%-29s;%-2s;%s%s\n" % [ solver.id,
+  "%03i;%-29s;%-2s;;%s%s\n" % [ solver.id,
                                "#{solver.last_name} #{solver.name}",
                                solver.grade_num,
                                body,
