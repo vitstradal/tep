@@ -17,20 +17,37 @@ class Sosna::SolutionController < SosnaController
   def index
     _prepare_solvers_problems_solutions
     _load_index
+  end
+
+  def lidi
+    _prepare_solvers_problems_solutions(false)
+    # dirty hack
+    _sort_solvers_by_score
     respond_to do |format|
-      format.html
       format.csv do
-         ul = @problem_no.nil? ?  '' : "-ul#{@problem_no}"
-         headers['Content-Disposition'] = "attachment; filename=lidi-roc#{@annual}-se#{@round}#{ul}.csv"
+         headers['Content-Disposition'] = "attachment; filename=lidi-roc#{@annual}-se#{@round}.csv"
       end
       format.pik do
-         ul = @problem_no.nil? ?  '' : "_#{@problem_no}"
-         headers['Content-Disposition'] = "attachment; filename=body#{@annual}_#{@round}#{ul}.pik"
+         headers['Content-Disposition'] = "attachment; filename=body#{@annual}_#{@round}.pik"
          headers['Content-Type'] = "text/plain; charset=UTF-8";
       end
     end  
-
   end
+
+  def vysl
+    _prepare_solvers_problems_solutions(false)
+    respond_to do |format|
+      format.wiki do
+         headers['Content-Disposition'] = "inline; filename=vysl#{@annual}_#{@round}.wiki"
+         headers['Content-Type'] = "text/plain; charset=UTF-8";
+      end
+      format.pik do
+         headers['Content-Disposition'] = "attachment; filename=vysl#{@annual}_#{@round}.pik"
+         headers['Content-Type'] = "text/plain; charset=UTF-8";
+      end
+    end  
+  end
+
   def edit
     _prepare_solvers_problems_solutions
     @want_edit_paper = @want_edit = @want_edit_penalisation = false
@@ -664,9 +681,23 @@ class Sosna::SolutionController < SosnaController
     return roc, se, ul
   end
 
-  def _prepare_solvers_problems_solutions
+  def _sort_solvers_by_score
+    @solvers.sort! do  |a,b|
+        if a.grade_num != b.grade_num
+         a.grade_num <=> b.grade_num
+        elsif a.last_name != b.last_name
+          strcollf(a.last_name, b.last_name)
+        elsif a.name != b.name
+          strcollf(a.name, b.name)
+        end
+    end
+  end
+
+  def _prepare_solvers_problems_solutions(want_test = true)
     load_config
-    @solvers = get_sorted_solvers(annual: @annual)
+    where = { annual: @annual}
+    where.merge!({is_test_solver: false }) if ! want_test
+    @solvers = get_sorted_solvers(where)
     @problems = _problems_from_roc_se_ul
     @solutions_by_solver = _solutions_by_solver @solvers, @problems
     @penalisations_by_solver = _penalisations_by_solver @solvers
@@ -675,6 +706,9 @@ class Sosna::SolutionController < SosnaController
       @want_sous = true
       @solvers = @solvers.select { |solver| @results_by_solver[solver.id].class_rank < 10 }
     end
+  end
+
+  def _prepare_solvers_by_ranks
   end
 
   def _problems_from_roc_se_ul
