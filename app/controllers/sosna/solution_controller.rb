@@ -21,13 +21,14 @@ class Sosna::SolutionController < SosnaController
 
   def lidi
     _prepare_solvers_problems_solutions(false)
-    ul = @problem_no.nil? ?  '' : "_#{@problem_no}"
+    # dirty hack
+    _sort_solvers_by_score
     respond_to do |format|
       format.csv do
-         headers['Content-Disposition'] = "attachment; filename=lidi-roc#{@annual}-se#{@round}#{ul}.csv"
+         headers['Content-Disposition'] = "attachment; filename=lidi-roc#{@annual}-se#{@round}.csv"
       end
       format.pik do
-         headers['Content-Disposition'] = "attachment; filename=body#{@annual}_#{@round}#{ul}.pik"
+         headers['Content-Disposition'] = "attachment; filename=body#{@annual}_#{@round}.pik"
          headers['Content-Type'] = "text/plain; charset=UTF-8";
       end
     end  
@@ -679,6 +680,18 @@ class Sosna::SolutionController < SosnaController
     @problem_no = ul 
 
     return roc, se, ul
+  end
+
+  def _sort_solvers_by_score
+    @solvers.sort! do  |a,b|
+        if a.grade_num != b.grade_num
+         a.grade_num <=> b.grade_num
+        elsif a.last_name != b.last_name
+          strcollf(a.last_name, b.last_name)
+        elsif a.name != b.name
+          strcollf(a.name, b.name)
+        end
+    end
   end
 
   def _prepare_solvers_problems_solutions(want_test = true)
