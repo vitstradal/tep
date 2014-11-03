@@ -1,5 +1,3 @@
-
-<%= 0/0%>
 <h3>Konfigurace Sosny</h3>
 
 <%= form_for :config, :url => {:action => :update}, :html =>  {:class => 'form-horizontal'}  do |f| %>
@@ -16,8 +14,17 @@
     <div class="controls"><%= text_field :config, :round,  value: @config[:round] %></div>
   </div>
 
+  <div class="control-group"><label class="control-label">Série s Návratkou</label>
+    <div class="controls"><%= text_field :config, :confirmation_round,  value: @config[:confirmation_round] %></div>
+  </div>
+
+
   <div class="control-group"><label class="control-label">Zobrazit opravené řešení aktuální série (řešení předchozích sérií budou zobrazeny bez ohledu na tuto hodnotu)</label>
     <div class="controls"><%= select_tag 'config[show_revisions]', options_for_select(["yes","no"], @config[:show_revisions]) %></div>
+  </div>
+
+  <div class="control-group"><label class="control-label">Zobrazit upload návratky</label>
+    <div class="controls"><%= select_tag 'config[confirmation_file_upload]', options_for_select(["yes","no"], @config[:show_revisions]) %></div>
   </div>
 
   <% (1..6).each do |round| %>

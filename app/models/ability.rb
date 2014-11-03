@@ -30,6 +30,8 @@ class Ability
     if user.user?
       can :user_index, Sosna::Solution
       can :upload, Sosna::Solution
+      can :upload_confirm_file, Sosna::Solution
+      can :get_confirm_file, Sosna::Solution
       can :download, Sosna::Solution
       can :download_rev, Sosna::Solution
     end
@@ -82,6 +84,8 @@ class Ability
       can :update_penalisations, Sosna::Solution
       can :update_results, Sosna::Solution
 
+      can :get_confirm_files, Sosna::Solution
+
     end
 
     if user.admin?
@@ -89,6 +93,7 @@ class Ability
       can :delete, Sosna::Solver
       can :delete, Sosna::School
       can :delete, Sosna::Problem
+
 
       can :users,            :tep
       can :user,             :tep

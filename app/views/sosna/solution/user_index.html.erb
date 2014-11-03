@@ -54,6 +54,30 @@
 
   </tr>
 <% end %>
+<% if @show_confirmation_upload %>
+  <tr>
+    <td>Návratka</td>
+    <td>
+      <% if @confirmation_exists %>
+         <i class="fa fa-check green"></i> <%=link_to 'Návratka', sosna_solutions_get_confirm_file_path %> byla nahrána
+      <% else %>
+        <i class="fa fa-exclamation-triangle red"></i><i>Nahraj návratku</i>
+      <% end %>
+    </td>
+    <% if show_nahrat %>
+       <td>  <%= form_tag  sosna_solutions_upload_confirm_file_path, :class=> 'form-inline', :multipart => true  do |f|  %>
+               <%= hidden_field_tag :roc, @annual %>
+               <%= hidden_field_tag :se, @round %>
+                   <div style="display:inline-block;width:200px;height:16px">
+                     <%= file_field_tag :confirm_file , :class => 'ace-file-input', :accept => 'application/pdf', 'max-size' => max_size  %>
+                   </div>
+                   <%= submit_tag '<', :class=>'btn btn-default'%>
+          <% end %>
+       </td>
+    <% end %>
+    <td></td>
+  </tr>
+<% end %>
 </table>
 
 <ul>

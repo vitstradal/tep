@@ -22,6 +22,7 @@ class Sosna::SolverController < SosnaController
     @solvers = Sosna::Solver.where solution_form: 'tep', annual: @annual, is_test_solver: false
   end
 
+
   def dup
     solver_id = params[:id]
     annual = params[:annual] || @annual

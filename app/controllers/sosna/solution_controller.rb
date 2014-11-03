@@ -115,6 +115,58 @@ class Sosna::SolutionController < SosnaController
     redirect_to action: :edit, roc: roc, se: se, ul: ul
   end
 
+  def get_confirm_files
+    zip_file = Tempfile.new(['confirmations', '.zip'], UPLOAD_DIR)
+    zip_file_name = zip_file.path
+    zip_file.unlink
+    annual = params[:annual] || @config[:annual]
+    solvers = Sosna::Solver.where(annual: annual)
+
+    # Zip::File.open potrebuej aby zip_file_naem (neexistovalo
+    # jinak si zacne myslet, ze zip chci otevrit a ne prepsat
+    # naopak Tempfile nedokaze jen vymyslet jmeno a neotevirat
+    Zip::File.open(zip_file_name, Zip::File::CREATE) do |zipfile|
+      solvers.each do |solver|
+        filename = _confirm_file_path solver 
+        next if filename.nil? || ! File.exists?(filename)
+        zipfile.add(translit("navratky/confirm-file-#{solver.last_name}-#{solver.name}-#{solver.id}.pdf"),  filename)
+      end
+    end
+    send_file zip_file_name, :filename => 'navratky.zip', :type => "application/zip"
+  end
+
+  def upload_confirm_file
+
+    confirm_file = params[:confirm_file]
+
+    roc = params[:roc]
+    se =  params[:se]
+    solver = Sosna::Solver.where(annual: @annual, user_id: current_user.id).first
+
+    if solver.nil? 
+        add_alert 'Bad user and solver'
+    elsif confirm_file.nil?
+      File.delete _confirm_file_path(solver)
+      add_alert 'Návratka byla smazána'
+    elsif confirm_file.original_filename !~ /\.pdf$/
+      add_alert 'Pozor: pouze soubory ve formátu PDF'
+    else 
+      File.open(_confirm_file_path(solver), 'wb') {  |f| f.write confirm_file.read }
+      add_success 'Návratka nahrána'
+    end
+    redirect_to sosna_solutions_user_url(roc, se, solver.id)
+  end
+
+  def get_confirm_file
+    solver = Sosna::Solver.where(annual: @annual, user_id: current_user.id).first
+    if ! solver.nil? 
+       send_file _confirm_file_path(solver) , :filename => 'navratka.pdf', :type => 'application/pdf'
+    end
+  end
+
+  def _confirm_file_path(solver)
+         UPLOAD_DIR + "confirm-file-#{solver.id}.pdf"
+  end
 
   def download_rev
     solution = Sosna::Solution.find id = params[:id]
@@ -221,7 +273,6 @@ class Sosna::SolutionController < SosnaController
     if cfile_name =~ /\.pdf$/
        path =  _upload_rev_one(roc, se, ul,  cfile_name)
        if path
-         print "writing to path"
          File.open(UPLOAD_DIR + path, 'wb') {  |f| f.write(rfile.read) }
        end
     elsif rfile.original_filename =~ /\.zip$/
@@ -281,6 +332,11 @@ class Sosna::SolutionController < SosnaController
     if ! @solver
        add_alert "Pozor: zatím nejsi letošním řešitelem, nejprve vyplň přihlašku!"
        return redirect_to :controller => :solver , :action => :new
+    end
+
+    if @config[:confirmation_round] == @round
+      @show_confirmation_upload = true
+      @confirmation_exists = File.exists? _confirm_file_path @solver
     end
 
     @problems  = Sosna::Problem.where(:annual=> @annual, :round=> @round)
