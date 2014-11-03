@@ -1,0 +1,17 @@
+<% @results.each do |result| %>
+<%=
+   solver = result.solver
+   school = solver.school
+   '%-10s;%-10s;%-10s;%-22s;%4s;%4s;XXX;%2s;%3s' % [
+       result.rank_multi? ? "#{result.rank}-#{result.rank_to}" : result.rank ,
+       result.class_rank_multi? ? "#{result.class_rank}-#{result.class_rank_to}" : result.class_rank,
+       solver.name,
+       solver.last_name,
+       solver.grade_num,
+       school.nil? ? '-' : school.short,
+       #XXX
+       result.round_score,
+       result.score,
+       ]
+  %>
+<% end %>
