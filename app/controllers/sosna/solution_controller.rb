@@ -34,7 +34,8 @@ class Sosna::SolutionController < SosnaController
   end
 
   def vysl
-    _prepare_solvers_problems_solutions(false)
+    load_config
+    @results = Sosna::Result.includes(:solver).where('sosna_solvers.is_test_solver' => false, round: @round, annual: @annual)
     respond_to do |format|
       format.wiki do
          headers['Content-Disposition'] = "inline; filename=vysl#{@annual}_#{@round}.wiki"
