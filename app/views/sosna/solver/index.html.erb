@@ -1,11 +1,33 @@
-<div class="widget-box transparent">
+<div class="widget-box transparent collapsed">
   <div class="widget-header widget-header-flat">
     <h4 class="widget-title">Seznam řešitelů <%= @annual%>. ročníku </h4>
     <div class="widget-toolbar">
-      <a href="#" data-action="collapse"> <i class="ace-icon fa fa-chevron-up"></i> </a>
+      <a href="#" data-action="collapse"> <i class="ace-icon fa fa-gear"></i> </a>
     </div>
   </div>
   <div class="widget-body">
+
+    <%= link_to 'Založit nového řešitele',
+                { action: :new },
+                { :class=> 'btn btn-primary'} %>
+
+    <%= link_to 'Lidi.pik',
+                { format: 'pik'},
+                { :class=> 'btn btn-primary'} %>
+
+    <%= link_to 'Štítky.pdf',
+                { action: :labels },
+                { :class=> 'btn btn-primary'} %>
+    <%= link_to 'Tep emails',
+                { action: :tep_emails },
+                { :class=> 'btn btn-primary'} %>
+
+  </div>
+</div>
+
+
+
+
     <table class="table table-bordered">
       <tr>
        <th>Id</th>
@@ -56,22 +78,4 @@
       </tr>
     <% end %>
     </table>
-  </div>
-</div>
-
-
-<%= link_to 'Založit nového řešitele',
-            { action: :new },
-            { :class=> 'btn btn-primary'} %>
-
-<%= link_to 'Lidi.pik',
-            { format: 'pik'},
-            { :class=> 'btn btn-primary'} %>
-
-<%= link_to 'Štítky.pdf',
-            { action: :labels },
-            { :class=> 'btn btn-primary'} %>
-<%= link_to 'Tep emails',
-            { action: :tep_emails },
-            { :class=> 'btn btn-primary'} %>
 

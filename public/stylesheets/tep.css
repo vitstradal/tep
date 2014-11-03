@@ -565,8 +565,14 @@ height: 100%;
   color: red;
 }
 
-/*  */
-tt {
+/* wiki: terminal inline ie `rm -rf /` */
+code {
         background-color: #FAFAFA;
         border: 1px solid #E2E2E2;
 }
+
+/*  */
+html {
+  overflow-y: scroll; 
+}
+
