@@ -27,9 +27,11 @@
     <td><%= p.problem_no%> </td>
     <td>
       <% if sol.filename_orig  %>
-        <%= link_to sol.filename_orig, :action => :download, :id => sol.id %>
+        <i class="fa fa-check green"></i> <%= link_to sol.filename_orig, :action => :download, :id => sol.id %>
+      <% elsif sol.has_paper_mail %>
+        <i class="fa fa-check green"></i> <i>řešení došlo poštou</i>
       <% else %>
-        <i>žádné řešení</i>
+        <i class="fa fa-ban red"></i> <i>žádné řešení</i>
       <% end %>
     </td>
     <% if show_nahrat %>
@@ -45,10 +47,18 @@
     <td>
       <% sol_in_this_round_allowed   = @round <  @config[:round] %>
       <% sol_in_this_round_allowed ||= @round == @config[:round] && @config[:show_revisions] == 'yes'  %>
-      <% if sol_in_this_round_allowed && sol.filename_corr_display %>
-        <%= link_to sol.filename_corr_display, :action => :download_rev, :id => sol.id %>
+      <% if sol_in_this_round_allowed %> 
+        <% if sol.filename_corr_display %>
+          <%= link_to sol.filename_corr_display, :action => :download_rev, :id => sol.id %>
+        <% elsif sol.has_paper_mail %>
+          <i class="fa fa-envelope blue"></i> <i>opravené řešení bylo zasláno poštou</i>
+        <% else %>
+          <i class="fa fa-ban red"></i> <i>úlohu řešitel neřešil</i>
+        <% end %>
       <% else %>
-        <i>řešení není opravené</i>
+        <% if sol.filename_corr_display || sol.has_paper_mail %>
+          <i class="fa fa-ban red"></i> <i>řešení není opravené</i>
+        <% end %>
       <% end %>
       </td>
 
@@ -61,7 +71,7 @@
       <% if @confirmation_exists %>
          <i class="fa fa-check green"></i> <%=link_to 'Návratka', sosna_solutions_get_confirm_file_path %> byla nahrána
       <% else %>
-        <i class="fa fa-exclamation-triangle red"></i><i>Nahraj návratku</i>
+        <i class="fa fa-exclamation-triangle red"></i> <i>Nahraj návratku</i>
       <% end %>
     </td>
     <% if show_nahrat %>
