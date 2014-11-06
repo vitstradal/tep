@@ -73,6 +73,7 @@
       <% else %>
         <i class="fa fa-exclamation-triangle red"></i> <i>Nahraj návratku</i>
       <% end %>
+      <sup><%= link_to wiki_main_url('navratka'), title: 'Co je to návratka?' do %> <i class="fa fa-question red"></i> <%end%></sup>
     </td>
     <% if show_nahrat %>
        <td>  <%= form_tag  sosna_solutions_upload_confirm_file_path, :class=> 'form-inline', :multipart => true  do |f|  %>
