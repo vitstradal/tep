@@ -1,12 +1,17 @@
 % id; příjmení; jméno; ročník; třída; flagy; dat. nar.; ulice,psč,město,stát; škola; mail
-% flagy: s/k - posílat domů / do školy;
+% flagy: s/k/e/T - posílat domů / do školy / email / Test -- nepositat;
 %        f/m - pohlaví;
 %        0-9 - kolik let už řešil Pikomat;
 %        -/! - máme všechny údaje / něco chybí;
 %        -/! - má / nemá souhlas se zpracováním;
 <% @solvers.map do |solver|  %><%=
+    send = '?'
+    send = 's' if solver.where_to_send == 'home'
+    send = 'e' if solver.where_to_send == 'email'
+    send = 'k' if solver.where_to_send == 'school'
+    send = 'T' if solver.is_test_solver 
     flagy = [
-            solver.is_test_solver ?  'T' : solver.where_to_send == 'home' ? 's' : 'k',
+            send,
             solver.sex == 'male' ? 'm' : 'f',
             '?',
             '-', # ma vse
