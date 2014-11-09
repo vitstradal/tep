@@ -1,0 +1,117 @@
+<%= stylesheet_link_tag 'jstoolbar.css'  %>
+<%= stylesheet_link_tag 'trac.css'  %>
+<%= javascript_include_tag 'jstoolbar/jstoolbar.js' %>
+<%= javascript_include_tag 'jstoolbar/trac.js' %>
+<%= javascript_include_tag 'jstoolbar/lang/jstoolbar-en.js' %>
+
+ <%= form_tag({:path =>  @path}, {id: 'edit-form'})  do %>
+  <%= hidden_field_tag 'version', @version %>
+  <%= hidden_field_tag 'edit', '' %>
+  <%= hidden_field_tag 'cursor', @cursor %>
+  <% if @part %>
+    <%= hidden_field_tag 'part', @part %>
+    <%= hidden_field_tag 'pos', @pos %>
+  <% end %>
+  <%# <h1>Editace souboru '<%= @path % >'</h1> %>
+  <div class="btn-toolbar">
+    <div class="btn-group">
+     <a class="btn btn-xs btn-white btn-info" data-edit="bold" title="Bold (Ctrl+B)"> <i class=" ace-icon fa fa-bold"></i> </a>
+     <a class="btn btn-xs btn-white btn-info" data-edit="italic" title="Italic (Ctrl+I)"> <i class=" ace-icon fa fa-italic"></i> </a>
+     <a class="btn btn-xs btn-white btn-info" data-edit="strike" title="Strikethrough"> <i class=" ace-icon fa fa-strikethrough"></i> </a>
+     <a class="btn btn-xs btn-white btn-info" data-edit="code" title="Code"> <i class="ace-icon fa fa-keyboard-o"></i> </a>
+     <a class="btn btn-xs btn-white btn-info" data-edit="comment" title="Comment out"> <i class=" ace-icon fa fa-slack"></i> </a>
+    </div>
+    <div class="btn-group">
+       <a class="btn btn-xs btn-white btn-info" data-edit="table" title="TablE Ctrl+E"> <i class="ace-icon fa fa-table"></i> </a>
+    </div>
+    <div class="btn-group">
+     <a class="btn btn-xs btn-white btn-info" data-edit="sub" title="subscript"> <i class=" ace-icon fa fa-subscript"></i> </a>
+     <a class="btn btn-xs btn-white btn-info" data-edit="sup" title="superscript"> <i class=" ace-icon fa fa-superscript"></i> </a>
+    </div>
+    <div class="btn-group">
+     <a class="btn btn-xs btn-white btn-info" data-edit="ol" title="Ordered list"> <i class=" ace-icon fa fa-list-ol"></i> </a>
+     <a class="btn btn-xs btn-white btn-info" data-edit="ul" title="List"> <i class=" ace-icon fa fa-list-ul"></i> </a>
+    </div>
+    <div class="btn-group">
+     <a class="btn btn-xs btn-white btn-info" data-edit="h1" title="Header 1">h1</a>
+     <a class="btn btn-xs btn-white btn-info" data-edit="h2" title="Header 2">h2</a>
+     <a class="btn btn-xs btn-white btn-info" data-edit="h3" title="Header 3">h3</a>
+    </div>
+    <div class="btn-group">
+     <a class="btn btn-xs btn-white btn-info" data-edit="math" title="Inline math"> <i class=" ace-icon fa fa-dollar"></i> </a>
+     <a class="btn btn-xs btn-white btn-info" data-edit="dmath" title="Display math"> <i class=" ace-icon fa fa-dollar"></i><i class=" ace-icon fa fa-dollar"></i> </a>
+    </div>
+    <div class="btn-group">
+     <a class="btn btn-xs btn-white btn-info" data-edit="link" title="Link"> <i class=" ace-icon fa fa-chain"></i></a>
+     <a class="btn btn-xs btn-white btn-info" data-edit="image" title="Image"> <i class=" ace-icon fa fa-image"></i></a>
+    </div>
+    <div class="btn-group">
+     <a class="btn btn-xs btn-white btn-info" data-edit="help" data-help-url="<%= wiki_piki_path('jakna/wiki', format: 'json') %>" title="help"> <i class=" ace-icon fa fa-life-ring"></i></a>
+     <a class="btn btn-xs btn-white btn-info" data-edit="icons" data-icons-url="<%= wiki_piki_path( 'jakna/ikony', format: 'json') %>" title="ikony"> <i class=" ace-icon fa fa-star"></i></a>
+    </div>
+    <div class="btn-group">
+     <a class="editorcancel btn btn-xs btn-white btn-info" href="<%= url_for path: @path %>" title="cancel (ctrl-escape)">  <i class="fa fa-ban"></i> </a>
+     <a class="btn btn-xs btn-white btn-info" data-edit="save-stay" title="Save and stay (Shift-Enter)"> <i class=" ace-icon fa fa-floppy-o"></i></a>
+     <a class="btn btn-xs btn-white btn-warning" data-edit="save" title="Save and show (Ctrl-Enter)"> <i class=" ace-icon fa fa-floppy-o"></i></a>
+     <a class="btn btn-xs btn-white btn-info" data-edit="preview" title="Preview (Alt-Enter)"> <i class=" ace-icon fa fa-eye"></i></a>
+    </div>
+  </div>
+  <div class="row">
+
+    <div class="col-xs-6">
+      <div class="row">
+        <div class="textarea-container col-xs-12">
+          <%= text_area_tag :text, @text, style:'float:left', class: 'span9 aceeditor ctrl-enter-submit', id: 'textedit', cols: 100, rows: 24%>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="cmdline" style="width:100%;height:2em;position:relative;">huu</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-xs-6">
+      <div style="float:left" id="preview-div"></div>
+    </div>
+  </div>
+  <div style="clear:both"></div>
+  <%= button_tag  'Zpět',   :class=>'btn',            :ico => 'fa-reply', :href => url_for(path: @path)  %>
+  <%= button_tag  'Uložit', :class=>'btn btn-danger', ico: 'fa-floppy-o'  %>
+
+      <label class='pull-right'>
+        <input id='vinovi' type="checkbox" data-edit='vi' name="myoption" class="ace ace-switch xswitch-field-1" <%if cookies['ace.vi'.to_sym] == 'on'%>checked="checked"<%end%> />
+
+        <span class="lbl" data-lbl="&nbsp;vi&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nevi"></span>
+      </label>
+    </div>
+
+   <% if false %>
+    <script>
+                var toolbar = new jsToolBar(document.getElementById('textedit'));
+                <% if @giwi.help_link %>toolbar.help_link = '<%= url_for(:root) + @giwi.help_link %>'; <% end %>
+                toolbar.draw();
+   </script>
+  <% end %>
+<% end #form %>
+<% if @used_templates %>
+  Templates:
+  <ul>
+  <% @used_templates.sort.each do |template,defined| %>
+    <% next if template =~ /^\// %>
+    <% path =  template %>
+    templates: '<%= @giwi.templates %>'
+    url: '<%= @giwi.url %>'
+
+    <li><%= link_to template, wiki_tepmac_url(path) %>
+        <%= link_to "[edit]", wiki_tepmac_url(path , edit: 'me')%> : <%= defined %>,</li>
+  <% end %>
+  </ul>
+<% end %>
+
+<% content_for :action_buttons do %>
+  <div class="pull-right">
+    <%= button_tag  'Zpět',   :class=>'btn',            :ico => 'fa-reply', :href => url_for(path: @path)  %>
+    <%= button_tag  'Uložit', :class=>'btn btn-danger', ico: 'fa-floppy-o', :type => 'button', 'data-submit-form'=>'#edit-form'   %>
+  </div>
+<% end %>

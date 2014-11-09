@@ -62,6 +62,14 @@ local: &local
     ext: '.wiki'
     update: :org
     update: :org
+  wikuk:
+    url: 'wikuk'
+    templates: 'tepmac'
+    path: '/home/vitas/tmp/wikuk'
+    nogit: true
+    ext: '.wiki'
+    read:   :org
+    update: :org
   tepmac:
     path: '/home/vitas/git/tepmac'
     url: 'tepmac'

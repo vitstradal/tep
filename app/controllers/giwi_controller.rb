@@ -69,7 +69,7 @@ class GiwiController < ApplicationController
 
     if @edit && @can_update
       _handle_edit
-      return render :show
+      return render :edit
     end
 
     path_ext = @path + @giwi.ext
@@ -400,7 +400,7 @@ class GiwiController < ApplicationController
     @path = _to_ascii(@path)
     @edit = true
     @wide_display = true
-    render :show
+    render :edit
   end
   def _breadcrumb_from_path(path)
 

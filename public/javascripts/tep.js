@@ -320,11 +320,10 @@ function get_hash()
  * ace-editor support functions
  */
 
-function editor_tool_button_switch($el, editor, form)
+function editor_tool_button_switch($el, editor)
 {
   var on = $el.is(':checked');
   var action = $el.data('edit');
-  //console.log("editor_tool_button_switch");
   switch(action) {
   case 'vi':
      var kb = on ? 'ace/keyboard/vim' : '';
@@ -335,13 +334,14 @@ function editor_tool_button_switch($el, editor, form)
   }
 }
 
-function editor_tool_button_click(el, editor, form)
+function editor_tool_button_click(el, editor)
 {
-  editor_tool_action($(el).data('edit'), editor, form);
+  editor_tool_action($(el).data('edit'), editor);
 }
 
-function editor_tool_action(action, editor, form)
+function editor_tool_action(action, editor)
 {
+  var form = editor.form;
   switch(action) {
   case 'link':    return editor_wrap(editor, '[[', ']]');
   case 'image':   return editor_wrap(editor, '[[Image(', ')]]');
@@ -362,12 +362,12 @@ function editor_tool_action(action, editor, form)
   case 'ol':      return editor_wrap(editor, "1. ");
   case 'img':     return editor_wrap(editor, "[[Image(", ")]]");
   case 'table':   return editor_table(editor);
-  case 'save':    return editor_save(editor, form, false);
-  case 'save-stay':return editor_save(editor, form, true);
-  case 'cancel':  return editor_cancel(editor, form);
-  case 'preview': return editor_preview(editor, form);
+  case 'save':    return editor_save(editor, false);
+  case 'save-stay':return editor_save(editor, true);
+  case 'cancel':  return editor_cancel(editor);
+  case 'preview': return editor_preview(editor);
   case 'help':    return editor_show_url(editor, form.find('[data-help-url]').data('help-url'));
-  case 'icons':   return editor_show_url(editor, form.find('[data-icons-url]').data('icons-url')); 
+  case 'icons':   return editor_show_url(editor, form.find('[data-icons-url]').data('icons-url'));
   default:
           console.log("unknown action", action);
           return editor_wrap(editor, '[[', ']]');
@@ -392,17 +392,24 @@ function init_icons(editor) {
        }
 }
 
-function editor_cancel(editor, form)
+function editor_cancel(editor)
 {
   //console.log('editor cancel');
-  $(form).find('.editorcancel').each(function (i, el) { 
+  var form = editor.form;
+  $(form).find('.editorcancel').each(function (i, el) {
     //console.log('editor cancel');
     window.location =  $(el).attr('href');
   });
 }
 
-function editor_save(editor, form, stay)
+function editor_reload(editor)
 {
+  window.location = window.location;
+}
+
+function editor_save(editor, stay)
+{
+  var form = editor.form;
   if( stay) {
     $(form).find('[name=edit]').val('1');
     save_cursor(editor, form);
@@ -432,9 +439,10 @@ function editor_show_url(editor, url)
    );
 }
 
-function editor_preview(editor, form)
+function editor_preview(editor)
 {
 
+   var form = editor.form;
    var action = form.attr('action');
    var wiki = editor.getSession().getValue();
    //console.log("action", action);
@@ -562,18 +570,6 @@ var $consoleEl = $('<div>HU</div>', {
                        'class': 'textarea-container col-xs-6'
                        });
 
-/*
-$('.cmdline').append($consoleEl);
-
-var cli = ace.edit($consoleEl[0]);
-        cli.renderer.setShowGutter(true);
-        cli.getSession().setValue('AHOOJ');
-        cli.getSession().setMode("ace/mode/tracwiki");
-        cli.setTheme("ace/theme/tomorrow");
-*/
-//        cmdLine.getSession().setUseWrapMode(true);
-//        cmdLine.setTheme("ace/theme/tomorrow");
-//        cmdLine.renderer.setShowGutter(true);
 
 //editDiv.append($consoleEl);
 //consoleEl.style.cssText = "position:fixed; bottom:1px; right:0;//border:1px solid #baf; z-index:100";
@@ -595,16 +591,21 @@ var cli = ace.edit($consoleEl[0]);
         //editor.renderer.setShowInvisibles(true);
 
         var form = $textarea.closest('form');
-
+        editor.form = form;
         editor.commands.bindKeys({
-                        'ctrl-b':       function () { editor_tool_action('bold', editor, form ); },
-                        'ctrl-e':       function () { editor_tool_action('table', editor, form ); },
-                        'ctrl-i':       function () { editor_tool_action('italic', editor, form ); },
-                        //'ctrl-$':     function () { editor_tool_action('math', editor, form ); },
-                        'ctrl-escape':  function () { editor_cancel(editor, form);  },
-                        'ctrl-enter':   function () { editor_save(editor, form, false);  },
-                        'shift-enter':  function () { editor_save(editor, form, true);  },
-                        'alt-enter':    function () { editor_preview(editor, form);  },
+                        'ctrl-b':       function () { editor_tool_action('bold', editor); },
+                        'ctrl-e':       function () { editor_tool_action('table', editor); },
+                        'ctrl-i':       function () { editor_tool_action('italic', editor); },
+                        //'ctrl-$':     function () { editor_tool_action('math', editor); },
+                        'ctrl-escape':  function () { editor_cancel(editor);  },
+                        'ctrl-enter':   function () { editor_save(editor, false);  },
+                        'shift-enter':  function () { editor_save(editor, true);  },
+                        'alt-enter':    function () { editor_preview(editor);  },
+
+                        // toggle vi|nevi mode by pressing vi|nevi switch
+                        'ctrl-m':       function () { $('#vinovi').click();},
+
+                        // disable default bindings
                         'ctrl-l':null,
                         'ctrl-t':null,
                         'ctrl-r':null,
@@ -625,7 +626,44 @@ var cli = ace.edit($consoleEl[0]);
                 //save_cursor(editor, form);
         });
         //.find('a[data-edit]').click(function () { editor_tool_button_click($textarea, editor); });
-        $('a[data-edit]').click(function () {      editor_tool_button_click($(this), editor, form); });
-        $('input[data-edit]').change(function () { editor_tool_button_switch($(this), editor, form); });
-        $('input[data-edit]').each(function (i, el) { editor_tool_button_switch($(el), editor, form); });
+        $('a[data-edit]').click(function () {      editor_tool_button_click($(this), editor); });
+        $('input[data-edit]').change(function () { editor_tool_button_switch($(this), editor); });
+        $('input[data-edit]').each(function (i, el) { editor_tool_button_switch($(el), editor); });
+
+        _init_cmdline_editor(editor)
+}
+
+function _init_cmdline_editor(editor)
+{
+
+        // cmd line
+        var cli = ace.edit($('.cmdline')[0]);
+        cli.renderer.setShowGutter(true);
+        cli.getSession().setValue('ready...');
+        cli.getSession().setMode("ace/mode/tracwiki");
+        cli.setTheme("ace/theme/tomorrow");
+        cli.renderer.setShowGutter(false);
+
+        editor.cmdLine = cli;
+        editor.showCommandLine = function(val) {
+          this.cmdLine.focus();
+          if (typeof val == "string") {
+           this.cmdLine.setValue(val, 1);
+         }
+        };
+        editor.commands.addCommand({ name: ':w', exec: function () { editor_save(editor, true);},     });
+        editor.commands.addCommand({ name: ':x', exec: function () { editor_save(editor, false);},    });
+        editor.commands.addCommand({ name: ':q', exec: function () { editor_cancel(editor);},         });
+        editor.commands.addCommand({ name: ':e', exec: function () { editor_reload(editor);},         });
+        cli.commands.bindKeys({
+              "Shift-Return|Ctrl-Return|Alt-Return": function(cmdLine) { cmdLine.insert("\n"); },
+              "Esc|Shift-Esc": function(cmdLine){ editor.focus(); },
+              "Return": function(cmdLine) {
+                var command = cmdLine.getValue().split(/\s+/);
+                console.log('vi command', command[0], command);
+                editor.commands.exec(command[0], editor, command[1]);
+                editor.focus();
+              }
+        });
+
 }
