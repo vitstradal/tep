@@ -40,7 +40,7 @@
                    <div style="display:inline-block;width:200px;height:16px">
                      <%= f.file_field :solution_file , :class => 'ace-file-input', :accept => 'application/pdf', 'max-size' => max_size  %>
                    </div>
-                   <%= f.submit :class => 'btn', :value => '<' %>
+                   <%= f.submit :class => 'btn btn-primary', :value => '<' %>
           <% end %>
        </td>
     <% end %>
@@ -56,7 +56,7 @@
           <i class="fa fa-ban red"></i> <i>úlohu řešitel neřešil</i>
         <% end %>
       <% else %>
-        <% if sol.filename_corr_display || sol.has_paper_mail %>
+        <% if sol.filename || sol.has_paper_mail %>
           <i class="fa fa-ban red"></i> <i>řešení není opravené</i>
         <% end %>
       <% end %>
@@ -82,7 +82,7 @@
                    <div style="display:inline-block;width:200px;height:16px">
                      <%= file_field_tag :confirm_file , :class => 'ace-file-input', :accept => 'application/pdf', 'max-size' => max_size  %>
                    </div>
-                   <%= submit_tag '<', :class=>'btn btn-default'%>
+                   <%= submit_tag '<', :class=>'btn btn-primary'%>
           <% end %>
        </td>
     <% end %>
@@ -103,7 +103,7 @@
   <li> Nahrávej řešení menší než <%= max_size / (1024*1024) %>MB.</li>
   <li>Soubor musí být ve formátu PDF.</li>
   <li>Pokud omylem nahraješ řešení ke špatné úloze nebo v něm najdeš později chybu, můžeš úlohu nahrát znovu (nesmí však být již po termínu odevzdání).</li>
-  <li> Špatně nahraný soubor můžeš smazat i tak, že nevybereš žádný soubor a klikneš na <button class="btn btn-mini">&lt;</button>.</li>
+  <li> Špatně nahraný soubor můžeš smazat i tak, že nevybereš žádný soubor a klikneš na <button class="btn btn-xs btn-primary">&lt;</button>.</li>
   <li>Doporučujeme ve vlastním zájmu nahrávat řešení s takovými názvy, aby bylo poznat, o jakou úlohu se jedná (např. <code>Uloha1.pdf</code>). Není to ale nutné.</li>
 </ul>
 </p>
