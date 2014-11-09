@@ -366,12 +366,24 @@ function editor_tool_action(action, editor)
   case 'save-stay':return editor_save(editor, true);
   case 'cancel':  return editor_cancel(editor);
   case 'preview': return editor_preview(editor);
-  case 'help':    return editor_show_url(editor, form.find('[data-help-url]').data('help-url'));
-  case 'icons':   return editor_show_url(editor, form.find('[data-icons-url]').data('icons-url'));
+  case 'help':    return editor_show_help(editor);
+  case 'icons':    return editor_show_icons(editor);
   default:
           console.log("unknown action", action);
           return editor_wrap(editor, '[[', ']]');
   }
+}
+
+function editor_show_help(editor)
+{
+        var form = editor.form;
+        editor_show_url(editor, form.find('[data-help-url]').data('help-url'));
+}
+
+function editor_show_icons(editor)
+{
+        var form = editor.form;
+        editor_show_url(editor, form.find('[data-icons-url]').data('icons-url'));
 }
 
 function init_icons(editor) {
@@ -651,19 +663,40 @@ function _init_cmdline_editor(editor)
            this.cmdLine.setValue(val, 1);
          }
         };
-        editor.commands.addCommand({ name: ':w', exec: function () { editor_save(editor, true);},     });
-        editor.commands.addCommand({ name: ':x', exec: function () { editor_save(editor, false);},    });
-        editor.commands.addCommand({ name: ':q', exec: function () { editor_cancel(editor);},         });
-        editor.commands.addCommand({ name: ':e', exec: function () { editor_reload(editor);},         });
+        editor.commands.addCommand({ name: ':w',   exec: function () { editor_save(editor, true);},               });
+        editor.commands.addCommand({ name: ':x',   exec: function () { editor_save(editor, false);},              });
+        editor.commands.addCommand({ name: ':wq',  exec: function () { editor_save(editor, false);},              });
+        editor.commands.addCommand({ name: ':q',   exec: function () { editor_cancel(editor);},                   });
+        editor.commands.addCommand({ name: ':e',   exec: function () { editor_reload(editor);},                   });
+        editor.commands.addCommand({ name: ':he',  exec: function () { editor_show_help(editor);},                });
+        editor.commands.addCommand({ name: ':ico', exec: function () { editor_show_icons(editor);},               });
+        editor.commands.addCommand({ name: ':p',   exec: function () { editor_preview(editor);},               });
+
+        editor.commands.addCommand({ name: ':i', exec: function () { editor_tool_action('italic', editor);},      });
+        editor.commands.addCommand({ name: ':b', exec: function () { editor_tool_action('bold', editor);},        });
+        editor.commands.addCommand({ name: ':s', exec: function () { editor_tool_action('strike', editor);},      });
+        editor.commands.addCommand({ name: ':$', exec: function () { editor_tool_action('math', editor);},        });
+        editor.commands.addCommand({ name: ':t', exec: function () { editor_table(editor);},                      });
+
         cli.commands.bindKeys({
-              "Shift-Return|Ctrl-Return|Alt-Return": function(cmdLine) { cmdLine.insert("\n"); },
+              //"Shift-Return|Ctrl-Return|Alt-Return": function(cmdLine) { cmdLine.insert("\n"); },
               "Esc|Shift-Esc": function(cmdLine){ editor.focus(); },
               "Return": function(cmdLine) {
-                var command = cmdLine.getValue().split(/\s+/);
-                console.log('vi command', command[0], command);
-                editor.commands.exec(command[0], editor, command[1]);
+                var command = cmdLine.getValue();
+                if( command.match(/^:\d+$/)  ) {
+                  editor.gotoLine(parseInt(command.substr(1)));
+                  editor.focus();
+                  return;
+                }
+                if( command[0] == '/' ) {
+                  editor.find(command.substr(1));
+                  editor.focus();
+                  return;
+                }
+                var commands = command.split(/\s+/);
+                console.log('vi command', command, commands);
+                editor.commands.exec(commands[0], editor, commands[1]);
                 editor.focus();
               }
         });
-
 }
