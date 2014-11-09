@@ -628,7 +628,7 @@ class Sosna::SolutionController < SosnaController
     path = [ _annual_link(@annual) ]
 
     dir = nil
-    @action_more = true
+    @action_more = false
     if @problem_no
       # in level problem
       path.push(_round_link(@annual, @round))

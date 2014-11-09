@@ -1,4 +1,63 @@
 
+<% content_for :heading_tools do %>
+  <div class="btn-toolbox ">
+    <% if ! ( @want_edit || @want_edit_paper || @want_edit_penalisation  ) %>
+      <div class="btn-group ">
+        <%= button_tag "řešení v .zip", :class=> 'btn btn-primary', ico: 'fa-file-o', href: sosna_solution_down_all_url(annual:@annual, round: @round, problem:@problem_no)  %>
+        <%= button_tag "opravy v .zip", :class=> 'btn btn-primary', ico: 'fa-file', href: sosna_solution_down_all_url(annual:@annual,  round:@round, problem:@problem_no, rev: :yes)  %>
+        <%= button_tag "řešitelé .csv", :class=> 'btn btn-primary', ico: 'fa-table', href: sosna_solutions_lidi_url(format: 'csv') %>
+        <%= button_tag "body.pik", :class=> 'btn btn-primary', ico: 'fa-th', href: sosna_solutions_lidi_url(format: 'pik') %>
+        <%= button_tag "navratky.zip", :class=> 'btn btn-primary', ico: 'fa-check', href: sosna_solutions_get_confirm_files_url %>
+      </div>
+      <div class="btn-group">
+        <%= button_tag "Filtruj soustredeni", :class=> 'btn btn-primary', ico: 'fa-filter', href: sosna_solutions_org_url(roc:@annual, round:@round, sous: 1) %>
+      </div>
+      <div class="btn-group">
+        <%= form_tag({:action => :update_results, :roc => @annual, :se => @round, :ul => @problem_no}, :class => 'btn-group form-inline') do %>
+                <button type="submit" class="btn btn-primary"> <i class="fa fa-flash"></i> Vygenerovat výsledky</button>
+        <% end %>
+      </div>
+      
+      <% if  @problem_no %>
+        <div class="btn-group">
+           <%= button_tag "Editovat body", :class=> 'btn btn-danger', ico: 'fa-th', href: url_for(action: 'edit', roc: @annual, se: @round, ul: @problem_no)  %>
+           <%= button_tag "Editovat papíry", :class=> 'btn btn-danger', ico: 'fa-file-text', href: url_for(action: 'edit', roc: @annual, se: @round, ul: @problem_no, paper: 'yes')  %>
+        </div>
+        <hr>
+        <%= form_tag({:action => :upload_rev} , :multipart => true , :class => 'form-inline') do %>
+          <div class="clearfix" >
+            <div class="grid2">
+                <%= hidden_field_tag :roc, @annual %>
+                <%= hidden_field_tag :se,  @round %>
+                <%= hidden_field_tag :ul,  @problem_no %>
+                  <div class="input-xlarge" >
+                    <%= file_field_tag :file_rev, :style=>'display:block', :class => 'btn btn-small ace-input-file input-large', :accept => '*.pdf|*.zip'  %>
+                  </div>
+                <%= button_tag 'Nahraj opravené řešení (.pdf, .zip)', :ico => 'fa-cloud-upload',:class => 'btn btn-danger'  %>
+            </div>
+            <div style="line-height:1.5" class="grid2">
+                <span class='help-block' style='display:block'>Soubor ve tvaru <code>reseni-rocNN-seNN-ulNN-relNNN-ori-PRIMENI-JMENO.pdf</code>
+                   (tedy stejné jako neopravené řešení), nebo zip archiv s více opravenými řešeními
+                   (né nutně všemi)</p>
+            </div>
+          </div>
+        <% end # form %>
+      <% else # problem_no %>
+        <div class="btn-group">
+          <%= button_tag "Editovat body", :class=> 'btn btn-danger', ico: 'fa-th', href: sosna_solutions_edit2_url(@annual, @round)  %>
+          <%= button_tag "Editovat papíry", :class=> 'btn btn-danger', ico: 'fa-file-text', href: sosna_solutions_edit2_url(@annual, @round, paper: 'yes')  %>
+          <%= button_tag "Editovat penalizaci", :class=> 'btn btn-danger', ico: 'fa-thumbs-down', href: sosna_solutions_edit2_url(@annual, @round, penalisation: 'yes' )  %>
+        </div>
+        <p>Pro nahrání opraveného řešení vyber úlohu:
+
+          <% @problems.each do |pr| %>
+            <%= link_to "ul#{pr.problem_no}", { action: :index, roc: @annual, se: @round, ul: pr.problem_no , anchor: 'upload' } %>,
+         <% end %></p>
+      <% end # problem_no %>
+    <% end # want this%>
+  </div> <%#btn-toolsbox%>
+<% end # heading_tools %> 
+
 <%#### seznam  ročníků -%>
 <% if @annuals %>
   <div class='page-header'><h1>Řešení úloh po ročnících</h1></div>
@@ -16,9 +75,13 @@
 
 <%#### tabulka řešení -%>
 
-  <div class='page-header'>
-    <h1>Řešení úloh, ročník <%=@annual%>, série <%=@round%><%if @problem_no%>, úloha <%=@problem_no%><%end%></h4>
-  </div>
+<%#= heading_tools "Řešení úloh, ročník #{@annual}, série #{@round} #{if @problem_no; "úloha #{@problem_no}"; end}" do %>
+<%= heading_with_tools "Řešení úloh, ročník #{@annual}, série #{@round}" do %>
+  <%= content_for :heading_tools %>
+<% end %>
+
+
+
   <% if @want_edit %>
     <%= form_tag action: :update_scores, :roc => @annual, :se => @round, :ul => @problem_no %> 
   <% elsif @want_edit_paper %>
@@ -150,98 +213,5 @@
   </div>
 
 
-  <div data-move-to="#page-content-top2" id='tools-more' style='background-color:xred' class="xrow collapse nojs-in"> 
-  <%#<div data-move-to="#page-af-breadcrumbs" id='tools-more' class="row collapse in nojs-in">%>
-    <div class="xcol-sm-12">
-      <div class="btn-toolbox ">
-          <% if ! ( @want_edit || @want_edit_paper || @want_edit_penalisation  ) %>
-
-            <div class="btn-group ">
-              <%= link_to({ :action => :downall, :roc =>  @annual, :se =>  @round, :ul =>  @problem_no }, { :class => 'btn btn-primary'}) do %>
-                        <i class="fa fa-file-o"></i>
-                        řešení v .zip
-              <% end %>
-              <%= link_to({ :action => :downall, :roc =>  @annual, :se =>  @round, :ul =>  @problem_no, rev: :yes }, { :class => 'btn btn-primary'}) do %>
-                        <i class="fa fa-file"></i>
-                        opravy v .zip
-              <% end %>
-
-              <%= link_to( sosna_solutions_lidi_url(format: 'csv'), { :class=> 'btn btn-primary'} ) do %>
-                        <i class="fa fa-table"></i>
-                        řešitelé .csv
-              <% end %>
-
-              <%= link_to( sosna_solutions_lidi_url(format: 'pik'), { :class=> 'btn btn-primary'} ) do %>
-                        <i class="fa fa-th"></i>
-                        body.pik
-              <% end %>
-              <%= link_to( sosna_solutions_get_confirm_files_url, { :class=> 'btn btn-primary'} ) do %>
-                        <i class="fa fa-check"></i>
-                        navratky.zip
-              <% end %>
-            </div>
-            <div class="btn-group">
-
-              <%= link_to({ :action => :index, roc: @annual, se: @round, ul: @problem_no, sous: 1  }, { :class=> 'btn btn-primary'}) do %>
-                        <i class="fa fa-filter"></i>
-                        Filtruj soustředění
-              <% end %>
-            </div>
-            <div class="btn-group">
-              <%= form_tag({:action => :update_results, :roc => @annual, :se => @round, :ul => @problem_no}, :class => 'btn-group form-inline') do %>
-                      <button type="submit" class="btn btn-primary"> <i class="fa fa-flash"></i> Vygenerovat výsledky</button>
-              <% end %>
-            </div>
-          
-          <% if  @problem_no %>
-            <div class="btn-group">
-               <%= button_tag "Editovat body", :class=> 'btn btn-danger', ico: 'fa-th', href: url_for(action: 'edit', roc: @annual, se: @round, ul: @problem_no)  %>
-               <%= button_tag "Editovat papíry", :class=> 'btn btn-danger', ico: 'fa-file-text', href: url_for(action: 'edit', roc: @annual, se: @round, ul: @problem_no, paper: 'yes')  %>
-            </div>
-            <hr>
-            <%= form_tag({:action => :upload_rev} , :multipart => true , :class => 'form-inline') do %>
-            <div class="clearfix" >
-              <div class="grid2">
-                  <%= hidden_field_tag :roc, @annual %>
-                  <%= hidden_field_tag :se,  @round %>
-                  <%= hidden_field_tag :ul,  @problem_no %>
-                    <div class="input-xlarge" >
-                      <%= file_field_tag :file_rev, :style=>'display:block', :class => 'btn btn-small ace-input-file input-large', :accept => '*.pdf|*.zip'  %>
-                    </div>
-                  <%= button_tag 'Nahraj opravené řešení (.pdf, .zip)', :ico => 'fa-cloud-upload',:class => 'btn btn-danger'  %>
-              </div>
-              <div style="line-height:1.5" class="grid2">
-                  <span class='help-block' style='display:block'>Soubor ve tvaru <code>reseni-rocNN-seNN-ulNN-relNNN-ori-PRIMENI-JMENO.pdf</code>
-                     (tedy stejné jako neopravené řešení), nebo zip archiv s více opravenými řešeními
-                     (né nutně všemi)</p>
-              </div>
-              </div>
-            <% end %>
-            </div>
-          <% else # problem_no %>
-            <div class="btn-group">
-              <%= button_tag "Editovat body", :class=> 'btn btn-danger', ico: 'fa-th', href: url_for(action: 'edit', roc: @annual, se: @round)  %>
-              <%= button_tag "Editovat papíry", :class=> 'btn btn-danger', ico: 'fa-file-text', href: url_for(action: 'edit', roc: @annual, se: @round, paper: 'yes')  %>
-              <%= button_tag "Editovat penalizaci", :class=> 'btn btn-danger', ico: 'fa-thumbs-down', href: url_for(action: 'edit', roc: @annual, se: @round, ul: @problem_no, penalisation: 'yes' )  %>
-            </div>
-            <p>Pro nahrání opraveného řešení vyber úlohu:
-
-              <% @problems.each do |pr| %>
-                <%= link_to "ul#{pr.problem_no}", { action: :index, roc: @annual, se: @round, ul: pr.problem_no , anchor: 'upload' } %>,
-              <% end %></p>
-          <% end # problem_no %>
-      </div> <%#btn-toolsbox%>
-    </div><%# col-sm-12 %>
-  </div><%# tools-more %>
-<% end %>
-
-
 <% end # annuals %>
-
-
-<% content_for :action_buttons do %>
-  <div class="pull-right">
-    <%= button_tag '', 'data-toggle'=>"collapse", 'data-parent'=>'#row', href: '#tools-more', :class => 'btn btn-info', ico: 'fa-angle-double-down icon-only' %>
-  </div>
-<% end %>
 

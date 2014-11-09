@@ -1,11 +1,4 @@
-<div class="widget-box transparent collapsed">
-  <div class="widget-header widget-header-flat">
-    <h4 class="widget-title">Seznam řešitelů <%= @annual%>. ročníku </h4>
-    <div class="widget-toolbar">
-      <a href="#" data-action="collapse"> <i class="ace-icon fa fa-gear"></i> </a>
-    </div>
-  </div>
-  <div class="widget-body">
+<%= heading_with_tools "Seznam řešitelů #{@annual}. ročníku" do %>
 
     <%= link_to 'Založit nového řešitele',
                 { action: :new },
@@ -21,12 +14,7 @@
     <%= link_to 'Tep emails',
                 { action: :tep_emails },
                 { :class=> 'btn btn-primary'} %>
-
-  </div>
-</div>
-
-
-
+<% end %>
 
     <table class="table table-bordered">
       <tr>

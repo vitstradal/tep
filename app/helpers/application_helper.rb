@@ -205,4 +205,26 @@ module ApplicationHelper
                     }
       solvers.sort! { |a,b| strcollf(a.last_name, b.last_name) || strcollf(a.name, b.name) || 0 }
   end
+
+  def heading_with_tools(title, &block)
+    body = capture(&block)
+    content_tag(:div, :class => "widget-box transparent collapsed") do 
+      content_tag(:div, :class => "widget-header widget-header-flat") do
+        content_tag(:h4, title, :class => "widget-title") +
+        content_tag(:div, :class => "widget-toolbar") do 
+          content_tag(:a, href: '#', 'data-action' => 'collapse') do 
+             content_tag(:i, ' ', :class => 'ace-icon fa fa-dashboard')
+          end
+        end
+      end +
+      content_tag(:div, :class => "widget-body") do 
+        content_tag(:div, :class => "row") do 
+          content_tag(:div, :class => "col-xs-12") do 
+           capture(&block)
+          end
+        end
+      end
+    end 
+  end
+
 end

@@ -38,7 +38,7 @@ Tep::Application.routes.draw do
   post '/sosna/solutions/update_penalisations'=>'sosna/solution#update_penalisations', :as => :sosna_solutions_update_penalisations
   post '/sosna/solution/update'              => 'sosna/solution#update',        :as => :sosna_solution_update
   post '/sosna/solution/update_results'      => 'sosna/solution#update_results',:as => :sosna_solution_update_results
-  get  '/sosna/solution/downall'             => 'sosna/solution#downall',       :as => :sosna_solution_down
+  get  '/sosna/solution/downall'             => 'sosna/solution#downall',       :as => :sosna_solution_down_all
 
   get  '/sosna/problems'                     => 'sosna/problem#index',          :as => :sosna_problems
   get  '/sosna/problem(/:id)'                => 'sosna/problem#show',           :as => :sosna_problem
