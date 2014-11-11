@@ -39,8 +39,9 @@ def print_round(annual, round)
   maturity_grade = 13
   date = DateTime.now.strftime('%Y-%m-%d %H:%M:%S')
   year = 2014 + annual - 30
-  #event = "pikomat.rocnik.#{annual}.serie.#{round}"
   event = "pikomat.#{annual}"
+  event = "pikomat.rocnik"
+  comment = "Pikomat rocnik=#{annual} serie=#{round}"
 
   solvers = Sosna::Solver.where(annual: annual, is_test_solver: false) 
   ex = []
@@ -51,6 +52,7 @@ def print_round(annual, round)
   ex << ['date',        date]
   ex << ['max-rank',   solvers.count ]
   ex << ['max-points',  round * 30]
+  ex << ['comment',  comment ]
   ex << []
   ex << ['id', 'name', 'surname', 'fullname', 'school', 'street', 'postcode', 'town', 'country', 'email', 'end-year', 'rank', 'points', 'spam-flag', 'spam-date',
          #'grade',
