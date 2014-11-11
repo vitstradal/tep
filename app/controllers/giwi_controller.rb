@@ -188,7 +188,11 @@ class GiwiController < ApplicationController
     edit = (params[:edit]||'') == '' ? nil : params[:part] || 'me'
     cursor = (params[:cursor]||'') == '' ? nil : params[:cursor]
 
-    redirect_to action: :show,  wiki: @wiki, path: @path, cursor: cursor, edit: edit
+    if ! edit && params[:part] 
+      redirect_to action: :show,  wiki: @wiki, path: @path, cursor: cursor, anchor: "h#{params[:part]}"
+    else 
+      redirect_to action: :show,  wiki: @wiki, path: @path, cursor: cursor, edit: edit
+    end
   end
 
   private
@@ -289,7 +293,12 @@ class GiwiController < ApplicationController
       #"/sklep/index.php/apps/ownhacks/calendar-10.php?start=#{now.strftime('%s')}&end=#{nm.strftime('%s')}\n" +
       env['nocache'] = '1'
       json.sort {|a,b| a['start'] <=> b['start'] }.map do |item|
-          "* **#{item['start']}** #{item['title']}\n"
+          url = item['description']
+          if url =~ /(https?:\/\/\S*)/
+            "* **#{item['start']}** [[#{$1} | #{item['title']}]]\n"
+          else
+            "* **#{item['start']}** #{item['title']}\n"
+          end
       end.join
     rescue
       ''
