@@ -140,7 +140,7 @@ class GiwiController < ApplicationController
   # aktualizace stranky
   # @param version verze (git-id) ze ktre se pri editaci vychazi
   # @param file pokud jde o upload
-  # @param preview pozadovano je pouze preview, hodnota je wikitext, navrat bude json {html=>'..'}
+  # @param preview pozadovano je pouze preview, hodnota je wikitext, navrat bude json `{html=>'..'}`
   # @param data obsah ukladaneho souboru, ale v parametru (pro
   # @param text text aktualizovaneho textu
   # @param pos pozice puvodniho textu v originale (ve verzi `version`), format pozice:
