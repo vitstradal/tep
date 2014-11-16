@@ -10,7 +10,7 @@ require 'prawn/templates'
 class Sosna::SolutionController < SosnaController
 
   include ApplicationHelper
-  include ActionView::Helpers::NumberHelper 
+  include ActionView::Helpers::NumberHelper
   #UPLOAD_DIR = "public/uploads/"
   UPLOAD_DIR = "var/uploads/"
 
@@ -31,7 +31,7 @@ class Sosna::SolutionController < SosnaController
          headers['Content-Disposition'] = "attachment; filename=body#{@annual}_#{@round}.pik"
          headers['Content-Type'] = "text/plain; charset=UTF-8";
       end
-    end  
+    end
   end
 
   def vysl
@@ -46,7 +46,7 @@ class Sosna::SolutionController < SosnaController
          headers['Content-Disposition'] = "attachment; filename=vysl#{@annual}_#{@round}.pik"
          headers['Content-Type'] = "text/plain; charset=UTF-8";
       end
-    end  
+    end
   end
 
   def edit
@@ -106,7 +106,7 @@ class Sosna::SolutionController < SosnaController
 
       score = begin Integer scores[id] ; rescue ; nil ;  end
 
-      if sol.score != score 
+      if sol.score != score
         sol.score = score
         sol.save
       end
@@ -127,7 +127,7 @@ class Sosna::SolutionController < SosnaController
     # naopak Tempfile nedokaze jen vymyslet jmeno a neotevirat
     Zip::File.open(zip_file_name, Zip::File::CREATE) do |zipfile|
       solvers.each do |solver|
-        filename = _confirm_file_path solver 
+        filename = _confirm_file_path solver
         next if filename.nil? || ! File.exists?(filename)
         zipfile.add(translit("navratky/confirm-file-#{solver.last_name}-#{solver.name}-#{solver.id}.pdf"),  filename)
       end
@@ -143,14 +143,14 @@ class Sosna::SolutionController < SosnaController
     se =  params[:se]
     solver = Sosna::Solver.where(annual: @annual, user_id: current_user.id).first
 
-    if solver.nil? 
+    if solver.nil?
         add_alert 'Bad user and solver'
     elsif confirm_file.nil?
       File.delete _confirm_file_path(solver)
       add_alert 'Návratka byla smazána'
     elsif confirm_file.original_filename !~ /\.pdf$/
       add_alert 'Pozor: pouze soubory ve formátu PDF'
-    else 
+    else
       File.open(_confirm_file_path(solver), 'wb') {  |f| f.write confirm_file.read }
       add_success 'Návratka nahrána'
     end
@@ -159,7 +159,7 @@ class Sosna::SolutionController < SosnaController
 
   def get_confirm_file
     solver = Sosna::Solver.where(annual: @annual, user_id: current_user.id).first
-    if ! solver.nil? 
+    if ! solver.nil?
        send_file _confirm_file_path(solver) , :filename => 'navratka.pdf', :type => 'application/pdf'
     end
   end
@@ -172,7 +172,7 @@ class Sosna::SolutionController < SosnaController
     solution = Sosna::Solution.find id = params[:id]
     if ! solution
       add_alert 'Chyba: soubor neexistuje'
-      return redirect_to :action =>  :user_index 
+      return redirect_to :action =>  :user_index
     end
 
     if solution.owner? current_user
@@ -182,7 +182,7 @@ class Sosna::SolutionController < SosnaController
       sol_in_this_round_allowed ||= round == @config[:round].to_i && @config[:show_revisions] == 'yes'
       if ! sol_in_this_round_allowed
         add_alert 'Chyba: soubor neexistuje'
-        return redirect_to :action =>  :user_index 
+        return redirect_to :action =>  :user_index
       end
       filename = solution.filename_corr_display
       filename_disp = solution.filename_corr_display
@@ -214,12 +214,12 @@ class Sosna::SolutionController < SosnaController
 #  end
 
   #
-  # - URL   
+  # - URL
   #```
   #  /sosna/solutions/user(/:roc(/:se(/:id)))+
   #```
-  # - `roc`  ročník 
-  # - `serie` 
+  # - `roc`  ročník
+  # - `serie`
   # - `bla`   id solvera, pokud není pokusí se najít letošního řešitele,
   #          přihlášeného uživatele; je nutné mít +:org+
   #
@@ -246,7 +246,7 @@ class Sosna::SolutionController < SosnaController
     # naopak Tempfile nedokaze jen vymyslet jmeno a neotevirat
     Zip::File.open(zip_file_name, Zip::File::CREATE) do |zipfile|
       solutions.each do |solution|
-        if want_rev 
+        if want_rev
           filename = solution.filename_corr
           filename_disp = solution.get_filename_rev
         else
@@ -258,7 +258,7 @@ class Sosna::SolutionController < SosnaController
       end
     end
     send_file zip_file_name, :filename => 'reseni.zip', :type => "application/zip"
-    #File.delete zip_file_name 
+    #File.delete zip_file_name
   end
 
   def upload_rev
@@ -295,8 +295,8 @@ class Sosna::SolutionController < SosnaController
 
   #
   # [URL]    +/sosna/solutions/user(/:roc(/:se(/:id)))+
-  # @param roc  ročník 
-  # @param  serie 
+  # @param roc  ročník
+  # @param  serie
   # @param   id solvera, pokud není pokusí se najít letošního řešitele,
   #          přihlášeného uživatele; je nutné mít +:org+
   #
@@ -324,8 +324,8 @@ class Sosna::SolutionController < SosnaController
     if solver_id
       authorize! :user_index_org, Sosna::Solution
       @solver = Sosna::Solver.find(solver_id)
-    else 
-      
+    else
+
       @solver = Sosna::Solver.where(:user_id => current_user.id, :annual => @config[:annual]).take
       @solver_is_current_user = true
     end
@@ -436,11 +436,11 @@ class Sosna::SolutionController < SosnaController
     # penalizace za tuto serii
     pens = Sosna::Penalisation.where(:annual => roc, :round => se)
 
-    # poblemy podle id  
+    # poblemy podle id
     problems_by_id = {}
     problems.each{|p| problems_by_id[p.id] = p}
 
-    # resitele podle id  
+    # resitele podle id
     pens_by_solver_id = {}
     pens.each{|p| pens_by_solver_id[p.solver_id] = p.score }
 
@@ -464,11 +464,11 @@ class Sosna::SolutionController < SosnaController
       lres = results_last[solver.id]
       res.score = (score||0) + ( lres.nil? ? 0 : (lres.score||0) )
     end
-    
+
     # setridime od nejvice bodu
     solvers.sort_by! { |solver| results_by_solver[solver.id].score  }.reverse!
 
-    # priradime poradi (rank) 
+    # priradime poradi (rank)
     rank = 0
 
     # od prvnich mist
@@ -492,7 +492,7 @@ class Sosna::SolutionController < SosnaController
       grade_count = {}
 
       # nastav jim poradi, a zaroven spocitej kolik je v tomto bloku lidi z jake tridy
-      (first_i .. i - 1).each do |j| 
+      (first_i .. i - 1).each do |j|
         # nastav jim to
         solver = solvers[j]
         res = results_by_solver[solver.id]
@@ -502,7 +502,7 @@ class Sosna::SolutionController < SosnaController
       end
 
       # resitelum z tohoto bloku nastav poradi v rocniku
-      (first_i .. i - 1).each do |j| 
+      (first_i .. i - 1).each do |j|
         solver = solvers[j]
         grade = solver.grade_num
         res = results_by_solver[solver.id]
@@ -544,7 +544,7 @@ class Sosna::SolutionController < SosnaController
 
   def _get_results(solvers, roc, se)
     Sosna::Result.where(:solver_id => solvers.map{ |s| s.id },
-                                              :annual => roc, 
+                                              :annual => roc,
                                               :round => se).load
 
   end
@@ -553,14 +553,14 @@ class Sosna::SolutionController < SosnaController
     _results = _get_results(solvers, roc, se)
     results_by_solver = {}
     _results.each { |p| results_by_solver[p.solver_id] = p }
-    solvers.each do |solver| 
+    solvers.each do |solver|
       if results_by_solver[solver.id].nil? && want_create
           begin
             results_by_solver[solver.id] = Sosna::Result.create({ :solver_id => solver.id,
                                                                             :annual => @annual,
                                                                             :round => @round, })
           rescue Exception => e
-            Rails::logger.fatal(" results_by_solver :Solution.create -> " + e.to_s)
+            log(" results_by_solver :Solution.create -> #{e.to_s}")
           end
       end
     end
@@ -569,11 +569,11 @@ class Sosna::SolutionController < SosnaController
   end
   def _penalisations_by_solver(solvers)
     penalisations = Sosna::Penalisation.where(:solver_id => solvers.map{ |s| s.id },
-                                              :annual => @annual, 
+                                              :annual => @annual,
                                               :round => @round).load
     penalisations_by_solver = {}
     penalisations.each { |p| penalisations_by_solver[p.solver_id] = p }
-    solvers.each do |solver| 
+    solvers.each do |solver|
       if penalisations_by_solver[solver.id].nil?
           begin
             penalisations_by_solver[solver.id] = Sosna::Penalisation.create({
@@ -581,7 +581,7 @@ class Sosna::SolutionController < SosnaController
                                                                         :annual => @annual,
                                                                         :round => @round, })
           rescue Exception => e
-            Rails::logger.fatal(" penalisations_by_solver :Solution.create -> " + e.to_s)
+            log(" penalisations_by_solver :Solution.create -> #{e.to_s}")
           end
       end
     end
@@ -594,7 +594,7 @@ class Sosna::SolutionController < SosnaController
                                        :problem_id => problems.map { |p| p.id },
                                     )
     solutions_by_solver = []
-    problems_by_id = {} 
+    problems_by_id = {}
     problems.each { |p| problems_by_id[p.id] = p }
 
     # solution_by_solver[solver_id][problem_no] => solution
@@ -608,11 +608,11 @@ class Sosna::SolutionController < SosnaController
     solvers.each do |solver|
       solutions_by_solver[solver.id] ||= []
       problems.each do |pr|
-        if solutions_by_solver[solver.id][pr.problem_no].nil? 
+        if solutions_by_solver[solver.id][pr.problem_no].nil?
           begin
             sol = Sosna::Solution.create({ :solver_id => solver.id, :problem_id => pr.id, })
           rescue Exception => e
-            Rails::logger.fatal(" solutions_from_roc_se_ul_by_solver:Solution.create -> " + e.to_s)
+            log(" solutions_from_roc_se_ul_by_solver:Solution.create -> #{e.to_s}")
           end
           solutions_by_solver[solver.id][pr.problem_no] = sol
         end
@@ -710,15 +710,15 @@ class Sosna::SolutionController < SosnaController
         Prawn::Document.generate(dest, :template => template) do
           # hack utf8 font
           font_families.update( 'andulka' => { :normal => 'public/stylesheets/andulka/andulkabook-webfont.ttf' } )
-          font 'andulka' 
+          font 'andulka'
           repeat( :all, :dynamic => true ) do
                       draw_text "#{ulfull} #{name}", :at => bounds.top_left
                       draw_text "str#{page_number}/#{page_count.to_s}", :at => bounds.top_right
           end
         end
-      rescue Exception => e  
-        Rails::logger.fatal("Hlavicka fail: #{e.to_s}")
-        FileUtils::cp template, dest 
+      rescue Exception => e
+        log("Hlavicka fail: #{e.to_s}")
+        FileUtils::cp template, dest
       end
   end
 
@@ -733,7 +733,7 @@ class Sosna::SolutionController < SosnaController
 
     @annual = roc
     @round = se
-    @problem_no = ul 
+    @problem_no = ul
 
     return roc, se, ul
   end

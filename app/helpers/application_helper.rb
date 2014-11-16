@@ -12,7 +12,7 @@ module ApplicationHelper
 
   # opt:
   #  ico -- icon class (fa-search)
-  #  
+  #
   def button_tag (text, opt = {}, &block)
     if block_given?
       opt = text
@@ -24,7 +24,7 @@ module ApplicationHelper
     opt[:type] ||=  'submit';
 
     content_tag(tag, opt ) do
-       if ico 
+       if ico
          content_tag(:i, '', :class => "ace-icon fa #{ico}") + " " + text
        else
          text
@@ -79,15 +79,15 @@ module ApplicationHelper
 
     content_tag(:li, { :class => li_cls.join(' ') } ) do
       content_tag(:a, {:class => a_cls, :href => url}) do
-          ico_tag  + text_tag + a_extra 
+          ico_tag  + text_tag + a_extra
       end + li_extra
     end
   end
 
   def url_for_root(user = nil)
     user ||= current_user
-    #Rails::logger.fatal("user:#{pp(user)}");
-    
+    #log("user:#{pp(user)}")
+
     if ! user.nil?
       if user.has_role? :admin
         return url_for (wiki_piki_path(path: 'org'))
@@ -145,11 +145,11 @@ module ApplicationHelper
   end
 
   def strcoll(a,b)
-    FFILocale::strcoll(a, b) 
+    FFILocale::strcoll(a, b)
   end
 
   def strcollf(a,b)
-    ret = FFILocale::strcoll(a, b) 
+    ret = FFILocale::strcoll(a, b)
     return ret == 0 ? false : ret
   end
 
@@ -160,7 +160,7 @@ module ApplicationHelper
     txt = errors.join(", ")
     return content_tag(:span, txt , class: 'help-inline');
   end
- 
+
   def form_error_class(obj, *attrs)
     attrs.each  do |a|
       return 'control-group error' if ! obj.errors.get(a).nil?
@@ -199,7 +199,7 @@ module ApplicationHelper
   end
 
   def get_sorted_solvers(where = {})
-      solvers = Sosna::Solver.includes(:school).where(where).load.to_a 
+      solvers = Sosna::Solver.includes(:school).where(where).load.to_a
       solvers.sort! { |a,b| (a.last_name != b.last_name ) ? strcoll(a.last_name, b.last_name) :
                                                             strcoll(a.name, b.name)
                     }
@@ -208,23 +208,27 @@ module ApplicationHelper
 
   def heading_with_tools(title, &block)
     body = capture(&block)
-    content_tag(:div, :class => "widget-box transparent collapsed") do 
+    content_tag(:div, :class => "widget-box transparent collapsed") do
       content_tag(:div, :class => "widget-header widget-header-flat") do
         content_tag(:h4, title, :class => "widget-title") +
-        content_tag(:div, :class => "widget-toolbar") do 
-          content_tag(:a, href: '#', 'data-action' => 'collapse') do 
+        content_tag(:div, :class => "widget-toolbar") do
+          content_tag(:a, href: '#', 'data-action' => 'collapse') do
              content_tag(:i, ' ', :class => 'ace-icon fa fa-dashboard')
           end
         end
       end +
-      content_tag(:div, :class => "widget-body") do 
-        content_tag(:div, :class => "row") do 
-          content_tag(:div, :class => "col-xs-12") do 
+      content_tag(:div, :class => "widget-body") do
+        content_tag(:div, :class => "row") do
+          content_tag(:div, :class => "col-xs-12") do
            capture(&block)
           end
         end
       end
-    end 
+    end
+  end
+
+  def log(msg)
+    Rails::logger.fatal("  " + msg)
   end
 
 end

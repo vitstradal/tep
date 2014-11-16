@@ -41,7 +41,6 @@ class GiwiController < ApplicationController
     @editable = @can_update
 
     @path = params[:path]
-    #print "path: #{@wiki}:#{@path}\n"
 
     @edit = params[:edit] || false
     @ls   = params[:ls]
@@ -55,17 +54,17 @@ class GiwiController < ApplicationController
     # @wiki, Giwi.can_read?
 
 
-    if @can_update
-      _cache_clear if @cache == 'clear'
-      return _handle_preview(params[:preview])  if ! params[:preview].nil?
-      return _handle_ls if @ls
-      return _handle_history if @history
-      return _handle_diff if @diff
-      return _handle_csrf if fmt == 'csrf'
-      return _handle_special_edit(@path, fmt) if @edit && %w(svg).include?(fmt)
-    end
+    _cache_clear if @cache == 'clear' && @can_update
+
+    return _handle_preview(params[:preview])  if ! params[:preview].nil?
+    return _handle_ls if @ls
+    return _handle_history if @history
+    return _handle_diff if @diff
+    return _handle_csrf if fmt == 'csrf'
+    return _handle_special_edit(@path, fmt) if @edit && %w(svg).include?(fmt)
 
     return _handle_raw_file("#{@path}.#{fmt}", fmt) if %w(pdf png jpg jpeg gif svg).include? fmt
+
     return redirect_to action: :show, path: @path + 'index',  wiki: @wiki if @path =~ /\/$/
     return redirect_to action: :show, path: 'index',  wiki: @wiki if ! @path
 
@@ -77,7 +76,7 @@ class GiwiController < ApplicationController
     end
 
     path_ext = @path + @giwi.ext
-    Rails::logger.fatal("path:#{path_ext}")
+    log "path:#{path_ext}"
     @text, @version = @giwi.get_page(path_ext)
 
     if ! @text
@@ -95,40 +94,36 @@ class GiwiController < ApplicationController
     end
     @path = path_ext
 
-    result = _cached_or_parse_and_cache
+    page = _cached_or_parse_and_cache
 
-    @html = result[:html]
-    @headings = result[:headings],
-    @tep_index = result[:tep_index]
-    @wide_display = result[:wide_display]
-    @foto_gallery = result[:foto_gallery]
-    @redirect_to = result[:redirect_to]
-    @nocache = result[:nocache]
+    @html         = page[:html]
+    @toc          = page[:toc]
+    @headings     = page[:headings]
+    @tep_index    = page[:tep_index]
+    @wide_display = page[:wide_display]
+    @foto_gallery = page[:foto_gallery]
+    @redirect_to  = page[:redirect_to]
+    @nocache      = page[:nocache]
 
     return _handle_redirect(@redirect_to) if @redirect_to
 
-    if @tep_index
-      @no_sidebar = true
-      #@breadcrumb = nil
-    end
-    #print "tep_index:",  @tep_index
+    @no_sidebar = true if @tep_index
 
 
-    if @headings.size > 3
-      @toc = parser.make_toc_html
-    end
     return render :json => { :html =>  @html } if params[:format] == 'json' && @can_update
     render :show
   end
 
 
   def _handle_diff
+    authorize! :update, @giwi.auth_name
     @giwi = Giwi.get_giwi(@wiki)
     @diff_lines = @giwi.get_diff(@diff)
     return render :diff
   end
 
   def _handle_history
+    authorize! :update, @giwi.auth_name
     @giwi = Giwi.get_giwi(@wiki)
     @history = @giwi.get_history
     return render :history
@@ -142,7 +137,7 @@ class GiwiController < ApplicationController
   # @param text text aktualizovaneho textu
   # @param pos pozice puvodniho textu v originale (ve verzi `version`), format pozice:
   #   `pos` in form `3.0-44.20` "from start of line 3 to line 44 char 20";
-  #   `pos` in form `3-44` "from start of line 3 to start line 44 (inc \n)"; 
+  #   `pos` in form `3-44` "from start of line 3 to start line 44 (inc \n)";
   #   `pos` in form `3.4` "insert at line 3 after char 4";
   #
   def update
@@ -171,11 +166,9 @@ class GiwiController < ApplicationController
     status = @giwi.set_page(@path + @giwi.ext, text, version, email, pos)
 
     if @giwi.cache_killer?
-      print "cache: clearing all\n"
       _cache_clear
     else
       if @giwi.cache?
-        print "cache: clearing #{@path} #{version}\n"
         _cache_delete version
       end
     end
@@ -195,9 +188,9 @@ class GiwiController < ApplicationController
     edit = (params[:edit]||'') == '' ? nil : params[:part] || 'me'
     cursor = (params[:cursor]||'') == '' ? nil : params[:cursor]
 
-    if ! edit && params[:part] 
+    if ! edit && params[:part]
       redirect_to action: :show,  wiki: @wiki, path: @path, cursor: cursor, anchor: "h#{params[:part]}"
-    else 
+    else
       redirect_to action: :show,  wiki: @wiki, path: @path, cursor: cursor, edit: edit
     end
   end
@@ -205,13 +198,14 @@ class GiwiController < ApplicationController
   private
 
   def _handle_redirect(redir)
-    Rails::logger.fatal("redir:#{redir}")
+    log "redir:#{redir}"
     return redirect_to url_for(redir) if redir =~ /^\//
     return redirect_to wiki_main_path(redir) if @wiki.to_s == 'main'
     return redirect_to url_for(action: :show, wiki: @wiki, path: redir)
   end
 
   def _handle_special_edit(path, fmt)
+    authorize! :update, @giwi.auth_name
     if fmt == 'svg'
        uri = url_for(wiki: @wiki, path: '/', :only_path => true).gsub(/\/+$/, '')
       redirect_to "/pokusy/svg-edit-2.7.1/svg-editor.html?url=#{uri}/#{path}.#{fmt}"
@@ -219,10 +213,12 @@ class GiwiController < ApplicationController
   end
 
   def _handle_csrf
+    authorize! :update, @giwi.auth_name
     render json: {:csrf => form_authenticity_token.to_s  }
   end
 
   def _handle_raw_file(path, fmt)
+    authorize! :update, @giwi.auth_name
     @raw, @version = Giwi.get_giwi(@wiki).get_page(path)
     send_data @raw, :type => fmt.to_sym, :disposition => 'inline'
   end
@@ -336,12 +332,16 @@ class GiwiController < ApplicationController
 
   def _handle_preview(wiki)
 
+     authorize! :update, @giwi.auth_name
+
      parser = _get_parser
      html = parser.to_html(wiki)
      render :json => { :html => html }
   end
 
   def _handle_file_upload(data, filename, filename_orig, redirect = true)
+
+    authorize! :update, @giwi.auth_name
 
     if !filename_orig.nil? && ( filename =~ /\/$/ || filename == '' )
       filename += filename_orig
@@ -350,14 +350,14 @@ class GiwiController < ApplicationController
     raise "bad filename #{filename}" if filename =~ /\.\./
     raise "bad filename #{filename}" if filename =~ /^\s*$/
 
-    Rails::logger.fatal("file:#{filename} text.size:#{data.size}, @path: #{@path}");
+    log "file:#{filename} text.size:#{data.size}, @path: #{@path}"
 
     flash[:success] ||= []
     flash[:success].push("Soubor #{filename} uložen.")
 
     email = current_user.full_email
     status = Giwi.get_giwi(@wiki).set_page(filename, data, '', email)
-    Rails::logger.fatal("url::#{url_for(action: :show, wiki: @wiki, path: @path, ls: '.')}");
+    log "url::#{url_for(action: :show, wiki: @wiki, path: @path, ls: '.')}"
 
     return redirect_to url_for(action: :show, wiki: @wiki, path: @path, ls: '.') if redirect
     render text: 'tnx'
@@ -369,11 +369,14 @@ class GiwiController < ApplicationController
   end
 
   def _handle_ls
+    authorize! :update, @giwi.auth_name
     @files, @dirs, @path_dir = Giwi.get_giwi(@wiki).get_ls(@path)
     render :ls
   end
 
   def _handle_edit
+
+    authorize! :update, @giwi.auth_name
 
     @text, @version = @giwi.get_page(@path + @giwi.ext)
 
@@ -435,7 +438,7 @@ class GiwiController < ApplicationController
       else
         cur_path = part
       end
-      #Rails::logger.fatal("wiki (#{@wiki}) is main #{ @wiki.to_s == 'main' ? 'yes' : 'no'}");
+      #log("wiki (#{@wiki}) is main #{ @wiki.to_s == 'main' ? 'yes' : 'no'}")
       url = if @wiki.to_s == 'main'
                  wiki_main_path(path: cur_path)
             else
@@ -469,11 +472,16 @@ class GiwiController < ApplicationController
       end
     end
 
+
     env = parser.env
-    html = parser.to_html(@text)
     return {} if env.nil?
+
+    html = parser.to_html(@text)
+    toc  = parser.headings.size > 3 ?  parser.make_toc_html : nil
+
     return {
       html:         html,
+      toc:          toc,
       headings:     parser.headings,
       tep_index:    env.at('tep_index', false),
       wide_display: env.at('wide_display', false),
@@ -486,12 +494,14 @@ class GiwiController < ApplicationController
   # clear all cache
   def _cache_clear
     return if ! Rails.configuration.wiki_do_cache_parse
+    log "cache: clear all"
     Rails.cache.clear
   end
 
   # delete one file from cache
   # @param version sha256 hash version (git oid) of file
   def _cache_delete(version)
+    log "cache: clear #{version}"
     return if ! Rails.configuration.wiki_do_cache_parse
     Rails.cache.delete version
   end
@@ -500,15 +510,15 @@ class GiwiController < ApplicationController
   def _cached_or_parse_and_cache
 
     if ! Rails.configuration.wiki_do_cache_parse
-      print "no cache: global conf\n"
+      log "no cache: global conf"
       return _parse
     end
     if ! @giwi.cache?
-      print "no cache: this giwi no caching\n"
+      log "no cache: this giwi no caching"
       return _parse
     end
     if ! @version
-      print "no cache: no version\n"
+      log "no cache: no version"
       return _parse
     end
 
@@ -516,7 +526,7 @@ class GiwiController < ApplicationController
 
     # we have in cache
     if cached
-      print "chached #{@path}\n"
+      log "chached #{@path}"
       return cached
     end
 
@@ -524,10 +534,10 @@ class GiwiController < ApplicationController
     ret = _parse
     if ! ret[:nocache]
       #  do not cache if page includes more dynamic (calendar, active forms, so on..)
-      print "caching:#{@path}\n"
+      log "caching:#{@path}"
       Rails.cache.write @version, ret
     else
-      print "parsed but:nocache set:#{@path}\n"
+      log "parsed but:nocache set:#{@path}"
     end
     return ret
   end

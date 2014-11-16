@@ -84,7 +84,7 @@ class Giwi
   end
 
   def cache_killer?
-    @name == @templates
+    @name.to_sym == @templates.to_sym
   end
 
   def cache?

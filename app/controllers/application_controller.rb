@@ -9,7 +9,7 @@ class ApplicationController < ActionController::Base
 
   def after_sign_in_path_for(resource)
      ret =  url_for_root(resource)
-     Rails::logger.fatal("url:#{ret}");
+     log("after_sign_in_path_for:#{ret}");
      return ret
   end
 

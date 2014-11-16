@@ -94,7 +94,7 @@ class TepController < ApplicationController
 
   def error
     @errid = "ERR-#{rand(1000000)}"
-    Rails::logger.fatal(@errid);
+    log(@errid)
     render :layout => nil
   end
 
