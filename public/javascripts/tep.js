@@ -6,12 +6,16 @@ var foto_cat = '';
 var anketa_states = [ 'fa-circle-o', 'fa-smile-o', 'fa-meh-o', 'fa-frown-o',  ];
 var anketa_td_class = [ 'anketa-nic', 'anketa-yes', 'anketa-maybe', 'anketa-no',  ];
 var anketa_txt =    [ ' ', 'y', '?', 'n' ];
+ace.vars['base'] = '/ace';
 
 jQuery(document).ready(function($) {
 
         $('.secret-menu-toggler').click(function () {
           $('#sidebar').toggleClass('hide');
           $('#main-content-id').toggleClass('main-content');
+        });
+        $('#menu-toggler').click( function () {
+          $('.sidebar').removeClass('hide');
         });
 
         // anketa zvyrazneni

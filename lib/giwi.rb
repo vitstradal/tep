@@ -83,6 +83,18 @@ class Giwi
     return [ text, blob.oid]
   end
 
+  def cache_killer?
+    @name == @templates
+  end
+
+  def cache?
+    if @nogit
+        false
+    else
+        true
+    end 
+  end
+
 
   # r: [ files, -- files in path dir
   #      dirs,  -- dirs in path dir
@@ -225,7 +237,7 @@ class Giwi
     }
         #:parents => [ repo.head.target ].compact,
     Rugged::Commit.create(@repo, options)
-    Rails::logger.fatal("options:#{pp(options)}");
+    #Rails::logger.fatal("options:#{pp(options)}");
     return status
   end
 
@@ -365,7 +377,7 @@ class GiwiNoGit < Giwi
   def get_page(path, raw = false)
     path_fs = File.join(@path, path)
     return nil if ! File.exists? path_fs
-    return [ File.read(path_fs),  '0.1']
+    return [ File.read(path_fs),  false]
   end
 
   def get_ls(path)

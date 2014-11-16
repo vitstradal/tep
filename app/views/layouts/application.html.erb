@@ -15,19 +15,18 @@
   <meta name="description" content="pikomat korespondenční matematický seminář, soustředění matematické tábory" />
   <%= stylesheet_link_tag '/ace/css/bootstrap.min.css' %>
   <%= stylesheet_link_tag '/ace/css/bootstrap.min.css' %>
-  <%= stylesheet_link_tag 'font-awesome.min.css' %>
+  <%= stylesheet_link_tag '/stylesheets/font-awesome.min.css' %>
   <%= stylesheet_link_tag '/ace/css/ace-fonts.css' %>
   <%# stylesheet_link_tag '/ace/css/ace.min.css' %>
   <%= stylesheet_link_tag '/ace/css/uncompressed/ace.css' %>
-  <%#= stylesheet_link_tag '/ace/css/ace-skins.min.css' %>
+  <%# stylesheet_link_tag '/ace/css/ace-skins.min.css' %>
   <%= stylesheet_link_tag '/ace/css/uncompressed/ace-skins-plus.css' %>
   <%= stylesheet_link_tag '/ace/css/ace-rtl.min.css' %>
   <%= stylesheet_link_tag '/ace/css/chosen.css' %>
   <%= stylesheet_link_tag '/ace/css/ui.jqgrid.css' %>
   <%# stylesheet_link_tag '/ace/css/ace-part2.css' %>
-
-  <%= stylesheet_link_tag 'andulka/stylesheet.css' %>
-  <%= stylesheet_link_tag 'tep.css' %>
+  <%= stylesheet_link_tag '/stylesheets/andulka/stylesheet.css' %>
+  <%= stylesheet_link_tag '/stylesheets/tep.css' %>
 
   <%#= javascript_include_tag '/ace/js/ace-extra.min.js' %>
   <%= javascript_include_tag '/ace/js/uncompressed/ace-extra.js' %>
@@ -342,20 +341,10 @@
 <%= javascript_include_tag '/ace/js/uncompressed/jquery.dataTables.js' %>
 <%= javascript_include_tag '/ace/js/jquery.dataTables.bootstrap.js' %>
 <%= javascript_include_tag '/ace-editor/ace.js' %>
-
-
-<script type="text/javascript"> ace.vars['base'] = '/ace'; </script>
-<script type="text/javascript"> 
-   $('#menu-toggler').click( function () {
-      $('.sidebar').removeClass('hide');
-   });
-</script>
-
 <%= javascript_include_tag '/ace/js/ace-elements.min.js' %>
-<%#= javascript_include_tag '/ace/js/ace.min.js' %>
+<%# javascript_include_tag '/ace/js/ace.min.js' %>
 <%= javascript_include_tag '/ace/js/uncompressed/ace.js' %>
-
-<%= javascript_include_tag 'tep.js' %>
+<%= javascript_include_tag '/javascripts/tep.js' %>
 
 </body>
 </html>

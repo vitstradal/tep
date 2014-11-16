@@ -1,6 +1,7 @@
 # encoding: utf-8
 
 require 'trac-wiki'
+require 'pp'
 require 'faraday'
 require 'iconv'
 require 'json'
@@ -47,12 +48,15 @@ class GiwiController < ApplicationController
     @history  = params[:history]
     @diff  = params[:diff]
     @part = false
+    @cache = params[:cache] || ''
 
     fmt = params[:format]
 
     # @wiki, Giwi.can_read?
 
+
     if @can_update
+      _cache_clear if @cache == 'clear'
       return _handle_preview(params[:preview])  if ! params[:preview].nil?
       return _handle_ls if @ls
       return _handle_history if @history
@@ -91,26 +95,17 @@ class GiwiController < ApplicationController
     end
     @path = path_ext
 
-    parser = _get_parser
-    parser.at_callback = Proc.new do |key,env|
-      case key
-        when 'csrf'
-          env['nocache'] = '1'
-          form_authenticity_token.to_s
-        when 'page_version'
-          @version
-        else nil
-      end
-    end
+    result = _cached_or_parse_and_cache
 
-    @html = parser.to_html(@text)
-    @headings = parser.headings
-    @tep_index = parser.env.nil? ? false : parser.env.at('tep_index', nil).nil? ? false : true
-    @wide_display = parser.env.nil? ? false : parser.env.at('wide_display', nil).nil? ? false : true
-    @foto_gallery = parser.env.nil? ? false : parser.env.at('foto_gallery', nil).nil? ? false : true
-    @redirect_to = parser.env.nil? ? nil : parser.env.at('redirect_to', nil)
-    @nocache = parser.env.nil? ? nil : parser.env.at('nocache', nil)
-    return _handle_redirect(@redirect_to) if ! @redirect_to.nil?
+    @html = result[:html]
+    @headings = result[:headings],
+    @tep_index = result[:tep_index]
+    @wide_display = result[:wide_display]
+    @foto_gallery = result[:foto_gallery]
+    @redirect_to = result[:redirect_to]
+    @nocache = result[:nocache]
+
+    return _handle_redirect(@redirect_to) if @redirect_to
 
     if @tep_index
       @no_sidebar = true
@@ -119,18 +114,20 @@ class GiwiController < ApplicationController
     #print "tep_index:",  @tep_index
 
 
-    if parser.headings.size > 3
+    if @headings.size > 3
       @toc = parser.make_toc_html
     end
     return render :json => { :html =>  @html } if params[:format] == 'json' && @can_update
     render :show
   end
 
+
   def _handle_diff
     @giwi = Giwi.get_giwi(@wiki)
     @diff_lines = @giwi.get_diff(@diff)
     return render :diff
   end
+
   def _handle_history
     @giwi = Giwi.get_giwi(@wiki)
     @history = @giwi.get_history
@@ -172,6 +169,16 @@ class GiwiController < ApplicationController
 
     email = current_user.full_email
     status = @giwi.set_page(@path + @giwi.ext, text, version, email, pos)
+
+    if @giwi.cache_killer?
+      print "cache: clearing all\n"
+      _cache_clear
+    else
+      if @giwi.cache?
+        print "cache: clearing #{@path} #{version}\n"
+        _cache_delete version
+      end
+    end
 
     if status !=  Giwi::SETPAGE_OK
       if status ==  Giwi::SETPAGE_MERGE_OK
@@ -236,11 +243,11 @@ class GiwiController < ApplicationController
       id_translit: true,
       no_escape: true,
       allow_html: true,
-      template_handler: self.method(:template_handler),
+      template_handler: self.method(:_template_handler),
     }
   end
 
-  def template_handler(tname, env, argv)
+  def _template_handler(tname, env, argv)
 
     return _template_textimg(env, argv) if tname == 'textimg'
     return _template_fakecrypt(env, argv) if tname == 'fakecrypt'
@@ -411,6 +418,9 @@ class GiwiController < ApplicationController
     @wide_display = true
     render :edit
   end
+
+
+
   def _breadcrumb_from_path(path)
 
     cur_path  = nil
@@ -442,6 +452,84 @@ class GiwiController < ApplicationController
       bread[-1][:active] = true
     end
     @breadcrumb = [ bread ]
+  end
+
+  # parse @text
+  # *`@text` is parsed wiki
+  def _parse
+    parser = _get_parser
+    parser.at_callback = Proc.new do |key,env|
+      case key
+        when 'csrf'
+          env['nocache'] = '1'
+          form_authenticity_token.to_s
+        when 'page_version'
+          @version
+        else nil
+      end
+    end
+
+    env = parser.env
+    html = parser.to_html(@text)
+    return {} if env.nil?
+    return {
+      html:         html,
+      headings:     parser.headings,
+      tep_index:    env.at('tep_index', false),
+      wide_display: env.at('wide_display', false),
+      foto_gallery: env.at('foto_gallery', false),
+      redirect_to:  env.at('redirect_to', false),
+      nocache:      env.at('nocache', false),
+    }
+  end
+
+  # clear all cache
+  def _cache_clear
+    return if ! Rails.configuration.wiki_do_cache_parse
+    Rails.cache.clear
+  end
+
+  # delete one file from cache
+  # @param version sha256 hash version (git oid) of file
+  def _cache_delete(version)
+    return if ! Rails.configuration.wiki_do_cache_parse
+    Rails.cache.delete version
+  end
+
+  # try find in cache, or parse, and then store in cache
+  def _cached_or_parse_and_cache
+
+    if ! Rails.configuration.wiki_do_cache_parse
+      print "no cache: global conf\n"
+      return _parse
+    end
+    if ! @giwi.cache?
+      print "no cache: this giwi no caching\n"
+      return _parse
+    end
+    if ! @version
+      print "no cache: no version\n"
+      return _parse
+    end
+
+    cached = Rails.cache.read @version
+
+    # we have in cache
+    if cached
+      print "chached #{@path}\n"
+      return cached
+    end
+
+    # no in cache parse and store in cache
+    ret = _parse
+    if ! ret[:nocache]
+      #  do not cache if page includes more dynamic (calendar, active forms, so on..)
+      print "caching:#{@path}\n"
+      Rails.cache.write @version, ret
+    else
+      print "parsed but:nocache set:#{@path}\n"
+    end
+    return ret
   end
 
 end
