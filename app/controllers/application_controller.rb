@@ -2,8 +2,9 @@ class ApplicationController < ActionController::Base
   protect_from_forgery
   rescue_from CanCan::AccessDenied do |exception|
       #sign_out :user
-      #redirect_to :access_denied
-      render :access_denied
+      log "ERROR:access_denied:#{exception}"
+      redirect_to :access_denied
+      #render :access_denied
   end
   include ApplicationHelper
 

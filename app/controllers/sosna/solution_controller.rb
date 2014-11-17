@@ -40,7 +40,6 @@ class Sosna::SolutionController < SosnaController
     respond_to do |format|
       format.wiki do
          headers['Content-Disposition'] = "inline; filename=vysl#{@annual}_#{@round}.wiki"
-         headers['Content-Type'] = "text/plain; charset=UTF-8";
       end
       format.pik do
          headers['Content-Disposition'] = "attachment; filename=vysl#{@annual}_#{@round}.pik"
@@ -325,7 +324,6 @@ class Sosna::SolutionController < SosnaController
       authorize! :user_index_org, Sosna::Solution
       @solver = Sosna::Solver.find(solver_id)
     else
-
       @solver = Sosna::Solver.where(:user_id => current_user.id, :annual => @config[:annual]).take
       @solver_is_current_user = true
     end
@@ -361,6 +359,8 @@ class Sosna::SolutionController < SosnaController
     se = problem.round
     roc = problem.annual
 
+    solver_id_or_nil = is_owner ? nil : solver.id
+
     if problem.annual.to_s != @config[:annual] || deadline_time(@config, problem.round) < Time.now
       if is_owner
         pp solution.problem.annual != @config[:annual]
@@ -368,7 +368,7 @@ class Sosna::SolutionController < SosnaController
         pp solution.problem.annual
         pp deadline_time(@config, solution.problem.round)
         add_alert "Řešení není možné odevdat"
-        return redirect_to sosna_solutions_user_url(roc, se, solver.id)
+        return redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
       end
     end
 
@@ -383,13 +383,13 @@ class Sosna::SolutionController < SosnaController
 
     if solution_file.original_filename !~ /\.pdf$/
       add_alert 'Pozor: pouze soubory ve formátu PDF'
-      return redirect_to sosna_solutions_user_url(roc, se, solver.id)
+      return redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
     end
 
     max_size =  Rails.configuration.sosna_user_solution_max_size || (20 * 1024 * 1024)
     if solution_file.size > max_size
       add_alert "Soubor je příliš velký (větší než #{number_to_human_size max_size})."
-      return redirect_to sosna_solutions_user_url(roc, se, solver.id)
+      return redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
     end
 
 
@@ -408,7 +408,7 @@ class Sosna::SolutionController < SosnaController
     solution.save
     add_success 'Soubor úspěšně nahrán'
 
-    redirect_to sosna_solutions_user_url(roc, se, solver.id)
+    redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
   end
 
   # pocitani vysledku
