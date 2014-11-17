@@ -218,7 +218,6 @@ class GiwiController < ApplicationController
   end
 
   def _handle_raw_file(path, fmt)
-    authorize! :update, @giwi.auth_name
     @raw, @version = Giwi.get_giwi(@wiki).get_page(path)
     send_data @raw, :type => fmt.to_sym, :disposition => 'inline'
   end
