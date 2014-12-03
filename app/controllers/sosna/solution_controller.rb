@@ -256,7 +256,8 @@ class Sosna::SolutionController < SosnaController
         zipfile.add('reseni/' + File.basename(filename_disp),  UPLOAD_DIR + filename)
       end
     end
-    send_file zip_file_name, :filename => 'reseni.zip', :type => "application/zip"
+    log("zip size:#{File::size?(zip_file_name)}")
+    send_file zip_file_name, :filename => 'reseni.zip', :type => "application/zip", :x_sendfile => true
     #File.delete zip_file_name
   end
 
@@ -734,6 +735,7 @@ class Sosna::SolutionController < SosnaController
     @annual = roc
     @round = se
     @problem_no = ul
+    log("roc:#{roc} se:#{se} ul:#{ul}\n")
 
     return roc, se, ul
   end
