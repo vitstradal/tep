@@ -748,6 +748,8 @@ class Sosna::SolutionController < SosnaController
           strcollf(a.last_name, b.last_name)
         elsif a.name != b.name
           strcollf(a.name, b.name)
+        else
+          a.id <=> b.id
         end
     end
   end
