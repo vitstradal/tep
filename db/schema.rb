@@ -11,7 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 12) do
+ActiveRecord::Schema.define(version: 13) do
+
+  create_table "informs", force: true do |t|
+    t.string   "form"
+    t.string   "data"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  add_index "informs", ["form"], name: "index_informs_on_form"
 
   create_table "sessions", force: true do |t|
     t.string   "session_id", null: false
