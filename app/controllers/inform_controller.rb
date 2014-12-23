@@ -1,7 +1,9 @@
 
 require 'json'
 
+
 class InformController < ApplicationController
+  authorize_resource
   include ApplicationHelper
 
   def index
@@ -17,6 +19,11 @@ class InformController < ApplicationController
     @keys = hkeys.keys.sort
   end
 
+  def tnx
+    @tnx = flash[:tnx]
+    @tnx2 = flash[:tnx2]
+  end
+
   def add
     data = {}
     params.each do |k,v|
@@ -25,9 +32,14 @@ class InformController < ApplicationController
     end
     form = data.delete('form') || 'unk'
     redir = data.delete('redir')
-    datastr = JSON.dump(data);j
+
+    flash[:tnx] = data.delete('tnx') || "Děkujeme."
+    flash[:tnx2] = data.delete('tnx2')
+
+    datastr = JSON.dump(data);
     Inform.create(form:  form, data: datastr);
-    render text: "tnx(#{form}:#{data})"
+
+    redirect_to :inform_tnx
   end
 
   def del

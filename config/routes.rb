@@ -15,6 +15,7 @@ Tep::Application.routes.draw do
   get   '/inform/index/(:form)'                 => 'inform#index',            :as => :inform_index
   post  '/inform/add'                        => 'inform#add',              :as => :inform_add
   get   '/inform/add'                        => 'inform#add',              :as => :inform_add_get
+  get   '/inform/tnx'                        => 'inform#tnx',              :as => :inform_tnx
   post   '/inform/del/:id'                        => 'inform#del',              :as => :inform_del
 
   # user:
