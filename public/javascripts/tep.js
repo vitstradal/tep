@@ -1,13 +1,10 @@
-// Place your application-specific JavaScript functions and classes here
-// This file is automatically included by javascript_include_tag :defaults
-
 var foto_cat = '';
-//var anketa_states = [ 'fa-square-o', 'fa-check-square-o', 'fa-plus-square-o', 'fa-minus-square-o',  ];
 var anketa_states = [ 'fa-circle-o', 'fa-smile-o', 'fa-meh-o', 'fa-frown-o',  ];
 var anketa_td_class = [ 'anketa-nic', 'anketa-yes', 'anketa-maybe', 'anketa-no',  ];
 var anketa_txt =    [ ' ', 'y', '?', 'n' ];
 ace.vars['base'] = '/ace';
 
+// init tep page
 jQuery(document).ready(function($) {
 
         $('.secret-menu-toggler').click(function () {
@@ -18,103 +15,15 @@ jQuery(document).ready(function($) {
           $('.sidebar').removeClass('hide');
         });
 
-        // anketa zvyrazneni
-        $('div.anketa').each(function (ii, div) {
-           var pos = parseInt($(this).data('lineno')||0) + 2;
-           var ver = $(this).data('version');
-           var stat = {};
-           var $table = $(div).next();
-           console.log("csrf", $('meta[name=csrf-token]').attr('content'));
-           $table.find('td').first().each(function (i,td) {
-             $(this).addClass('hand');
-             $(td).prepend( $('<span class="fa fa-lg fa-plus-square-o">&nbsp;</span>'));
-             $(this).click(function () {
-
-               var $tr = $table.find('.edit-row');
-               if( $tr.length > 0  ) {
-                 $tr.toggle();
-                 return;
-               }
-
-               $tr = $('<tr class="edit-row">');
-               var user = ($('.label-user').text() || "anon").replace(/@.*/, '').replace(/ /, '');
-
-               $tr.append($('<td><input type="text" value="' + uc_first(user) + '"/></td>'));
-               for (var k in stat ) {
-                 var $quad =$("<span class='fa fa-circle-o'></span>");
-                 var $td = $('<td data-state="0">').append($quad);
-                 $td.click(function (but) {
-                   var $this = $(this);
-                   var state = (parseInt($this.data('state')||0) + 1)%4;
-                   $this.find('span').attr('class', 'hand fa ' + anketa_states[state]);
-                   $this.data('state', state);
-                   $this.attr('class', anketa_td_class[state]);
-                 });
-                 $tr.append($td);
-               }
-
-               var $csrf = $('<input type="hidden" name="authenticity_token">').val($('meta[name=csrf-token]').attr('content'));
-               var $pos = $('<input type="hidden" name="pos">').val(pos);
-               var $ver = $('<input type="hidden" name="version">').val(ver);
-               var $text = $('<input type="hidden" name="text">');
-               var $form = $('<form method="POST">').append($csrf).append($pos).append($text).append($ver);
-               $form.append( $('<button type="submit" class="btn btn-danger">save</button>'));
-               $form.submit(function () {
-                 var $tr = $(this).closest('tr');
-                 var row = '|| ' + ($tr.find('input').val() || '???' );
-                 $tr.find('td[data-state]').each(function () { row +=  ' || ' + anketa_txt[parseInt($(this).data('state')||0)] });
-                 row += " ||\n";
-                 $text.val(row);
-                 console.log('row:', row);
-               });
-               $tr.append($('<td>').append($form));
-               $table.find('tr').first().after($tr);
-              }); /* click */
-           });
-           $table.find('td').each(function (i,td) {
-             var $td = $(td);
-             var txt = $td.text();
-             var c =  $td.index();
-             var r =  $td.parent().index();
-             var dostat = true;
-             switch(txt) {
-               case 'y': $td.addClass('anketa-yes'); break;
-               case 'n': $td.addClass('anketa-no'); break;
-               case '?': $td.addClass('anketa-maybe'); break;
-               default:  dostat = false;
-             }
-             if( dostat ) {
-                     stat[c] = stat[c] || {};
-                     stat[c][txt] = stat[c][txt] || 0;
-                     stat[c][txt]++;
-             }
-          });
-          var tab = [];
-          //console.log("stat", stat);
-          var $tr = $('<tr>').append('<td>&sum;</td>');
-          for (var k in stat ) {
-            var ret ='';
-            var ry = stat[k]['y'] || 0;
-            var rn = stat[k]['n'] || 0;
-            var rm = stat[k]['?'] || 0;
-            //ret = "<span class='anketa-yes'>" + ry + "</span>/<span class='anketa-maybe'>" + rm + "</span>/<span class='anketa-no'>" + rn + "</span>";
-            ret = ry + "/" + rm + "/" + rn;
-            var $td = $('<td>');
-            $td.html(ret);
-            $tr.append($td);
-            tab[k] = ret;
-          }
-          $table.append($tr);
-          console.log('tab', tab);
-        });
-
+        // anketa zvyrazneni, a dekorace
+        $('div.anketa').each(function (ii, div) { _init_anketa_div(div) });
 
         $('.ace-file-input').ace_file_input()
                             .on('change', function () {
                                     $(this).closest('form').submit();
                              });
 
-        // data tables 
+        // data tables
 	jQuery.extend( jQuery.fn.dataTableExt.oSort, {
 	    "locale-pre": function ( a ) {
 	        return a.replace(/<[^>]*>/,'');
@@ -132,8 +41,7 @@ jQuery(document).ready(function($) {
             "numstr-desc": function ( a, b ) { return b - a; },
 	} );
 
-/*
- */
+        // trizeni datatabli
         $('.datatable').dataTable({
                 "bPaginate": false,
                 "bLengthChange": false,
@@ -145,85 +53,12 @@ jQuery(document).ready(function($) {
 	        "aoColumnDefs": [
 					{ "sType": "numeric", "aTargets": [ 0,  ] },
 					{ "sType": "locale", "aTargets": [ 1 ] },
-//					{ "sType": "numstr", "aTargets": [ 1 ] },
 			        ],
         });
-        /********************************************************
-         * fotky
-         */
-        $('button[data-foto-dir]').click(function (ev) {
-          var src = $(this).closest('.modal').find('img').attr('src');
-          var foto = $('a[href="'+src+'"]').closest('.foto');
 
-          var dir = $(this).data('foto-dir');
+        init_fotky();
 
-          var cat = $('.fotofilter.label-success').attr('id');
-          cat = cat === null || cat == 'ff-all' ? null : '.' + cat;
-          //console.log('cat', cat);
-
-          var next =( dir ==  'next' ) ?  foto.nextAll(cat):
-                                          foto.prevAll(cat);
-          next.first().find('img').click();
-        });
-
-        $('#foto-modal').on('hide.bs.modal', function () { set_hash(foto_cat); });
-
-        $('.foto img').click(function (ev) {
-           ev.preventDefault();
-           var foto = $(this).closest('.foto');
-           var bigimg = $(this).closest('a').attr('href');
-           var title = $(this).closest('.foto').find('span').text();
-           $('#foto-modal').modal('show');
-           $('#foto-modal').height(  $(window).height() );
-           var wh = $(window).height() - 10;
-           $('#foto-modal .modal-content').height(wh);
-           var hh = $('#foto-modal .modal-title').height();
-           console.log('h', wh , hh);
-           $('#foto-modal img').attr('src', bigimg)
-                            .css('height', wh - 50)
-                            .css('width', 'auto');
-           $('#foto-modal a').attr('href', bigimg);
-           $('#foto-modal .modal-title').text(title);
-
-           var cat = $('.fotofilter.label-success').attr('id');
-           cat = cat === null || cat == 'ff-all' ? '' :  cat.substr(3);
-
-           set_hash(cat, foto);
-        });
-        $('.fotofilter').click(function (){
-            $(".fotofilter").removeClass('label-success');
-            $(this).addClass('label-success');
-            var id = $(this).attr('id');
-            //console.log("select", id);
-            if( id == 'ff-all' ) {
-              $("span.foto").show();
-              set_hash('');
-              return;
-            }
-            $("span.foto").each(function (i, el) {
-              if( $(el).hasClass(id) ) {
-                $(el).show();
-              } else {
-                $(el).hide();
-              }
-            });
-            set_hash(id.substr(3));
-        });
-        $('.fotos').first().each( function () {
-           var hash = get_hash();
-           var filter = hash[0];
-           var imgid = hash[1];
-           //console.log("hash:", filter, imgid);
-           if( filter && filter != '' ) {
-             //console.log("click:", '#ff-' + filter);
-             $('#ff-' +  filter ).click();
-           }
-           if( imgid )  {
-              $('[id="' + imgid + '"]').find('img').click();
-           }
-        });
-
-
+        // formular resitel (novy|editace), schovat adresu skoly, kdyz je vybrana ze seznamu
         $('#school_id').change(function (){
                 if('jina' == $(this).val()) {
                   $('#school_div').show(400);
@@ -245,6 +80,8 @@ jQuery(document).ready(function($) {
                   $(this).closest('form').submit();
                 }
         });
+
+        // upload reseni, test jestli jak je soubor velky
         $('form[id^=edit_sosna_solution]').submit(function(){
           var isOk = true;
           $('input[type=file][max-size]', this).each(function(){
@@ -262,8 +99,8 @@ jQuery(document).ready(function($) {
                 }
             }
             return isOk;
+          });
         });
-    });
 
         /* nojs-in:  show when no js, so hide when js enabled */
         $('.nojs-in').removeClass('nojs-in');
@@ -288,11 +125,11 @@ jQuery(document).ready(function($) {
          me.hide();
        });
 
+      init_icons();
+
       // https://gist.github.com/duncansmart/5267653
       // turn textarea into ace-ecitor
-      init_icons();
       $('textarea.aceeditor').each(function () {
-
                 var $textarea = $(this);
                 _init_textarea_with_ace($textarea);
       });
@@ -703,4 +540,204 @@ function _init_cmdline_editor(editor)
                 editor.focus();
               }
         });
+}
+
+/********************************************************
+ * fotky
+ */
+function init_fotky()
+{
+        $('button[data-foto-dir]').click(function (ev) {
+          var src = $(this).closest('.modal').find('img').attr('src');
+          var foto = $('a[href="'+src+'"]').closest('.foto');
+
+          var dir = $(this).data('foto-dir');
+
+          var cat = $('.fotofilter.label-success').attr('id');
+          cat = cat === null || cat == 'ff-all' ? null : '.' + cat;
+          //console.log('cat', cat);
+
+          var next =( dir ==  'next' ) ?  foto.nextAll(cat):
+                                          foto.prevAll(cat);
+          next.first().find('img').click();
+        });
+
+        $('#foto-modal').on('hide.bs.modal', function () { set_hash(foto_cat); });
+
+        $('.foto img').click(function (ev) {
+           ev.preventDefault();
+           var foto = $(this).closest('.foto');
+           var bigimg = $(this).closest('a').attr('href');
+           var title = $(this).closest('.foto').find('span').text();
+           $('#foto-modal').modal('show');
+           $('#foto-modal').height(  $(window).height() );
+           var wh = $(window).height() - 10;
+           $('#foto-modal .modal-content').height(wh);
+           var hh = $('#foto-modal .modal-title').height();
+           console.log('h', wh , hh);
+           $('#foto-modal img').attr('src', bigimg)
+                            .css('height', wh - 50)
+                            .css('width', 'auto');
+           $('#foto-modal a').attr('href', bigimg);
+           $('#foto-modal .modal-title').text(title);
+
+           var cat = $('.fotofilter.label-success').attr('id');
+           cat = cat === null || cat == 'ff-all' ? '' :  cat.substr(3);
+
+           set_hash(cat, foto);
+        });
+        $('.fotofilter').click(function (){
+            $(".fotofilter").removeClass('label-success');
+            $(this).addClass('label-success');
+            var id = $(this).attr('id');
+            //console.log("select", id);
+            if( id == 'ff-all' ) {
+              $("span.foto").show();
+              set_hash('');
+              return;
+            }
+            $("span.foto").each(function (i, el) {
+              if( $(el).hasClass(id) ) {
+                $(el).show();
+              } else {
+                $(el).hide();
+              }
+            });
+            set_hash(id.substr(3));
+        });
+        $('.fotos').first().each( function () {
+           var hash = get_hash();
+           var filter = hash[0];
+           var imgid = hash[1];
+           //console.log("hash:", filter, imgid);
+           if( filter && filter != '' ) {
+             //console.log("click:", '#ff-' + filter);
+             $('#ff-' +  filter ).click();
+           }
+           if( imgid )  {
+              $('[id="' + imgid + '"]').find('img').click();
+           }
+        });
+}
+
+function _init_anketa_div(div) {
+   var pos = parseInt($(div).data('lineno')||0) + 2;
+   var ver = $(div).data('version');
+   var stat = {};
+   var cols_max = 0;
+   var cols_max2 = 0;
+   var $table = $(div).next();
+   //console.log("pos", pos);
+   //console.log("csrf", $('meta[name=csrf-token]').attr('content'));
+
+   $table.find('td').first().each(function (i,td) {
+     console.log('td in table');
+     $(this).addClass('hand');
+     $(td).prepend( $('<span class="fa fa-lg fa-plus-square-o">&nbsp;</span>'));
+
+     // click on plus
+     $(this).click(function () {
+
+       var $tr = $table.find('.edit-row');
+       if( $tr.length > 0  ) {
+         $tr.toggle();
+         return;
+       }
+
+       $tr = $('<tr class="edit-row">');
+       var user = ($('.label-user').text() || "anon").replace(/@.*/, '').replace(/ /, '');
+
+       $tr.append($('<td><input type="text" value="' + uc_first(user) + '"/></td>'));
+       console.log("bf add edit row: colsMax", cols_max);
+       for (var k = 1; k <= cols_max; k++) {
+         var $quad =$("<span class='fa fa-circle-o'></span>");
+         var $td = $('<td data-state="0">').append($quad);
+         $td.click(function (but) {
+           var $this = $(this);
+           var state = (parseInt($this.data('state')||0) + 1)%4;
+           $this.find('span').attr('class', 'hand fa ' + anketa_states[state]);
+           $this.data('state', state);
+           $this.attr('class', anketa_td_class[state]);
+         });
+         $tr.append($td);
+       }
+
+       var $csrf = $('<input type="hidden" name="authenticity_token">').val($('meta[name=csrf-token]').attr('content'));
+       var $pos = $('<input type="hidden" name="pos">').val(pos);
+       var $ver = $('<input type="hidden" name="version">').val(ver);
+       var $text = $('<input type="hidden" name="text">');
+       var $form = $('<form method="POST">').append($csrf).append($pos).append($text).append($ver);
+       $form.append( $('<button type="submit" class="btn btn-danger">save</button>'));
+       $form.submit(function () {
+         var $tr = $(this).closest('tr');
+         var row = '|| ' + ($tr.find('input').val() || '???' );
+         $tr.find('td[data-state]').each(function () { row +=  ' || ' + anketa_txt[parseInt($(this).data('state')||0)] });
+         row += " ||\n";
+         $text.val(row);
+         console.log('row:', row);
+       });
+       $tr.append($('<td>').append($form));
+       $table.find('tr').first().after($tr);
+      }); /* click */
+   });
+   $table.find('td').each(function (i,td) {
+     var $td = $(td);
+     var txt = $td.text();
+     var c =  $td.index();
+     var r =  $td.parent().index();
+     var dostat = true;
+     switch(txt) {
+       case 'y': $td.addClass('anketa-yes'); break;
+       case 'n': $td.addClass('anketa-no'); break;
+       case '?': $td.addClass('anketa-maybe'); break;
+       default:  dostat = false;
+     }
+     cols_max2 = Math.max(cols_max2, c);
+     if( dostat ) {
+             cols_max = Math.max(cols_max, c);
+             stat[c] = stat[c] || {};
+             stat[c][txt] = stat[c][txt] || 0;
+             stat[c][txt]++;
+     }
+  });
+  if( cols_max == 0 )  {
+    cols_max = cols_max2;
+  }
+  var tab = [];
+  //console.log("stat", stat);
+  var $tr = $('<tr>').append('<td>&sum;</td>');
+  var max_y = 0;
+  var max_ym = 0;
+  for (var k in stat ) {
+    var ry = stat[k]['y'] || 0;
+    var rm = stat[k]['?'] || 0;
+    max_y = Math.max(max_y, ry);
+    max_ym = Math.max(max_ym, ry+rm);
+  }
+  console.log('maxym:', max_ym);
+  for (var k in stat ) {
+    var ret ='';
+    var ry = stat[k]['y'] || 0;
+    var rn = stat[k]['n'] || 0;
+    var rm = stat[k]['?'] || 0;
+    var sep = ' ';
+    //var sep = '/';
+    ret = "<span class='anketa-stat-yes'>" + ry + "</span>" + sep + "<span class='anketa-stat-maybe'>" + rm + "</span>" + sep + "<span class='anketa-stat-no'>" + rn + "</span>";
+    //ret = ry + "/" + rm + "/" + rn;
+    var $td = $('<td>');
+    var title = '';
+    if( ry == max_y ) {
+      $td.addClass('anketa-max-yes');
+      $td.attr('title', "Maximum 'yes'");
+    }
+    if( ry + rm == max_ym ) {
+      $td.addClass('anketa-max-yes-maybe');
+      $td.attr('title', ( ry == max_y  ) ? "Maximum 'yes' i 'yes+maybe'" : "Maximum 'yes'");
+    }
+    $td.html(ret);
+    $tr.append($td);
+    tab[k] = ret;
+  }
+  $table.append($tr);
+  //console.log('tab', tab);
 }

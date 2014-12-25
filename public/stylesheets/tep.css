@@ -517,6 +517,30 @@ a.mailcrypt {
   background-color: #FFFF99;
 }
 
+.anketa-stat-no {
+  color: #FF5555;
+}
+
+.anketa-stat-yes {
+  font-weight:  bold;
+  font-size: 120%;
+  color: #008800;
+}
+
+.anketa-stat-maybe {
+  color: #aaaa00;
+}
+
+.anketa-max-yes-maybe {
+  text-decoration: underline;
+  /*background-color: #ffffdd; */
+  text-decoration-color: #aaaa00;
+}
+
+.anketa-max-yes {
+  background-color: #ddFFdd;
+}
+
 .hand {
   cursor: pointer;
 }
