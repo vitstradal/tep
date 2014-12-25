@@ -51,10 +51,13 @@ class GiwiController < ApplicationController
 
     fmt = params[:format]
 
-    # @wiki, Giwi.can_read?
-
-
-    _cache_clear if @cache == 'clear' && @can_update
+    if @cache == 'clear' && @can_update
+      _cache_clear
+      add_alert "Wiki parse cache was cleared #{@wiki}:#{@path}"
+      #FIXME: nefunguje v main wiki (ignoruje @path)
+      #FIXME: csrf
+      return redirect_to(action: :show, path: @path, wiki: @wiki)
+    end
 
     return _handle_preview(params[:preview])  if ! params[:preview].nil?
     return _handle_ls if @ls
@@ -72,7 +75,7 @@ class GiwiController < ApplicationController
 
     if @edit && @can_update
       _handle_edit
-      return render :edit
+      return render :edit, formats:[:html]
     end
 
     path_ext = @path + @giwi.ext
@@ -166,6 +169,7 @@ class GiwiController < ApplicationController
     status = @giwi.set_page(@path + @giwi.ext, text, version, email, pos)
 
     if @giwi.cache_killer?
+      add_alert 'Wiki parse cache was cleared'
       _cache_clear
     else
       if @giwi.cache?

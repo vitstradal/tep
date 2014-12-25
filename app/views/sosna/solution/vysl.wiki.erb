@@ -1,10 +1,16 @@
-<% @results.each do |result| %>
+<% last_result = nil
+   @results.each do |result| %>
 <%=
    solver = result.solver
    school = solver.school
+
+   rank_all = result.rank_range(last_result)
+   rank_cls = result.class_rank_range(last_result)
+   last_result = result
+
    '%-10s;%-10s;%-10s;%-22s;%4s;%4s;XXX;%2s;%3s' % [
-       result.rank_multi? ? "#{result.rank}-#{result.rank_to}" : result.rank ,
-       result.class_rank_multi? ? "#{result.class_rank}-#{result.class_rank_to}" : result.class_rank,
+       rank_all,
+       rank_cls,
        solver.name,
        solver.last_name,
        solver.grade_num,
