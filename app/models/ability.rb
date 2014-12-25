@@ -9,6 +9,7 @@ class Ability
 
     # public
 
+    can :add, Inform
     can :new, Sosna::Solver
     can :create, Sosna::Solver
     can :create_tnx, Sosna::Solver
@@ -37,6 +38,8 @@ class Ability
     end
 
     if user.org?
+      can :index, Inform
+      can :tnx, Inform
       can :pokusy, :tep
 
       can :index, Sosna::Solution
@@ -74,6 +77,7 @@ class Ability
     if user.morg?
 
       can :new_round, Sosna::Problem
+      can :del, Inform
 
       can :update, Sosna::Solver
       can :update, Sosna::School

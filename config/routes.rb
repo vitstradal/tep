@@ -12,6 +12,12 @@ Tep::Application.routes.draw do
   get  '/sosna/solver/tnx'                   => 'sosna/solver#create_tnx',      :as => :sosna_solver_create_tnx
   get  '/sosna/aesop/index'                  => 'sosna/aesop#index',            :as => :sosna_aesop_index
 
+  get   '/inform/index/(:form)'                 => 'inform#index',            :as => :inform_index
+  post  '/inform/add'                        => 'inform#add',              :as => :inform_add
+  get   '/inform/add'                        => 'inform#add',              :as => :inform_add_get
+  get   '/inform/tnx'                        => 'inform#tnx',              :as => :inform_tnx
+  post   '/inform/del/:id'                        => 'inform#del',              :as => :inform_del
+
   # user:
   get  '/sosna/solutions/user(/:roc(/:se(/:id)))' => 'sosna/solution#user_index',    :as => :sosna_solutions_user
   patch '/sosna/solution/upload'             => 'sosna/solution#upload',        :as => :sosna_solution_upload

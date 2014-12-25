@@ -471,6 +471,8 @@ class GiwiController < ApplicationController
           form_authenticity_token.to_s
         when 'page_version'
           @version
+        when 'url_for_root'
+          url_for(:root)
         else nil
       end
     end
