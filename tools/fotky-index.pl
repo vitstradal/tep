@@ -2,7 +2,9 @@
 
 use File::Slurp;
 use File::Copy;
+use Cwd;
 use File::Find;
+use Getopt::Long;
 use Data::Dump 'pp';
 use YAML::Syck;
 
@@ -10,7 +12,13 @@ use strict;
 use warnings;
 use utf8;
 
-my ($wiki_file, $fotoroot, $path) = @ARGV;
+my $webroot = '/home/www/html';
+my $fotodir = getcwd;
+my $wiki_file;
+my $wikuk_file = '/home/pikomat/wikuk/foto.wiki';
+my $wikuk =  0;
+my $update  = 0;
+my $help =0;
 
 sub escy($)
 {
@@ -23,11 +31,11 @@ $YAML::Syck::Headless = 1;
 
 sub proces($$)
 {
-  my ($y, $fotoroot) = @_;;
+  my ($y, $fotodir) = @_;;
 
-  my $fullpath = $fotoroot;
+  my $fullpath = $fotodir;
   my @jpgs;
-  File::Find::find({ wanted=>sub { push(@jpgs, $_ =~ s/^\Q$fotoroot\E//r)  if /-v\.jpe?g/i }, no_chdir=> 1}, $fullpath);
+  File::Find::find({ wanted=>sub { push(@jpgs, $_ =~ s/^\Q$fotodir\E//r)  if /-v\.jpe?g/i }, no_chdir=> 1}, $fullpath);
 
   utf8::decode($y) if ! utf8::is_utf8($y);
   my $h = Load($y);
@@ -65,23 +73,51 @@ sub proces($$)
     $data .= "  foto: @{[escy($f)]}\n";
     $data .= "  cats: [ ]\n";
   }
-  return "{{fotky\n$data\n}}";
+  return "{{foto\n$data\n}}";
 }
 
-$fotoroot ||= '/home/www/html';
-$path ||= '';
+sub usage 
+{
+   die <<EOL
+usage: $0  [ -w /path/to/www/root ] [ -d /abs/path/to/to/galery ] [-u] output.wiki 
+   -o output (default: $wiki_file)
+   -w web root (default: $webroot)
+   -d dir (default: $fotodir)
+   -u update file existing
+   -k short for -o $wikuk_file,
+   -h this help
+EOL
+}
 
-die "usage: $0 file.wiki [ /path/to/foto/root [ rel/path/to/galery ] ] \n" if ! $wiki_file ;
+
+GetOptions(
+        'w|webroot=s'   => \$webroot,
+        'd|foto-dir=s'  => \$fotodir,
+        'o|output=s'    => \$wiki_file,
+        'u|update'      => \$update,
+        'k|wikuk'       => \$wikuk,
+        'h|help'        => \$help,
+);
+
+$wiki_file = $wikuk_file if $wikuk;
+
+usage() if ! $wiki_file ;
+usage() if $help;
+
 my $wiki;
 
-if( -f $wiki_file )  {
+my $foto_dir_rel = $fotodir =~ s{^\Q$webroot\E/*}{}r;
+$foto_dir_rel =~ s{^fotky/}{data/};
+
+if( $update && -f $wiki_file  )  {
    copy($wiki_file, "$wiki_file.backup") or die "cannt create backup";
    $wiki = read_file($wiki_file, binmode => ':utf8') or die;
 
 } else {
-   $wiki = "{{fotky\n---\n path: \"$path\"\n}}\n";
+   $wiki = "{{foto\n---\n path: \"/$foto_dir_rel\"\n}}\n";
 }
 
-$wiki =~ s/\{\{fotky\b(.*)^\}\}/proces($1,$fotoroot)/gsem;
+$wiki =~ s/\{\{foto\b(.*)^\}\}/proces($1,$fotodir)/gsem;
 write_file($wiki_file, $wiki) or die "cannt write to $wiki_file";
+print STDERR "$wiki_file done\n";
 
