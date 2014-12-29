@@ -481,6 +481,7 @@ class GiwiController < ApplicationController
     env = parser.env
     return {} if env.nil?
 
+    #log("Text #{@text}")
     html = parser.to_html(@text)
     toc  = parser.headings.size > 3 ?  parser.make_toc_html : nil
 
