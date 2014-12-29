@@ -5,7 +5,7 @@ use warnings;
 my ($file, $path) =  @ARGV;
 die "usage: $0 file.dat /path/to/fotos\n" if ! $file || ! $path;
 my %y = ();
-open F, '<', "$file" or die "cannt open $file";
+open F, '<', "$file" or die "cannot open $file";
 
 while(my $r = <F>) {
   chomp($r);
