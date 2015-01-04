@@ -5,6 +5,7 @@
 %        -/! - máme všechny údaje / něco chybí;
 %        -/! - má / nemá souhlas se zpracováním;
 <% @solvers.map do |solver|  %><%=
+    next if solver.is_test_solver
     send = '?'
     send = 's' if solver.where_to_send == 'home'
     send = 'e' if solver.where_to_send == 'email'

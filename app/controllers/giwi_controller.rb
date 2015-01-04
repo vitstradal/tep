@@ -483,7 +483,9 @@ class GiwiController < ApplicationController
 
     #log("Text #{@text}")
     html = parser.to_html(@text)
-    toc  = parser.headings.size > 3 ?  parser.make_toc_html : nil
+    notoc = env.at('notoc', false)
+    toc  = nil 
+    toc = parser.make_toc_html  if ! notoc && parser.headings.size > 3 
 
     return {
       html:         html,
