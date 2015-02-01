@@ -22,7 +22,7 @@ class Sosna::SolutionController < SosnaController
   def lidi
     _prepare_solvers_problems_solutions(false)
     # dirty hack
-    _sort_solvers_by_score
+    _sort_solvers_by_grade
     respond_to do |format|
       format.csv do
          headers['Content-Disposition'] = "attachment; filename=lidi-roc#{@annual}-se#{@round}.csv"
@@ -35,8 +35,8 @@ class Sosna::SolutionController < SosnaController
   end
 
   def vysl
-    load_config
-    @results = Sosna::Result.includes(:solver).where('sosna_solvers.is_test_solver' => false, round: @round, annual: @annual)
+    _prepare_solvers_problems_solutions
+    _sort_solvers_by_rank
     respond_to do |format|
       format.wiki do
          headers['Content-Disposition'] = "inline; filename=vysl#{@annual}_#{@round}.wiki"
@@ -550,10 +550,11 @@ class Sosna::SolutionController < SosnaController
 
   end
 
+  # r: { solver_id => [ result1,  result2, ... ], ... }
   def _get_results_by_solver(solvers, roc, se, want_create = true)
     _results = _get_results(solvers, roc, se)
     results_by_solver = {}
-    _results.each { |p| results_by_solver[p.solver_id] = p }
+    _results.each { |r| results_by_solver[r.solver_id] = r }
     solvers.each do |solver|
       if results_by_solver[solver.id].nil? && want_create
           begin
@@ -740,16 +741,55 @@ class Sosna::SolutionController < SosnaController
     return roc, se, ul
   end
 
-  def _sort_solvers_by_score
+#  def _sort_solvers_by_score
+#    @solvers.sort! do  |a,b|
+#        if a.grade_num != b.grade_num
+#         a.grade_num <=> b.grade_num
+#        elsif a.last_name != b.last_name
+#          strcollf(a.last_name, b.last_name)
+#        elsif a.name != b.name
+#          strcollf(a.name, b.name)
+#        else
+#          a.id <=> b.id
+#        end
+#    end
+#  end
+
+  def _sort_solvers_by_grade
     @solvers.sort! do  |a,b|
-        if a.grade_num != b.grade_num
-         a.grade_num <=> b.grade_num
+        agr = a.grade_num || '1'
+        bgr = b.grade_num || '1'
+        if agr != bgr
+          agr <=> bgr 
         elsif a.last_name != b.last_name
           strcollf(a.last_name, b.last_name)
         elsif a.name != b.name
           strcollf(a.name, b.name)
         else
           a.id <=> b.id
+        end
+    end
+  end
+
+  def _sort_solvers_by_rank
+    r_by_s = @results_by_solver
+    @solvers.sort! do  |a,b|
+        ares= r_by_s[a.id]
+        bres= r_by_s[b.id]
+        if ares.rank != bres.rank
+          ares.rank <=> bres.rank
+        else
+          agr = a.grade_num || '1'
+          bgr = b.grade_num || '1'
+          if agr != bgr
+            agr <=> bgr
+          elsif a.last_name != b.last_name
+            strcollf(a.last_name||'', b.last_name||'')
+          elsif a.name != b.name
+            strcollf(a.name||'', b.name||'')
+          else
+            a.id <=> b.id
+          end
         end
     end
   end
@@ -777,7 +817,7 @@ class Sosna::SolutionController < SosnaController
     if ul
       return Sosna::Problem.where(:annual => roc, :round => se, :problem_no => ul)
     else
-      return Sosna::Problem.where(:annual => roc, :round => se)
+      return Sosna::Problem.where(:annual => roc, :round => se).order(:problem_no)
     end
   end
 
