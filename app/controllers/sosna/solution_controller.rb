@@ -35,7 +35,7 @@ class Sosna::SolutionController < SosnaController
   end
 
   def vysl
-    _prepare_solvers_problems_solutions
+    _prepare_solvers_problems_solutions(false)
     _sort_solvers_by_rank
     respond_to do |format|
       format.wiki do
@@ -420,7 +420,6 @@ class Sosna::SolutionController < SosnaController
   # a spocita se poradi v rocniku (a pokud ma stejne bodu tak interval poradi)
   def update_results
     roc, se, ul = _params_roc_se_ul
-    add_alert "generovani je zatim trosku alfa, anjoy #{roc} #{se}"
 
     # resitele
     solvers = get_sorted_solvers(annual: roc).to_a
@@ -521,6 +520,7 @@ class Sosna::SolutionController < SosnaController
     results_by_solver.each {|id,res| res.save}
 
     # presmerovat na zobrazeni tabukly
+    add_success "výsledky pro rocnik #{roc} serie #{se} byly přegenrovány"
     redirect_to :action =>  :index , :roc => roc, :se => se
   end
 
