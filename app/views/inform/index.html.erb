@@ -1,8 +1,12 @@
 
 <h1>Inform <%= @form %> </h1>
 
+<% count = 0 %>
+
 <table class='table'>
   <tr>
+    <th>#</th>
+    <th>ua</th>
     <% @keys.each do |k| %>
       <th><%= k.titleize %></th>
     <% end%> 
@@ -10,6 +14,8 @@
   <% @informs.each do  |inform| %>
     <% jdata = inform.jdata %>
     <tr>
+      <td><%= count += 1 %></td>
+      <td><span title="<%= inform.user_agent %>">*</span></td>
       <% @keys.each do |k| %>
         <td><%= jdata[k] || 'undef' %></td>
       <% end%> 

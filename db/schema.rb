@@ -11,13 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 13) do
+ActiveRecord::Schema.define(version: 14) do
 
   create_table "informs", force: true do |t|
     t.string   "form"
     t.string   "data"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "user_agent", default: "unknown"
   end
 
   add_index "informs", ["form"], name: "index_informs_on_form"

@@ -142,13 +142,15 @@ class Sosna::SolverController < SosnaController
     solver.annual = @annual
 
     user = User.find_by_email solver.email
-    if !user 
-      # create user by email
-      user =  User.new(email: solver.email.downcase, name: solver.name, last_name: solver.last_name, confirmation_sent_at: Time.now,  roles: [:user])
-      user.confirm!
-      user.send_first_login_instructions  if send_first
-      solver.user_id = user.id
-      user.save
+    if !user  
+      if ! solver.email.empty?
+        # create user by email
+        user =  User.new(email: solver.email.downcase, name: solver.name, last_name: solver.last_name, confirmation_sent_at: Time.now,  roles: [:user])
+        user.confirm!
+        user.send_first_login_instructions  if send_first
+        solver.user_id = user.id
+        user.save
+      end
     else 
       solver.user_id = user.id
     end
@@ -184,6 +186,8 @@ class Sosna::SolverController < SosnaController
       school = Sosna::School.new(params[:sosna_school])
       school.save
     end
+
+    sr.delete :user_id
 
     if sr[:id]
       solver = Sosna::Solver.find(sr[:id])

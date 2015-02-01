@@ -148,7 +148,7 @@ class Sosna::SolutionController < SosnaController
       File.delete _confirm_file_path(solver)
       add_alert 'Návratka byla smazána'
     elsif confirm_file.original_filename !~ /\.pdf$/
-      add_alert 'Pozor: pouze soubory ve formátu PDF'
+      add_alert 'Pozor: pouze soubory ve formátu .pdf'
     else
       File.open(_confirm_file_path(solver), 'wb') {  |f| f.write confirm_file.read }
       add_success 'Návratka nahrána'
@@ -383,7 +383,7 @@ class Sosna::SolutionController < SosnaController
     end
 
     if solution_file.original_filename !~ /\.pdf$/
-      add_alert 'Pozor: pouze soubory ve formátu PDF'
+      add_alert 'Pozor: pouze soubory ve formátu .pdf'
       return redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
     end
 
@@ -663,7 +663,7 @@ class Sosna::SolutionController < SosnaController
   def _upload_rev_one(roc, se, ul,  fname)
 
     if fname !~ /^(?:[ \w]*\/)?reseni-roc(\d+)-se(\d+)-ul(\d+)-rel(\d+)-(ori|rev)-.*.pdf/
-      _add_msg(fname, "jmeno souboru neni ve spravnem formatu '#{fname}'")
+      _add_msg(fname, "jmeno souboru neni ve spravnem formatu, ocekavany format: reseni-rocNN-seN-ulN-relN-(ori|rev)-.*.pdf")
       return nil
     end
     oroc, ose, oul, relid = $1.to_i, $2.to_i, $3.to_i, $4.to_i
