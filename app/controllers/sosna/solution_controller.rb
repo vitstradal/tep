@@ -34,18 +34,20 @@ class Sosna::SolutionController < SosnaController
     end
   end
 
-  def vysl
-    _prepare_solvers_problems_solutions(false)
+  def vysl_pik
+    _prepare_solvers_problems_solutions
     _sort_solvers_by_rank
-    respond_to do |format|
-      format.wiki do
-         headers['Content-Disposition'] = "inline; filename=vysl#{@annual}_#{@round}.wiki"
-      end
-      format.pik do
-         headers['Content-Disposition'] = "attachment; filename=vysl#{@annual}_#{@round}.pik"
-         headers['Content-Type'] = "text/plain; charset=UTF-8";
-      end
-    end
+    headers['Content-Disposition'] = "attachment; filename=vysl#{@annual}_#{@round}.pik"
+    headers['Content-Type'] = "text/plain; charset=UTF-8";
+    render layout: nil
+  end
+
+  def vysl_wiki
+    _prepare_solvers_problems_solutions
+    _sort_solvers_by_rank
+    headers['Content-Disposition'] = "inline; filename=vysl#{@annual}_#{@round}.wiki"
+    headers['Content-Type'] = "text/plain; charset=UTF-8";
+    render layout: nil
   end
 
   def edit

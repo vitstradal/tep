@@ -42,11 +42,13 @@ class Ability
     if user.org?
       can :index, Inform
       can :pokusy, :tep
+      can :view_error, :tep
 
       can :index, Sosna::Solution
       can :show, Sosna::Solution
       can :lidi, Sosna::Solution
-      can :vysl, Sosna::Solution
+      can :vysl_pik,  Sosna::Solution
+      #can :vysl_wiki, Sosna::Solution
       can :download, Sosna::Solution
       can :download_org, Sosna::Solution
       can :upload, Sosna::Solution
