@@ -1,6 +1,10 @@
 <h2>Přihlášení</h2>
 
 <%= form_for(resource, as: resource_name, url: session_path(resource_name), html: {:class=>'form-horizontal'}) do |f| %> 
+  <% nxt = params[:next] %>
+  <% if nxt %>
+    <input type="hidden" name="next"  value="<%=nxt%>"/>
+  <%end%>
 
   <div class="form-group">
     <%= f.label :solver_email, "E-mail", :class =>  'col-sm-3 control-label no-padding-right'%>

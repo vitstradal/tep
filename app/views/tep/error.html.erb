@@ -4,6 +4,7 @@
   <title>We're sorry, but something went wrong (500)</title>
   <style type="text/css">
     body { background-color: #fff; color: #666; text-align: center; font-family: arial, sans-serif; }
+    pre { text-align: left; background-color: #eee; }
     div.dialog {
       width: 25em;
       padding: 0 4em;
@@ -20,6 +21,11 @@
     <h1>Omlouváme se, nastala neočekávána chyba.</h1>
     <p>Považuješ-li chybu za závažnou napiš na pikomat@mff.cuni.cz. Uveď, prosím, číslo chyby: <%= @errid %>.
     </p>
+    <% if @error && can?(:view_error, :tep) %>
+      <h1>Popis chyby:</h2>
+      <pre><%= @error %></pre>
+    <% end %>
+    <p>
   </div>
 </body>
 </html>
