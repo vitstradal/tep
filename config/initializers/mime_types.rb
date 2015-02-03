@@ -4,4 +4,4 @@
 # Mime::Type.register "text/richtext", :rtf
 # Mime::Type.register_alias "text/html", :iphone
 Mime::Type.register "text/plain; charset=UTF-8", :pik
-Mime::Type.register "text/plain; charset=UTF-8", :wiki
+#Mime::Type.register "text/plain; charset=UTF-8", :wiki

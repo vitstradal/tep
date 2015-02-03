@@ -31,8 +31,9 @@ Tep::Application.routes.draw do
   #get  '/sosna/solution/:id/down_rev(/:ori)'=> 'sosna/solution#download_rev', :as => :sosna_solution_download_rev
 
   # org:
-  get  '/sosna/solutions/lidi(/:roc(/:se(/:ul)))' => 'sosna/solution#lidi',         :as => :sosna_solutions_lidi
-  get  '/sosna/solutions/vysl(/:roc(/:se(/:ul)))' => 'sosna/solution#vysl',         :as => :sosna_solutions_vysl
+  get  '/sosna/solutions/lidi(/:roc(/:se(/:ul)))' => 'sosna/solution#lidi',           :as => :sosna_solutions_lidi
+  get  '/sosna/solutions/vysl(/:roc(/:se(/:ul)))' => 'sosna/solution#vysl_pik',       :as => :sosna_solutions_vysl_pik
+  get  '/sosna/solutions/vyslwiki(/:roc(/:se(/:ul)))' => 'sosna/solution#vysl_wiki',  :as => :sosna_solutions_vysl_wiki
 
   get  '/sosna/solutions/:roc/:se/edit'      => 'sosna/solution#edit',          :as => :sosna_solutions_edit2
   get  '/sosna/solutions/:roc/:se/:ul/edit'  => 'sosna/solution#edit',          :as => :sosna_solutions_edit

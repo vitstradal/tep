@@ -10,8 +10,8 @@
         <%= button_tag "navratky.zip", :class=> 'btn btn-primary', ico: 'fa-check', href: sosna_solutions_get_confirm_files_url %>
       </div>
       <div class="btn-group">
-        <%= button_tag "vysl.wiki", :class=> 'btn btn-primary', ico: 'fa-filter', href: sosna_solutions_vysl_url(roc:@annual, round:@round, format: :wiki) %>
-        <%= button_tag "vysl.pik(notyet)", :class=> 'btn btn-primary', ico: 'fa-filter', href: sosna_solutions_vysl_url(roc:@annual, round:@round, format: :pik) %>
+        <%= button_tag "vysl.wiki", :class=> 'btn btn-primary', ico: 'fa-filter', href: sosna_solutions_vysl_wiki_url(roc:@annual, round:@round) %>
+        <%= button_tag "vysl.pik(notyet)", :class=> 'btn btn-primary', ico: 'fa-filter', href: sosna_solutions_vysl_pik_url(roc:@annual, round:@round) %>
       </div>
       <div class="btn-group">
         <%= button_tag "Filtruj soustredeni", :class=> 'btn btn-primary', ico: 'fa-filter', href: sosna_solutions_org_url(roc:@annual, round:@round, sous: 1) %>
