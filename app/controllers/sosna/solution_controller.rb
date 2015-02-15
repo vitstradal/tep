@@ -384,7 +384,7 @@ class Sosna::SolutionController < SosnaController
       return redirect_to sosna_solutions_user_url(roc, se, solver.id)
     end
 
-    if solution_file.original_filename !~ /\.pdf$/
+    if solution_file.original_filename !~ /\.pdf$/i
       add_alert 'Pozor: pouze soubory ve formátu .pdf'
       return redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
     end
