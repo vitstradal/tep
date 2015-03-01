@@ -33,8 +33,8 @@ fi
 FDIR="archiv/rocnik$ROC"
 echo "archive dir: '$FDIR'"
 
-perl -pne 's#\\m#\\meter#g' "$TEX" |
-"$HPPDIR/ttm8"  -d "$HPPDIR/texmac.u8.ttm"  |
+perl -pne 's#\\m#\\meter#g' "$TEX" | tee /tmp/meter |
+"$HPPDIR/ttm8"  -d "$HPPDIR/texmac.u8.ttm"  |tee /tmp/meter2 |
 m4 -D "__fdir=$FDIR" -D "__roc=$ROC" -D "__base_jn=$BASE_JN" "$M4_TO_WI_M4" -  | tee /tmp/m4 |
   perl -pne "\$fdir=\"$FDIR/\";"'
    $mezera = 1;
