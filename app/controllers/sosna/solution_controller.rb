@@ -807,7 +807,7 @@ class Sosna::SolutionController < SosnaController
     @results_by_solver = _get_results_by_solver(@solvers, @annual, @round)
     if !params[:sous].nil?
       @want_sous = true
-      @solvers = @solvers.select { |solver| @results_by_solver[solver.id].class_rank < 10 }
+      @solvers = @solvers.select { |solver| (!solver.is_test_solver) && ((@results_by_solver[solver.id].class_rank||100) < 10) }
     end
   end
 
