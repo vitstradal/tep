@@ -45,6 +45,9 @@ class Sosna::SolverController < SosnaController
 
   def labels
     @annual = params[:annual] || @annual
+    ids = (params[:ids]  || '').gsub(/;.*$/,'').split(/[,\n\s]+/).map { |x| x.to_i }
+    log("ids:" +  ids.to_s);
+
     respond_to do |format|
       format.html
       format.pdf do
@@ -57,8 +60,13 @@ class Sosna::SolverController < SosnaController
          @prawnto_options = { :prawn => {:page_size => @opt[:p] || 'C5', :page_layout => :landscape, }} if @envelope;
 
          @dbg = params[:dbg]
-         where = {annual: @annual, is_test_solver: false} 
-         where.merge!({ where_to_send: ['home', 'school'] }) if params[:obalkovani]
+         where = nil
+         if ids.size ==  0
+           where = {annual: @annual, is_test_solver: false}
+           where.merge!({ where_to_send: ['home', 'school'] }) if params[:obalkovani]
+         else
+           where = { id: ids}
+         end
          @solvers = get_sorted_solvers(where)
          @schools = []
          @schools = Sosna::School.where(want_paper: true) if params[:skoly]

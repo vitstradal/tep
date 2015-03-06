@@ -8,7 +8,7 @@
 
   <div class="tab-content">
     <div class="tab-pane in active" id="envelops">
-      <%= form_tag sosna_solver_labels_path(:format => :pdf), :method => :get , :class=> 'form-horizontal' do %>
+      <%= form_tag sosna_solver_labels_post_path(:format => :pdf), :method => :post , :class=> 'form-horizontal' do %>
       
         <%= hidden_field_tag :envelope, 1%>
 
@@ -17,6 +17,7 @@
             <%= text_area_tag 'opt', "pl:20\npt:20\nal:120\nat:80\np:C5", cols: 80, rows: 5 %>
           </div>
         </div>
+
 
         <div class="form-group">
           <div class="col-sm-9">
@@ -29,6 +30,17 @@
                 <code>as</code> velikost fontu (adresat)
                 <code>p</code> paper  C5, C4, ...
             </p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-sm-12">
+            <p><b>Id účastníků</b> jedno číslo na řádek,vše za středníkem bude
+            ignorováno, takže je možné pastnout přímo jen vybrané řádky
+            z <code>lidi.pik</code>, pokud toto pole bude prázdné bere se
+            aktuální ročník (<%= @annual %>):</p>
+
+            <%= text_area_tag 'ids', '', cols: 80, rows: 2 %>
           </div>
         </div>
       
@@ -92,8 +104,19 @@
                 <code>h</code> výška (height);
                 <code>dx</code> mezera vodorovná;
                 <code>dy</code> mezera svislá;
-                <code>s</code> velikost fontu (v pt=1/72in=0.3mm), ostaní jsou v milimetrech.
-            </p>
+                <code>s</code> velikost fontu (v pt=1/72in=0.3mm), ostaní jsou
+                               v milimetrech.</p>
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="col-sm-12">
+            <p><b>Id účastníků</b> jedno číslo na řádek,vše za středníkem bude
+            ignorováno, takže je možné pastnout přímo jen vybrané řádky
+            z <code>lidi.pik</code>, pokud toto pole bude prázdné bere se
+            aktuální ročník (<%= @annual %>):</p>
+
+            <%= text_area_tag 'ids', '', cols: 80, rows: 2 %>
           </div>
         </div>
       
