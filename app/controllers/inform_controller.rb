@@ -17,6 +17,7 @@ class InformController < ApplicationController
       end
     end
     @keys = hkeys.keys.sort
+    @wide_display = true
   end
 
   def tnx
