@@ -155,7 +155,7 @@
         <ul class="submenu">
           <%= menu_lii :new_user_session,        'Přihlásit' %>
           <%= menu_lii :sosna_solver_new,        'Nový řešitel' %>
-          <%= menu_lii wiki_main_path('prihlaska'),  'Přáhláška na tábor'  %>
+          <%= menu_lii wiki_main_path('prihlaska'),  'Přihláška na tábor'  %>
         </ul>
       <% end %>
       <% if user_signed_in?  %>
@@ -163,7 +163,7 @@
           <ul class="submenu">
             <%= menu_lii :sosna_solutions_user,   'Moje řešení' %>
             <%= menu_lii :edit_user_registration, 'Změna hesla' %>
-            <%= menu_lii :faq,                    'Nápověda'   %>
+            <%= menu_lii wiki_main_path('faq'),   'Nápověda'   %>
           </ul>
         <% end %>
       <% else %>

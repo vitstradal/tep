@@ -135,7 +135,7 @@ GEM
     thor (0.19.1)
     thread_safe (0.3.4)
     tilt (1.4.1)
-    trac-wiki (0.3.30)
+    trac-wiki (0.3.31)
     ttfunk (1.1.1)
     tzinfo (1.2.2)
       thread_safe (~> 0.1)
@@ -166,5 +166,5 @@ DEPENDENCIES
   rugged
   sanitize
   sqlite3
-  trac-wiki (~> 0.3.30)
+  trac-wiki (~> 0.3.31)
   unicode_utils

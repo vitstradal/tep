@@ -350,6 +350,10 @@ class Sosna::SolutionController < SosnaController
 
     # find solution
     solution = Sosna::Solution.find(solution_id) or raise RuntimeError, "bad solution id: #{solution_id}"
+    if ! solution
+      add_alert "Chyba: solution #{solution_id} neexistuje"
+      return redirect_to :action =>  :user_index
+    end
 
     is_owner = solution.owner?(current_user)
     authorize! :upload_org, Sosna::Solution if ! is_owner

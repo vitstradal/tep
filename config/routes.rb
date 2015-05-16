@@ -88,7 +88,7 @@ Tep::Application.routes.draw do
   get  '/die'                                => 'tep#die', :as => :tep_die
 
 
-  get  '/faq'                                => "tep#faq",                      :as => :faq
+  get  '/faqold'                             => "tep#faq",                      :as => :faq
   get  '/500'                                => "tep#error",                    :as => :error
 
   Giwi.giwis.each_value do |giwi|

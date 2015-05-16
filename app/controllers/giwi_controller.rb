@@ -294,7 +294,7 @@ class GiwiController < ApplicationController
       cal =  argv['cal'] || 'resitel'
 
       conn = Faraday.new('https://pikomat.mff.cuni.cz')
-      resp = conn.get('/sklep/index.php/apps/ownhacks/calendar-22.php', cal: cal ,start: now.strftime('%s'), end: nm.strftime('%s'))
+      resp = conn.get('/sklep/index.php/apps/ownhacks/public', cal: cal ,start: now.strftime('%s'), end: nm.strftime('%s'))
       json = JSON.load(resp.body)
       #"/sklep/index.php/apps/ownhacks/calendar-10.php?start=#{now.strftime('%s')}&end=#{nm.strftime('%s')}\n" +
       env['nocache'] = '1'
