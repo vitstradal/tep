@@ -600,3 +600,7 @@ html {
   overflow-y: scroll; 
 }
 
+
+.unicode-cross:before {
+ content: "†";
+}

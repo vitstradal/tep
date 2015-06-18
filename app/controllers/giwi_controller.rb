@@ -66,7 +66,7 @@ class GiwiController < ApplicationController
     return _handle_csrf if fmt == 'csrf'
     return _handle_special_edit(@path, fmt) if @edit && %w(svg).include?(fmt)
 
-    return _handle_raw_file("#{@path}.#{fmt}", fmt) if %w(pdf png jpg jpeg gif svg).include? fmt
+    return _handle_raw_file("#{@path}.#{fmt}", fmt) if %w(pdf png jpg jpeg gif svg pik).include? fmt
 
     return redirect_to action: :show, path: @path + 'index',  wiki: @wiki if @path =~ /\/$/
     return redirect_to action: :show, path: 'index',  wiki: @wiki if ! @path
@@ -210,9 +210,11 @@ class GiwiController < ApplicationController
 
   def _handle_special_edit(path, fmt)
     authorize! :update, @giwi.auth_name
+    uri = url_for(wiki: @wiki, path: '/', :only_path => true).gsub(/\/+$/, '')
     if fmt == 'svg'
-       uri = url_for(wiki: @wiki, path: '/', :only_path => true).gsub(/\/+$/, '')
-      redirect_to "/pokusy/svg-edit-2.7.1/svg-editor.html?url=#{uri}/#{path}.#{fmt}"
+      redirect_to "/tools/svg-edit-2.7.1/svg-editor.html?url=#{uri}/#{path}.#{fmt}"
+    elsif fmt == 'sheet'
+      redirect_to "/tools/jQuery.sheet/sheet-editor.html?url=#{uri}/#{path}.#{fmt}"
     end
   end
 

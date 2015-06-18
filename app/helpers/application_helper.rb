@@ -110,13 +110,15 @@ module ApplicationHelper
     end
   end
   def deadline_time(cfg, round, ignore_show = false)
-    pravek = Time.parse('1975-04-15')
+    log("deadline round #{round}, #{cfg}, #{cfg[:deadline1]}")
     if ! ignore_show
       s = cfg["show#{round}".to_sym]
-      return  pravek if ! s || s != 'yes'
+      log("deadline round s:  #{s}")
+      return  nil if ! s || s != 'yes'
     end
     t = cfg["deadline#{round}".to_sym]
-    return pravek if ! t
+    log("deadline round t:  #{t}")
+    return nil if ! t
     return Time.parse(t) + 1.day - 1
   end
 
@@ -196,6 +198,7 @@ module ApplicationHelper
     Sosna::Config.all.load.each {|c| @config[c.key.to_sym] =  c.value}
     @annual = @config[:annual]
     @round = @config[:round]
+    #log( "config: #{@config}" )
   end
 
   def get_sorted_solvers(where = {})

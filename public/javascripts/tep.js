@@ -134,6 +134,17 @@ jQuery(document).ready(function($) {
                 _init_textarea_with_ace($textarea);
       });
 
+      // macro youtube
+      $('.youtube').each(function () {
+                var video = $(this).data('v');
+                console.log('youtube', video);
+                $(this).append($('<iframe width="560" height="315" '+
+                                           'src="https://www.youtube-nocookie.com/embed/'+escape(video)+'?rel=0&amp;controls=0&amp;showinfo=0" '+
+                                           'frameborder="0" allowfullscreen></iframe>'
+                               ));
+        
+      });
+
 });
 
 /* f otogal */

@@ -368,7 +368,8 @@ class Sosna::SolutionController < SosnaController
 
     solver_id_or_nil = is_owner ? nil : solver.id
 
-    if problem.annual.to_s != @config[:annual] || deadline_time(@config, problem.round) < Time.now
+    deadline = deadline_time(@config, problem.round)
+    if problem.annual.to_s != @config[:annual] || !deadline || deadline  < Time.now
       if is_owner
         pp solution.problem.annual != @config[:annual]
         pp @config[:annual]
