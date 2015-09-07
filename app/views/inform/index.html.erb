@@ -1,32 +1,85 @@
+<% style = params[:style] %>
 
 <h1>Inform <%= @form %> </h1>
 
+[<%= link_to 'tab', inform_index_path(@form, style: 'tab')  %>, 
+ <%= link_to 'list',  inform_index_path(@form, style: 'list') %>,
+ <%= link_to 'list2',  inform_index_path(@form, style: 'list2') %>]
+
 <% count = 0 %>
 
-<table class='table'>
-  <tr>
-    <th>#</th>
-    <th>ua</th>
-    <% @keys.each do |k| %>
-      <th><%= k.titleize %></th>
-    <% end%> 
-  </tr>
-  <% @informs.each do  |inform| %>
-    <% jdata = inform.jdata %>
+<% if style.nil? || style == 'tab'  %>
+
+  <table class='table'>
     <tr>
-      <td><%= count += 1 %></td>
-      <td><span title="<%= inform.user_agent %>">*</span></td>
+      <th>#</th>
+      <th>ua</th>
       <% @keys.each do |k| %>
-        <td><%= jdata[k] || 'undef' %></td>
+        <th><%= k.titleize %></th>
       <% end%> 
-      <td>
-        <%= form_tag inform_del_url(inform.id)   do  %>
-          <input type=submit value="del">
-        <% end%>
-      </td>
     </tr>
+    <% @informs.each do  |inform| %>
+      <% jdata = inform.jdata %>
+      <tr>
+        <td title="<%= inform.created_at%>" ><%= count += 1 %></td>
+        <td><span title="<%= inform.user_agent %>">*</span></td>
+        <% @keys.each do |k| %>
+          <td><%= jdata[k] || 'undef' %></td>
+        <% end%> 
+        <%#<td> %>
+          <%#= form_tag inform_del_url(inform.id)   do  %>
+          <%#  <input type=submit value="del"> %>
+          <%# end%>
+        <%#</td> %>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
+
+<% if style == 'list' %>
+  <% name = @keys.grep(/^Jm[ée]no/i).first %>
+  <div>
+    <% @informs.each do  |inform| %>
+      <% jdata = inform.jdata %>
+        <h3><%= count += 1 %>. <%= jdata[name]  %> (<%= inform.created_at%>)
+        <span title="<%= inform.user_agent %>">*</span>
+        </h3>
+        <span>
+          <%= form_tag inform_del_url(inform.id)   do  %>
+            <input type=submit value="del">
+          <% end%>
+        </span>
+      </tr>
+      <% @keys.each do |k| %>
+          <dl>
+            <dt><%= k.titleize %></dt>
+            <dd><%= jdata[k] || 'undef' %></dd>
+          </dl>
+        <% end%> 
+      </tr>
+    <% end %>
+  </div>
+  <hr/>
+<% end %>
+
+<% if style == 'list2' %>
+  <% name = @keys.grep(/^Jm[ée]no/i).first %>
+  <% @keys.each do |k| %>
+    <h3><%= k.titleize %></h3>
+      <% count = 0 %>
+      <table>
+        <% @informs.each do  |inform| %>
+         <% jdata = inform.jdata %>
+         <tr>
+          <td><%= count += 1 %></td>
+          <td><%= jdata[name] || 'undef' %></td>
+          <td><%= jdata[k] || '.' %></td>
+        </tr>
+       <% end %>
+    </table>
   <% end %>
-</table>
+<% end %>
+
 
 <ul>
 <% @forms.each do |form| %>

@@ -9,6 +9,15 @@ class Sosna::SchoolController < SosnaController
 
   def index
     @schools =  Sosna::School.all.load
+    @shorts = {}
+    @schools.each do  |sch|
+      if @shorts[sch.short].nil?
+        @shorts[sch.short] = 1
+      else
+        @shorts[sch.short] += 1
+      end
+       
+    end
     respond_to do |format|
       format.html
       format.pik do
