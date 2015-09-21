@@ -99,14 +99,15 @@ class GiwiController < ApplicationController
 
     page = _cached_or_parse_and_cache
 
-    @html         = page[:html]
-    @toc          = page[:toc]
-    @headings     = page[:headings]
-    @tep_index    = page[:tep_index]
-    @wide_display = page[:wide_display]
-    @foto_gallery = page[:foto_gallery]
-    @redirect_to  = page[:redirect_to]
-    @nocache      = page[:nocache]
+    @html              = page[:html]
+    @toc               = page[:toc]
+    @headings          = page[:headings]
+    @tep_index         = page[:tep_index]
+    @wide_display      = page[:wide_display]
+    @foto_gallery      = page[:foto_gallery]
+    @redirect_to       = page[:redirect_to]
+    @background_image  = page[:background_image]
+    @nocache           = page[:nocache]
 
     return _handle_redirect(@redirect_to) if @redirect_to
 
@@ -490,14 +491,15 @@ class GiwiController < ApplicationController
     toc = parser.make_toc_html  if ! notoc && parser.headings.size > 3 
 
     return {
-      html:         html,
-      toc:          toc,
-      headings:     parser.headings,
-      tep_index:    env.at('tep_index', false),
-      wide_display: env.at('wide_display', false),
-      foto_gallery: env.at('foto_gallery', false),
-      redirect_to:  env.at('redirect_to', false),
-      nocache:      env.at('nocache', false),
+      html:             html,
+      toc:              toc,
+      headings:         parser.headings,
+      tep_index:        env.at('tep_index', false),
+      wide_display:     env.at('wide_display', false),
+      foto_gallery:     env.at('foto_gallery', false),
+      background_image: env.at('background_image', nil),
+      redirect_to:      env.at('redirect_to', false),
+      nocache:          env.at('nocache', false),
     }
   end
 

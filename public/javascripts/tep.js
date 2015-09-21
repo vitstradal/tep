@@ -23,6 +23,10 @@ jQuery(document).ready(function($) {
                                     $(this).closest('form').submit();
                              });
 
+        var bgimg = $('body').data('background-image');
+        if( bgimg ) {
+          $('body').css('background-image', "url(" + bgimg + ")");
+        }
         // data tables
 	jQuery.extend( jQuery.fn.dataTableExt.oSort, {
 	    "locale-pre": function ( a ) {
