@@ -168,7 +168,7 @@ if @envelope
       pdf.text "<b>Pikomat MFF UK</b>", :inline_format => true, :align => :center
       pdf.text "KPMS MFF UK", :align => :center
       pdf.text "Sokolovská 83, 186 75 Praha 8", :align => :center
-      pdf.text "Česká Republika", :aling => :center if ! country_txt.nil?
+      pdf.text "Česká Republika", :align => :center if ! country_txt.nil?
       pdf.stroke_bounds if @dbg
     end
     pdf.start_new_page

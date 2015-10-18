@@ -15,9 +15,10 @@
   <% @schools.each do |sch| %>
     <tr>
       <td><%= link_to sch.id, :action => :show, :id => sch.id %></a></td>
-      <% cls = @shorts[sch.short] > 1 ? 'bg-red' : nil %>
-      <td <%if cls%>class="<%=cls%>"<%end%>><%= sch.short%></td>
-      <td><%= sch.universal_id %> </td>
+      <% cls1 = @shorts[sch.short] > 1 ? 'bg-red' : nil %>
+      <% cls2 = @izos[sch.universal_id] > 1 ? 'bg-red' : nil %>
+      <td <%if cls1%>class="<%=cls1%>"<%end%>><%= sch.short%></td>
+      <td <%if cls2%>class="<%=cls2%>"<%end%>><%= sch.universal_id %> </td>
       <td><%= sch.name %></td>
       <td><%= sch.want_paper ? 'Y' : ' ' %></td>
       <td><%= sch.address %> </td>
