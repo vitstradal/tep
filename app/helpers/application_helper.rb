@@ -10,6 +10,17 @@ module ApplicationHelper
     link_to text, url, opt
   end
 
+  # coutry_code: cz, nebo sk
+  # r: 'Slovensko' if 'sk'
+  # r: nil if 'cz'
+  # r: coutry_code jinak
+  def country_code_to_txt(country_code)
+    return "Slovensko" if country_code  == 'sk'
+    return nil if country_code  == 'cz'
+    return  country_code
+  end
+
+
   # opt:
   #  ico -- icon class (fa-search)
   #
