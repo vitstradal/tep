@@ -16,20 +16,24 @@
                 { :class=> 'btn btn-primary'} %>
 <% end %>
 
-    <table class="table table-bordered">
-      <tr>
-       <th>Id</th>
-       <th title="Uživatel">Už.</th>
-       <th>Jméno</th>
-       <th>Příjmení</th>
-       <th>Škola</th>
-       <th>P</th>
-       <th>Ročník</th>
-       <th>RN</th>
-       <th>Kam</th>
-       <th>Jak</th>
-       <th>Adresa</th>
-     </tr>
+    <table class="table table-bordered datatable">
+      <thead>
+        <tr>
+         <th>Id</th>
+         <th title="Uživatel">Už.</th>
+         <th>Jméno</th>
+         <th>Příjmení</th>
+         <th>Škola</th>
+         <th>P</th>
+         <th>Ročník</th>
+         <th>RN</th>
+         <th>Kam</th>
+         <th>Jak</th>
+         <th>Adresa</th>
+         <th>Zem</th>
+       </tr>
+       </thead>
+     <tbody>
     <% @solvers.each do |s| %>
       <tr <%if s.is_test_solver%> class="warning"<%end%>>
         <td>
@@ -65,7 +69,9 @@
         <td><%= s.where_to_send %> </td>
         <td><%= s.solution_form %> </td>
         <td><%= s.address %> </td>
+        <td><%= s.country %> </td>
       </tr>
     <% end %>
+     </tbody>
     </table>
 
