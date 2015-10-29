@@ -1,24 +1,30 @@
 
 <h1>Seznam škol</h1>
-<table class="table table-bordered">
-  <tr>
-   <th>Id</th>
-   <th>Zkr.</th>
-   <th>Universal ID</th>
-   <th>Jméno</th>
-   <th>Pap</th>
-   <th>Adresa</th>
- </tr>
-<% @schools.each do |sch| %>
-  <tr>
-    <td><%= link_to sch.id, :action => :show, :id => sch.id %></a></td>
-    <td><%= sch.short%></td>
-    <td><%= sch.universal_id %> </td>
-    <td><%= sch.name %></td>
-    <td><%= sch.want_paper ? 'Y' : ' ' %></td>
-    <td><%= sch.address %> </td>
-  </tr>
-<% end %>
+<table class="table table-bordered datatable">
+ <thead>
+   <tr>
+    <th>Id</th>
+    <th>Zkr.</th>
+    <th title="Univerzal Id">UniID</th>
+    <th>Jméno</th>
+    <th title="Papír">P</th>
+    <th>Adresa</th>
+   </tr>
+ </thead>
+ <tbody>
+  <% @schools.each do |sch| %>
+    <tr>
+      <td><%= link_to sch.id, :action => :show, :id => sch.id %></a></td>
+      <% cls1 = @shorts[sch.short] > 1 ? 'bg-red' : nil %>
+      <% cls2 = @izos[sch.universal_id] > 1 ? 'bg-red' : nil %>
+      <td <%if cls1%>class="<%=cls1%>"<%end%>><%= sch.short%></td>
+      <td <%if cls2%>class="<%=cls2%>"<%end%>><%= sch.universal_id %> </td>
+      <td><%= sch.name %></td>
+      <td><%= sch.want_paper ? 'Y' : ' ' %></td>
+      <td><%= sch.address %> </td>
+    </tr>
+  <% end %>
+ <tbody>
 </table>
 
 

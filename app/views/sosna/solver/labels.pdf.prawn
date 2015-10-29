@@ -124,19 +124,18 @@ addrs = []
     school_name = nil
     school = solver.school
     if solver.where_to_send == 'home'
-      street, city, psc = [ "#{solver.street} #{solver.num}", "#{solver.city}", "#{solver.psc} " ]
+      street, city, psc, country = [ "#{solver.street} #{solver.num}", "#{solver.city}", "#{solver.psc} ", "#{solver.country}" ]
     else
-      school_name, street, city, psc = [ "#{school.name}",  "#{school.street} #{school.num}", "#{school.city}", "#{school.psc} " ]
+      school_name, street, city, psc, country = [ "#{school.name}",  "#{school.street} #{school.num}", "#{school.city}", "#{school.psc} ", "#{school.country}" ]
     end
     title = "#{solver.sex == 'female' ? "Řešitelka" : "Řešitel"} Pikomatu MFF UK"
-    addrs.push( {full: solver.full_name, title: title, street: street, school_name: school_name, city:city, psc: psc})
+    addrs.push( {full: solver.full_name, title: title, street: street, school_name: school_name, city:city, psc: psc, country: country})
 end
 @schools.each do |school|
-    school_name, street, city, psc = [ "#{school.name}",  "#{school.street} #{school.num}", "#{school.city}", "#{school.psc} " ]
+    school_name, street, city, psc, country = [ "#{school.name}",  "#{school.street} #{school.num}", "#{school.city}", "#{school.psc} ", "#{school.country}" ]
     title = nil
-    addrs.push({full: nil, title: title, street: street, school_name: school_name, city:city, psc: psc})
+    addrs.push({full: nil, title: title, street: street, school_name: school_name, city:city, psc: psc, country: country})
 end
-
 
 if @envelope
   #####################################################
@@ -144,6 +143,8 @@ if @envelope
   pdf.text "count: #{@solvers.size}" if @dbg
   addrs.each do |addr|
     cross pdf,o, omm if @dbg
+    country_txt = country_code_to_txt(addr[:country])
+
     pdf.font_size = o[:ps]
     psc_y = 0 
     name = nil
@@ -154,6 +155,7 @@ if @envelope
       pdf.text  addr[:street]
       psc_y = pdf.cursor
       pdf.text addr[:city]
+      pdf.text "#{country_txt}" if ! country_txt.nil?
       pdf.stroke_bounds if @dbg
     end
     pdf.bounding_box([o[:al] - 20.mm, psc_y  - o[:h] + ph - o[:at]],:width => 20.mm - 1.mm, :height => o[:ps] ) do
@@ -166,6 +168,7 @@ if @envelope
       pdf.text "<b>Pikomat MFF UK</b>", :inline_format => true, :align => :center
       pdf.text "KPMS MFF UK", :align => :center
       pdf.text "Sokolovská 83, 186 75 Praha 8", :align => :center
+      pdf.text "Česká Republika", :align => :center if ! country_txt.nil?
       pdf.stroke_bounds if @dbg
     end
     pdf.start_new_page
@@ -177,12 +180,14 @@ else
   y = ph - o[:t]
   cross pdf,o, omm if @dbg
   @solvers.each do |solver|
+    country_txt = country_code_to_txt(solver.country)
     pdf.font_size = o[:s]
     pdf.bounding_box([x, y],:width => o[:w], :height => o[:h] ) do
       pdf.text "#{solver.sex == 'female' ? "Řešitelka" : "Řešitel"} Pikomatu MFF UK"
       pdf.text "#{solver.full_name}"
       pdf.text "#{solver.street} #{solver.num}"
       pdf.text "#{solver.psc} #{solver.city}"
+      pdf.text "#{country_txt}" if ! country_txt.nil?
       pdf.stroke_bounds if @dbg
     end
     x += o[:w] + o[:dx]

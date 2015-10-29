@@ -45,6 +45,9 @@ class Sosna::SolverController < SosnaController
 
   def labels
     @annual = params[:annual] || @annual
+    ids = (params[:ids]  || '').gsub(/;.*$/,'').split(/[,\n\s]+/).map { |x| x.to_i }
+    log("ids:" +  ids.to_s);
+
     respond_to do |format|
       format.html
       format.pdf do
@@ -57,8 +60,13 @@ class Sosna::SolverController < SosnaController
          @prawnto_options = { :prawn => {:page_size => @opt[:p] || 'C5', :page_layout => :landscape, }} if @envelope;
 
          @dbg = params[:dbg]
-         where = {annual: @annual, is_test_solver: false} 
-         where.merge!({ where_to_send: ['home', 'school'] }) if params[:obalkovani]
+         where = nil
+         if ids.size ==  0
+           where = {annual: @annual, is_test_solver: false}
+           where.merge!({ where_to_send: ['home', 'school'] }) if params[:obalkovani]
+         else
+           where = { id: ids}
+         end
          @solvers = get_sorted_solvers(where)
          @schools = []
          @schools = Sosna::School.where(want_paper: true) if params[:skoly]
@@ -142,13 +150,15 @@ class Sosna::SolverController < SosnaController
     solver.annual = @annual
 
     user = User.find_by_email solver.email
-    if !user 
-      # create user by email
-      user =  User.new(email: solver.email.downcase, name: solver.name, last_name: solver.last_name, confirmation_sent_at: Time.now,  roles: [:user])
-      user.confirm!
-      user.send_first_login_instructions  if send_first
-      solver.user_id = user.id
-      user.save
+    if !user  
+      if ! solver.email.empty?
+        # create user by email
+        user =  User.new(email: solver.email.downcase, name: solver.name, last_name: solver.last_name, confirmation_sent_at: Time.now,  roles: [:user])
+        user.confirm!
+        user.send_first_login_instructions  if send_first
+        solver.user_id = user.id
+        user.save
+      end
     else 
       solver.user_id = user.id
     end
@@ -184,6 +194,8 @@ class Sosna::SolverController < SosnaController
       school = Sosna::School.new(params[:sosna_school])
       school.save
     end
+
+    sr.delete :user_id
 
     if sr[:id]
       solver = Sosna::Solver.find(sr[:id])

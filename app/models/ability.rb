@@ -10,6 +10,8 @@ class Ability
     # public
 
     can :add, Inform
+    can :tnx, Inform
+
     can :new, Sosna::Solver
     can :create, Sosna::Solver
     can :create_tnx, Sosna::Solver
@@ -39,13 +41,14 @@ class Ability
 
     if user.org?
       can :index, Inform
-      can :tnx, Inform
       can :pokusy, :tep
+      can :view_error, :tep
 
       can :index, Sosna::Solution
       can :show, Sosna::Solution
       can :lidi, Sosna::Solution
-      can :vysl, Sosna::Solution
+      can :vysl_pik,  Sosna::Solution
+      #can :vysl_wiki, Sosna::Solution
       can :download, Sosna::Solution
       can :download_org, Sosna::Solution
       can :upload, Sosna::Solution

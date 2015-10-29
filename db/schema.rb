@@ -11,13 +11,14 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 13) do
+ActiveRecord::Schema.define(version: 15) do
 
   create_table "informs", force: true do |t|
     t.string   "form"
     t.string   "data"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.text     "user_agent", default: "unknown"
   end
 
   add_index "informs", ["form"], name: "index_informs_on_form"
@@ -85,6 +86,7 @@ ActiveRecord::Schema.define(version: 13) do
     t.text    "state"
     t.text    "universal_id"
     t.boolean "want_paper",   default: false, null: false
+    t.text    "country",      default: "cz"
   end
 
   create_table "sosna_solutions", force: true do |t|
@@ -124,6 +126,7 @@ ActiveRecord::Schema.define(version: 13) do
     t.datetime "updated_at"
     t.text     "solution_form",  default: "tep"
     t.boolean  "is_test_solver", default: false,  null: false
+    t.text     "country",        default: "cz"
   end
 
   create_table "users", force: true do |t|

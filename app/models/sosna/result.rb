@@ -12,29 +12,26 @@ class Sosna::Result < ActiveRecord::Base
     return class_rank < class_rank_to
   end
 
-  def rank_disp(last_result = nil)
-     return rank_disp if last_result.nil?
-     return rank if last_result.rank != rank
-     return ''
-  end
+#  def rank_disp(result_last = nil, page_begin = false)
+#     return rank_disp if result_last.nil?
+#     return rank if page_begin || result_last.rank != rank
+#     return ''
+#  end
 
-  def rank_range(result_last = nil)
-    range = rank_multi? ? "#{result.rank}-#{result.rank_to}" : result.rank
+  def rank_range(result_last = nil, page_begin = false)
+    range = rank_multi? ? "#{rank}-#{rank_to}" : rank
     return range if result_last.nil?
-    range_last = last_result.rank_range
-    return range if range != range_last
+    range_last = result_last.rank_range
+    return range if page_begin || range != range_last
     return ''
   end
   
-  def class_rank_range(result_last = nil)
-    class_range = class_rank_multi? ? "#{result.class_rank}-#{result.class_rank_to}" : result.class_rank
+  def class_rank_range(result_last = nil,page_begin = false)
+    class_range = class_rank_multi? ? "#{class_rank}-#{class_rank_to}" : class_rank
     return class_range if result_last.nil?
-    class_range_last = last_result.class_rank_range
-    return class_range if class_range != class_range_last
+    class_range_last = result_last.class_rank_range
+    return class_range if page_begin || class_range != class_range_last
     return ''
   end
 
-  def class_rank_range
-    class_rank_multi? ? "#{result.class_rank}-#{result.class_rank_to}" : result.class_rank
-  end
 end

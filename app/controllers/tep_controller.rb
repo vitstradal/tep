@@ -80,8 +80,12 @@ class TepController < ApplicationController
     user_id = params[:id]
     user = User.find(user_id)
     if user
-      user.update(params[:user])
-      add_success 'Data aktualizovaná'
+      rv = user.update(params[:user]) 
+      if rv
+        add_success 'Data aktualizovaná'
+      else
+        add_alert "Chyba aktualizace: #{pp(user.errors.messages)}"
+      end
     end
     redirect_to action: :user, id: user_id
   end

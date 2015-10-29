@@ -6,6 +6,7 @@ class Sosna::Solution < ActiveRecord::Base
   belongs_to :solver
   belongs_to :problem
   def owner?(user)
+    return false if solver.user.nil?
     return solver.user.id == user.id
   end
 

@@ -22,7 +22,7 @@ class Sosna::SolutionController < SosnaController
   def lidi
     _prepare_solvers_problems_solutions(false)
     # dirty hack
-    _sort_solvers_by_score
+    _sort_solvers_by_grade
     respond_to do |format|
       format.csv do
          headers['Content-Disposition'] = "attachment; filename=lidi-roc#{@annual}-se#{@round}.csv"
@@ -34,18 +34,20 @@ class Sosna::SolutionController < SosnaController
     end
   end
 
-  def vysl
-    load_config
-    @results = Sosna::Result.includes(:solver).where('sosna_solvers.is_test_solver' => false, round: @round, annual: @annual)
-    respond_to do |format|
-      format.wiki do
-         headers['Content-Disposition'] = "inline; filename=vysl#{@annual}_#{@round}.wiki"
-      end
-      format.pik do
-         headers['Content-Disposition'] = "attachment; filename=vysl#{@annual}_#{@round}.pik"
-         headers['Content-Type'] = "text/plain; charset=UTF-8";
-      end
-    end
+  def vysl_pik
+    _prepare_solvers_problems_solutions
+    _sort_solvers_by_rank
+    headers['Content-Disposition'] = "attachment; filename=vysl#{@annual}_#{@round}.pik"
+    headers['Content-Type'] = "text/plain; charset=UTF-8";
+    render layout: nil
+  end
+
+  def vysl_wiki
+    _prepare_solvers_problems_solutions
+    _sort_solvers_by_rank
+    headers['Content-Disposition'] = "inline; filename=vysl#{@annual}_#{@round}.wiki"
+    headers['Content-Type'] = "text/plain; charset=UTF-8";
+    render layout: nil
   end
 
   def edit
@@ -148,7 +150,7 @@ class Sosna::SolutionController < SosnaController
       File.delete _confirm_file_path(solver)
       add_alert 'Návratka byla smazána'
     elsif confirm_file.original_filename !~ /\.pdf$/
-      add_alert 'Pozor: pouze soubory ve formátu PDF'
+      add_alert 'Pozor: pouze soubory ve formátu .pdf'
     else
       File.open(_confirm_file_path(solver), 'wb') {  |f| f.write confirm_file.read }
       add_success 'Návratka nahrána'
@@ -348,6 +350,10 @@ class Sosna::SolutionController < SosnaController
 
     # find solution
     solution = Sosna::Solution.find(solution_id) or raise RuntimeError, "bad solution id: #{solution_id}"
+    if ! solution
+      add_alert "Chyba: solution #{solution_id} neexistuje"
+      return redirect_to :action =>  :user_index
+    end
 
     is_owner = solution.owner?(current_user)
     authorize! :upload_org, Sosna::Solution if ! is_owner
@@ -362,7 +368,8 @@ class Sosna::SolutionController < SosnaController
 
     solver_id_or_nil = is_owner ? nil : solver.id
 
-    if problem.annual.to_s != @config[:annual] || deadline_time(@config, problem.round) < Time.now
+    deadline = deadline_time(@config, problem.round)
+    if problem.annual.to_s != @config[:annual] || !deadline || deadline  < Time.now
       if is_owner
         pp solution.problem.annual != @config[:annual]
         pp @config[:annual]
@@ -382,8 +389,8 @@ class Sosna::SolutionController < SosnaController
       return redirect_to sosna_solutions_user_url(roc, se, solver.id)
     end
 
-    if solution_file.original_filename !~ /\.pdf$/
-      add_alert 'Pozor: pouze soubory ve formátu PDF'
+    if solution_file.original_filename !~ /\.pdf$/i
+      add_alert 'Pozor: pouze soubory ve formátu .pdf'
       return redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
     end
 
@@ -420,7 +427,6 @@ class Sosna::SolutionController < SosnaController
   # a spocita se poradi v rocniku (a pokud ma stejne bodu tak interval poradi)
   def update_results
     roc, se, ul = _params_roc_se_ul
-    add_alert "generovani je zatim trosku alfa, anjoy #{roc} #{se}"
 
     # resitele
     solvers = get_sorted_solvers(annual: roc).to_a
@@ -521,6 +527,7 @@ class Sosna::SolutionController < SosnaController
     results_by_solver.each {|id,res| res.save}
 
     # presmerovat na zobrazeni tabukly
+    add_success "výsledky pro rocnik #{roc} serie #{se} byly přegenrovány"
     redirect_to :action =>  :index , :roc => roc, :se => se
   end
 
@@ -550,10 +557,11 @@ class Sosna::SolutionController < SosnaController
 
   end
 
+  # r: { solver_id => [ result1,  result2, ... ], ... }
   def _get_results_by_solver(solvers, roc, se, want_create = true)
     _results = _get_results(solvers, roc, se)
     results_by_solver = {}
-    _results.each { |p| results_by_solver[p.solver_id] = p }
+    _results.each { |r| results_by_solver[r.solver_id] = r }
     solvers.each do |solver|
       if results_by_solver[solver.id].nil? && want_create
           begin
@@ -662,7 +670,7 @@ class Sosna::SolutionController < SosnaController
   def _upload_rev_one(roc, se, ul,  fname)
 
     if fname !~ /^(?:[ \w]*\/)?reseni-roc(\d+)-se(\d+)-ul(\d+)-rel(\d+)-(ori|rev)-.*.pdf/
-      _add_msg(fname, "jmeno souboru neni ve spravnem formatu '#{fname}'")
+      _add_msg(fname, "jmeno souboru neni ve spravnem formatu, ocekavany format: reseni-rocNN-seN-ulN-relN-(ori|rev)-.*.pdf")
       return nil
     end
     oroc, ose, oul, relid = $1.to_i, $2.to_i, $3.to_i, $4.to_i
@@ -740,16 +748,55 @@ class Sosna::SolutionController < SosnaController
     return roc, se, ul
   end
 
-  def _sort_solvers_by_score
+#  def _sort_solvers_by_score
+#    @solvers.sort! do  |a,b|
+#        if a.grade_num != b.grade_num
+#         a.grade_num <=> b.grade_num
+#        elsif a.last_name != b.last_name
+#          strcollf(a.last_name, b.last_name)
+#        elsif a.name != b.name
+#          strcollf(a.name, b.name)
+#        else
+#          a.id <=> b.id
+#        end
+#    end
+#  end
+
+  def _sort_solvers_by_grade
     @solvers.sort! do  |a,b|
-        if a.grade_num != b.grade_num
-         a.grade_num <=> b.grade_num
+        agr = a.grade_num || '1'
+        bgr = b.grade_num || '1'
+        if agr != bgr
+          agr <=> bgr 
         elsif a.last_name != b.last_name
           strcollf(a.last_name, b.last_name)
         elsif a.name != b.name
           strcollf(a.name, b.name)
         else
           a.id <=> b.id
+        end
+    end
+  end
+
+  def _sort_solvers_by_rank
+    r_by_s = @results_by_solver
+    @solvers.sort! do  |a,b|
+        ares= r_by_s[a.id]
+        bres= r_by_s[b.id]
+        if ares.rank != bres.rank
+          ares.rank <=> bres.rank
+        else
+          agr = a.grade_num || '1'
+          bgr = b.grade_num || '1'
+          if agr != bgr
+            agr <=> bgr
+          elsif a.last_name != b.last_name
+            strcollf(a.last_name||'', b.last_name||'')
+          elsif a.name != b.name
+            strcollf(a.name||'', b.name||'')
+          else
+            a.id <=> b.id
+          end
         end
     end
   end
@@ -765,7 +812,7 @@ class Sosna::SolutionController < SosnaController
     @results_by_solver = _get_results_by_solver(@solvers, @annual, @round)
     if !params[:sous].nil?
       @want_sous = true
-      @solvers = @solvers.select { |solver| @results_by_solver[solver.id].class_rank < 10 }
+      @solvers = @solvers.select { |solver| (!solver.is_test_solver) && ((@results_by_solver[solver.id].class_rank||100) < 10) }
     end
   end
 
@@ -777,7 +824,7 @@ class Sosna::SolutionController < SosnaController
     if ul
       return Sosna::Problem.where(:annual => roc, :round => se, :problem_no => ul)
     else
-      return Sosna::Problem.where(:annual => roc, :round => se)
+      return Sosna::Problem.where(:annual => roc, :round => se).order(:problem_no)
     end
   end
 

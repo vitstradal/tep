@@ -17,6 +17,7 @@ class InformController < ApplicationController
       end
     end
     @keys = hkeys.keys.sort
+    @wide_display = true
   end
 
   def tnx
@@ -37,7 +38,8 @@ class InformController < ApplicationController
     flash[:tnx2] = data.delete('tnx2')
 
     datastr = JSON.dump(data);
-    Inform.create(form:  form, data: datastr);
+
+    Inform.create(form:  form, data: datastr, user_agent: request.env['HTTP_USER_AGENT'] || 'unknown');
 
     redirect_to :inform_tnx
   end

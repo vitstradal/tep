@@ -31,8 +31,9 @@ Tep::Application.routes.draw do
   #get  '/sosna/solution/:id/down_rev(/:ori)'=> 'sosna/solution#download_rev', :as => :sosna_solution_download_rev
 
   # org:
-  get  '/sosna/solutions/lidi(/:roc(/:se(/:ul)))' => 'sosna/solution#lidi',         :as => :sosna_solutions_lidi
-  get  '/sosna/solutions/vysl(/:roc(/:se(/:ul)))' => 'sosna/solution#vysl',         :as => :sosna_solutions_vysl
+  get  '/sosna/solutions/lidi(/:roc(/:se(/:ul)))' => 'sosna/solution#lidi',           :as => :sosna_solutions_lidi
+  get  '/sosna/solutions/vysl(/:roc(/:se(/:ul)))' => 'sosna/solution#vysl_pik',       :as => :sosna_solutions_vysl_pik
+  get  '/sosna/solutions/vyslwiki(/:roc(/:se(/:ul)))' => 'sosna/solution#vysl_wiki',  :as => :sosna_solutions_vysl_wiki
 
   get  '/sosna/solutions/:roc/:se/edit'      => 'sosna/solution#edit',          :as => :sosna_solutions_edit2
   get  '/sosna/solutions/:roc/:se/:ul/edit'  => 'sosna/solution#edit',          :as => :sosna_solutions_edit
@@ -53,6 +54,7 @@ Tep::Application.routes.draw do
   post '/sosna/problem/new_round'            => 'sosna/problem#new_round',      :as => :sosna_problem_new_round
   post '/sosna/problem/:id/delete'           => 'sosna/problem#delete',         :as => :sosna_problem_delete
 
+  post  '/sosna/solvers/labels'                => 'sosna/solver#labels',         :as => :sosna_solver_labels_post
   get  '/sosna/solvers/labels'                => 'sosna/solver#labels',         :as => :sosna_solver_labels
   post  '/sosna/solver/:id/dup(/:annual)'       => 'sosna/solver#dup', :as => :sosna_solver_dup
   get  '/sosna/solvers/tep_emails(/:annual)'  => 'sosna/solver#tep_emails',         :as => :sosna_solver_tep_emails
@@ -86,7 +88,7 @@ Tep::Application.routes.draw do
   get  '/die'                                => 'tep#die', :as => :tep_die
 
 
-  get  '/faq'                                => "tep#faq",                      :as => :faq
+  get  '/faqold'                             => "tep#faq",                      :as => :faq
   get  '/500'                                => "tep#error",                    :as => :error
 
   Giwi.giwis.each_value do |giwi|
