@@ -123,14 +123,14 @@ Pokud škola v seznamu není, vyberte položku 'Jiná škola', a vyplňte název
 <hr>
 
   <div class="form-group">
-    <%= f.label :solver_where_to_send, "Koresponenci zasílejte", :class =>  'col-sm-3 control-label no-padding-right'%>
+    <%= f.label :solver_where_to_send, "Způsob zasílání letáku (zadání)", :class =>  'col-sm-3 control-label no-padding-right'%>
     <div class="col-sm-9 <%= form_error_class @solver, :where_to_send %>">
 
        <%= select_tag "sosna_solver[where_to_send]",
                options_for_select([['domů', 'home'],
                                    ['do školy', 'school'],
                                    ['na e-mail', 'email'],
-                                   ['nezasílat', 'nowhere'],
+                                   #['nezasílat', 'nowhere'],
                                    ],
                                    @solver.where_to_send)
          %>
@@ -143,7 +143,7 @@ Pokud škola v seznamu není, vyberte položku 'Jiná škola', a vyplňte název
        <%= select_tag "sosna_solver[solution_form]",
                options_for_select([['elektronicky (Tep)', 'tep'],
                                    ['poštou, papírově',   'paper'],
-                                   ['zatím nevím',        'unknown'],
+                                   #['zatím nevím',        'unknown'],
                                    ],
                                    @solver.solution_form)
          %>
