@@ -7,10 +7,12 @@ Tep::Application.routes.draw do
   get  '/csrf.json'                   => 'tep#csrf',             :as => :tep_csrf
   # přidání akcí je třeba přidat i práva v app/models/ability.rb
   # anon:
-  get  '/sosna/solver/new'                   => 'sosna/solver#new',             :as => :sosna_solver_new
-  post '/sosna/solver/create'                => 'sosna/solver#create',          :as => :sosna_solver_anon_create
-  get  '/sosna/solver/tnx'                   => 'sosna/solver#create_tnx',      :as => :sosna_solver_create_tnx
-  get  '/sosna/aesop/index'                  => 'sosna/aesop#index',            :as => :sosna_aesop_index
+  get  '/sosna/solver/new'                   => 'sosna/solver#new',                     :as => :sosna_solver_new
+  get  '/sosna/solver/confirm'               => 'sosna/solver#user_solver_confirm',     :as => :sosna_solver_user_solver_confirm
+  post '/sosna/solver/create'                => 'sosna/solver#create',                  :as => :sosna_solver_anon_create
+  get  '/sosna/solver/tnx'                   => 'sosna/solver#create_tnx',              :as => :sosna_solver_create_tnx
+  get  '/sosna/aesop/index'                  => 'sosna/aesop#index',                    :as => :sosna_aesop_index
+  post '/sosna/solver/confirm_none_to_next'  => 'sosna/solver#confirm_none_to_next',    :as => :sosna_solver_confirm_none_to_next
 
   get   '/inform/index/(:form)'                 => 'inform#index',            :as => :inform_index
   post  '/inform/add'                        => 'inform#add',              :as => :inform_add

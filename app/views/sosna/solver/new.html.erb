@@ -2,7 +2,7 @@
 <h1>Přihláška do <%= @config[:annual] %>. ročníku Pikomatu</h1>
 
 <% is_new  = true %>
-<%= render :partial => 'form', :locals => { :is_edit => false } %>
+<%= render :partial => 'form', :locals => { :is_edit => false, :is_confirm => false } %>
 
 <hr>
 <a name="souhlas"></a>

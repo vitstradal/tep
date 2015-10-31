@@ -1,8 +1,21 @@
 
 <%= form_for @solver, :url => { :action => (is_edit ? :update : :create) },  :method => (is_edit ? :patch : :post), :html => {:class=>'form-horizontal'} do |f| %>
 <div class="<%= form_error_class @solver, :name, :last_name%>">
+  <% if is_confirm %>
+    <div class="form-group">
+      <div class="col-sm-offset-3 col-sm-9">
+        <%= f.submit :class=>'btn btn-primary', :value=>'Potvrzuji uvedené údaje' %>
+        <%= link_to 'Odložit potvrezní návratky na později', :sosna_solutions_user%>
+      </div>
+    </div>
+  <% end %>
+
   <% if is_edit %>
           <%= f.hidden_field :id %>
+  <% end %>
+  <% if is_confirm %>
+          <%= hidden_field_tag 'sosna_solver[confirm_state]', 'conf' %>
+          <%= hidden_field_tag 'is_confirm', '1' %>
   <% end %>
 
 
@@ -198,15 +211,34 @@ Pokud škola v seznamu není, vyberte položku 'Jiná škola', a vyplňte název
      </label>
     </div>
   </div>
+  <% if ! is_confirm %>
+    <div class="form-group">
+      <%= f.label :solver_confirm_state, "Stav confirmace", :class =>  'col-sm-3 control-label no-padding-right'%>
+      <div class="col-sm-9 <%= form_error_class @solver, :confirm_state %>">
+         <%= select_tag "sosna_solver[confirm_state]",
+                 options_for_select([['none -- confirmováno není a nechce se',                    'none'],
+                                     ['conf -- confirmovano',                                     'conf'],
+                                     ['next -- bude vyžadována confirmace při přihlášení',        'next'],
+                                     ],
+                                     @solver.confirm_state)
+           %>
+      </div>
+    <% end # ! is_confirm %>
+  </div>
 <% end %>
 
 
   <div class="form-group">
     <div class="col-sm-offset-3 col-sm-9">
-      <% if is_edit %>
-        <%= f.submit :class=>'btn btn-primary', :value=>'Uložit' %>
+      <% if is_confirm %>
+          <%= f.submit :class=>'btn btn-primary', :value=>'Potvrzuji uvedené údaje' %>
+          <%= link_to 'Odložit potvrezní návratky na později', :sosna_solutions_user%>
       <% else %>
-        <%= f.submit :class=>'btn btn-primary', :value=>'Přihlásit se do Pikomatu' %>
+        <% if is_edit %>
+          <%= f.submit :class=>'btn btn-primary', :value=>'Uložit' %>
+        <% else %>
+          <%= f.submit :class=>'btn btn-primary', :value=>'Přihlásit se do Pikomatu' %>
+        <% end %>
       <% end %>
     </div>
   </div>

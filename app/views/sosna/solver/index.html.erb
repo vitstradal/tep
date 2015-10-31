@@ -14,6 +14,11 @@
     <%= link_to 'Tep emails',
                 { action: :tep_emails },
                 { :class=> 'btn btn-primary'} %>
+    <div class="btn-group">
+        <%= form_tag({:controller => :solver, :action => :confirm_none_to_next}, :class => 'btn-group form-inline') do %>
+                <button type="submit" class="btn btn-primary"> <i class="fa fa-flash"></i>Návratky 'none' -> 'next'</button>
+       <% end %>
+    </div>
 <% end %>
 
     <table class="table table-bordered datatable">
@@ -30,7 +35,8 @@
          <th>Kam</th>
          <th>Jak</th>
          <th>Adresa</th>
-         <th>Zem</th>
+         <th title="Zeme">Z</th>
+         <th title="Navrátka (none,conf,need)">N</th>
        </tr>
        </thead>
      <tbody>
@@ -62,7 +68,6 @@
              -
           <% end %>
         </td>
-    
         <td><%= s.sex %></td>
         <td><%= s.grade %> </td>
         <td><%= s.grade_num %> </td>
@@ -70,6 +75,7 @@
         <td><%= s.solution_form %> </td>
         <td><%= s.address %> </td>
         <td><%= s.country %> </td>
+        <td><%= s.confirm_state %> </td>
       </tr>
     <% end %>
      </tbody>

@@ -37,6 +37,8 @@ class Ability
       can :get_confirm_file, Sosna::Solution
       can :download, Sosna::Solution
       can :download_rev, Sosna::Solution
+
+      can :user_solver_confirm, Sosna::Solver
     end
 
     if user.org?
@@ -96,6 +98,8 @@ class Ability
     end
 
     if user.admin?
+
+      can :confirm_none_to_next, Sosna::Solver
 
       can :delete, Sosna::Solver
       can :delete, Sosna::School

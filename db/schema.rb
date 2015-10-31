@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 15) do
+ActiveRecord::Schema.define(version: 16) do
 
   create_table "informs", force: true do |t|
     t.string   "form"
@@ -127,6 +127,7 @@ ActiveRecord::Schema.define(version: 15) do
     t.text     "solution_form",  default: "tep"
     t.boolean  "is_test_solver", default: false,  null: false
     t.text     "country",        default: "cz"
+    t.text     "confirm_state",  default: "none"
   end
 
   create_table "users", force: true do |t|

@@ -1,4 +1,10 @@
 
+<% if @alert_link %>
+  <div class="alert alert-danger"> <%= @alert_link[:text] %>
+   <%= link_to @alert_link[:url_text],  @alert_link[:url] %>.
+  </div>
+<% end %>
+
 
 <h1>Úlohy <%= @annual %>. ročníku, série <%= @round %>
 <% if ! @solver_is_current_user %>,

@@ -342,6 +342,12 @@ class Sosna::SolutionController < SosnaController
 
     @problems  = Sosna::Problem.where(:annual=> @annual, :round=> @round)
     @solutions_by_solver = _solutions_by_solver [@solver], @problems
+
+    if @solver.confirm_state == 'next'
+      add_alert "Pozor: musíš nejprve potvrdit návratku."
+      return redirect_to :sosna_solver_user_solver_confirm
+      #@alert_link = {:text => "Prosím potvrď", :url => url_for(:sosna_solver_user_solver_confirm),  :url_text => "návratku"}
+    end
   end
 
   def upload
@@ -767,7 +773,7 @@ class Sosna::SolutionController < SosnaController
         agr = a.grade_num || '1'
         bgr = b.grade_num || '1'
         if agr != bgr
-          agr <=> bgr 
+          agr <=> bgr
         elsif a.last_name != b.last_name
           strcollf(a.last_name, b.last_name)
         elsif a.name != b.name

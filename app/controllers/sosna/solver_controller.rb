@@ -75,6 +75,16 @@ class Sosna::SolverController < SosnaController
     end
   end
 
+  def confirm_none_to_next
+    solvers = Sosna::Solver.where(:annual =>  @annual, :confirm_state => 'none').all
+    solvers.each do |solver|
+      solver.confirm_state = 'next'
+      solver.save
+    end
+    add_success "Celkem #{solvers.size} uživatelů bylo převedeno do návratkového (confirmed_state ='next')"
+    redirect_to :sosna_solvers
+  end
+
   def delete
      id = params[:id]
      u = Sosna::Solver.find(id)
@@ -87,6 +97,9 @@ class Sosna::SolverController < SosnaController
      redirect_to action: :index
   end
 
+  def _load_schools
+    @schools = Sosna::School.all.load
+  end
   def new
     load_config
     @school ||= flash[:school] || Sosna::School.new
@@ -94,8 +107,8 @@ class Sosna::SolverController < SosnaController
     if ! @solver 
       @solver= _prepare_new_solver
     end
-    @schools = Sosna::School.all.load
     @agree = flash[:agree] || false
+    _load_schools
   end
   #def new_tnx end
 
@@ -172,6 +185,21 @@ class Sosna::SolverController < SosnaController
   def create_tnx
   end
 
+  def user_solver_confirm
+    @solver = Sosna::Solver.where(:user_id => current_user.id, :annual => @config[:annual]).take
+    @solver_is_current_user = true
+    if ! @solver
+      add_alert "Pozor: zatím nejsi letošním řešitelem, nejprve vyplň přihlašku!"
+      return redirect_to :controller => :solver , :action => :new
+    end
+    if @solver.confirm_state != 'next'
+      add_alert "Uživatel již návratku potvrdil"
+      redirect_to :sosna_solutions_user
+    end
+    @school = @solver.school
+    _load_schools
+  end
+
   def show
     id = params[:id]
     @solver = id ? Sosna::Solver.find(id) : Sosna::Solver.new
@@ -179,7 +207,8 @@ class Sosna::SolverController < SosnaController
     if id
      @solutions = Sosna::Solution.where(:solver_id => id).all
     end
-    new
+    load_config
+    _load_schools
   end
 
   def update
@@ -203,6 +232,9 @@ class Sosna::SolverController < SosnaController
       solver.update_attributes(sr)
     else
       solver = Sosna::Solver.create(sr)
+    end
+    if params[:is_confirm]
+       return redirect_to :sosna_solutions_user
     end
     redirect_to :action =>  :show , :id => solver.id
   end
