@@ -63,15 +63,17 @@
       <%= form_error @solver, :psc, :city %>
     </div>
   </div>
-  <% if !current_user.nil? && current_user.admin?  %>
-    <div class="form-group">
-      <%= f.label :solver_country, "Země (cz,sk)", :class =>  'col-sm-3 control-label no-padding-right'%>
-      <div class="col-sm-9 <%= form_error_class @solver, :country %>">
-        <%= f.text_field :country, :class=>'input-mini'%>
+  <div class="form-group">
+    <%= f.label :solver_country, "Země", :class =>  'col-sm-3 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @solver, :country %>">
+       <%= f.select :country,
+               options_for_select( [['Česká republika', 'cz'], ['Slovensko', 'sk']],
+                                   @solver.nil? ? 'cz' : @solver.country
+                                 )
+         %>
         <%= form_error @solver, :country %>
-      </div>
     </div>
- <% end %>
+  </div>
 
 <noscript>
 <div class='alert'>
