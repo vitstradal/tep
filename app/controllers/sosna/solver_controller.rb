@@ -216,15 +216,34 @@ class Sosna::SolverController < SosnaController
     _load_schools
   end
 
+  def update_confirm
+    log "update_confirm"
+    @solver = Sosna::Solver.where(:user_id => current_user.id, :annual => @config[:annual]).take
+    sol_id = params[:sosna_solver][:id].to_i
+    log "sid:#{sol_id} sid2:#{@solver.id} #{sol_id == @solver.id} #{!@solver.nil? && sol_id == @solver.id}"
+    if !@solver.nil? && sol_id == @solver.id
+      log "->update"
+      update
+    else
+      add_alert "Wrong solver"
+      log "wrong solver"
+      redirect_to :sosna_solutions_user
+    end
+  end
+
   def update
+    Rails.logger.fatal("A0")
     params.require(:sosna_solver).permit!
     sr = params[:sosna_solver]
-    school_id =  params[:school].delete :id
+    school_id = params[:school].delete :id
+
+    Rails.logger.fatal("A1")
 
     begin
       school = Sosna::School.find(school_id) 
     rescue
       begin
+        Rails.logger.fatal("A2")
         params.require(:sosna_school).permit!
         school = Sosna::School.new(params[:sosna_school])
         school.save
@@ -232,6 +251,8 @@ class Sosna::SolverController < SosnaController
         school = nil
       end
     end
+
+    Rails.logger.fatal("A3")
 
     sr.delete :user_id
 
@@ -242,9 +263,17 @@ class Sosna::SolverController < SosnaController
     else
       solver = Sosna::Solver.create(sr)
     end
-    if params[:is_confirm]
+    Rails.logger.fatal("A4")
+    Rails.logger.fatal("A4.1")
+
+    if !params[:is_confirm].nil?
+       log "A4.5"
+       solver.confirm_state = 'conf'
+       solver.save
+       add_success "Návratka potvrzena."
        return redirect_to :sosna_solutions_user
     end
+    Rails.logger.fatal("A5")
 
     if _edit_want_send_first()
       user = User.find_by_email solver.email

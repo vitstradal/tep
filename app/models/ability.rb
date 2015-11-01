@@ -39,6 +39,7 @@ class Ability
       can :download_rev, Sosna::Solution
 
       can :user_solver_confirm, Sosna::Solver
+      can :update_confirm, Sosna::Solver
     end
 
     if user.org?
