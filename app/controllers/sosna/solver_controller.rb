@@ -112,14 +112,19 @@ class Sosna::SolverController < SosnaController
   end
   #def new_tnx end
 
+  def _edit_want_send_first
+    return false if !current_user.nil? && current_user.admin? && params[:send_first].nil?
+    return true
+  end
+
   def create
     load_config
     params.require(:sosna_solver).permit!
     is_admin =  !current_user.nil? && current_user.admin?
 
     school_id =  params[:school].delete :id
-    send_first =  true
-    send_first =  false if !current_user.nil? && current_user.admin? && params[:send_first].nil?
+
+    send_first =  _edit_want_send_first()
 
     solver = Sosna::Solver.new(params[:sosna_solver])
 
@@ -219,9 +224,13 @@ class Sosna::SolverController < SosnaController
     begin
       school = Sosna::School.find(school_id) 
     rescue
-      params.require(:sosna_school).permit!
-      school = Sosna::School.new(params[:sosna_school])
-      school.save
+      begin
+        params.require(:sosna_school).permit!
+        school = Sosna::School.new(params[:sosna_school])
+        school.save
+      rescue
+        school = nil
+      end
     end
 
     sr.delete :user_id
@@ -235,6 +244,14 @@ class Sosna::SolverController < SosnaController
     end
     if params[:is_confirm]
        return redirect_to :sosna_solutions_user
+    end
+
+    if _edit_want_send_first()
+      user = User.find_by_email solver.email
+      if !user.nil?
+        user.send_first_login_instructions 
+        add_success "Zaslán uvítací email"
+      end
     end
     redirect_to :action =>  :show , :id => solver.id
   end

@@ -77,10 +77,10 @@ Pokud škola v seznamu není, vyberte položku 'Jiná škola', a vyplňte název
                        [['Vyber školu', :none]] +
                        @schools.sort_by {|s| s.city }.map{ |s| ["#{s.long}, #{s.short}", s.id] } <<
                        ['Jiná škola', :jina],
-                       @school.id.nil? ? :none 
-                                      : @school.id < 0  ? :jina
-                                                        : @school.id
-                                                      
+                       (@school.nil? || @school.id.nil?) ? :none 
+                                       : @school.id < 0  ? :jina
+                                                         : @school.id
+                                                     
                        )
          %>
         <%= form_error @solver, :skola %>
@@ -89,35 +89,35 @@ Pokud škola v seznamu není, vyberte položku 'Jiná škola', a vyplňte název
 
 
  <div id='school_div' >
-<%= fields_for @school do |sf| %>
-  <div class="form-group">
-    <%= f.label :school_name, "Jméno školy", :class =>  'col-sm-3 control-label no-padding-right'%>
-    <div class="col-sm-9 <%= form_error_class @school, :name %>">
-      <%= sf.text_field :name %>
-      <%= form_error @school, :name %>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :solver_nazev, "Ulice a č.p.", :class =>  'col-sm-3 control-label no-padding-right'%>
-    <div class="col-sm-9 <%= form_error_class @school, :street, :num %>">
-          <%= sf.text_field :street  %>
-          <%= sf.text_field :num, :class=>'input-mini'%>
-          <%= form_error @school, :street, :num %>
-    </div>
-  </div>
-
-  <div class="form-group">
-    <%= f.label :solver_nazev, "PSČ a Město", :class =>  'col-sm-3 control-label no-padding-right'%>
-    <div class="col-sm-9 <%= form_error_class @school, :psc, :city %>">
-          <%= sf.text_field :psc, :class=>'input-mini'%>
-          <%= sf.text_field :city %>
-          <%= form_error @school, :psc, :city %>
-    </div>
-  </div>
-
-<% end %>
-
+ <% if ! @school.nil? %>
+   <%= fields_for @school do |sf| %>
+     <div class="form-group">
+       <%= f.label :school_name, "Jméno školy", :class =>  'col-sm-3 control-label no-padding-right'%>
+       <div class="col-sm-9 <%= form_error_class @school, :name %>">
+         <%= sf.text_field :name %>
+         <%= form_error @school, :name %>
+       </div>
+     </div>
+   
+     <div class="form-group">
+       <%= f.label :solver_nazev, "Ulice a č.p.", :class =>  'col-sm-3 control-label no-padding-right'%>
+       <div class="col-sm-9 <%= form_error_class @school, :street, :num %>">
+             <%= sf.text_field :street  %>
+             <%= sf.text_field :num, :class=>'input-mini'%>
+             <%= form_error @school, :street, :num %>
+       </div>
+     </div>
+   
+     <div class="form-group">
+       <%= f.label :solver_nazev, "PSČ a Město", :class =>  'col-sm-3 control-label no-padding-right'%>
+       <div class="col-sm-9 <%= form_error_class @school, :psc, :city %>">
+             <%= sf.text_field :psc, :class=>'input-mini'%>
+             <%= sf.text_field :city %>
+             <%= form_error @school, :psc, :city %>
+       </div>
+     </div>
+    <% end %>
+  <% end %>
 </div>
 
 <hr>
