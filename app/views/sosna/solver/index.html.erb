@@ -75,9 +75,24 @@
         <td><%= s.solution_form %> </td>
         <td><%= s.address %> </td>
         <td><%= s.country %> </td>
-        <td><%= s.confirm_state %> </td>
+        <% conf_class = case s.confirm_state
+                        when 'conf'; 'bg-green'
+                        when 'next'; 'bg-yellow'
+                        else 'bg-red'
+                        end
+                        %>
+        <td class="<%=conf_class%>"><%= s.confirm_state %> </td>
       </tr>
     <% end %>
      </tbody>
     </table>
+
+  <div>
+    <i>Legenda</i>:
+    <b>Id</b> <i title="TESTOVACÍ ŘEŠITEL" class="fa fa-crosshairs"></i> testovací uživatel; 
+    <b>Návratky</b>
+    <span class='bg-green box'>conf</span> -- návratka potvrezna (confirmed);
+    <span class='bg-yellow box'>next</span> -- při následujícím přístupu k 'Moje řešení' bude vyžadováno odsouhlasení návratky;
+    <span class='bg-red box'>none</span> -- návratka nepotvrzena.
+  </div>
 
