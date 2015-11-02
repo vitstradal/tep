@@ -128,14 +128,18 @@
    </thead>
    <tbody>
   <% @solvers.each do |solver| %>
-    <tr <%if solver.is_test_solver%> class="warning"<%end%>>
-      <td>
+    <% sol_arr = @solutions_by_solver[solver.id]  %>
+    <% solver_has_papper_sol =  sol_arr.any? { |s| !s.nil? && s.has_paper_mail }  %>
+    <% tep_vs_paper_confict = solver_has_papper_sol && solver.solution_form == 'tep' %>
+    <tr <%if solver.is_test_solver%>class="warning"<%end%>>
+      <td <%if tep_vs_paper_confict%>class="bg-red"<%end%>>
          <%= solver.id  %>
-         <%if solver.is_test_solver %> <i title="TESTOVACÍ ŘEŠITEL" class="fa fa-crosshairs"></i> <% end %></td>
+         <%if solver.is_test_solver %> <i title="TESTOVACÍ ŘEŠITEL" class="fa fa-crosshairs"></i> <% end %>
+         <%if  tep_vs_paper_confict%> <i title="tep vs. paper conflict" class="fa bg-red fa-envelope-o"></i> <% end %>
+      </td>
       <td><%= link_to solver.full_name, { controller: :solver, action: :show, id: solver.id }  %></td>
       <td><%= solver.school.nil? ? '-' : solver.school.short %></td>
       <% @problems.each do |pr| %>
-         <% sol_arr = @solutions_by_solver[solver.id]  %>
          <% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  %>
          <% ready = (!sol.filename.nil? && !sol.filename_corr.nil? || sol.has_paper_mail ) && !sol.score.nil? %>
          <% weird = (sol.filename.nil? && !sol.has_paper_mail ) && !sol.score.nil? %>
@@ -158,7 +162,6 @@
       <% end %>
       <%  @problems.each do |pr| %>
          <td>
-           <% sol_arr = @solutions_by_solver[solver.id]  %>
            <% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  %>
            <% if !sol.nil? %>
              <% if @want_edit %>
@@ -213,7 +216,8 @@
     <b>o</b> opravené řešení;
     <span class='bg-green box'>&nbsp;</span> -- došlé řešení je obodované a pokud je elektronické, tak i nahrána oprava;
     <span class='bg-red box'>&nbsp;</span> -- obodováná nedošlá úloha, nebo neobodována došlá úloha, nebo chybí el. oprava.
-    <i title="Testovací řešitel" class="fa fa-crosshairs"></i> -- Testovací řešitel, nebude ve výsledkovách (snad)</td>
+    <i title="Testovací řešitel" class="fa fa-crosshairs"></i> -- Testovací řešitel, nebude ve výsledkovách (snad);
+    <i title="tep vs. paper conflict" class="bg-red fa fa-envelope-o"></i> -- Uživatel chtěl odevzdávat tepem, ale v této sérii zaslal poštou;
   </div>
 
 
