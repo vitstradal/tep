@@ -40,7 +40,7 @@
             z <code>lidi.pik</code>, pokud toto pole bude prázdné bere se
             aktuální ročník (<%= @annual %>):</p>
 
-            <%= text_area_tag 'ids', '', cols: 80, rows: 2 %>
+            <%= text_area_tag 'ids', @ids.join(','), cols: 80, rows: 2 %>
           </div>
         </div>
       
@@ -116,7 +116,7 @@
             z <code>lidi.pik</code>, pokud toto pole bude prázdné bere se
             aktuální ročník (<%= @annual %>):</p>
 
-            <%= text_area_tag 'ids', '', cols: 80, rows: 2 %>
+            <%= text_area_tag 'ids', @ids.join(','), cols: 80, rows: 2 %>
           </div>
         </div>
       

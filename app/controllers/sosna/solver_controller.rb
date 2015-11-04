@@ -45,8 +45,8 @@ class Sosna::SolverController < SosnaController
 
   def labels
     @annual = params[:annual] || @annual
-    ids = (params[:ids]  || '').gsub(/;.*$/,'').split(/[,\n\s]+/).map { |x| x.to_i }
-    log("ids:" +  ids.to_s);
+    @ids = (params[:ids]  || '').gsub(/;.*$/,'').split(/[,\n\s]+/).map { |x| x.to_i }
+    log("ids:" +  @ids.to_s);
 
     respond_to do |format|
       format.html
@@ -61,11 +61,11 @@ class Sosna::SolverController < SosnaController
 
          @dbg = params[:dbg]
          where = nil
-         if ids.size ==  0
+         if @ids.size ==  0
            where = {annual: @annual, is_test_solver: false}
            where.merge!({ where_to_send: ['home', 'school'] }) if params[:obalkovani]
          else
-           where = { id: ids}
+           where = { id: @ids}
          end
          @solvers = get_sorted_solvers(where)
          @schools = []

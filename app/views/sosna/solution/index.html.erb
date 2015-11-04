@@ -135,7 +135,11 @@
       <td <%if tep_vs_paper_confict%>class="bg-red"<%end%>>
          <%= solver.id  %>
          <%if solver.is_test_solver %> <i title="TESTOVACÍ ŘEŠITEL" class="fa fa-crosshairs"></i> <% end %>
-         <%if  tep_vs_paper_confict%> <i title="tep vs. paper conflict" class="fa bg-red fa-envelope-o"></i> <% end %>
+         <%if  tep_vs_paper_confict%>
+            <%=link_to sosna_solver_labels_url(:ids=>solver.id) do %>
+               <i title="tep vs. paper conflict" class="fa bg-red fa-envelope-o"></i>
+            <% end # link %>
+         <% end # if tep vs papper %>
       </td>
       <td><%= link_to solver.full_name, { controller: :solver, action: :show, id: solver.id }  %></td>
       <td><%= solver.school.nil? ? '-' : solver.school.short %></td>
