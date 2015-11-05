@@ -4,8 +4,9 @@ require 'fileutils'
 #require 'rubygems'
 require 'zip'
 require 'tempfile'
-require 'prawn'
-require 'prawn/templates'
+require 'combine_pdf'
+#require 'prawn'
+#require 'prawn/templates'
 
 class Sosna::SolutionController < SosnaController
 
@@ -722,15 +723,17 @@ class Sosna::SolutionController < SosnaController
       FileUtils::cp  dest, template
 
       begin
-        Prawn::Document.generate(dest, :template => template) do
-          # hack utf8 font
-          font_families.update( 'andulka' => { :normal => 'public/stylesheets/andulka/andulkabook-webfont.ttf' } )
-          font 'andulka'
-          repeat( :all, :dynamic => true ) do
-                      draw_text "#{ulfull} #{name}", :at => bounds.top_left
-                      draw_text "str#{page_number}/#{page_count.to_s}", :at => bounds.top_right
-          end
-        end
+        pdf = CombinePDF.load(template)
+
+        # combine_pdf zatím neumí utf, takže musíme hlavičku odháčkovat
+        # také neumí změnit font.
+
+        fmt_left = translit "#{ulfull} #{name}"
+        fmt_right = translit "str%s/#{pdf.pages.count}"
+        pdf.number_pages(:number_format => fmt_left, :location => [:top_left, :bottom_left], :margin_from_height => 30)
+        pdf.number_pages(:number_format => fmt_right, :location => [:top_right, :bottom_right], :margin_from_height => 30)
+
+        pdf.save dest
       rescue Exception => e
         log("Hlavicka fail: #{e.to_s}")
         FileUtils::cp template, dest
