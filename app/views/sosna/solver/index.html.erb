@@ -47,7 +47,7 @@
            <%if s.is_test_solver %> <i title="TESTOVACÍ ŘEŠITEL" class="fa fa-crosshairs"></i> <% end %></td>
         <td>
            <% if s.user %>
-             <% if !s.user_email_consistent? %><span title="řešitel nemá stejný email jako jeho uživatel">!!!</span><% end %>
+             <% if !s.user_email_consistent? %><span title="řešitel nemá stejný email jako jeho uživatel (<%="#{s.email} vs #{s.user_email}"%>)">!!!</span><% end %>
                <% if current_user.admin? %>
                  <%= link_to s.user.id, user_show_path(s.user.id)%>
                <% else %>

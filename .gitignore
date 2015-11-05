@@ -21,3 +21,4 @@ tags
 /var/uploads/*.tmpl
 /var/uploads/*.pdf
 /var/uploads/*.ext
+/var/uploads/*.bad

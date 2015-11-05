@@ -12,7 +12,11 @@ class Sosna::Solver < ActiveRecord::Base
 
   def user_email_consistent?
      return true if self.user.nil?
-     return self.user.email == email
+     return self.user.email.casecmp(email) == 0
+  end
+  def user_email
+     return nil if self.user.nil?
+     return self.user.email
   end
 
   def send_home?
