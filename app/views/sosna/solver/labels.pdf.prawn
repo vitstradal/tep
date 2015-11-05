@@ -141,7 +141,7 @@ if @envelope
   #####################################################
   # nakresli obalky
   pdf.text "count: #{@solvers.size}" if @dbg
-  addrs.each do |addr|
+  addrs.each_with_index do |addr,index|
     cross pdf,o, omm if @dbg
     country_txt = country_code_to_txt(addr[:country])
 
@@ -171,7 +171,7 @@ if @envelope
       pdf.text "Česká Republika", :align => :center if ! country_txt.nil?
       pdf.stroke_bounds if @dbg
     end
-    pdf.start_new_page
+    pdf.start_new_page if index < addrs.size - 1 # not for last
   end
 else
   #####################################################
@@ -179,7 +179,7 @@ else
   x = o[:l]
   y = ph - o[:t]
   cross pdf,o, omm if @dbg
-  @solvers.each do |solver|
+  @solvers.each_with_index do |solver, index|
     country_txt = country_code_to_txt(solver.country)
     pdf.font_size = o[:s]
     pdf.bounding_box([x, y],:width => o[:w], :height => o[:h] ) do
@@ -193,10 +193,12 @@ else
     x += o[:w] + o[:dx]
     x,y = o[:l], y - o[:h] - o[:dy] if x + o[:w] > pw
     if y - o[:h] - o[:dy] < 0
-      pdf.start_new_page
-      x = o[:l]
-      y =  ph - o[:t]
-      cross pdf,o, omm if @dbg
+     if index < solvers.size - 1  # not for last
+        pdf.start_new_page
+        x = o[:l]
+        y =  ph - o[:t]
+        cross pdf,o, omm if @dbg
+      end
     end
   end
 end
