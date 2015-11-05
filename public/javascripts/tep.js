@@ -222,7 +222,8 @@ function editor_tool_action(action, editor)
   case 'save-stay':return editor_save(editor, true);
   case 'cancel':  return editor_cancel(editor);
   case 'preview': return editor_preview(editor);
-  case 'help':    return editor_show_help(editor);
+  case 'help':       return editor_show_help(editor, action);
+  case 'informhelp': return editor_show_help(editor, action);
   case 'icons':    return editor_show_icons(editor);
   default:
           console.log("unknown action", action);
@@ -230,10 +231,10 @@ function editor_tool_action(action, editor)
   }
 }
 
-function editor_show_help(editor)
+function editor_show_help(editor, action)
 {
         var form = editor.form;
-        editor_show_url(editor, form.find('[data-help-url]').data('help-url'));
+        editor_show_url(editor, form.find('[data-help-url][data-edit="'+action+'"]').data('help-url'));
 }
 
 function editor_show_icons(editor)
