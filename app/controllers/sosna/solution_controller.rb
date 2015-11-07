@@ -344,7 +344,7 @@ class Sosna::SolutionController < SosnaController
     @problems  = Sosna::Problem.where(:annual=> @annual, :round=> @round)
     @solutions_by_solver = _solutions_by_solver [@solver], @problems
 
-    if @solver.confirm_state == 'next'
+    if @solver.confirm_state == 'next' && !current_user.admin?
       add_alert "Pozor: musíš nejprve potvrdit návratku."
       return redirect_to :sosna_solver_user_solver_confirm
       #@alert_link = {:text => "Prosím potvrď", :url => url_for(:sosna_solver_user_solver_confirm),  :url_text => "návratku"}
