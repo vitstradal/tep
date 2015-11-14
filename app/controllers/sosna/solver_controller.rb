@@ -9,7 +9,12 @@ class Sosna::SolverController < SosnaController
     @annual = params[:annual] || @annual
     @solvers = get_sorted_solvers(annual: @annual)
     respond_to do |format|
-      format.html
+      format.html do
+         @solver_names =  {}
+         @solvers.each do |s|
+           @solver_names[s.full_name] = @solver_names[s.full_name].to_i + 1
+         end
+      end
       format.pik do
          headers['Content-Disposition'] = "attachment; filename=lidi-roc#{@annual}.pik"
          headers['Content-Type'] = "text/plain; charset=UTF-8";
