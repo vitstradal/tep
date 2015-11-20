@@ -2,7 +2,7 @@ source 'http://rubygems.org'
 
 gem 'posix-spawn'
 gem 'activerecord-session_store'
-gem 'combine_pdf'
+gem 'combine_pdf', '~> 0.2.12'
 gem 'rails'
 gem 'faraday'
 gem 'rugged'
