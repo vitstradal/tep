@@ -105,7 +105,8 @@ class Ability
       can :delete, Sosna::Solver
       can :delete, Sosna::School
       can :delete, Sosna::Problem
-
+      can :resign, Sosna::Solution
+      can :nosign, Sosna::Solution
 
       can :users,            :tep
       can :user,             :tep

@@ -426,6 +426,40 @@ class Sosna::SolutionController < SosnaController
     redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
   end
 
+  def resign
+    solution_id  = params[:id]
+    solution = Sosna::Solution.find(solution_id) or raise RuntimeError, "bad solution id: #{solution_id}"
+    if ! solution
+      add_alert "Chyba: solution #{solution_id} neexistuje"
+      return redirect_to sosna_solutions_user_url(roc, se)
+    end
+
+    _sign_pdf(solution, UPLOAD_DIR + solution.get_filename_ori, false)
+    add_success("file resigned")
+    problem = solution.problem
+    se = problem.round
+    roc = problem.annual
+    redirect_to sosna_solutions_user_url(roc, se, solution.solver.id)
+  end
+  def nosign
+    solution_id  = params[:id]
+    solution = Sosna::Solution.find(solution_id) or raise RuntimeError, "bad solution id: #{solution_id}"
+    if ! solution
+      add_alert "Chyba: solution #{solution_id} neexistuje"
+      return redirect_to sosna_solutions_user_url(roc, se)
+    end
+
+    dest = UPLOAD_DIR + solution.get_filename_ori
+    template =  dest + '.tmpl'
+    FileUtils::cp  template, dest
+    add_success("file unsigned")
+    problem = solution.problem
+    se = problem.round
+    roc = problem.annual
+    redirect_to sosna_solutions_user_url(roc, se, solution.solver.id)
+
+  end
+
   # pocitani vysledku
   #
   # pocet bodu se pocita ze seti nejlepsich prikladu (ze sedmi)
@@ -713,14 +747,14 @@ class Sosna::SolutionController < SosnaController
   end
 
 
-  def _sign_pdf(solution, dest)
+  def _sign_pdf(solution, dest, overwrite = true)
       problem = solution.problem
       solver = solution.solver
       name = "#{solver.last_name} #{solver.name}"
       ulfull = "roč#{problem.annual} se#{problem.round} ul#{problem.problem_no}"
 
       template = dest + '.tmpl'
-      FileUtils::cp  dest, template
+      FileUtils::cp  dest, template if overwrite
 
       begin
         pdf = CombinePDF.load(template)

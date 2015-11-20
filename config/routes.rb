@@ -28,6 +28,8 @@ Tep::Application.routes.draw do
   get  '/sosna/solutions/confirm_file' => 'sosna/solution#get_confirm_file',    :as => :sosna_solutions_get_confirm_file
   get  '/sosna/solution/confirm_files' => 'sosna/solution#get_confirm_files',    :as => :sosna_solutions_get_confirm_files
   get  '/sosna/solution/:id/down'            => 'sosna/solution#download',      :as => :sosna_solution_download
+
+
   get  '/sosna/solution/:id/down_rev'       => 'sosna/solution#download_rev', :as => :sosna_solution_download_rev
   #get  '/sosna/solution/:id/down(/:ori)'     => 'sosna/solution#download',      :as => :sosna_solution_download
   #get  '/sosna/solution/:id/down_rev(/:ori)'=> 'sosna/solution#download_rev', :as => :sosna_solution_download_rev
@@ -48,6 +50,9 @@ Tep::Application.routes.draw do
   post '/sosna/solution/update'              => 'sosna/solution#update',        :as => :sosna_solution_update
   post '/sosna/solution/update_results'      => 'sosna/solution#update_results',:as => :sosna_solution_update_results
   get  '/sosna/solution/downall'             => 'sosna/solution#downall',       :as => :sosna_solution_down_all
+
+  post  '/sosna/solution/:id/resing'         => 'sosna/solution#resign',      :as => :sosna_solution_resign
+  post  '/sosna/solution/:id/nosign'         => 'sosna/solution#nosign',      :as => :sosna_solution_nosign
 
   get  '/sosna/problems'                     => 'sosna/problem#index',          :as => :sosna_problems
   get  '/sosna/problem(/:id)'                => 'sosna/problem#show',           :as => :sosna_problem

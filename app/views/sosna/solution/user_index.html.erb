@@ -25,7 +25,10 @@
    <% if show_nahrat  %>
      <th>Nahrát</td>
    <% end %>
-   <th>Opravené řešení</td>
+   <th>Opravené řešení</th>
+   <% if current_user.admin? %>
+     <th>Akce</th>
+   <% end %>
  </tr> 
 <% @problems.each do |p| %>
   <% sol = @solutions_by_solver[@solver.id][p.problem_no]  %>
@@ -67,6 +70,17 @@
         <% end %>
       <% end %>
       </td>
+      <% if current_user.admin? %>
+        <td>
+          <%= form_tag(sosna_solution_resign_url(:id => sol.id), :class => 'btn-group form-inline') do %>
+                <button type="submit" class="btn btn-xs btn-primary" title="Resing - znova přidat hlavičku"> <i class="fa fa-pencil-square-o"></i></button>
+          <% end %>
+          <%= form_tag(sosna_solution_nosign_url(:id => sol.id), :class => 'btn-group form-inline') do %>
+                <button type="submit" class="btn btn-xs btn-primary" title="Bez hlavičky - orginal"> <i class="fa fa-reply"></i></button>
+          <% end %>
+        </td>
+      <% end %>
+
 
   </tr>
 <% end %>
@@ -96,6 +110,14 @@
   </tr>
 <% end %>
 </table>
+
+<% if current_user.admin? %>
+<b>Legenda</b>:
+<button type="submit" class="btn btn-xs btn-primary" title="Resing - znova přidat hlavičku"> <i class="fa fa-pencil-square-o"></i></button>
+  -- znovu se pokusit přidat do řešení hlavičku (vychází se z originálního zaslaného souboru);
+<button type="submit" class="btn btn-xs btn-primary" title="Bez hlavičky - orginal"> <i class="fa fa-reply"></i></button>
+  , a číslovaní stránek-- návrat k originálnímu řešení (nebude mít hlavičku se jménem, ročníkem, serií, číslem ulohy, a číslovaní stránek);
+<% end %>
 
 <ul>
   <% if is_current_annual && !deadline.nil?%>
