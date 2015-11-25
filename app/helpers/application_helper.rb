@@ -1,5 +1,6 @@
 # encoding: utf-8
 require 'digest/hmac'
+#require 'unicode_utils'
 module ApplicationHelper
 
   def ilink_to(text = nil , url = nil, opt = nil, &block)
@@ -151,14 +152,17 @@ module ApplicationHelper
   end
 
   def translit(str)
-    Iconv.iconv('ascii//translit', 'utf-8', str).join
+    self.translit(str)
   end
   def self.translit(str)
-    Iconv.iconv('ascii//translit', 'utf-8', str).join
+    #Iconv.iconv('ascii//translit', 'utf-8', str).join
+    #UnicodeUtils.nfkd(r).gsub(/(\p{Letter})\p{Mark}+/,'\\1')
+    str
+
   end
 
   def strcoll(a,b)
-    FFILocale::strcoll(a, b)
+    return FFILocale::strcoll(a, b)
   end
 
   def strcollf(a,b)
