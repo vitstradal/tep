@@ -1,6 +1,6 @@
 class Sosna::Solution < ActiveRecord::Base
 
-  #fixme: helpery asi nepatri do modelu, ale tady se pozivat 'translit', tak so  stim?
+  #fixme: helpery asi nepatri do modelu, ale tady se poziva 'translit', tak so  stim?
   include ApplicationHelper
 
   belongs_to :solver

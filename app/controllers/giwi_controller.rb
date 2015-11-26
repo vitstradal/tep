@@ -371,7 +371,10 @@ class GiwiController < ApplicationController
 
   def _to_ascii(txt)
       txt.gsub! /\s+/, '_'
-      Iconv.iconv('ascii//translit', 'utf-8', txt).join('')
+      # Iconv.iconv('ascii//translit', 'utf-8', txt).join('')
+      # UnicodeUtils.nfkd(txt).gsub(/(\p{Letter})\p{Mark}+/,'\\1')
+      # FIXME: dup code with app/helpers/application_helper.rb
+      translit txt
   end
 
   def _handle_ls
