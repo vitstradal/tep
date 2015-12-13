@@ -69,6 +69,7 @@ class Sosna::SolverController < SosnaController
          if @ids.size ==  0
            where = {annual: @annual, is_test_solver: false}
            where.merge!({ where_to_send: ['home', 'school'] }) if params[:obalkovani]
+           where.merge!({ confirm_state: 'conf'}) if params[:confirmed_only]
          else
            where = { id: @ids}
          end
