@@ -91,6 +91,11 @@ class Sosna::SolverController < SosnaController
     redirect_to :sosna_solvers
   end
 
+#  def delete_zero_solvers
+#    add_alert "not yet implemented"
+#    redirect_to :sosna_solvers
+#  end
+
   def delete
      id = params[:id]
      u = Sosna::Solver.find(id)

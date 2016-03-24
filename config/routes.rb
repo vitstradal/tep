@@ -13,6 +13,7 @@ Tep::Application.routes.draw do
   get  '/sosna/solver/tnx'                   => 'sosna/solver#create_tnx',              :as => :sosna_solver_create_tnx
   get  '/sosna/aesop/index'                  => 'sosna/aesop#index',                    :as => :sosna_aesop_index
   post '/sosna/solver/confirm_none_to_next'  => 'sosna/solver#confirm_none_to_next',    :as => :sosna_solver_confirm_none_to_next
+#  post '/sosna/solver/delete_zero_solvers'   => 'sosna/solver#delete_zero_solvers',     :as => :sosna_solver_delete_zero_solvers
 
   get   '/inform/index/(:form)'                 => 'inform#index',            :as => :inform_index
   post  '/inform/add'                        => 'inform#add',              :as => :inform_add
