@@ -351,6 +351,12 @@ class Sosna::SolutionController < SosnaController
     end
   end
 
+  def user_bonus
+    params[:se] = '100'
+    user_index
+    render :user_index
+  end
+
   def upload
     solution_file = params[:sosna_solution][:solution_file]
     solution_id  = params[:sosna_solution][:id]
@@ -896,13 +902,19 @@ class Sosna::SolutionController < SosnaController
   # return Sosna::Problem
   def _rounds_roc(roc, se = nil)
     rounds = []
+    serie_is_bonus = is_bonus_round(se)
     Sosna::Problem.select('round')
                        .where({annual: roc})
                        .group('round')
                        .order('round')
                        .load
                        .each do |pr|
-                          rounds.push  _round_link(roc, pr.round, pr.round.to_s == se)
+                          round_str = pr.round.to_s
+                          is_bonus = is_bonus_round(round_str)
+                          if is_bonus == serie_is_bonus
+                            rounds.push _round_link(roc, pr.round, round_str == se)
+                          else
+                          end
                        end
     rounds
   end
@@ -920,7 +932,11 @@ class Sosna::SolutionController < SosnaController
 
 
   def _round_link(annual, round, active= false)
-     {name: "Série #{round}", active: active, url: {roc: annual, se: round}}
+     if is_bonus_round(round)
+       {name: "Bonusová série", active: active, url: {roc: annual, se: round}}
+     else
+       {name: "Série #{round}", active: active, url: {roc: annual, se: round}}
+     end
   end
 
   def _annuals

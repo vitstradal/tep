@@ -99,6 +99,7 @@ module ApplicationHelper
   def url_for_root(user = nil)
     user ||= current_user
     #log("user:#{pp(user)}")
+    load_config
 
     if ! user.nil?
       if user.has_role? :admin
@@ -106,7 +107,15 @@ module ApplicationHelper
       elsif user.has_role? :org
         return url_for(wiki_piki_path(path: 'org'))
       elsif user.has_role? :user
-        return url_for(wiki_main_path(path: 'usr'))
+        #Rails::logger.fatal("show100:"+ config_value('show100'))
+        if config_value('show100') == 'yes'
+          solver = find_solver_for_user_id(user.id)
+          #Rails::logger.fatal("solver"+pp(solver))
+          if solver.confirm_state == 'bonus'
+            return url_for(:sosna_solutions_user_bonus)
+          end
+        end 
+        return url_for(:sosna_solutions_user)
       end
     end
     return url_for(wiki_main_path(path: 'index'))
@@ -204,6 +213,7 @@ module ApplicationHelper
   end
 
   def load_config
+    return if @config
     @config  =  { annual:20,
                   round: 1,
                   show_revisions: 'no',
@@ -245,6 +255,22 @@ module ApplicationHelper
 
   def log(msg)
     Rails::logger.fatal("  " + msg)
+  end
+
+  def is_bonus_round(round)
+    return round.to_s == '100'
+  end
+
+  def config_value(key)
+    #return @config[key] if @config
+    c = Sosna::Config.where(key:key).first
+    return c.value if c
+    return nil
+  end
+
+  def find_solver_for_user_id(user_id, annual = nil)
+    annual ||= @config[:annual] || config_value(:annual)
+    return Sosna::Solver.where(user_id: user_id, annual: annual ).first
   end
 
 end

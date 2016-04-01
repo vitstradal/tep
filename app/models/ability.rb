@@ -13,6 +13,7 @@ class Ability
     can :tnx, Inform
 
     can :new, Sosna::Solver
+    can :new_bonus, Sosna::Solver
     can :create, Sosna::Solver
     can :create_tnx, Sosna::Solver
     can :user_finish_registration, :tep
@@ -32,6 +33,7 @@ class Ability
 
     if user.user?
       can :user_index, Sosna::Solution
+      can :user_bonus, Sosna::Solution
       can :upload, Sosna::Solution
       can :upload_confirm_file, Sosna::Solution
       can :get_confirm_file, Sosna::Solution

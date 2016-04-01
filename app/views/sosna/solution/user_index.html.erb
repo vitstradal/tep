@@ -6,7 +6,12 @@
 <% end %>
 
 
-<h1>Úlohy <%= @annual %>. ročníku, série <%= @round %>
+<h1>Úlohy <%= @annual %>. ročníku,
+<% if  is_bonus_round(@round) %>
+   bonusová série
+<% else %>
+   série <%= @round %>
+<% end %>
 <% if ! @solver_is_current_user %>,
    <%= @solver.full_name %> (roč.<%= @solver.annual%>)
 <% end%>

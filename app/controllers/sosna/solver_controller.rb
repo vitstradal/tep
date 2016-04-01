@@ -121,6 +121,13 @@ class Sosna::SolverController < SosnaController
     @agree = flash[:agree] || false
     _load_schools
   end
+
+  def new_bonus
+    @bonus = true
+    new
+    render :new
+  end
+
   #def new_tnx end
 
   def _edit_want_send_first
@@ -138,6 +145,7 @@ class Sosna::SolverController < SosnaController
     send_first =  _edit_want_send_first()
 
     solver = Sosna::Solver.new(params[:sosna_solver])
+    is_bonus = solver.confirm_state == 'bonus'
 
     solver.valid?
     agree = ! params[:souhlasim].nil?
@@ -169,8 +177,9 @@ class Sosna::SolverController < SosnaController
         flash[:solver] = solver
         flash[:school] = school
         flash[:agree] = agree
-        Rails.logger.fatal(pp("school", solver.errors.messages))
-        Rails.logger.fatal(pp("solver", school.errors.messages)) if school
+        #Rails.logger.fatal(pp("school", solver.errors.messages))
+        #Rails.logger.fatal(pp("solver", school.errors.messages)) if school
+        return redirect_to :action => :new_bonus if is_bonus
         return redirect_to :action => :new
     end
 

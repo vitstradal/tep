@@ -8,6 +8,7 @@ Tep::Application.routes.draw do
   # přidání akcí je třeba přidat i práva v app/models/ability.rb
   # anon:
   get  '/sosna/solver/new'                   => 'sosna/solver#new',                     :as => :sosna_solver_new
+  get  '/bonus/new'                          => 'sosna/solver#new_bonus',               :as => :sosna_solver_new_bonus
   get  '/sosna/solver/confirm'               => 'sosna/solver#user_solver_confirm',     :as => :sosna_solver_user_solver_confirm
   post '/sosna/solver/create'                => 'sosna/solver#create',                  :as => :sosna_solver_anon_create
   get  '/sosna/solver/tnx'                   => 'sosna/solver#create_tnx',              :as => :sosna_solver_create_tnx
@@ -23,12 +24,13 @@ Tep::Application.routes.draw do
 
   # user:
   get  '/sosna/solutions/user(/:roc(/:se(/:id)))' => 'sosna/solution#user_index',    :as => :sosna_solutions_user
-  patch '/sosna/solution/upload'             => 'sosna/solution#upload',        :as => :sosna_solution_upload
-  post '/sosna/solution/upload_rev'         => 'sosna/solution#upload_rev',   :as => :sosna_solution_upload_rev
-  post  '/sosna/solutions/upload_confirm' => 'sosna/solution#upload_confirm_file',    :as => :sosna_solutions_upload_confirm_file
-  get  '/sosna/solutions/confirm_file' => 'sosna/solution#get_confirm_file',    :as => :sosna_solutions_get_confirm_file
-  get  '/sosna/solution/confirm_files' => 'sosna/solution#get_confirm_files',    :as => :sosna_solutions_get_confirm_files
-  get  '/sosna/solution/:id/down'            => 'sosna/solution#download',      :as => :sosna_solution_download
+  get  '/sosna/solutions/bonus'                   => 'sosna/solution#user_bonus',    :as => :sosna_solutions_user_bonus
+  patch '/sosna/solution/upload'                  => 'sosna/solution#upload',        :as => :sosna_solution_upload
+  post '/sosna/solution/upload_rev'               => 'sosna/solution#upload_rev',   :as => :sosna_solution_upload_rev
+  post  '/sosna/solutions/upload_confirm'         => 'sosna/solution#upload_confirm_file',    :as => :sosna_solutions_upload_confirm_file
+  get  '/sosna/solutions/confirm_file'            => 'sosna/solution#get_confirm_file',    :as => :sosna_solutions_get_confirm_file
+  get  '/sosna/solution/confirm_files'            => 'sosna/solution#get_confirm_files',    :as => :sosna_solutions_get_confirm_files
+  get  '/sosna/solution/:id/down'                 => 'sosna/solution#download',      :as => :sosna_solution_download
 
 
   get  '/sosna/solution/:id/down_rev'       => 'sosna/solution#download_rev', :as => :sosna_solution_download_rev

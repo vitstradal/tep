@@ -121,6 +121,7 @@
 <%# menu na leve strane%>
 <%################################################################################## %>
 
+<% is_bonus_active = config_value('show100') == 'yes' %>
 <div class="main-container <%if !@wide_display%>container<%end%> <% if @tep_index %>tep-index<% end %>" id="main-container">
   <div class="sidebar responsive
         <%if @wide_display%>menu-min<%end%>
@@ -139,6 +140,10 @@
         <ul class="submenu">
           <%= menu_lii wiki_main_path('archiv/aktualni'),   'Aktuální série' %>
           <%= menu_lii wiki_main_path('archiv'),            'Archiv příkladů' %>
+
+           <% if is_bonus_active %>
+            <%= menu_lii wiki_main_path('bonus'),        'Bonusové příklady' %>
+          <% end %>
           <%= menu_lii wiki_main_path('pravidla'),           'Pravidla'  %>
           <%#= menu_lii wiki_main_path('onas/faq'),                'Otázky a odpovědi'   %>
         </ul>
@@ -162,6 +167,9 @@
         <%= menu_li '#', 'Uživatel', ico: 'fa-user' do %>
           <ul class="submenu">
             <%= menu_lii :sosna_solutions_user,   'Moje řešení' %>
+            <% if is_bonus_active %>
+              <%= menu_lii :sosna_solutions_user_bonus,   'Řešení bonusových příkladů' %>
+            <% end %>
             <%= menu_lii :edit_user_registration, 'Změna hesla' %>
             <%= menu_lii wiki_main_path('faq'),   'Nápověda'   %>
           </ul>
