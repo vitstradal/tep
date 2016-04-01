@@ -63,6 +63,7 @@ class TepController < ApplicationController
 
       when 'send_first_email'
         user.send_first_login_instructions
+
         add_success 'Posláno'
 
       when 'send_password_reset'

@@ -45,21 +45,10 @@ class User < ActiveRecord::Base
   end
 
   def send_first_login_instructions
-     #self.generate_reset_password_token!
-     #self.send_devise_notification(:first_login_instructions)
-     #print("mailer:", pp(mailer), "\n")
-     #d.deliver
-     #mailer.first_login_instructions(self, {})
-     #opts = {}
-     #self.send_devise_notification(:first_login_instructions, opts)
-
-     raw, enc = Devise.token_generator.generate(self.class, :reset_password_token)
-
-     self.reset_password_token   = enc
+     token_raw, token_enc = Devise.token_generator.generate(self.class, :reset_password_token)
+     self.reset_password_token   = token_enc
      self.reset_password_sent_at = Time.now.utc
      self.save(:validate => false)
-
-     devise_mailer.first_login_instructions(self).deliver
-
+     send_devise_notification(:first_login_instructions, token_enc)
   end
 end

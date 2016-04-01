@@ -4,13 +4,13 @@
   <p>Tento e-mail ti přišel, protože si o tobě někdo myslí (možná i ty), že chceš organizovat Pikomat.</p>
   <p>Registraci dokončíš pomocí tohoto linku:</p>
 
-  <p><%= link_to 'Dokončit registraci', user_finish_registration_url(:token => @resource.reset_password_token || 'fake') %></p>
+  <p><%= link_to 'Dokončit registraci', user_finish_registration_url(:token => @token || 'fake') %></p>
 
 <% else %>
   <p>Tento e-mail ti přišel, protože tě někdo (pravděpodoboně ty) přihlásil do soutěže Pikomat.</p>
   <p>Pro dokončení registrace použij následující odkaz:</p>
 
-  <p><%= link_to 'Dokončit registraci', user_finish_registration_url(:token => @resource.reset_password_token || 'fake') %></p>
+  <p><%= link_to 'Dokončit registraci', user_finish_registration_url(:token => @token || 'fake') %></p>
 
   <p>Pokud jsi již registrovaný, tento mail je ti poslán z důvodu nutnosti
      aktualizace údajů a potvrzení souhlasu o zpracování osobních udajů na další
