@@ -45,10 +45,8 @@ class User < ActiveRecord::Base
   end
 
   def send_first_login_instructions
-     token_raw, token_enc = Devise.token_generator.generate(self.class, :reset_password_token)
-     self.reset_password_token   = token_enc
-     self.reset_password_sent_at = Time.now.utc
-     self.save(:validate => false)
-     send_devise_notification(:first_login_instructions, token_enc)
+     token_raw = set_reset_password_token
+     send_devise_notification(:first_login_instructions, token_raw)
+
   end
 end

@@ -5,7 +5,8 @@
   <p>Pro dokončení regitrace zadej své budoucí heslo:</p>
   <%= form_for(@user, :url => password_path(:user), :html => { :method => :put }) do |f| %>
     <%#= devise_error_messages! %>
-    <%= f.hidden_field :reset_password_token %>
+    <%#= f.hidden_field :reset_password_token %>
+    <%= hidden_field 'user', 'reset_password_token', value: @token %>
   
     <div><%= f.label :password, "Heslo" %><br />
     <%= f.password_field :password %></div>

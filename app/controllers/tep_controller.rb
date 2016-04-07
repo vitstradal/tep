@@ -34,7 +34,9 @@ class TepController < ApplicationController
   end
 
   def user
-    @user = User.find(params[:id])
+    user_id = params[:id]
+    @user = User.find(user_id);
+    @solvers = Sosna::Solver.where(user_id: user_id)
   end
 
   def user_new
@@ -92,9 +94,8 @@ class TepController < ApplicationController
   end
 
   def user_finish_registration
-      token = params[:token]
-      @user = User.find_by_reset_password_token(token)
-      #print "user:", pp(@user)
+      @token = params[:token]
+      @user = User.with_reset_password_token(@token)
   end
 
   def error

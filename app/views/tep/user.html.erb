@@ -26,6 +26,7 @@
 
 
 <hr>
+Skupiny:
 <%= form_for @user, url: user_role_change_path(@user.id), :html => {:class => 'form-inline' } do |f| %>
     <%= @user.roles.to_a.join(',') %>
     <%= f.hidden_field :id %>
@@ -35,6 +36,12 @@
        %>
     <%= f.submit value: 'Přidat/odebrat skupinu'%>
 <% end %>
+
+Řešitelé:
+<% @solvers.each do |solver| %>
+   <%= solver.name %> <%= solver.last_name %> <%= link_to "id#{solver.id}", sosna_solver_url(solver.id)%> (roč<%= solver.annual %>),
+<% end %>
+
 <hr>
 
 <%= form_tag user_action_path(@user.id, :send_first_email), html: {:class=>'form-horizontal'} do %>
