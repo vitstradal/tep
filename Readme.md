@@ -37,3 +37,8 @@ Pomocné skripty, bez argumetů napíšou stručný help.
 
 * `script/sqlitedump.pl` -- sqlitedump, ale takovy aby se dal pouzit pri upgradu, (insert i se jmeny sloupcu).
 
+Je treba mít v `.bash_profile`
+
+```
+[[ -s "/usr/local/rvm/scripts/rvm" ]] && source "/usr/local/rvm/scripts/rvm"
+```

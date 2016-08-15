@@ -111,7 +111,7 @@ module ApplicationHelper
         if config_value('show100') == 'yes'
           solver = find_solver_for_user_id(user.id)
           #Rails::logger.fatal("solver"+pp(solver))
-          if solver.confirm_state == 'bonus'
+          if !solver.nil? && solver.confirm_state == 'bonus'
             return url_for(:sosna_solutions_user_bonus)
           end
         end 

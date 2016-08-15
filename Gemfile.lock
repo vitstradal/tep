@@ -189,6 +189,3 @@ DEPENDENCIES
   sqlite3
   trac-wiki (~> 0.3.31)
   unicode_utils
-
-BUNDLED WITH
-   1.10.6

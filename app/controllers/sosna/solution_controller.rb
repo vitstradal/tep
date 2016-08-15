@@ -317,7 +317,17 @@ class Sosna::SolutionController < SosnaController
     #@annual = params[:roc] || @config[:annual]
     @annual = @config[:annual]
     solver_id = params[:id]
-    @round  = params[:se]  || @config[:round]
+    @round  = params[:se]
+    if @round.nil?
+      @round = if @config[:round].to_i < 100
+                   # not bonus
+                   @config[:round]
+               else
+                   # FIXME: pokud je bonusova serie (==100), je moje reseni u uzivatele posledni serie
+                   # FIXME: posledni serie, je zde natvrdo '6' (&btw: must be string)
+                   '6'
+               end
+    end
     @breadcrumb = [[], _rounds_roc(@annual, @round) ]
 
     @is_current = (@annual == @config[:annual] && @round ==  @config[:round])

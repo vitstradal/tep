@@ -103,20 +103,24 @@ end
 def main 
   round_max = Sosna::Config.where(key: 'round').take.value.to_i
   annual = Sosna::Config.where(key: 'annual').take.value.to_i
+  round_max = 6 if round_max == 100
 
   files = []
+  dir = "ovvp"
+  index_path = "ovvp.index.txt"
   (round_max .. round_max ).each do |round|
 
     file = "ovvp.#{annual}.#{round}.txt"
-    File.open(file, 'w') do |f| 
+    File.open("#{dir}/#{file}", 'w') do |f| 
         f.write print_round(annual, round)
     end
     files << file
     "#{annual}.#{round}.txt"
   end
-  File.open("ovvp.index.txt", 'w') do |f|
+  File.open("#{dir}/#{index_path}", 'w') do |f|
     f.write(files.join("\n")+"\n")
   end
+  print "created #{dir}/#{index_path}, #{files.map{|f| "#{dir}/#{f}"}.join(',')}.\n"
 end
  
 main

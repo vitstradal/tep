@@ -59,7 +59,7 @@
        </td>
     <% end %>
     <td>
-      <% sol_in_this_round_allowed   = @round <  @config[:round] %>
+      <% sol_in_this_round_allowed   = @round.to_i <  @config[:round].to_i %>
       <% sol_in_this_round_allowed ||= @round == @config[:round] && @config[:show_revisions] == 'yes'  %>
       <% if sol_in_this_round_allowed %> 
         <% if sol.filename_corr_display %>
