@@ -199,6 +199,7 @@ class Sosna::SolverController < SosnaController
       end
     else 
       solver.user_id = user.id
+      send_first = false
     end
 
     # some test

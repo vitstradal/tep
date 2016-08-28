@@ -19,9 +19,12 @@
 
 <p>Díky, že jsi se přihlásil.</p>
 
-<p>Na zadanou emailovou adresu ti přijdou instrukce,
-jak se přihlásit v případě, že budeš chtít zasílat řešení elektronicky (elektronické zasílání řešení však není povinné).
-</p>
+<% if (params[:send_first]||'') == 'true'  %>
+  <p>Na zadanou emailovou adresu ti přijdou instrukce,
+     jak se přihlásit v případě, že budeš chtít zasílat řešení elektronicky (elektronické zasílání řešení však není povinné).
+  </p>
+<% else %>
+<% end %>
 
 <p>
 Na tvoji účast v soutěži se těší organizátoři Pikomatu MFF UK.
