@@ -861,7 +861,7 @@ class Sosna::SolutionController < SosnaController
   end
 
   def _prepare_solvers_problems_solutions(want_test = true)
-    load_config
+    _params_roc_se_ul
     where = { annual: @annual}
     where.merge!({is_test_solver: false }) if ! want_test
     @solvers = get_sorted_solvers(where)
