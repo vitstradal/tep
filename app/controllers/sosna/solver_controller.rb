@@ -187,11 +187,19 @@ class Sosna::SolverController < SosnaController
     solver.school = school
     solver.annual = @annual
 
-    user = User.find_by_email solver.email
+    user = User.find_by_email solver.email.downcase
     if !user  
       if ! solver.email.empty?
         # create user by email
+
+        # Are e-mail addresses case sensitive? 
+        #
+        # Yes, according to RFC 2821, the local mailbox (the portion before @)
+        # is considered case-sensitive. However, typically e-mail addresses are
+        # not case-sensitive because of the difficulties and confusion it would
+        # cause between users, the server, and the administrator.
         user =  User.new(email: solver.email.downcase, name: solver.name, last_name: solver.last_name, confirmation_sent_at: Time.now,  roles: [:user])
+
         user.confirm!
         user.send_first_login_instructions  if send_first
         solver.user_id = user.id
