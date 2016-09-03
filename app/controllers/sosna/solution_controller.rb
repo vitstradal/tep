@@ -343,7 +343,7 @@ class Sosna::SolutionController < SosnaController
     end
 
     if ! @solver && @annual.to_i < @config[:annual].to_i
-       add_alert "V ročníku #{@annual} jsi nebyl řešitelem!"
+       add_alert_now "V ročníku #{@annual} jsi nebyl řešitelem!"
        return render :empty
     end
     if @config[:confirmation_round] == @round

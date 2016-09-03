@@ -153,6 +153,18 @@ module ApplicationHelper
     flash[:success].push(msg)
   end
 
+  # allerts for non-redirection
+  def add_alert_now(msg)
+    flash.now[:alerts] ||= []
+    flash.now[:alerts].push(msg)
+  end
+
+  def add_success_now(msg)
+    flash.now[:success] ||= []
+    flash.now[:success].push(msg)
+  end
+
+
   def email_valid_mx_record?(email)
       #mail_servers = Resolv::DNS.open.getresources(email.split('@').last, Resolv::DNS::Resource::IN::MX)
       mail_servers = Resolv::DNS.open.getresources(email.split('@').last.force_encoding('ASCII-8BIT'), Resolv::DNS::Resource::IN::MX)
