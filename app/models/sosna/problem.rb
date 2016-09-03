@@ -1,5 +1,8 @@
 class Sosna::Problem < ActiveRecord::Base
   has_many :solutions
+
+  BONUS_ROUND_NUM = 100
+
   def rounds
     _rounds_roc(annual)
   end

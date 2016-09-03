@@ -254,7 +254,7 @@ module ApplicationHelper
   end
 
   def is_bonus_round(round)
-    return round.to_s == '100'
+    return round.to_s == Sosna::Problem::BONUS_ROUND_NUM.to_s
   end
 
   def config_value(key)

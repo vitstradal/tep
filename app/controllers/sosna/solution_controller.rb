@@ -15,6 +15,7 @@ class Sosna::SolutionController < SosnaController
   #UPLOAD_DIR = "public/uploads/"
   UPLOAD_DIR = "var/uploads/"
 
+
   def index
     _prepare_solvers_problems_solutions
     _load_index
@@ -319,13 +320,11 @@ class Sosna::SolutionController < SosnaController
     solver_id = params[:id]
     @round  = params[:se] || 1
     if @round.nil?
-      @round = if @config[:round].to_i < 100
+      @round = if @config[:round].to_i < Sosna::Problem::BONUS_ROUND_NUM
                    # not bonus
                    @config[:round]
                else
-                   # FIXME: pokud je bonusova serie (==100), je "moje reseni" u uzivatele posledni serie
-                   # FIXME: posledni serie, je zde natvrdo '6' (&btw: must be string)
-                   '6'
+                   _max_round_non_bonus(@annual)
                end
     end
 
@@ -363,7 +362,7 @@ class Sosna::SolutionController < SosnaController
   end
 
   def user_bonus
-    params[:se] = '100'
+    params[:se] = Sosna::Problem::BONUS_ROUND_NUM.to_s
     @hide_non_bonus_in_breadcrumb = true
     user_index
     render :user_index
@@ -929,6 +928,13 @@ class Sosna::SolutionController < SosnaController
                             annual[a.annual] = _rounds_roc(a.annual)
                        end
     return annual
+  end
+  def _max_round_non_bonus(annual)
+     max = Sosna::Problem
+                       .where({annual: annual})
+                       .where(arel_table[:round].lt(Sosna::Problem::BONUS_ROUND_NUM))
+                       .maximum('round')
+     max.to_s
   end
 
 end
