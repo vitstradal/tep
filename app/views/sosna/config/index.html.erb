@@ -2,50 +2,85 @@
 
 <%= form_for :config, :url => {:action => :update}, :html =>  {:class => 'form-horizontal'}  do |f| %>
 
-  <div class="control-group"><label class="control-label">Rok</label>
-    <div class="controls"><%= text_field :config, :year, value: @config[:year] %></div>
-  </div>
+  <table class="table table-condensed table-hover table-bordered">
+    <tbody>
+      <tr>
+        <th>Rok</th>
+        <td><%= text_field :config, :year, value: @config[:year] %></td>
+        <td></td>
+      </tr>
+      <tr>
+       <th>Ročník</th>
+       <td><%= text_field :config, :annual, value: @config[:annual] %></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>Série</th>
+        <td><%= text_field :config, :round,  value: @config[:round] %></td>
+        <td></td>
+      </tr>
+      <tr>
+        <th>Série s Návratkou</th>
+        <td><%= text_field :config, :confirmation_round,  value: @config[:confirmation_round] %></td>
+        <td></td>
+      </tr>
+      <tr>
+        
+        <th>Zobrazit opravené řešení aktuální série</th>
+        <td><%= select_tag 'config[show_revisions]', options_for_select(["yes","no"], @config[:show_revisions]) %></td>
+        <td>řešení předchozích sérií budou zobrazeny bez ohledu na tuto hodnotu)</td>
+        <td></td>
+      </div>
+      <tr>
+        <th>Zobrazit upload návratky</th>
+        <td><%= select_tag 'config[confirmation_file_upload]', options_for_select(["yes","no"], @config[:show_revisions]) %></td>
+        <td></td>
+      </tr>
+    
+      </div>
+    </tbody>
+  <table>
+  <table class="table table-condensed table-hover table-bordered">
+    <thead>
+    <tr>
+     <th>Ser.</th>
+     <th>Datum</th>
+     <th>Povol upload</th>
+     <th>Počet úloh</th>
+     <th>Deadline</th>
+   </tr>
+   </thead>
+   <tbody>
+     <% [1, 2, 3, 4, 5, 6, Sosna::Problem::BONUS_ROUND_NUM].each do |round| %>
+       <tr>
+         <td>
 
-  <div class="control-group"><label class="control-label">Ročník</label>
-    <div class="controls"><%= text_field :config, :annual, value: @config[:annual] %></div>
-  </div>
-
-  <div class="control-group"><label class="control-label">Série</label>
-    <div class="controls"><%= text_field :config, :round,  value: @config[:round] %></div>
-  </div>
-
-  <div class="control-group"><label class="control-label">Série s Návratkou</label>
-    <div class="controls"><%= text_field :config, :confirmation_round,  value: @config[:confirmation_round] %></div>
-  </div>
-
-
-  <div class="control-group"><label class="control-label">Zobrazit opravené řešení aktuální série (řešení předchozích sérií budou zobrazeny bez ohledu na tuto hodnotu)</label>
-    <div class="controls"><%= select_tag 'config[show_revisions]', options_for_select(["yes","no"], @config[:show_revisions]) %></div>
-  </div>
-
-  <div class="control-group"><label class="control-label">Zobrazit upload návratky</label>
-    <div class="controls"><%= select_tag 'config[confirmation_file_upload]', options_for_select(["yes","no"], @config[:show_revisions]) %></div>
-  </div>
-
-  <% [1, 2, 3, 4, 5, 6, Sosna::Problem::BONUS_ROUND_NUM].each do |round| %>
-    <div class="control-group"><label class="control-label">Termín odeslaní <%=round%>. série</label>
-      <% if round >= 100 %>(bonusová série)<% end %>
-      <% dline = deadline_time(@config, round, true) %>
-      <div class="controls"><%= select_date( dline || Time.parse('2010-06-06'),
+            <% if round < Sosna::Problem::BONUS_ROUND_NUM  %>
+             <%= round %>
+             <% else %>
+              bonus
+            <% end %>
+         </td>
+         <% dline = deadline_time(@config, round, true) %>
+         <td>
+            <%= select_date( dline || Time.parse('2010-06-06'),
                                             { :use_month_numbers => true, :prefix => "config[deadline#{round}]", :order => [:day, :month, :year]},
                                             { :class => 'input-small' } ) %>
-        Povolit upload:
-        <%= select_tag("config[show#{round}]",
+        </td>
+        <td>
+           <%= select_tag("config[show#{round}]",
                        options_for_select(["no","yes"], @config["show#{round}".to_sym]),
                        {:class=>'input-mini'} ) %>
-        Počet úloh v sérii:
+        </td>
+        <td>
         <%= select_tag("config[problems#{round}]",
                        options_for_select([1,2,3,4,5,6,7,8,9,10], @config["problems#{round}".to_sym]),
                        {:class=>'input-mini'} ) %>
-        <%= dline.to_s %>
-      </div>
-    </div>
-  <% end %>
+        </td>
+        <td><%= dline.to_s %></td>
+      <% end %>
+    <tbody>
+  </table>
 
   <div class="control-group">
     <div class="controls"><%= f.submit :class=>'btn btn-primary', :value=>'Uložit' %></div>
