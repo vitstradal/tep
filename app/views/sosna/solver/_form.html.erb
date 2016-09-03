@@ -92,7 +92,7 @@ Pokud škola v seznamu není, vyberte položku 'Jiná škola', a vyplňte název
        <%= select :school, :id,
                options_for_select(
                        [['Vyber školu', :none]] +
-                       @schools.sort_by {|s| s.city }.map{ |s| ["#{s.long}, #{s.short}", s.id] } <<
+                       @schools_sorted.map{ |s| ["#{s.long}, #{s.short}", s.id] } <<
                        ['Jiná škola', :jina],
                        (@school.nil? || @school.id.nil?) ? :none 
                                        : @school.id < 0  ? :jina

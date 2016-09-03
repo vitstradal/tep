@@ -59,7 +59,7 @@ class Sosna::SolverController < SosnaController
       format.pdf do
          @opt = {}
          @envelope= params[:envelope]
-         params[:opt].split(/\s*;\s*|\s+/).each do |o| 
+         params[:opt].split(/\s*;\s*|\s+/).each do |o|
            @opt[$1.to_sym] = $2 if o =~ /^\s*(\w+)\s*:(\S*)/
          end
 
@@ -111,12 +111,19 @@ class Sosna::SolverController < SosnaController
 
   def _load_schools
     @schools = Sosna::School.all.load
+    @schools_sorted = @schools.sort_by { |s|
+      # kažedé číslo v názvu města dopň na deset cifer
+      # Praha 1  => Praha 0001
+      # Praha 10 => Praha 0010
+      # (toto bude klíč k třízení, nebude se zobrazovat)
+      "#{s.city}-#{s.long}".gsub(/\d+/){|m| '0'*(10 - m.size) + m }
+    }
   end
   def new
     load_config
     @school ||= flash[:school] || Sosna::School.new
-    @solver ||= flash[:solver] 
-    if ! @solver 
+    @solver ||= flash[:solver]
+    if ! @solver
       @solver= _prepare_new_solver
     end
     @agree = flash[:agree] || false
@@ -158,7 +165,7 @@ class Sosna::SolverController < SosnaController
 
     not_admin =  current_user.nil? ||  !current_user.admin?
     if not_admin
-      solver.errors.add(:birth, 'nemůže být prázdné') if solver.birth.blank? 
+      solver.errors.add(:birth, 'nemůže být prázdné') if solver.birth.blank?
     end
 
     case school_id
@@ -189,11 +196,11 @@ class Sosna::SolverController < SosnaController
     solver.annual = @annual
 
     user = User.find_by_email solver.email.downcase
-    if !user  
+    if !user
       if ! solver.email.empty?
         # create user by email
 
-        # Are e-mail addresses case sensitive? 
+        # Are e-mail addresses case sensitive?
         #
         # Yes, according to RFC 2821, the local mailbox (the portion before @)
         # is considered case-sensitive. However, typically e-mail addresses are
@@ -206,7 +213,7 @@ class Sosna::SolverController < SosnaController
         solver.user_id = user.id
         user.save
       end
-    else 
+    else
       solver.user_id = user.id
       send_first = false
     end
@@ -270,7 +277,7 @@ class Sosna::SolverController < SosnaController
     Rails.logger.fatal("A1")
 
     begin
-      school = Sosna::School.find(school_id) 
+      school = Sosna::School.find(school_id)
     rescue
       begin
         Rails.logger.fatal("A2")
@@ -308,7 +315,7 @@ class Sosna::SolverController < SosnaController
     if _edit_want_send_first()
       user = User.find_by_email solver.email
       if !user.nil?
-        user.send_first_login_instructions 
+        user.send_first_login_instructions
         add_success "Zaslán uvítací email"
       end
     end
@@ -348,13 +355,13 @@ class Sosna::SolverController < SosnaController
     if grade =~ /^([ixv]+)(.)/i
       r, rest = $1, $2
       ri = ro.index(r.downcase)
-      if ! ri.nil? 
-        r_plus = ro[ri+delta] 
+      if ! ri.nil?
+        r_plus = ro[ri+delta]
         return "#{r_plus.upcase}#{rest}" if ! r_plus.nil?
       end
     end
 
-    if grade =~ /^([^\d]*)(\d+)(.*)$/ 
+    if grade =~ /^([^\d]*)(\d+)(.*)$/
       prefix, id, rest = $1, $2, $3
       return "#{prefix}#{id.to_i + delta}#{rest}"
     end
