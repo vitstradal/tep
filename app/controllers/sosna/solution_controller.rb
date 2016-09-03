@@ -314,8 +314,8 @@ class Sosna::SolutionController < SosnaController
   #
   def user_index
 
-    #@annual = params[:roc] || @config[:annual]
-    @annual = @config[:annual]
+    @annual = params[:roc] || @config[:annual]
+    #@annual = @config[:annual]
     solver_id = params[:id]
     @round  = params[:se]
     if @round.nil?
