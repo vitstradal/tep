@@ -395,7 +395,7 @@ class Sosna::SolutionController < SosnaController
     deadline = deadline_time(@config, problem.round)
     if problem.annual.to_s != @config[:annual] || !deadline || deadline  < Time.now
       # po deadline muze nahravat pouze pouze admin
-      if ! user.admin?
+      if ! current_user.admin?
         pp solution.problem.annual != @config[:annual]
         pp @config[:annual]
         pp solution.problem.annual
