@@ -317,7 +317,7 @@ class Sosna::SolutionController < SosnaController
     @annual = params[:roc] || @config[:annual]
     #@annual = @config[:annual]
     solver_id = params[:id]
-    @round  = params[:se]
+    @round  = params[:se] || 1
     if @round.nil?
       @round = if @config[:round].to_i < 100
                    # not bonus
@@ -329,7 +329,7 @@ class Sosna::SolutionController < SosnaController
                end
     end
 
-    @breadcrumb = [[_annual_link(@annual, :user_index)], _rounds_roc(@annual, @round, :user_index) ]
+    @breadcrumb = [[breadcrumb_annual_links(:user_index)], _rounds_roc(@annual, @round, :user_index) ]
 
     @is_current = (@annual == @config[:annual] && @round ==  @config[:round])
 
@@ -690,7 +690,7 @@ class Sosna::SolutionController < SosnaController
     @want_edit = false
     @want_edit_paper = false
     @want_edit_penalisation = false
-    path = [ _annual_link(@annual) ]
+    path = [ breadcrumb_annual_links(:index) ]
 
     dir = nil
     @action_more = false
@@ -797,6 +797,7 @@ class Sosna::SolutionController < SosnaController
         roc  = @annual
         se  = @round
     end
+    se ||= 1
 
     @annual = roc
     @round = se
@@ -805,20 +806,6 @@ class Sosna::SolutionController < SosnaController
 
     return roc, se, ul
   end
-
-#  def _sort_solvers_by_score
-#    @solvers.sort! do  |a,b|
-#        if a.grade_num != b.grade_num
-#         a.grade_num <=> b.grade_num
-#        elsif a.last_name != b.last_name
-#          strcollf(a.last_name, b.last_name)
-#        elsif a.name != b.name
-#          strcollf(a.name, b.name)
-#        else
-#          a.id <=> b.id
-#        end
-#    end
-#  end
 
   def _sort_solvers_by_grade
     @solvers.sort! do  |a,b|
@@ -918,16 +905,6 @@ class Sosna::SolutionController < SosnaController
                           rounds.push _round_link(roc, pr.round, round_str == se, action)
                        end
     rounds
-  end
-
-  def _annual_link(annual, action = :index)
-
-     annual_max = @config[:annual].to_i
-     annual_min = 29 # tep started
-     { name: "Ročník #{annual}",
-       url: {roc:@annual, se: 1},
-       sub: (annual_min .. annual_max).map { |a| {name: "Ročník #{a}", url: {action: action, roc:a, se:1}}}.reverse,
-     }
   end
 
   def _problem_link(annual, round, problem_no, action = :index)

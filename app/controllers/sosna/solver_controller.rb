@@ -6,7 +6,7 @@ class Sosna::SolverController < SosnaController
 
   def index
     load_config
-    @annual = params[:annual] || @annual
+    @annual = params[:roc] || @annual
     @solvers = get_sorted_solvers(annual: @annual)
     respond_to do |format|
       format.html do
@@ -20,17 +20,18 @@ class Sosna::SolverController < SosnaController
          headers['Content-Type'] = "text/plain; charset=UTF-8";
       end
     end
+    @breadcrumb = [[breadcrumb_annual_links(:index)]];
   end
 
   def tep_emails
-    @annual = params[:annual] || @annual
+    @annual = params[:roc] || @annual
     @solvers = Sosna::Solver.where solution_form: 'tep', annual: @annual, is_test_solver: false
   end
 
 
   def dup
     solver_id = params[:id]
-    annual = params[:annual] || @annual
+    annual = params[:roc] || @annual
 
     solver = Sosna::Solver.find(solver_id)
     if solver.nil?
@@ -49,7 +50,7 @@ class Sosna::SolverController < SosnaController
   end
 
   def labels
-    @annual = params[:annual] || @annual
+    @annual = params[:roc] || @annual
     @ids = (params[:ids]  || '').gsub(/;.*$/,'').split(/[,\n\s]+/).map { |x| x.to_i }
     log("ids:" +  @ids.to_s);
 

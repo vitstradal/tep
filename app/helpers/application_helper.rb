@@ -269,4 +269,13 @@ module ApplicationHelper
     return Sosna::Solver.where(user_id: user_id, annual: annual ).first
   end
 
+  def breadcrumb_annual_links(action = :index)
+     annual_max = @config[:annual].to_i
+     annual_min = 29 # tep started
+     { name: "Ročník #{@annual}",
+       url: {roc:@annual, se: 1},
+       sub: (annual_min .. annual_max).map { |a| {name: "Ročník #{a}", url: {action: action, roc:a}}}.reverse,
+     }
+  end
+
 end

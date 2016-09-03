@@ -64,11 +64,11 @@ Tep::Application.routes.draw do
   post '/sosna/problem/new_round'            => 'sosna/problem#new_round',      :as => :sosna_problem_new_round
   post '/sosna/problem/:id/delete'           => 'sosna/problem#delete',         :as => :sosna_problem_delete
 
-  post  '/sosna/solvers/labels'                => 'sosna/solver#labels',         :as => :sosna_solver_labels_post
+  post  '/sosna/solvers/labels'               => 'sosna/solver#labels',         :as => :sosna_solver_labels_post
   get  '/sosna/solvers/labels'                => 'sosna/solver#labels',         :as => :sosna_solver_labels
-  post  '/sosna/solver/:id/dup(/:annual)'       => 'sosna/solver#dup', :as => :sosna_solver_dup
-  get  '/sosna/solvers/tep_emails(/:annual)'  => 'sosna/solver#tep_emails',         :as => :sosna_solver_tep_emails
-  get  '/sosna/solvers(/:annual)'             => 'sosna/solver#index',           :as => :sosna_solvers
+  post  '/sosna/solver/:id/dup(/:roc)'        => 'sosna/solver#dup', :as => :sosna_solver_dup
+  get  '/sosna/solvers/tep_emails(/:roc)'     => 'sosna/solver#tep_emails',         :as => :sosna_solver_tep_emails
+  get  '/sosna/solvers(/:roc)'                => 'sosna/solver#index',           :as => :sosna_solvers
   #get  '/sosna/solvers'                      => 'sosna/solver#index',           :as => :sosna_solvers
   get  '/sosna/solver(/:id)'                 => 'sosna/solver#show',            :as => :sosna_solver
   patch '/sosna/solver/update'               => 'sosna/solver#update',          :as => :sosna_solver_update
