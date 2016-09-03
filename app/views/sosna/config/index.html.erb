@@ -7,7 +7,7 @@
       <tr>
         <th>Rok</th>
         <td><%= text_field :config, :year, value: @config[:year] %></td>
-        <td></td>
+        <td>používá se v <%=link_to "Souhlasu se zpracováním osobních údajů", sosna_solver_new_path(anchor: 'souhlas') %> </td>
       </tr>
       <tr>
        <th>Ročník</th>
@@ -19,23 +19,17 @@
         <td><%= text_field :config, :round,  value: @config[:round] %></td>
         <td></td>
       </tr>
+        <th>Zobrazit opravené řešení aktuální série</th>
+        <td><%= select_tag 'config[show_revisions]', options_for_select(["yes","no"], @config[:show_revisions]) %></td>
+        <td>řešení předchozích sérií budou zobrazeny bez ohledu na tuto hodnotu</td>
+        <td></td>
+      </tr>
       <tr>
         <th>Série s Návratkou</th>
         <td><%= text_field :config, :confirmation_round,  value: @config[:confirmation_round] %></td>
-        <td></td>
+        <td>u uploadu se zobrazí možnost nahrát návratku. (0 = nebude u žádné série)</td>
       </tr>
       <tr>
-        
-        <th>Zobrazit opravené řešení aktuální série</th>
-        <td><%= select_tag 'config[show_revisions]', options_for_select(["yes","no"], @config[:show_revisions]) %></td>
-        <td>řešení předchozích sérií budou zobrazeny bez ohledu na tuto hodnotu)</td>
-        <td></td>
-      </div>
-      <tr>
-        <th>Zobrazit upload návratky</th>
-        <td><%= select_tag 'config[confirmation_file_upload]', options_for_select(["yes","no"], @config[:show_revisions]) %></td>
-        <td></td>
-      </tr>
     
       </div>
     </tbody>
