@@ -323,12 +323,13 @@ class Sosna::SolutionController < SosnaController
                    # not bonus
                    @config[:round]
                else
-                   # FIXME: pokud je bonusova serie (==100), je moje reseni u uzivatele posledni serie
+                   # FIXME: pokud je bonusova serie (==100), je "moje reseni" u uzivatele posledni serie
                    # FIXME: posledni serie, je zde natvrdo '6' (&btw: must be string)
                    '6'
                end
     end
-    @breadcrumb = [[], _rounds_roc(@annual, @round) ]
+
+    @breadcrumb = [[_annual_link(@annual, :user_index)], _rounds_roc(@annual, @round, :user_index) ]
 
     @is_current = (@annual == @config[:annual] && @round ==  @config[:round])
 
@@ -338,14 +339,14 @@ class Sosna::SolutionController < SosnaController
       authorize! :user_index_org, Sosna::Solution
       @solver = Sosna::Solver.find(solver_id)
     else
-      @solver = Sosna::Solver.where(:user_id => current_user.id, :annual => @config[:annual]).take
+      @solver = Sosna::Solver.where(:user_id => current_user.id, :annual => @annual).take
       @solver_is_current_user = true
     end
-    if ! @solver
-       add_alert "Pozor: zatím nejsi letošním řešitelem, nejprve vyplň přihlašku!"
-       return redirect_to :controller => :solver , :action => :new
-    end
 
+    if ! @solver && @annual.to_i < @config[:annual].to_i
+       add_alert "V ročníku #{@annual} jsi nebyl řešitelem!"
+       return render :empty
+    end
     if @config[:confirmation_round] == @round
       @show_confirmation_upload = true
       @confirmation_exists = File.exists? _confirm_file_path @solver
@@ -363,6 +364,7 @@ class Sosna::SolutionController < SosnaController
 
   def user_bonus
     params[:se] = '100'
+    @hide_non_bonus_in_breadcrumb = true
     user_index
     render :user_index
   end
@@ -393,12 +395,13 @@ class Sosna::SolutionController < SosnaController
 
     deadline = deadline_time(@config, problem.round)
     if problem.annual.to_s != @config[:annual] || !deadline || deadline  < Time.now
-      if is_owner
+      # po deadline muze nahravat pouze pouze admin
+      if ! user.admin?
         pp solution.problem.annual != @config[:annual]
         pp @config[:annual]
         pp solution.problem.annual
         pp deadline_time(@config, solution.problem.round)
-        add_alert "Řešení není možné odevdat"
+        add_alert "Řešení není možné odevdat (pozdní termín)"
         return redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
       end
     end
@@ -423,10 +426,6 @@ class Sosna::SolutionController < SosnaController
       return redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
     end
 
-
-#    pp problem
-#    pp solver
-#
     # save file
     filename = solution.get_filename_ori
     File.open(UPLOAD_DIR + filename, 'wb') {  |f| f.write(solution_file.read) }
@@ -891,26 +890,20 @@ class Sosna::SolutionController < SosnaController
       Sosna::Solution.where(:problem_id => problems.map{|p| p.id}).load
   end
 
-#  def _ solutions_from_roc_se_ul
-#    roc, se, ul = _params_roc_se_ul
-#    if ul
-#      return Sosna::Solution.includes(:problem).joins(:problem).where(:sosna_problems => {:annual => roc, :round => se, :problem_no => ul}).load
-#    else
-#      return Sosna::Solution.includes(:problem).joins(:problem).where(:sosna_problems => {:annual => roc, :round => se}).load
-#    end
-#  end
 
-  def _problems_roc_se(roc, se)
+  # r: links to problems
+  def _problems_roc_se(roc, se, action = :index)
       return Sosna::Problem.where({:annual => roc, :round => se})
                          .load
                          .map do |ul|
-                              _problem_link(@annual, @round, ul.problem_no)
+                              _problem_link(@annual, @round, ul.problem_no, action)
                          end
 
   end
 
-  # return Sosna::Problem
-  def _rounds_roc(roc, se = nil)
+  # r: list of "links" to 
+  # r: [ { name: "", url:""}, ... ]
+  def _rounds_roc(roc, se = nil, action = :index)
     rounds = []
     serie_is_bonus = is_bonus_round(se)
     Sosna::Problem.select('round')
@@ -921,31 +914,32 @@ class Sosna::SolutionController < SosnaController
                        .each do |pr|
                           round_str = pr.round.to_s
                           is_bonus = is_bonus_round(round_str)
-                          if is_bonus == serie_is_bonus
-                            rounds.push _round_link(roc, pr.round, round_str == se)
-                          else
-                          end
+                          next if @hide_non_bonus_in_breadcrumb && !is_bonus 
+                          rounds.push _round_link(roc, pr.round, round_str == se, action)
                        end
     rounds
   end
 
-  def _annual_link(annual)
-     {name: "Ročník #{annual}", url: {roc:@annual}}
+  def _annual_link(annual, action = :index)
+
+     annual_max = @config[:annual].to_i
+     annual_min = 29 # tep started
+     { name: "Ročník #{annual}",
+       url: {roc:@annual, se: 1},
+       sub: (annual_min .. annual_max).map { |a| {name: "Ročník #{a}", url: {action: action, roc:a, se:1}}}.reverse,
+     }
   end
 
-  def _problem_link(annual, round, problem_no)
-      {name: "Úloha #{problem_no}", url: {roc: annual, se: round, ul: problem_no}}
+  def _problem_link(annual, round, problem_no, action = :index)
+      {name: "Úloha #{problem_no}", url: {action: action, roc: annual, se: round, ul: problem_no}}
   end
 
 
-
-
-
-  def _round_link(annual, round, active= false)
+  def _round_link(annual, round, active= false, action = :index)
      if is_bonus_round(round)
-       {name: "Bonusová série", active: active, url: {roc: annual, se: round}}
+       {name: "Bonusová série", active: active, url: {action: action, roc: annual, se: round}}
      else
-       {name: "Série #{round}", active: active, url: {roc: annual, se: round}}
+       {name: "Série #{round}", active: active, url: {action: action, roc: annual, se: round}}
      end
   end
 
@@ -959,8 +953,5 @@ class Sosna::SolutionController < SosnaController
                        end
     return annual
   end
-
-
-
 
 end

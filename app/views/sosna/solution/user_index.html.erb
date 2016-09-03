@@ -20,7 +20,7 @@
 <% deadline = deadline_time @config, @round %>
 <% is_current_annual = @config[:annual] == @annual %>
 <% show_nahrat = is_current_annual && !deadline.nil? && deadline >=  Time.now %>
-<% show_nahrat = true if current_user.admin? %>
+<% show_nahrat_admin = true if current_user.admin? %>
 <% max_size = Rails.configuration.sosna_user_solution_max_size %>
 
 <table class="table table-bordered">
@@ -29,6 +29,8 @@
    <th>Řešení</td>
    <% if show_nahrat  %>
      <th>Nahrát</td>
+   <% elsif show_nahrat_admin %>
+     <th>Nahrát (admin only)</td>
    <% end %>
    <th>Opravené řešení</th>
    <% if current_user.admin? %>
@@ -48,7 +50,7 @@
         <i class="fa fa-ban red"></i> <i>žádné řešení</i>
       <% end %>
     </td>
-    <% if show_nahrat %>
+    <% if show_nahrat || show_nahrat_admin%>
        <td>  <%= form_for  sol, :html => {:class=> 'form-inline', :multipart => true}, :url => :sosna_solution_upload do |f|  %>
                <%= f.hidden_field :id %>
                    <div style="display:inline-block;width:200px;height:16px">
@@ -61,6 +63,7 @@
     <td>
       <% sol_in_this_round_allowed   = @round.to_i <  @config[:round].to_i %>
       <% sol_in_this_round_allowed ||= @round == @config[:round] && @config[:show_revisions] == 'yes'  %>
+      <% sol_in_this_round_allowed ||= @annual < @config[:annual] %>
       <% if sol_in_this_round_allowed %> 
         <% if sol.filename_corr_display %>
           <%= link_to sol.filename_corr_display, :action => :download_rev, :id => sol.id %>
@@ -100,7 +103,7 @@
       <% end %>
       <sup><%= link_to wiki_main_url('navratka'), title: 'Co je to návratka?' do %> <i class="fa fa-question red"></i> <%end%></sup>
     </td>
-    <% if show_nahrat %>
+    <% if show_nahrat || show_nahrat_admin %>
        <td>  <%= form_tag  sosna_solutions_upload_confirm_file_path, :class=> 'form-inline', :multipart => true  do |f|  %>
                <%= hidden_field_tag :roc, @annual %>
                <%= hidden_field_tag :se, @round %>

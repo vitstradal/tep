@@ -217,7 +217,11 @@
     # [ cast1, cast2, cast3 ]
     # cast1 : [ item1, item2, item2, ... ]
     # item:
-    #        {name: "Série #{round}", active: true|false, url: url_for(roc: annual, se: round)}
+    #        { name: "Série #{round}",
+    #          active: true|false,
+    #          url: url_for(roc: annual, se: round),
+    #          sub: [ {name:"", url:""} , ...  ] # vyrolovaci menu
+    #        }
     #%>
   <% if @breadcrumb %>
     <div id="breadcrumbs" class="breadcrumbs">
@@ -228,16 +232,19 @@
              <% if ! bread[:active] || true %>
                <li class="<%= idx == 0 ? 'tep-slash' : ''%>">
                  <% if bread[:ico] %><i class="fa <%= bread[:ico] %> home-icon"></i><% end %>
-                 <%=link_to  bread[:name].capitalize, bread[:url] %>
                  <% if bread[:sub] %>
                    <div class="inline pos-rel">
-                   <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-caret-down"></i></a>
-                   <ul class="dropdown-menu dropdown-light dropdown-caret dropdown-closer">
-                     <% bread[:sub].each do |bread2| %>
-                       <li><%=link_to  bread2[:name].capitalize, bread2[:url] %></li>
-                     <% end %>
-                   </ul>
+                     <a href="#" class="dropdown-toggle" data-toggle="dropdown">
+                     <%= bread[:name].capitalize %>
+                     <i class="fa fa-caret-down"></i></a>
+                     <ul class="dropdown-menu dropdown-light dropdown-caret dropdown-closer">
+                       <% bread[:sub].each do |bread2| %>
+                         <li><%=link_to  bread2[:name].capitalize, bread2[:url] %></li>
+                       <% end %>
+                     </ul>
                    </div>
+                 <% else %>
+                   <%=link_to  bread[:name].capitalize, bread[:url] %>
                  <% end %>
                </li>
              <% elsif bread[:name] !~  /^index$/i %>

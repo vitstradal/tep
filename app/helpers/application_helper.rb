@@ -163,10 +163,6 @@ module ApplicationHelper
   def translit(str)
     UnicodeUtils.nfkd(str).gsub(/(\p{Letter})\p{Mark}+/,'\\1')
   end
-#  def self.translit(str)
-#    #Iconv.iconv('ascii//translit', 'utf-8', str).join
-#    UnicodeUtils.nfkd(str).gsub(/(\p{Letter})\p{Mark}+/,'\\1')
-#  end
 
   def strcoll(a,b)
     return FFILocale::strcoll(a, b)
