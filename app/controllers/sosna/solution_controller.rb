@@ -342,10 +342,16 @@ class Sosna::SolutionController < SosnaController
       @solver_is_current_user = true
     end
 
+    if ! @solver
+      add_alert "Pozor: zatím nejsi letošním řešitelem, nejprve vyplň přihlašku!"
+      return redirect_to :controller => :solver , :action => :new
+    end
+
     if ! @solver && @annual.to_i < @config[:annual].to_i
        add_alert_now "V ročníku #{@annual} jsi nebyl řešitelem!"
        return render :empty
     end
+
     if @config[:confirmation_round] == @round
       @show_confirmation_upload = true
       @confirmation_exists = File.exists? _confirm_file_path @solver
