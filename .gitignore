@@ -6,6 +6,7 @@ public/data
 db/lidi29*.yml
 db/skoly29.yml
 log/*.log
+log/*.log.gz
 tmp/
 /tmp.*
 tags

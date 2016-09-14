@@ -12,7 +12,6 @@ Tep::Application.routes.draw do
   get  '/sosna/solver/confirm'               => 'sosna/solver#user_solver_confirm',     :as => :sosna_solver_user_solver_confirm
   post '/sosna/solver/create'                => 'sosna/solver#create',                  :as => :sosna_solver_anon_create
   get  '/sosna/solver/tnx'                   => 'sosna/solver#create_tnx',              :as => :sosna_solver_create_tnx
-  get  '/sosna/aesop/index'                  => 'sosna/aesop#index',                    :as => :sosna_aesop_index
   post '/sosna/solver/confirm_none_to_next'  => 'sosna/solver#confirm_none_to_next',    :as => :sosna_solver_confirm_none_to_next
 #  post '/sosna/solver/delete_zero_solvers'   => 'sosna/solver#delete_zero_solvers',     :as => :sosna_solver_delete_zero_solvers
 
@@ -31,6 +30,9 @@ Tep::Application.routes.draw do
   get  '/sosna/solutions/confirm_file'            => 'sosna/solution#get_confirm_file',    :as => :sosna_solutions_get_confirm_file
   get  '/sosna/solution/confirm_files'            => 'sosna/solution#get_confirm_files',    :as => :sosna_solutions_get_confirm_files
   get  '/sosna/solution/:id/down'                 => 'sosna/solution#download',      :as => :sosna_solution_download
+
+  get  '/sosna/solver/aesop'                             => 'sosna/solver#aesop',            :as => :sosna_solver_aesop
+  post '/sosna/solver/aesop/create'                      => 'sosna/solver#aesop_create',     :as => :sosna_solver_aesop_create
 
 
   get  '/sosna/solution/:id/down_rev'       => 'sosna/solution#download_rev', :as => :sosna_solution_download_rev
@@ -68,7 +70,7 @@ Tep::Application.routes.draw do
   get  '/sosna/solvers/labels'                => 'sosna/solver#labels',         :as => :sosna_solver_labels
   post  '/sosna/solver/:id/dup(/:roc)'        => 'sosna/solver#dup', :as => :sosna_solver_dup
   get  '/sosna/solvers/tep_emails(/:roc)'     => 'sosna/solver#tep_emails',         :as => :sosna_solver_tep_emails
-  get  '/sosna/solvers(/:roc)'                => 'sosna/solver#index',           :as => :sosna_solvers
+  get  '/sosna/solvers/list(/:roc)'           => 'sosna/solver#index',           :as => :sosna_solvers
   #get  '/sosna/solvers'                      => 'sosna/solver#index',           :as => :sosna_solvers
   get  '/sosna/solver(/:id)'                 => 'sosna/solver#show',            :as => :sosna_solver
   patch '/sosna/solver/update'               => 'sosna/solver#update',          :as => :sosna_solver_update

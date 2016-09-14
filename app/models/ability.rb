@@ -102,6 +102,9 @@ class Ability
 
     if user.admin?
 
+      can :aesop, Sosna::Solver
+      can :aesop_create, Sosna::Solver
+
       can :confirm_none_to_next, Sosna::Solver
 
       can :delete, Sosna::Solver
