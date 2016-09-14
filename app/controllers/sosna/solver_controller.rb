@@ -374,23 +374,26 @@ class Sosna::SolverController < SosnaController
   end
 
   def _aesop_init
-    @round_max = Sosna::Config.where(key: 'round') .take.value.to_i
+    load_config
+    #@round_max = Sosna::Config.where(key: 'round') .take.value.to_i
     # FIXME:
-    @round_max = 6 if @round_max >= Sosna::Problem::BONUS_ROUND_NUM
-    @annual = Sosna::Config.where(key: 'annual').take.value.to_i
+    #@round_max = 6 if @round_max >= Sosna::Problem::BONUS_ROUND_NUM
   end
 
   def aesop_create
     _aesop_init
 
+    @annual = params[:roc] || @annual
+    @round_max = params[:se] || @round
+
     files = []
     dir = "ovvp"
     index_path = "ovvp.index.txt"
-    (@round_max .. @round_max ).each do |round|
+    (@round_max.to_i .. @round_max.to_i ).each do |round|
 
       file = "ovvp.#{@annual}.#{round}.txt"
       File.open("#{dir}/#{file}", 'w') do |f|
-          f.write _aesop_print_round(@annual, round)
+          f.write _aesop_print_round(@annual.to_i, round)
       end
       files << file
       "#{@annual}.#{round}.txt"
@@ -398,7 +401,7 @@ class Sosna::SolverController < SosnaController
     File.open("#{dir}/#{index_path}", 'w') do |f|
       f.write(files.join("\n")+"\n")
     end
-    #print "created #{dir}/#{index_path}, #{files.map{|f| "#{dir}/#{f}"}.join(',')}.\n"
+    add_success "created #{dir}/#{index_path}, #{files.map{|f| "#{dir}/#{f}"}.join(',')}.\n"
     redirect_to :sosna_solver_aesop
   end
 

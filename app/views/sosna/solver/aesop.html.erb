@@ -1,13 +1,17 @@
 
 <h3>Aesop, aneb  export pro OVVP</h3>
 
-<% cur_file = "ovvp.#{@annual}.#{@round_max}.txt" %>
+<% cur_file = "ovvp.#{@annual}.#{@round}.txt" %>
 <ul>
   <li><%= link_to  'index', @aesop_url %></li>
   <li><%= link_to  'ovvp.index.txt', "#{@aesop_url}/ovvp.index.txt"%></li>
   <li><%= link_to  cur_file , "#{@aesop_url}/#{cur_file}" %></li>
 </ul>
 
-<%= form_tag :action => :aesop_create  do%>
-  <button class="btn btn-danger" type="submit" >Vytvorit <%= cur_file %></button>
+<%= form_tag :action => :aesop_create  do |f| %>
+       File:
+       <% annual_max = @config[:annual].to_i %>
+       ovvp.<%= select_tag 'roc', options_for_select((28..(annual_max)), @config[:annual].to_i) %>.<%
+       %><%= select_tag 'se', options_for_select((1..7), @config[:round].to_i) %>.txt
+  <button class="btn btn-danger" type="submit" >Vytvořit</button>
 <% end %>
