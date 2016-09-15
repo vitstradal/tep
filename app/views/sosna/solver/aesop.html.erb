@@ -1,8 +1,11 @@
 
 <h3>Aesop, aneb  export pro OVVP</h3>
 
+
+
 <% cur_file = "ovvp.#{@annual}.#{@round}.txt" %>
 <ul>
+  <li><%= link_to  'Jakna AESOP', wiki_piki_url('jakna/aesop') %>
   <li><%= link_to  'index', @aesop_url %></li>
   <li><%= link_to  'ovvp.index.txt', "#{@aesop_url}/ovvp.index.txt"%></li>
   <li><%= link_to  cur_file , "#{@aesop_url}/#{cur_file}" %></li>
