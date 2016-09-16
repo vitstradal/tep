@@ -1,83 +1,104 @@
-<h3>Konfigurace Sosny</h3>
-
-<%= form_for :config, :url => {:action => :update}, :html =>  {:class => 'form-horizontal'}  do |f| %>
-
-  <table class="table table-condensed table-hover table-bordered">
-    <tbody>
-      <tr>
-        <th>Rok</th>
-        <td><%= text_field :config, :year, value: @config[:year] %></td>
-        <td>používá se v <%=link_to "Souhlasu se zpracováním osobních údajů", sosna_solver_new_path(anchor: 'souhlas') %> </td>
-      </tr>
-      <tr>
-       <th>Ročník</th>
-       <td><%= text_field :config, :annual, value: @config[:annual] %></td>
-        <td></td>
-      </tr>
-      <tr>
-        <th>Série</th>
-        <td><%= text_field :config, :round,  value: @config[:round] %></td>
-        <td></td>
-      </tr>
-        <th>Zobrazit opravené řešení aktuální série</th>
-        <td><%= select_tag 'config[show_revisions]', options_for_select(["yes","no"], @config[:show_revisions]) %></td>
-        <td>řešení předchozích sérií budou zobrazeny bez ohledu na tuto hodnotu</td>
-        <td></td>
-      </tr>
-      <tr>
-        <th>Série s Návratkou</th>
-        <td><%= text_field :config, :confirmation_round,  value: @config[:confirmation_round] %></td>
-        <td>u uploadu se zobrazí možnost nahrát návratku. (0 = nebude u žádné série)</td>
-      </tr>
-      <tr>
-    
-      </div>
-    </tbody>
-  <table>
-  <table class="table table-condensed table-hover table-bordered">
-    <thead>
-    <tr>
-     <th>Ser.</th>
-     <th>Termín odevzdání</th>
-     <th>Povolit upload</th>
-     <th>Počet úloh</th>
-     <th>Deadline přesně</th>
-   </tr>
-   </thead>
-   <tbody>
-     <% [1, 2, 3, 4, 5, 6, Sosna::Problem::BONUS_ROUND_NUM].each do |round| %>
-       <tr>
-         <td>
-
-            <% if round < Sosna::Problem::BONUS_ROUND_NUM  %>
-             <%= round %>
-             <% else %>
-              bonus
+<div class="tabbable">
+  <ul id="myTab" class="nav nav-tabs">
+     <li class="active"> <%= link_to 'Sosna', '#sosna', 'data-toggle' => 'tab' %></li>
+     <li               > <%= link_to 'Aesop', '#aesop', 'data-toggle' => 'tab' %></li>
+  </ul>
+  <div class="tab-content">
+    <div class="tab-pane in active" id='sosna'>
+      <%= form_for :config, :url => {:action => :update}, :html =>  {:class => 'form-horizontal'}  do |f| %>
+        <table class="table table-condensed table-hover table-bordered">
+          <tbody>
+            <tr>
+              <th>Rok</th>
+              <td><%= text_field :config, :year, value: @config[:year] %></td>
+              <td>používá se v <%=link_to "Souhlasu se zpracováním osobních údajů", sosna_solver_new_path(anchor: 'souhlas') %> </td>
+            </tr>
+            <tr>
+             <th>Ročník</th>
+             <td><%= text_field :config, :annual, value: @config[:annual] %></td>
+              <td></td>
+            </tr>
+            <tr>
+              <th>Série</th>
+              <td><%= text_field :config, :round,  value: @config[:round] %></td>
+              <td></td>
+            </tr>
+              <th>Zobrazit opravené řešení aktuální série</th>
+              <td><%= select_tag 'config[show_revisions]', options_for_select(["yes","no"], @config[:show_revisions]) %></td>
+              <td>řešení předchozích sérií budou zobrazeny bez ohledu na tuto hodnotu</td>
+              <td></td>
+            </tr>
+            <tr>
+              <th>Série s Návratkou</th>
+              <td><%= text_field :config, :confirmation_round,  value: @config[:confirmation_round] %></td>
+              <td>u uploadu se zobrazí možnost nahrát návratku. (0 = nebude u žádné série)</td>
+            </tr>
+            <tr>
+          </tbody>
+        </table>
+        <table class="table table-condensed table-hover table-bordered">
+          <thead>
+          <tr>
+           <th>Ser.</th>
+           <th>Termín odevzdání</th>
+           <th>Povolit upload</th>
+           <th>Počet úloh</th>
+           <th>Deadline přesně</th>
+         </tr>
+         </thead>
+         <tbody>
+           <% [1, 2, 3, 4, 5, 6, Sosna::Problem::BONUS_ROUND_NUM].each do |round| %>
+             <tr>
+               <td>
+      
+                  <% if round < Sosna::Problem::BONUS_ROUND_NUM  %>
+                   <%= round %>
+                   <% else %>
+                    bonus
+                  <% end %>
+               </td>
+               <% dline = deadline_time(@config, round, true) %>
+               <td>
+                  <%= select_date( dline || Time.parse('2010-06-06'),
+                                                  { :use_month_numbers => true, :prefix => "config[deadline#{round}]", :order => [:day, :month, :year]},
+                                                  { :class => 'input-small' } ) %>
+              </td>
+              <td>
+                 <%= select_tag("config[show#{round}]",
+                             options_for_select(["no","yes"], @config["show#{round}".to_sym]),
+                             {:class=>'input-mini'} ) %>
+              </td>
+              <td>
+              <%= select_tag("config[problems#{round}]",
+                             options_for_select([1,2,3,4,5,6,7,8,9,10], @config["problems#{round}".to_sym]),
+                             {:class=>'input-mini'} ) %>
+              </td>
+              <td><%= dline.to_s %></td>
             <% end %>
-         </td>
-         <% dline = deadline_time(@config, round, true) %>
-         <td>
-            <%= select_date( dline || Time.parse('2010-06-06'),
-                                            { :use_month_numbers => true, :prefix => "config[deadline#{round}]", :order => [:day, :month, :year]},
-                                            { :class => 'input-small' } ) %>
-        </td>
-        <td>
-           <%= select_tag("config[show#{round}]",
-                       options_for_select(["no","yes"], @config["show#{round}".to_sym]),
-                       {:class=>'input-mini'} ) %>
-        </td>
-        <td>
-        <%= select_tag("config[problems#{round}]",
-                       options_for_select([1,2,3,4,5,6,7,8,9,10], @config["problems#{round}".to_sym]),
-                       {:class=>'input-mini'} ) %>
-        </td>
-        <td><%= dline.to_s %></td>
+          <tbody>
+        </table>
+      
+        <div class="control-group">
+          <div class="controls"><%= f.submit :class=>'btn btn-primary', :value=>'Uložit' %></div>
+        </div>
       <% end %>
-    <tbody>
-  </table>
-
-  <div class="control-group">
-    <div class="controls"><%= f.submit :class=>'btn btn-primary', :value=>'Uložit' %></div>
+    </div>
+    <div class="tab-pane in" id='aesop'>
+      <%= form_for :config, :url => {:action => :update}, :html =>  {:class => 'form-horizontal'}  do |f| %>
+        <table class="table table-condensed table-hover table-bordered">
+          <tbody>
+            <tr>
+              <th>Errors-to</th>
+              <td><%= text_field :config, :aesop_errors_to, value: @config[:aesop_errors_to] %></td>
+              <td>komu bude chodit protesty, pokud nastanou problémy v <%=link_to 'AESOPu', sosna_solver_aesop_path%> </td>
+            </tr>
+          <tbody>
+        </table>
+      
+        <div class="control-group">
+          <div class="controls"><%= f.submit :class=>'btn btn-primary', :value=>'Uložit' %></div>
+        </div>
+      <% end %>
+    </div>
   </div>
-<% end %>
-
+</div>

@@ -4,7 +4,7 @@
 
 <div class="tabbable">
   <ul id="myTab" class="nav nav-tabs">
-     <li <%=class_active_if :all == role_sym %>> <%= link_to 'all', users_list_path(role:nil) %></a>
+     <li <%=class_active_if :all == role_sym %>> <%= link_to 'all', users_list_path(role:nil) %></li>
      <% User.valid_roles.each do  |r| %>
        <li <%=class_active_if r == role_sym %> ><%= link_to r, users_list_path(role:r) %></li>
      <% end %>

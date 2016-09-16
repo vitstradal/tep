@@ -385,6 +385,7 @@ class Sosna::SolverController < SosnaController
 
     @annual = params[:roc] || @annual
     @round_max = params[:se] || @round
+    errors_to = @config[:aesop_errors_to];
 
     files = []
     dir = "ovvp"
@@ -393,7 +394,7 @@ class Sosna::SolverController < SosnaController
 
       file = "ovvp.#{@annual}.#{round}.txt"
       File.open("#{dir}/#{file}", 'w') do |f|
-          f.write _aesop_print_round(@annual.to_i, round)
+          f.write _aesop_print_round(@annual.to_i, round, errors_to)
       end
       files << file
       "#{@annual}.#{round}.txt"
@@ -437,9 +438,8 @@ class Sosna::SolverController < SosnaController
 # spam-flag   „Y“ pokud účastník svolil k zasílání materiálů Matfyzu, „N“ pokud jsme se ho ptali a nesvolil. Prázdný řetězec znamená, že jsme se explicitně nezeptali.
 # spam-date   Datum (YYYY-DD-MM), kdy jsme se dozvěděli hodnotu spam-flag-u.
 
-  def _aesop_print_round(annual, round)
+  def _aesop_print_round(annual, round, errors_to)
 
-    errors_to = 'vitas@pikomat.mff.cuni.cz'
 
     maturity_grade = 13
     date = DateTime.now.strftime('%Y-%m-%d %H:%M:%S')
