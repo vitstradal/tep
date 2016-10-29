@@ -743,7 +743,7 @@ class Sosna::SolutionController < SosnaController
       return nil
     end
 
-    solver = Sosna::Solver.find(relid)
+    solver = Sosna::Solver.find_by_id(relid)
     if !solver
        _add_msg(fname, "neexistuje takovy resitel #{relid}")
        return nil
