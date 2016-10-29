@@ -6,6 +6,7 @@ gem 'combine_pdf', '~> 0.2.12'
 gem 'rails'
 gem 'faraday'
 gem 'rugged'
+gem 'filemagic'
 #gem 'rails-i18n'
 #FIXME jessie
 #gem 'devise', '~> 3.1.1'
