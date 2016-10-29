@@ -1,5 +1,5 @@
 # encoding: utf-8
-require 'digest/hmac'
+#require 'digest/hmac'
 require 'unicode_utils'
 module ApplicationHelper
 

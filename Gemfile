@@ -7,9 +7,8 @@ gem 'rails'
 gem 'faraday'
 gem 'rugged'
 gem 'filemagic'
-#gem 'rails-i18n'
-#FIXME jessie
-#gem 'devise', '~> 3.1.1'
+
+
 gem 'devise'
 gem 'devise-i18n'
 gem 'devise-encryptable'
@@ -35,3 +34,5 @@ gem 'ffi-locale', github: 'k3rni/ffi-locale'
 
 gem 'sqlite3'
 
+#FIXME jessie
+#gem 'devise', '~> 3.1.1'
