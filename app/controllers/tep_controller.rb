@@ -41,7 +41,7 @@ class TepController < ApplicationController
 
   def user_new
     user =  User.new(email: "example#{rand(100)}@example.com", name: 'John', last_name: 'Smith', confirmation_sent_at: Time.now,  roles: [:user])
-    user.confirm!
+    user.confirm
     user.save
     redirect_to :action => :user, :id =>  user.id
   end
