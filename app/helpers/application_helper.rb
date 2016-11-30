@@ -146,22 +146,26 @@ module ApplicationHelper
   def add_alert(msg)
     flash[:alerts] ||= []
     flash[:alerts].push(msg)
+    log("alert #{msg}")
   end
 
   def add_success(msg)
     flash[:success] ||= []
     flash[:success].push(msg)
+    log("success #{msg}")
   end
 
   # allerts for non-redirection
   def add_alert_now(msg)
     flash.now[:alerts] ||= []
     flash.now[:alerts].push(msg)
+    log("alert #{msg}")
   end
 
   def add_success_now(msg)
     flash.now[:success] ||= []
     flash.now[:success].push(msg)
+    log("success #{msg}")
   end
 
 

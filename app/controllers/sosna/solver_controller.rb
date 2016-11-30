@@ -208,7 +208,7 @@ class Sosna::SolverController < SosnaController
         # cause between users, the server, and the administrator.
         user =  User.new(email: solver.email.downcase, name: solver.name, last_name: solver.last_name, confirmation_sent_at: Time.now,  roles: [:user])
 
-        user.confirm!
+        user.confirm
         user.send_first_login_instructions  if send_first
         solver.user_id = user.id
         user.save
