@@ -273,28 +273,34 @@ class Sosna::SolutionController < SosnaController
     se =  params[:se]
     ul =  params[:ul]
 
+
     # reseni-roc29-se01-ul2-rel001-ori-vitas-vitas.pdf
     # reseni-roc29-se01-ul2-rel001-rev-vitas-vitas.pdf
-    cfile_name = rfile.original_filename
-    if cfile_name =~ /\.pdf$/
-       path =  _upload_rev_one(roc, se, ul,  cfile_name)
-       if path
-         File.open(UPLOAD_DIR + path, 'wb') {  |f| f.write(rfile.read) }
-       end
-    elsif rfile.original_filename =~ /\.zip$/
-       zip_file = Tempfile.new(['corr', '.zip'], UPLOAD_DIR)
-       File.open(zip_file, 'wb') {  |f| f.write(rfile.read) }
-       zip_file.close
-       Zip::File.open(zip_file.path) do |zipfile|
-         zipfile.each do |entry|
-           path =  _upload_rev_one(roc, se, ul,  entry.name)
-           if path
-             entry.extract(UPLOAD_DIR + path)  { true }
+    if rfile.nil?
+      add_alert "no uploaded file (param file_rev)"
+    else
+      cfile_name = rfile.original_filename
+
+      if cfile_name =~ /\.pdf$/
+         path =  _upload_rev_one(roc, se, ul,  cfile_name)
+         if path
+           File.open(UPLOAD_DIR + path, 'wb') {  |f| f.write(rfile.read) }
+         end
+      elsif rfile.original_filename =~ /\.zip$/
+         zip_file = Tempfile.new(['corr', '.zip'], UPLOAD_DIR)
+         File.open(zip_file, 'wb') {  |f| f.write(rfile.read) }
+         zip_file.close
+         Zip::File.open(zip_file.path) do |zipfile|
+           zipfile.each do |entry|
+             path =  _upload_rev_one(roc, se, ul,  entry.name)
+             if path
+               entry.extract(UPLOAD_DIR + path)  { true }
+             end
            end
          end
-       end
-    else
-      _add_msg(cfile_name, nil)
+      else
+        _add_msg(cfile_name, nil)
+      end
     end
     redirect_to :action =>  :index, :roc => roc, :se => se, :ul => ul
   end
@@ -895,7 +901,7 @@ class Sosna::SolutionController < SosnaController
 
   end
 
-  # r: list of "links" to 
+  # r: list of "links" to
   # r: [ { name: "", url:""}, ... ]
   def _rounds_roc(roc, se = nil, action = :index)
     rounds = []
@@ -908,7 +914,7 @@ class Sosna::SolutionController < SosnaController
                        .each do |pr|
                           round_str = pr.round.to_s
                           is_bonus = is_bonus_round(round_str)
-                          next if @hide_non_bonus_in_breadcrumb && !is_bonus 
+                          next if @hide_non_bonus_in_breadcrumb && !is_bonus
                           rounds.push _round_link(roc, pr.round, round_str == se, action)
                        end
     rounds
