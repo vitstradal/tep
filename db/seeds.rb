@@ -24,7 +24,7 @@ if true
              {:email => "org@pikomat.mff.cuni.cz", :roles => [:org, :user],          :password => "org je pes"},
         ])
 
-  users.each { |u| u.confirm! }
+  users.each { |u| u.confirm }
 
 end
 
