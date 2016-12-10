@@ -8,10 +8,10 @@
 
 
 #schools = Sosna::School.create([
-#          { :name => '1zakladni', :short => '1zs', 
+#          { :name => '1zakladni', :short => '1zs',
 #            :street => 'narodni', :num => 1, :city => 'Brno', :psc => "11111",
 #          },
-#          { :name => '2zakladni', :short => '2zs', 
+#          { :name => '2zakladni', :short => '2zs',
 #            :street => 'narodni', :num => 2, :city => 'Brno', :psc => "11111",
 #          },
 #        ])
