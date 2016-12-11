@@ -11,9 +11,9 @@ prod-reset: prod-del prod-migrate prod-seed
 #prod-del:
 #	rm -f db/production.sqlite3
 dev-del:
-	rm -f db/development.sqlite3
+	rm -f var/db/development.sqlite3
 loc-del:
-	rm -f db/local.sqlite3
+	rm -f var/db/local.sqlite3
 dev-migrate:
 	rake db:migrate RAILS_ENV=development
 loc-migrate:

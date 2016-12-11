@@ -13,7 +13,7 @@
 
 ActiveRecord::Schema.define(version: 16) do
 
-  create_table "informs", force: true do |t|
+  create_table "informs", force: :cascade do |t|
     t.string   "form"
     t.string   "data"
     t.datetime "created_at"
@@ -23,7 +23,7 @@ ActiveRecord::Schema.define(version: 16) do
 
   add_index "informs", ["form"], name: "index_informs_on_form"
 
-  create_table "sessions", force: true do |t|
+  create_table "sessions", force: :cascade do |t|
     t.string   "session_id", null: false
     t.text     "data"
     t.datetime "created_at"
@@ -33,14 +33,14 @@ ActiveRecord::Schema.define(version: 16) do
   add_index "sessions", ["session_id"], name: "index_sessions_on_session_id", unique: true
   add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at"
 
-  create_table "sosna_configs", force: true do |t|
+  create_table "sosna_configs", force: :cascade do |t|
     t.string "key"
     t.string "value"
   end
 
   add_index "sosna_configs", ["key"], name: "index_sosna_configs_on_key", unique: true
 
-  create_table "sosna_penalisations", force: true do |t|
+  create_table "sosna_penalisations", force: :cascade do |t|
     t.integer  "annual"
     t.integer  "round"
     t.integer  "solver_id"
@@ -52,14 +52,14 @@ ActiveRecord::Schema.define(version: 16) do
 
   add_index "sosna_penalisations", ["solver_id", "annual", "round"], name: "index_sosna_penalisations_on_solver_id_and_annual_and_round", unique: true
 
-  create_table "sosna_problems", force: true do |t|
+  create_table "sosna_problems", force: :cascade do |t|
     t.string  "title"
     t.integer "annual"
     t.integer "round"
     t.integer "problem_no"
   end
 
-  create_table "sosna_results", force: true do |t|
+  create_table "sosna_results", force: :cascade do |t|
     t.integer  "annual"
     t.integer  "round"
     t.integer  "solver_id"
@@ -76,7 +76,7 @@ ActiveRecord::Schema.define(version: 16) do
 
   add_index "sosna_results", ["solver_id", "annual", "round"], name: "index_sosna_results_on_solver_id_and_annual_and_round", unique: true
 
-  create_table "sosna_schools", force: true do |t|
+  create_table "sosna_schools", force: :cascade do |t|
     t.text    "name"
     t.text    "short"
     t.text    "street"
@@ -89,7 +89,7 @@ ActiveRecord::Schema.define(version: 16) do
     t.text    "country",      default: "cz"
   end
 
-  create_table "sosna_solutions", force: true do |t|
+  create_table "sosna_solutions", force: :cascade do |t|
     t.string   "filename"
     t.string   "filename_orig"
     t.string   "filename_corr"
@@ -104,7 +104,7 @@ ActiveRecord::Schema.define(version: 16) do
 
   add_index "sosna_solutions", ["solver_id", "problem_id"], name: "index_sosna_solutions_on_solver_id_and_problem_id", unique: true
 
-  create_table "sosna_solvers", force: true do |t|
+  create_table "sosna_solvers", force: :cascade do |t|
     t.text     "name"
     t.text     "last_name"
     t.text     "sex",            default: "male"
@@ -130,7 +130,7 @@ ActiveRecord::Schema.define(version: 16) do
     t.text     "confirm_state",  default: "none"
   end
 
-  create_table "users", force: true do |t|
+  create_table "users", force: :cascade do |t|
     t.string   "email",                  default: "", null: false
     t.string   "encrypted_password",     default: "", null: false
     t.string   "reset_password_token"
