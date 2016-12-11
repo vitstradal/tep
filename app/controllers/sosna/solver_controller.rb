@@ -151,14 +151,31 @@ class Sosna::SolverController < SosnaController
     school_id =  params[:school].delete :id
 
     send_first =  _edit_want_send_first()
-
+    #@sosna_solver=params[:sosna_solver]
+    #psc=@sosna_solver[:psc]
+    #prvni=psc[0,3]
+    #druhe=psc[-2,2]
+    #pscnove=prvni+" "+druhe
+    #@sosna_solver[:psc]=pscnove
+    #params[:sosna_solver]=@sosna_solver
     solver = Sosna::Solver.new(params[:sosna_solver])
+
     is_bonus = solver.confirm_state == 'bonus'
 
     solver.valid?
     agree = ! params[:souhlasim].nil?
     solver.errors.add(:souhlasim, 'Je nutno souhlasit s podmínkami') if ! agree
     solver.errors.add(:email, 'je již registrován u jiného řešitele') if Sosna::Solver.where(email: solver.email, annual: @annual).exists? && !solver.email.empty?
+
+    if solver.psc !~ /^\d{3} \d{2}$/ # pokud neni ve tvaru ^DDD DD$
+      solver.psc=solver.psc.gsub(/[^\d]/, '')	# kazdou necislici nahradi ''-smaze
+      if ! (solver.psc.length == 5)
+        solver.errors.add(:psc, 'neobsahuje 5 číslic')  #hodi chybu pokud neobsahuje prave 5 cislic
+      else
+        solver.psc=solver.psc[0,3]+" "+solver.psc[-2,2] # prevede do tvaru ^DDD DD$
+      end
+    end
+
     solver.errors.add(:email, 'neexistující adresa') if !solver.email.empty? && !email_valid_mx_record?(solver.email)
     solver.errors.add(:birth, 'jsi příliš stár') if solver.errors[:birth].blank? && !solver.birth.empty? && (Date.parse(solver.birth) + 17.years) < Date.today
     solver.errors.add(:email, 'adresa nemůže být prázdná') if !is_admin && solver.email.empty?
@@ -178,6 +195,14 @@ class Sosna::SolverController < SosnaController
       school = Sosna::School.find(school_id)
     end
 
+    if school.psc !~ /^\d{3} \d{2}$/ # pokud neni ve tvaru ^DDD DD$
+      school.psc=school.psc.gsub(/[^\d]/, '')	# kazdou necislici nahradi ''-smaze
+      if ! (school.psc.length == 5)
+        school.errors.add(:psc, 'neobsahuje 5 číslic')  #hodi chybu pokud neobsahuje prave 5 cislic
+      else
+        school.psc=school.psc[0,3]+" "+school.psc[-2,2] # prevede do tvaru ^DDD DD$
+      end
+    end
 
     if school.nil? || school.invalid? || solver.errors.count > 0
         add_alert "Pozor: ve formuláři jsou chyby"
