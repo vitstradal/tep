@@ -151,13 +151,13 @@ class Sosna::SolverController < SosnaController
     school_id =  params[:school].delete :id
 
     send_first =  _edit_want_send_first()
-    @sosna_solver=params[:sosna_solver]
-    psc=@sosna_solver[:psc]
-    prvni=psc[0,3]
-    druhe=psc[-2,2]
-    pscnove=prvni+" "+druhe
-    @sosna_solver[:psc]=pscnove
-    params[:sosna_solver]=@sosna_solver
+    #@sosna_solver=params[:sosna_solver]
+    #psc=@sosna_solver[:psc]
+    #prvni=psc[0,3]
+    #druhe=psc[-2,2]
+    #pscnove=prvni+" "+druhe
+    #@sosna_solver[:psc]=pscnove
+    #params[:sosna_solver]=@sosna_solver
     solver = Sosna::Solver.new(params[:sosna_solver])
 
     is_bonus = solver.confirm_state == 'bonus'
@@ -166,6 +166,13 @@ class Sosna::SolverController < SosnaController
     agree = ! params[:souhlasim].nil?
     solver.errors.add(:souhlasim, 'Je nutno souhlasit s podmínkami') if ! agree
     solver.errors.add(:email, 'je již registrován u jiného řešitele') if Sosna::Solver.where(email: solver.email, annual: @annual).exists? && !solver.email.empty?
+
+    if solver.psc !~ /^[0-9]{3} [0-9]{2}$/ 
+    solver.psc=solver.psc.gsub(/[^\d]/, '')
+    solver.errors.add(:psc, 'neobsahuje 5 číslic') if ! (solver.psc.length == 5)
+    solver.psc=solver.psc[0,3]+" "+solver.psc[-2,2]
+    end
+
     solver.errors.add(:email, 'neexistující adresa') if !solver.email.empty? && !email_valid_mx_record?(solver.email)
     solver.errors.add(:birth, 'jsi příliš stár') if solver.errors[:birth].blank? && !solver.birth.empty? && (Date.parse(solver.birth) + 17.years) < Date.today
     solver.errors.add(:email, 'adresa nemůže být prázdná') if !is_admin && solver.email.empty?
@@ -180,18 +187,16 @@ class Sosna::SolverController < SosnaController
        solver.errors.add(:skola, 'Vyber školu ze seznamu nebo zadej novou')
      when 'jina'
       params.require(:sosna_school).permit!
-      @sosna_solver=params[:sosna_school]
-    psc=@sosna_solver[:psc]
-    prvni=psc[0,3]
-    druhe=psc[-2,2]
-    pscnove=prvni+" "+druhe
-    @sosna_solver[:psc]=pscnove
-    params[:sosna_school]=@sosna_solver
       school = Sosna::School.new(params[:sosna_school])
      else
       school = Sosna::School.find(school_id)
     end
-	
+
+    if school.psc !~ /^[0-9]{3} [0-9]{2}$/ 
+    school.psc=school.psc.gsub(/[^\d]/, '')
+    school.errors.add(:psc, 'neobsahuje 5 číslic') if ! (school.psc.length == 5)
+    school.psc=school.psc[0,3]+" "+school.psc[-2,2]
+    end
 
     if school.nil? || school.invalid? || solver.errors.count > 0
         add_alert "Pozor: ve formuláři jsou chyby"
