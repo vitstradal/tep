@@ -167,10 +167,13 @@ class Sosna::SolverController < SosnaController
     solver.errors.add(:souhlasim, 'Je nutno souhlasit s podmínkami') if ! agree
     solver.errors.add(:email, 'je již registrován u jiného řešitele') if Sosna::Solver.where(email: solver.email, annual: @annual).exists? && !solver.email.empty?
 
-    if solver.psc !~ /^[0-9]{3} [0-9]{2}$/ # pokud neni ve tvaru ^DDD DD$
-    solver.psc=solver.psc.gsub(/[^\d]/, '')	# kazdou necislici nahradi ''-smaze
-    solver.errors.add(:psc, 'neobsahuje 5 číslic') if ! (solver.psc.length == 5) #hodi chybu pokud neobsahuje prave 5 cislic
-    solver.psc=solver.psc[0,3]+" "+solver.psc[-2,2] # prevede do tvaru ^DDD DD$
+    if solver.psc !~ /^\d{3} \d{2}$/ # pokud neni ve tvaru ^DDD DD$
+      solver.psc=solver.psc.gsub(/[^\d]/, '')	# kazdou necislici nahradi ''-smaze
+      if ! (solver.psc.length == 5)
+        solver.errors.add(:psc, 'neobsahuje 5 číslic')  #hodi chybu pokud neobsahuje prave 5 cislic
+      else
+        solver.psc=solver.psc[0,3]+" "+solver.psc[-2,2] # prevede do tvaru ^DDD DD$
+      end
     end
 
     solver.errors.add(:email, 'neexistující adresa') if !solver.email.empty? && !email_valid_mx_record?(solver.email)
@@ -192,10 +195,13 @@ class Sosna::SolverController < SosnaController
       school = Sosna::School.find(school_id)
     end
 
-    if school.psc !~ /^[0-9]{3} [0-9]{2}$/ 
-    school.psc=school.psc.gsub(/[^\d]/, '')
-    school.errors.add(:psc, 'neobsahuje 5 číslic') if ! (school.psc.length == 5)
-    school.psc=school.psc[0,3]+" "+school.psc[-2,2]
+    if school.psc !~ /^\d{3} \d{2}$/ # pokud neni ve tvaru ^DDD DD$
+      school.psc=school.psc.gsub(/[^\d]/, '')	# kazdou necislici nahradi ''-smaze
+      if ! (school.psc.length == 5)
+        school.errors.add(:psc, 'neobsahuje 5 číslic')  #hodi chybu pokud neobsahuje prave 5 cislic
+      else
+        school.psc=school.psc[0,3]+" "+school.psc[-2,2] # prevede do tvaru ^DDD DD$
+      end
     end
 
     if school.nil? || school.invalid? || solver.errors.count > 0
