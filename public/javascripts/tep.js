@@ -34,11 +34,11 @@ jQuery(document).ready(function($) {
 	    },
 	    "locale-asc": function ( a, b ) {
 		//console.log("asc:", a, b, a.localeCompare(b));
-		return a.localeCompare(b) < 0 ? -1 : 1;
+		return a.localeCompare(b, 'cs') < 0 ? -1 : 1;
 	    },
 	    "locale-desc": function ( a, b ) {
 		//console.log("desc:", a, b, a.localeCompare(b));
-		return b.localeCompare(a) < 0 ? -1 : 1;
+		return b.localeCompare(a, 'cs') < 0 ? -1 : 1;
 	    },
             "numstr-pre": function ( a ) { return parseInt(a); },
             "numstr-asc":  function ( a, b ) { return a - b; },
