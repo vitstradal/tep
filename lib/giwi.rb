@@ -238,7 +238,18 @@ class Giwi
         #:parents => [ repo.head.target ].compact,
     Rugged::Commit.create(@repo, options)
     #Rails::logger.fatal("options:#{pp(options)}");
+    _post_commit_hook()
     return status
+  end
+
+  def _post_commit_hook
+    hook_path = File.join(@path, 'hooks/post-receive')
+    if File.executable?(hook_path)
+      Rails::logger.fatal("executing #{hook_path}")
+      system(hook_path)
+    else
+      Rails::logger.fatal("not executing #{hook_path}")
+    end
   end
 
   def get_history(opts = {})
