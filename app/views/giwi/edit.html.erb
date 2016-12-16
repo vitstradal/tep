@@ -1,5 +1,5 @@
 <script type="text/x-mathjax-config"> MathJax.Hub.Config({ extensions: ["jsMath2jax.js"] });</script>
-<script type="text/javascript" src="/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script>
+<script type="text/javascript" src="<%= ENV["RAILS_RELATIVE_URL_ROOT"] %>/MathJax/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script>
 <%#= stylesheet_link_tag 'jstoolbar.css'  %>
 <%#= stylesheet_link_tag 'trac.css'  %>
 <%#= javascript_include_tag 'jstoolbar/jstoolbar.js' %>
@@ -82,8 +82,13 @@
   <%= button_tag  'Zpět',   :class=>'btn',            :ico => 'fa-reply', :href => url_for(path: @path)  %>
   <%= button_tag  'Uložit', :class=>'btn btn-danger', ico: 'fa-floppy-o'  %>
 
+      <label class='pull-right' title='toggle prev-mode Ctrl-...'>
+        <input id='prevmode' type="checkbox" data-edit='prev' name="pre" class="ace ace-switch xswitch-field-1" <%if cookies['ace.prev'.to_sym]=='on'%>checked="checked"<%end%>/>
+        <span class="lbl" data-lbl="auto&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;růčo"></span>
+      </label>
+
       <label class='pull-right' title='toggle vi-mode Ctrl-M'>
-        <input id='vinovi' type="checkbox" data-edit='vi' name="myoption" class="ace ace-switch xswitch-field-1" <%if cookies['ace.vi'.to_sym] == 'on'%>checked="checked"<%end%> />
+        <input id='vinovi' type="checkbox" data-edit='vi' name="myoption" class="ace ace-switch xswitch-field-1" <%if cookies['ace.vi'.to_sym]=='on'%>checked="checked"<%end%>/>
 
         <span class="lbl" data-lbl="&nbsp;vi&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nevi"></span>
       </label>

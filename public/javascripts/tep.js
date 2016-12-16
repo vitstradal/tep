@@ -187,6 +187,19 @@ function editor_tool_button_switch($el, editor)
      editor.focus();
      ace.data.set('vi', on ? 'on' : 'off' );
      break;
+  case 'prev':
+     console.log("auto preview", on);
+     editor.auto_preview = on;
+     editor_try_preview(editor);
+     break;
+  }
+}
+
+function editor_try_preview(editor)
+{
+  if( editor.auto_preview && ! editor.previewing ) {
+    editor.previewing = true;
+    editor_preview(editor);
   }
 }
 
@@ -329,6 +342,8 @@ function editor_preview(editor)
        if( typeof MathJax == 'object' ) {
          MathJax.Hub.Typeset();
        }
+       //FIXME: preview az po vyrenderovani mathjaxu
+       editor.previewing = false;
      }
    });
 }
@@ -501,6 +516,7 @@ var $consoleEl = $('<div>HU</div>', {
         $('a[data-edit]').click(function () {      editor_tool_button_click($(this), editor); });
         $('input[data-edit]').change(function () { editor_tool_button_switch($(this), editor); });
         $('input[data-edit]').each(function (i, el) { editor_tool_button_switch($(el), editor); });
+        editor.on('input', function () { editor_try_preview(editor); }); 
 
         _init_cmdline_editor(editor)
 }
