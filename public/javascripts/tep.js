@@ -326,6 +326,9 @@ function editor_preview(editor)
      success: function (data, textStatus, jqXHR) {
        //console.log("data", data, "status", textStatus, jqXHR);
        $('#preview-div').html(data['html']||'error');
+       if( typeof MathJax == 'object' ) {
+         MathJax.Hub.Typeset();
+       }
      }
    });
 }
