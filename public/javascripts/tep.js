@@ -491,6 +491,7 @@ var $consoleEl = $('<div>HU</div>', {
 
                         // toggle vi|nevi mode by pressing vi|nevi switch
                         'ctrl-m':       function () { $('#vinovi').click();},
+                        'ctrl-alt-enter':       function () { $('#prevmode').click();},
 
                         // disable default bindings
                         'ctrl-l':null,
@@ -546,7 +547,8 @@ function _init_cmdline_editor(editor)
         editor.commands.addCommand({ name: ':e',   exec: function () { editor_reload(editor);},                   });
         editor.commands.addCommand({ name: ':he',  exec: function () { editor_show_help(editor);},                });
         editor.commands.addCommand({ name: ':ico', exec: function () { editor_show_icons(editor);},               });
-        editor.commands.addCommand({ name: ':p',   exec: function () { editor_preview(editor);},               });
+        editor.commands.addCommand({ name: ':p',   exec: function () { editor_preview(editor);},                  });
+        editor.commands.addCommand({ name: ':pp',  exec: function () { $('#prevmode').click();},                  });
 
         editor.commands.addCommand({ name: ':i', exec: function () { editor_tool_action('italic', editor);},      });
         editor.commands.addCommand({ name: ':b', exec: function () { editor_tool_action('bold', editor);},        });

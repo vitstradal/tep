@@ -82,15 +82,15 @@
   <%= button_tag  'Zpět',   :class=>'btn',            :ico => 'fa-reply', :href => url_for(path: @path)  %>
   <%= button_tag  'Uložit', :class=>'btn btn-danger', ico: 'fa-floppy-o'  %>
 
-      <label class='pull-right' title='toggle prev-mode Ctrl-...'>
-        <input id='prevmode' type="checkbox" data-edit='prev' name="pre" class="ace ace-switch xswitch-field-1" <%if cookies['ace.prev'.to_sym]=='on'%>checked="checked"<%end%>/>
-        <span class="lbl" data-lbl="auto&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;růčo"></span>
-      </label>
 
       <label class='pull-right' title='toggle vi-mode Ctrl-M'>
         <input id='vinovi' type="checkbox" data-edit='vi' name="myoption" class="ace ace-switch xswitch-field-1" <%if cookies['ace.vi'.to_sym]=='on'%>checked="checked"<%end%>/>
-
         <span class="lbl" data-lbl="&nbsp;vi&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nevi"></span>
+      </label>
+
+      <label class='pull-right' title='automatic preview Ctrl-Alt-Enter'>
+        <input id='prevmode' type="checkbox" data-edit='prev' name="pre" class="ace ace-switch xswitch-field-1" <%if cookies['ace.prev'.to_sym]=='on'%>checked="checked"<%end%>/>
+        <span class="lbl" data-lbl="auto&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;růčo"></span>
       </label>
     </div>
 
