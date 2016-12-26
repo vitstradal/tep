@@ -256,7 +256,8 @@ class Giwi
     commit =  @repo.head.target
     history = []
     count = 1
-    while commit.parents.size > 0 && count < 500
+    count_max = opts[:count] || 500
+    while commit.parents.size > 0 && count <= count_max
       parent = commit.parents[0]
       diff = parent.diff(commit)
 

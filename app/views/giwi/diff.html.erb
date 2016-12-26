@@ -1,5 +1,9 @@
 
+<% body =  ( @diff_lines.find_all{ |line| line[:line_origin] == :addition  }.map{|line| line[:content]}.join("\n") ) %>
 <div class="pull-right">
+  <% ['pikomat-l', 'tabor'].each do  |email|  %>
+    <%= button_tag "Send to #{email}", :class=>'btn btn-success', :href => "mailto:#{email}@pikomat.mff.cuni.cz?subject=Novinky&body=#{body}" %>
+  <% end %>
   <%= button_tag 'Historie', :class=>'btn btn-primary', :href => url_for(path: @path, :history => '.'), ico: 'fa-university' %>
 </div>
 
@@ -22,3 +26,5 @@
    end
 end %>
 </pre>
+
+

@@ -122,6 +122,10 @@ class GiwiController < ApplicationController
   def _handle_diff
     authorize! :update, @giwi.auth_name
     @giwi = Giwi.get_giwi(@wiki)
+    if @diff == 'LAST'
+      history = @giwi.get_history(count: 1)
+      @diff = history[0][:commit] if history.size > 0
+    end
     @diff_lines = @giwi.get_diff(@diff)
     return render :diff
   end
