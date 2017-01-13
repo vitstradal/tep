@@ -38,8 +38,12 @@
             <p><b>Id účastníků</b> jedno číslo na řádek,vše za středníkem bude
             ignorováno, takže je možné pastnout přímo jen vybrané řádky
             z <code>lidi.pik</code>, pokud toto pole bude prázdné bere se
-            aktuální ročník (<%= @annual %>):</p>
-
+            aktuální ročník (<%= @annual %>):
+                 <a class="pink" id="open-event" href="#" title="checkboxy 'Obálkování', 'Pouze confirmovaní' a 'Tep vs. paper konflikt' jsou s v tomto případě ignorovány">
+                   <i class="ace-icon fa fa-hand-o-right"></i>
+                   Pozn
+                 </a>
+            </p>
             <%= text_area_tag 'ids', @ids.join(','), cols: 80, rows: 2 %>
           </div>
         </div>
@@ -53,13 +57,24 @@
         </div>
 
         <div class="form-group">
-          <div class="col-sm-9">
+          <div class="col-sm-12">
            <label class="checkbox" for="obalkovani"> <%= check_box_tag 'obalkovani', '1', true %> Obálkování
-                 (jen ti co mají
-                   <code>solution_form</code> nastavený na <code>paper</code>).
+                 (jen ti co mají <code>where_to_send</code> nastavený na <code>home</code> nebo <code>school</code>).
            </label>
-           <label for="confirmed_only"> <%= check_box_tag 'confirmed_only', '1', false %> Pouze confirmovaní
+           <label for="confirmed_only"> <%= check_box_tag 'confirmed_only', '1', false %> Pouze potvrzení řešitelé
                  (mají <code>confirm_state</code> mají nastavený na <code>conf</code>).
+           </label>
+           <label for="paper_tep_conflict"> <%=check_box_tag 'paper_tep_conflict', '1', false %>
+                  Pouze ti co mají "<i class="fa bg-red fa-envelope-o"></i> tep vs. paper konflikt"
+                 (mají <code>solution_form</code> nastavený na <code>tep</code>, ale v
+                 <%=select_tag :se, options_for_select((1..7).map{|s| [s]} , @round)%>.
+                 sérii odevzdali papír).
+                 <a class="pink" id="open-event" href="#" title="checkboxy 'Obálkování' a 'Pouze confirmovaní' jsou s v tomto případě ignorovány">
+                   <i class="ace-icon fa fa-hand-o-right"></i>
+                   Pozn
+                 </a>
+                                                                                                 
+                                            
            </label>
           </div>
         </div>

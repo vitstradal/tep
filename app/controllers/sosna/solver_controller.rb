@@ -67,14 +67,19 @@ class Sosna::SolverController < SosnaController
 
          @dbg = params[:dbg]
          where = nil
-         if @ids.size ==  0
+         @solvers = []
+         if @ids.size > 0
+           @solvers = get_sorted_solvers({ id: @ids})
+         elsif params[:paper_tep_conflict]
+           @round = params[:se] || @round
+           @solvers = get_sorted_conflict_solvers(@annual, @round);
+           log("solver count=#{@solvers.size}")
+         else
            where = {annual: @annual, is_test_solver: false}
            where.merge!({ where_to_send: ['home', 'school'] }) if params[:obalkovani]
            where.merge!({ confirm_state: 'conf'}) if params[:confirmed_only]
-         else
-           where = { id: @ids}
+           @solvers = get_sorted_solvers(where);
          end
-         @solvers = get_sorted_solvers(where)
          @schools = []
          @schools = Sosna::School.where(want_paper: true) if params[:skoly]
          render :formats => [:pdf]

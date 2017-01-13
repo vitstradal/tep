@@ -236,11 +236,23 @@ module ApplicationHelper
     #log( "config: #{@config}" )
   end
 
+  def get_sorted_conflict_solvers(annual, round)
+      solvers = Sosna::Solver.joins(:solutions => :problem)
+                             .where('annual' =>  annual,
+                                    'sosna_problems.round' => round,
+                                    'solution_form' =>  'tep',
+                                    'is_test_solver' =>  false,
+                                    'sosna_solutions.has_paper_mail' => true )
+                             .group(:id)
+                             .load.to_a
+
+      solvers.sort! { |a,b| strcollf(a.last_name, b.last_name) || strcollf(a.name, b.name) || 0 }
+  end
   def get_sorted_solvers(where = {})
       solvers = Sosna::Solver.includes(:school).where(where).load.to_a
-      solvers.sort! { |a,b| (a.last_name != b.last_name ) ? strcoll(a.last_name, b.last_name) :
-                                                            strcoll(a.name, b.name)
-                    }
+#      solvers.sort! { |a,b| (a.last_name != b.last_name ) ? strcoll(a.last_name, b.last_name) :
+#                                                            strcoll(a.name, b.name)
+#                    }
       solvers.sort! { |a,b| strcollf(a.last_name, b.last_name) || strcollf(a.name, b.name) || 0 }
   end
 
