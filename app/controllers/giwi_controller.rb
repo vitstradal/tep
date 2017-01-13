@@ -492,7 +492,8 @@ class GiwiController < ApplicationController
     return {} if env.nil?
 
     #log("Text #{@text}")
-    html = parser.to_html(@text)
+    base_url = url_for(action: :show, wiki:@wiki, path: @path)
+    html = parser.to_html(@text, base_url)
     notoc = env.at('notoc', false)
     toc  = nil 
     toc = parser.make_toc_html  if ! notoc && parser.headings.size > 3 
