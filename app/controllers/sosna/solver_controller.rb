@@ -7,7 +7,14 @@ class Sosna::SolverController < SosnaController
   def index
     load_config
     @annual = params[:roc] || @annual
-    @solvers = get_sorted_solvers(annual: @annual)
+    @school_id = params[:school]
+    if @school_id
+      @school = Sosna::School.find @school_id
+      @solvers = get_sorted_solvers(annual: @annual, school_id: @school_id)
+    else
+      @solvers = get_sorted_solvers(annual: @annual)
+    end
+
     respond_to do |format|
       format.html do
          @solver_names =  {}

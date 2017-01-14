@@ -1,4 +1,5 @@
-<%= heading_with_tools "Seznam řešitelů #{@annual}. ročníku" do %>
+<% school_name = @school.nil? ? '' : ", #{@school.short} #{@school.name} #{@school.city}" %>
+<%= heading_with_tools "Seznam řešitelů #{@annual}. ročníku#{school_name}" do %>
 
     <%= link_to 'Založit nového řešitele',
                 { action: :new },

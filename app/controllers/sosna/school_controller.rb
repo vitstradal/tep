@@ -5,10 +5,12 @@ class Sosna::SchoolController < SosnaController
 
   def show
     @school = Sosna::School.find params[:id]
+    @solver_count_by_annual = Sosna::Solver.where( school_id: params[:id]).group(:annual).count 
   end
 
   def index
     @schools =  Sosna::School.all.load
+    @schools_solver_count = Sosna::Solver.where(annual: @annual).group(:school_id).count
     @shorts = {}
     @izos= {}
     @schools.each do  |sch|
