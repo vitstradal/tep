@@ -101,6 +101,12 @@ class TepController < ApplicationController
   def error
     @errid = "ERR-#{rand(1000000)}"
     log(@errid)
+    Tep::Mailer.error(errid: @errid,
+                      message: "je to v tahu",
+                      email: current_user.email,
+                      vars: instance_variable_names,
+                      #env: @_env,
+                    ).deliver_later
     render :layout => nil
   end
 
@@ -128,4 +134,5 @@ class TepController < ApplicationController
     #redirect_to :users_list
     redirect_to(user_show_path(id: user.id))
   end
+
 end

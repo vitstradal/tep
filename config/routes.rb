@@ -4,7 +4,6 @@ Tep::Application.routes.draw do
   devise_for :users
 
 
-  get  '/csrf.json'                   => 'tep#csrf',             :as => :tep_csrf
   # přidání akcí je třeba přidat i práva v app/models/ability.rb
   # anon:
   get  '/sosna/solver/new'                   => 'sosna/solver#new',                     :as => :sosna_solver_new
