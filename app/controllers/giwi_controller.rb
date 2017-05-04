@@ -300,8 +300,11 @@ class GiwiController < ApplicationController
       nm =  now.next_month((argv['mon']||1).to_i)
       cal =  argv['cal'] || 'resitel'
 
-      conn = Faraday.new('https://pikomat.mff.cuni.cz')
+      conn = Faraday.new('https://pikomat.mff.cuni.cz', ssl: { verify: false } )
+      # https://pikomat.mff.cuni.cz/sklep/index.php/apps/ownhacks/public?cal=resitel&start=1493856000&end=1493956000
       resp = conn.get('/sklep/index.php/apps/ownhacks/public', cal: cal ,start: now.strftime('%s'), end: nm.strftime('%s'))
+      Rails.logger.fatal("calendar cal=#{cal}&start=#{now.strftime('%s')}&end=#{nm.strftime('%s')}")
+
       json = JSON.load(resp.body)
       #"/sklep/index.php/apps/ownhacks/calendar-10.php?start=#{now.strftime('%s')}&end=#{nm.strftime('%s')}\n" +
       env['nocache'] = '1'
@@ -313,8 +316,8 @@ class GiwiController < ApplicationController
             "* **#{item['start']}** #{item['title']}\n"
           end
       end.join
-    rescue
-      ''
+    rescue Exception => e
+      '.' #e.message
     end
 
   end
