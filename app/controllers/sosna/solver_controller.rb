@@ -207,12 +207,14 @@ class Sosna::SolverController < SosnaController
       school = Sosna::School.find(school_id)
     end
 
-    if school.psc !~ /^\d{3} \d{2}$/ # pokud neni ve tvaru ^DDD DD$
-      school.psc=school.psc.gsub(/[^\d]/, '')	# kazdou necislici nahradi ''-smaze
-      if ! (school.psc.length == 5)
-        school.errors.add(:psc, 'neobsahuje 5 číslic')  #hodi chybu pokud neobsahuje prave 5 cislic
-      else
-        school.psc=school.psc[0,3]+" "+school.psc[-2,2] # prevede do tvaru ^DDD DD$
+    if ! school.nil?
+      if school.psc !~ /^\d{3} \d{2}$/ # pokud neni ve tvaru ^DDD DD$
+        school.psc=school.psc.gsub(/[^\d]/, '')	# kazdou necislici nahradi ''-smaze
+        if ! (school.psc.length == 5)
+          school.errors.add(:psc, 'neobsahuje 5 číslic')  #hodi chybu pokud neobsahuje prave 5 cislic
+        else
+          school.psc=school.psc[0,3]+" "+school.psc[-2,2] # prevede do tvaru ^DDD DD$
+        end
       end
     end
 

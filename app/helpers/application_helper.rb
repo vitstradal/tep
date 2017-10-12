@@ -1,6 +1,9 @@
 # encoding: utf-8
 #require 'digest/hmac'
+
 require 'unicode_utils'
+require 'resolv'
+
 module ApplicationHelper
 
   def ilink_to(text = nil , url = nil, opt = nil, &block)

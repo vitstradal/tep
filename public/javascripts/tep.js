@@ -162,7 +162,9 @@ function set_hash(cat, img_el)
        $('html, body').scrollTop( img_el.offset().top );
        hash +=  ':' + img_el.attr('id');
    }
-   window.location.hash = hash;
+   if( hash != '' ) {
+     window.location.hash = hash;
+   }
 }
 
 
@@ -601,7 +603,7 @@ function init_fotky()
 
         $('#foto-modal').on('hide.bs.modal', function () { set_hash(foto_cat); });
 
-        $('.foto img').click(function (ev) {
+        $('.foto a').click(function (ev) {
            ev.preventDefault();
            var foto = $(this).closest('.foto');
            var bigimg = $(this).closest('a').attr('href');

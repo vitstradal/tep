@@ -40,7 +40,8 @@ class TepController < ApplicationController
   end
 
   def user_new
-    user =  User.new(email: "example#{rand(100)}@example.com", name: 'John', last_name: 'Smith', confirmation_sent_at: Time.now,  roles: [:user])
+    email = params[:email] || "example#{rand(1000)}@example.com"
+    user =  User.new(email: email, name: 'John', last_name: 'Smith', confirmation_sent_at: Time.now,  roles: [:user])
     user.confirm
     user.save
     redirect_to :action => :user, :id =>  user.id
@@ -105,6 +106,8 @@ class TepController < ApplicationController
                       message: "je to v tahu",
                       email: current_user.email,
                       vars: instance_variable_names,
+                      error: @error,
+                      action: @_action_name,
                       #env: @_env,
                     ).deliver_later
     render :layout => nil

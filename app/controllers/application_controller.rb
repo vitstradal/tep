@@ -7,9 +7,11 @@ class ApplicationController < ActionController::Base
         @error = "#{exception}"
         error
       end
+      log('application-controller-rescue')
   end
 
   def error
+    log('application-controller-error')
     @errid = "ERR-#{rand(1000000)}"
     if @error
       log "#{@errid}: #{@errror}"

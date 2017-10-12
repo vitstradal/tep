@@ -42,5 +42,6 @@
 <hr>
 
 <%= form_tag user_new_path, html: {:class=>'form-horizontal'} do %>
+         <%= text_field_tag(:email, '', size: 30, placeholder: 'new.user@email.example.com') %>
          <%= submit_tag 'Nový uživatel', :class=>'btn btn-danger'%>
 <% end %>
