@@ -89,7 +89,7 @@ Pokud škola v seznamu není, vyberte položku 'Jiná škola', a vyplňte název
     <div class="col-sm-9 <%= form_error_class @solver, :school %>">
        <%= select :school, :id,
                options_for_select(
-                       [['Vyber školu', :none]] +
+                       [['Vyber školu', :none], ['Jiná škola', :jina]] +
                        @schools_sorted.map{ |s| ["#{s.long}, #{s.short}", s.id] } <<
                        ['Jiná škola', :jina],
                        (@school.nil? || @school.id.nil?) ? :none 
