@@ -88,11 +88,13 @@
       <hr>
     </div>
     <div id='solvers'class="tab-pane">
-      <ul>
-        <% @solver_count_by_annual.keys.sort_by{|x|-x.to_i}.each do |annual| count = @solver_count_by_annual[annual]  %>
-          <li><%=link_to "Řešitelé #{annual}. ročníku", sosna_solvers_url(roc: annual, school: @school.id) %> ... <%=count%></li> 
-        <% end %>
-      </ul>
+      <% if ! @solver_count_by_annual.nil? %>
+        <ul>
+          <% @solver_count_by_annual.keys.sort_by{|x|-x.to_i}.each do |annual| count = @solver_count_by_annual[annual]  %>
+            <li><%=link_to "Řešitelé #{annual}. ročníku", sosna_solvers_url(roc: annual, school: @school.id) %> ... <%=count%></li> 
+          <% end %>
+        </ul>
+      <% end %>
     </div>
     <div id='tools'class="tab-pane">
       <% if @school.id %>
