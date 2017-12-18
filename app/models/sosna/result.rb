@@ -19,7 +19,7 @@ class Sosna::Result < ActiveRecord::Base
 #  end
 
   def rank_range(result_last = nil, page_begin = false)
-    range = rank_multi? ? "#{rank}-#{rank_to}" : rank
+    range = rank_multi? ? "#{rank}.--#{rank_to}." : "#{rank}."
     return range if result_last.nil?
     range_last = result_last.rank_range
     return range if page_begin || range != range_last
@@ -27,7 +27,7 @@ class Sosna::Result < ActiveRecord::Base
   end
   
   def class_rank_range(result_last = nil,page_begin = false)
-    class_range = class_rank_multi? ? "#{class_rank}-#{class_rank_to}" : class_rank
+    class_range = class_rank_multi? ? "#{class_rank}.--#{class_rank_to}." : "#{class_rank}."
     return class_range if result_last.nil?
     class_range_last = result_last.class_rank_range
     return class_range if page_begin || class_range != class_range_last

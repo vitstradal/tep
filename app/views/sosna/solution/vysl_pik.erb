@@ -13,6 +13,9 @@
    rank_all = result.rank_range
    rank_cls = result.class_rank_range
 
+   # flg0 - '+' pokud je poradi stejny jako predhozi rader (tedy skipnout)
+   # flg1 - '+' pokud je poradi v rocniku stejny jako predhozi rader (tedy skipnout)
+   # flg2 - '+' pokud je prvni radek stranky (stranka ma 56 radku)
    flg0 = (rank_all == rank_all_last) ? '+' : '-'
    flg1 = (rank_cls == rank_cls_last) ? '+' : '-'
    flg2 = (row % 56 == 1 )            ? '+' : '-'
@@ -20,7 +23,6 @@
 
    rank_all_last = rank_all
    rank_cls_last = rank_cls
-
 
    #format vysledkovky
    #1  2   3   4  5  6  7   8    9     10 11 12 13 14 15 16 17  18     19     20
@@ -42,8 +44,8 @@
    end
    pen = @penalisations_by_solver[solver.id]
 
-   [ '%7s' % rank_all,
-     '%7s' % rank_cls,
+   [ '%10s' % rank_all,
+     '%10s' % rank_cls,
      '%3s' % flagy,
      '%4s' % solver.id,
      '%18s' % solver.last_name,

@@ -11,7 +11,9 @@
       </div>
       <div class="btn-group">
         <%= button_tag "vysl.wiki", :class=> 'btn btn-primary', ico: 'fa-filter', href: sosna_solutions_vysl_wiki_url(roc:@annual, round:@round) %>
-        <%= button_tag "vysl.pik(notyet)", :class=> 'btn btn-primary', ico: 'fa-filter', href: sosna_solutions_vysl_pik_url(roc:@annual, round:@round) %>
+        <%= button_tag "vysl#{@annual}_#{@round}.pik", :class=> 'btn btn-primary',
+                                                       :ico => 'fa-filter',
+                                                       :href =>  sosna_solutions_vysl_pik_url(roc:@annual, se:@round) %>
       </div>
       <div class="btn-group">
         <%= button_tag "Filtruj soustredeni", :class=> 'btn btn-primary', ico: 'fa-filter', href: sosna_solutions_org_url(roc:@annual, se:@round, sous: 1) %>

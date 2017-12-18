@@ -845,23 +845,22 @@ class Sosna::SolutionController < SosnaController
         return 0 if ares.rank.nil? && bres.rank.nil?
         return -1 if ares.rank.nil?
         return 1 if bres.rank.nil?
-        0
-#        if ares.rank != bres.rank
-#          ares.rank <=> bres.rank
-#        else
-#          agr = a.grade_num || '1'
-#          bgr = b.grade_num || '1'
-#          if agr != bgr
-#            agr <=> bgr
-#          elsif a.last_name != b.last_name
-#            strcollf(a.last_name||'', b.last_name||'')
-#          elsif a.name != b.name
-#            strcollf(a.name||'', b.name||'')
-#          else
-#            a.id <=> b.id
-#          end
-#        end
-    end
+        if ares.rank != bres.rank
+          ares.rank <=> bres.rank
+        else
+          agr = a.grade_num || '1'
+          bgr = b.grade_num || '1'
+          if agr != bgr
+            agr <=> bgr
+          elsif a.last_name != b.last_name
+            strcollf(a.last_name||'', b.last_name||'')
+          elsif a.name != b.name
+            strcollf(a.name||'', b.name||'')
+          else
+            a.id <=> b.id
+          end
+        end
+     end
   end
 
   def _prepare_solvers_problems_solutions(want_test = true)
