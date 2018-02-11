@@ -1,6 +1,5 @@
-%    nr;    nrr;flg;  id;                pr;             jm;   roc; rroc;skola; 1;2; 3;4;5; 6;7; pen;sumser;sumall;bdz
+%       nr;       nrr;flg;  id;                pr;             jm;   roc; rroc;skola; 1;2; 3;4;5; 6;7; pen;sumser;sumall;bdz
 <%
-
    rank_all_last = ''
    rank_cls_last = ''
    row = 0
@@ -13,51 +12,50 @@
    rank_all = result.rank_range
    rank_cls = result.class_rank_range
 
-   # flg0 - '+' pokud je poradi stejny jako predhozi rader (tedy skipnout)
-   # flg1 - '+' pokud je poradi v rocniku stejny jako predhozi rader (tedy skipnout)
+   # flg0 - '+' pokud je poradi ruzny jako predhozi radek (tedy tisknout)
+   # flg1 - '+' pokud je poradi v rocniku ruzny jako predhozi rader (tedy tisknout)
    # flg2 - '+' pokud je prvni radek stranky (stranka ma 56 radku)
-   flg0 = (rank_all == rank_all_last) ? '+' : '-'
-   flg1 = (rank_cls == rank_cls_last) ? '+' : '-'
+   flg0 = (rank_all == rank_all_last) ? '-' : '+'
+   flg1 = (rank_cls == rank_cls_last) ? '-' : '+'
    flg2 = (row % 56 == 1 )            ? '+' : '-'
    flagy = "#{flg0}#{flg1}#{flg2}"
 
    rank_all_last = rank_all
    rank_cls_last = rank_cls
 
+   pen = @penalisations_by_solver[solver.id]
+   pen_txt = pen.score
+   pen_txt = '-' if pen.score.nil? || pen.score == 0
+
    #format vysledkovky
    #1  2   3   4  5  6  7   8    9     10 11 12 13 14 15 16 17  18     19     20
    #nr;nrr;flg;id;pr;jm;roc;rroc;skola;b1;b2;b3;b4;b5;b6;b7;pen;sumser;sumall;bdz
 
-   body = @problems.each_with_index.map do |pr,i| 
-                sol_arr = @solutions_by_solver[solver.id]  
-                sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  
-                if sol.score.nil? || sol.score == ''
-                  ret = '-'
-                else 
-                   ret = sol.score.to_s
-                end 
+   sol_arr = @solutions_by_solver[solver.id]
+   body = @problems.each_with_index.map do |pr,i|
+                sol = sol_arr.nil?  ? nil : sol_arr[pr.problem_no]
+                ret = (sol.score.nil? || sol.score == '') ?  '-' : sol.score.to_s
                 if i % 3 == 2 || i == 0
-                 ' '+ret
-               else 
-                 ret
-               end
+                    ' ' + ret
+                else
+                    ret
+                end
    end
-   pen = @penalisations_by_solver[solver.id]
 
    [ '%10s' % rank_all,
      '%10s' % rank_cls,
-     '%3s' % flagy,
-     '%4s' % solver.id,
+     '%3s'  % flagy,
+     '%4s'  % solver.id,
      '%18s' % solver.last_name,
      '%15s' % solver.name,
      '%9s'  % solver.grade,
      '%2s'  % solver.grade_num,
      '%5s'  % (school.nil? ? 's' : school.short),
      body.join(';'),
-     '%4s'  % pen.score,
+     '%4s'  % pen_txt,
      '%2s'  % result.round_score,
      '%3s'  % result.score,
      '(%s)'   % result.comment,
    ].join(';')
-  %>
+  %>;
 <% end %>

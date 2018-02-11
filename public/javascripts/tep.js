@@ -49,6 +49,7 @@ jQuery(document).ready(function($) {
         $('.datatable').dataTable({
                 "bPaginate": false,
                 "bLengthChange": false,
+                'resposive': true,
                 "bFilter": false,
                 "bInfo": false,
                 "bAutoWidth": false,

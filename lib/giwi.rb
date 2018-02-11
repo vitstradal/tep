@@ -138,6 +138,8 @@ class Giwi
       dirs.push( { path: path.sub(/(^|\/)[^\/]*\/$/, ''),
                    name: '..'} )
     end
+    dirs.sort_by! {|x| x[:name]}
+    files.sort_by! {|x| x[:name]}
     #pp [files, dirs, path]
     return [files, dirs, path]
   end
@@ -407,6 +409,8 @@ class GiwiNoGit < Giwi
       files.push({path: full, name:entry, size:File.size(fs_full)})  if File.file?(fs_full)
       dirs.push({path: full, name:entry})  if File.directory?(fs_full)
     end
+    dirs.sort_by! {|x| x[:name]}
+    files.sort_by! {|x| x[:name]}
     [files, dirs, path]
   end
 

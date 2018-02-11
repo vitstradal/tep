@@ -10,10 +10,13 @@
         <%= button_tag "navratky.zip", :class=> 'btn btn-primary', ico: 'fa-check', href: sosna_solutions_get_confirm_files_url %>
       </div>
       <div class="btn-group">
-        <%= button_tag "vysl.wiki", :class=> 'btn btn-primary', ico: 'fa-filter', href: sosna_solutions_vysl_wiki_url(roc:@annual, round:@round) %>
-        <%= button_tag "vysl#{@annual}_#{@round}.pik", :class=> 'btn btn-primary',
-                                                       :ico => 'fa-filter',
-                                                       :href =>  sosna_solutions_vysl_pik_url(roc:@annual, se:@round) %>
+        <% vysl_file = "vysl#{@annual}_#{@round}" %>
+        <%= button_tag "#{vysl_file}.wiki", :class =>'btn btn-primary',
+                                            :ico   =>  'fa-filter',
+                                            :href  =>  sosna_solutions_vysl_wiki_url(roc:@annual, se:@round) %>
+        <%= button_tag "#{vysl_file}.pik", :class  => 'btn btn-primary',
+                                           :ico    => 'fa-filter',
+                                           :href   =>  sosna_solutions_vysl_pik_url(roc:@annual, se:@round) %>
       </div>
       <div class="btn-group">
         <%= button_tag "Filtruj soustredeni", :class=> 'btn btn-primary', ico: 'fa-filter', href: sosna_solutions_org_url(roc:@annual, se:@round, sous: 1) %>
