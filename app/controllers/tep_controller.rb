@@ -4,7 +4,6 @@ class TepController < ApplicationController
 
   include ApplicationHelper
 
-
   def access; end
   def index;
     if ! current_user.nil?
@@ -97,20 +96,6 @@ class TepController < ApplicationController
   def user_finish_registration
       @token = params[:token]
       @user = User.with_reset_password_token(@token)
-  end
-
-  def error
-    @errid = "ERR-#{rand(1000000)}"
-    log(@errid)
-    Tep::Mailer.error(errid: @errid,
-                      message: "je to v tahu",
-                      email: current_user.email,
-                      vars: instance_variable_names,
-                      error: @error,
-                      action: @_action_name,
-                      #env: @_env,
-                    ).deliver_later
-    render :layout => nil
   end
 
   def die 

@@ -24,7 +24,7 @@ class Ability
     can :faq, :tep
     can :csrf, :tep
     can :die, :tep
-    can :error, :tep
+    #can :error, :tep
 
     can :index, :aesop
     #can :index, :aesop
