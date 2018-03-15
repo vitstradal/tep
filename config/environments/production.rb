@@ -51,4 +51,8 @@ Tep::Application.configure do
   config.active_support.deprecation = :notify
 
   config.eager_load = true
+
+  config.action_mailer.logger = nil
+  ActionMailer::Base.logger = nil
+  ActionMailer::DeliveryJob.logger = nil
 end

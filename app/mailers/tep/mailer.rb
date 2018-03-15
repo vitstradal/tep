@@ -4,8 +4,8 @@ class Tep::Mailer < Devise::Mailer
     devise_mail(record, :first_login_instructions)
   end
   def error(data)
-    @data = data
-    errid = @data[:errid]
+    errid = data[:errid]
+    @data = data.deep_stringify_keys
     mail(to: 'vitas@matfyz.cz', from: 'tep@pikomat.mff.cuni.cz', subject: "Tep Error #{errid}")
   end
 end

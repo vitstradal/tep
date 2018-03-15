@@ -22,14 +22,18 @@ class ApplicationController < ActionController::Base
   end
 
   def _error(exception)
-    errid = "ERR-#{rand(1000000)}"
+    @errid = "ERR-#{rand(1000000)}"
     @error = "#{exception}"
-    log "#{errid}: #{@error}"
+    log "#{@errid}: #{@error}"
 
-    Tep::Mailer.error(errid: errid,
+    Tep::Mailer.error(errid: @errid,
                       action: @_action_name,
                       error: @error,
+                      timestamp: DateTime.now.strftime("%y-%m-%d %H:%M:%S"),
                       email: current_user.nil? ? nil : current_user.email,
+                      params: params.to_hash,
+                      host: request.remote_ip,
+                      useragent: request.user_agent,
                       backtrace: exception.backtrace,
                     ).deliver_later
     render :layout => nil, template: 'tep/error'
