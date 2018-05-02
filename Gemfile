@@ -7,7 +7,7 @@ gem 'rails'
 gem 'faraday'
 gem 'rugged'
 gem 'filemagic'
-
+gem 'selene'
 
 gem 'devise'
 gem 'devise-i18n'

@@ -342,11 +342,13 @@ class Sosna::SolutionController < SosnaController
 
     raise 'not logged' if current_user.nil?
 
-    if solver_id
+    current_solver = Sosna::Solver.where(:user_id => current_user.id, :annual => @annual).take
+
+    if solver_id && (current_solver.nil? || current_solver.id != solver_id )
       authorize! :user_index_org, Sosna::Solution
       @solver = Sosna::Solver.find(solver_id)
     else
-      @solver = Sosna::Solver.where(:user_id => current_user.id, :annual => @annual).take
+      @solver = current_solver
       @solver_is_current_user = true
     end
 

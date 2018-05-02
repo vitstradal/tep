@@ -60,13 +60,13 @@ class Sosna::SolverController < SosnaController
     @annual = params[:roc] || @annual
     @ids = (params[:ids]  || '').gsub(/;.*$/,'').split(/[,\n\s]+/).map { |x| x.to_i }
     log("ids:" +  @ids.to_s);
-
+    opt_param = params[:opt] || ''
     respond_to do |format|
       format.html
       format.pdf do
          @opt = {}
          @envelope= params[:envelope]
-         params[:opt].split(/\s*;\s*|\s+/).each do |o|
+         opt_param.split(/\s*;\s*|\s+/).each do |o|
            @opt[$1.to_sym] = $2 if o =~ /^\s*(\w+)\s*:(\S*)/
          end
 
@@ -407,6 +407,24 @@ class Sosna::SolverController < SosnaController
     return grade
   end
 
+  def aesop_index
+    headers['Content-Type'] = "text/plain; charset=UTF-8";
+    render text: 'not yet'
+  end
+
+  def aesop_annual
+    load_config
+    annual = params[:roc] || @annual
+    if annual == @annual
+      round = @config[:show_revisions] == 'yes'? @round.to_i : @round.to_i - 1
+      die if round <= 0
+    else
+      round = Sosna::Problem.where(annual: annual).maximum(:round)
+    end
+    errors_to = @config[:aesop_errors_to];
+    render text: _aesop_print_round(@annual.to_i, @round.to_i, errors_to), content_type: 'text/plain' 
+  end
+
   def aesop
     _aesop_init
     @aesop_url = 'https://pikomat.mff.cuni.cz/ovvp'
@@ -446,6 +464,8 @@ class Sosna::SolverController < SosnaController
   end
 
 
+
+# https://opmk.mff.cuni.cz/wiki/aesop/import
 # version   Verze formátu. Tato specifikace popisuje verzi 1.
 # event   Identifikátor akce (např. ksp.rocnik.z)
 # year    Rok, v němž se akce konala. Je-li akce spjata se školním rokem, patří sem první rok.
@@ -482,21 +502,23 @@ class Sosna::SolverController < SosnaController
 
     maturity_grade = 13
     date = DateTime.now.strftime('%Y-%m-%d %H:%M:%S')
-    year = 2014 + annual - 30
+    year = 2014 + annual - 30 # ve skolnim roce 2014/2015 byl rocnik 30
     event = "pikomat.#{annual}"
     event = "pikomat.rocnik"
     comment = "Pikomat rocnik=#{annual} serie=#{round}"
 
     solvers = Sosna::Solver.where(annual: annual, is_test_solver: false)
     ex = []
-    ex << ['version',     1]
-    ex << ['year',        year]
-    ex << ['event',       event]
-    ex << ['errors-to',    errors_to]
-    ex << ['date',        date]
-    ex << ['max-rank',   solvers.count ]
-    ex << ['max-points',  round * 30]
-    ex << ['comment',  comment ]
+    ex << ['version',       1]
+    ex << ['year',          year]
+    ex << ['event',         event]
+    ex << ['id-generation', year]
+    ex << ['errors-to',     errors_to]
+    ex << ['date',          date]
+    ex << ['max-rank',      solvers.count ]
+    ex << ['max-points',    round * 30]
+    ex << ['comment',       comment ]
+    ex << ['x-round',       round ]
     ex << []
     ex << ['id', 'name', 'surname', 'fullname', 'school', 'street', 'postcode', 'town', 'country', 'email', 'end-year', 'rank', 'points', 'spam-flag', 'spam-date',
            #'grade',

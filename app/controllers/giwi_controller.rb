@@ -6,6 +6,7 @@ require 'faraday'
 require 'iconv'
 require 'json'
 require 'yaml'
+require 'caldavreport'
 #require 'magick_title'
 
 class GiwiController < ApplicationController
@@ -260,7 +261,6 @@ class GiwiController < ApplicationController
     return _template_include(env, argv) if tname == 'include'
     return _template_calendar(env, argv) if tname == 'owncalendar'
 
-
     part = 0
     if tname =~ /\A\//
       tname = $'
@@ -294,33 +294,74 @@ class GiwiController < ApplicationController
     end
   end
 
+  # usage: {{calendar URL | mon=3}}
+  # 3 mesice dopredu (from now)
   def _template_calendar(env, argv)
     begin
+      url =  argv['0'] 
+      mon =  argv['mon'] 
+
       now  = Date.today
-      nm =  now.next_month((argv['mon']||1).to_i)
-      cal =  argv['cal'] || 'resitel'
+      pak =  now.next_month((mon||1).to_i)
 
-      conn = Faraday.new('https://pikomat.mff.cuni.cz', ssl: { verify: false } )
-      # https://pikomat.mff.cuni.cz/sklep/index.php/apps/ownhacks/public?cal=resitel&start=1493856000&end=1493956000
-      resp = conn.get('/sklep/index.php/apps/ownhacks/public', cal: cal ,start: now.strftime('%s'), end: nm.strftime('%s'))
-      Rails.logger.fatal("calendar cal=#{cal}&start=#{now.strftime('%s')}&end=#{nm.strftime('%s')}")
+      now_f = now.strftime('%Y%m%dT000000')
+      pak_f = pak.strftime('%Y%m%dT000000')
 
-      json = JSON.load(resp.body)
-      #"/sklep/index.php/apps/ownhacks/calendar-10.php?start=#{now.strftime('%s')}&end=#{nm.strftime('%s')}\n" +
-      env['nocache'] = '1'
-      json.sort {|a,b| a['start'] <=> b['start'] }.map do |item|
-          url = item['description']
-          if url =~ /(https?:\/\/\S*)/
-            "* **#{item['start']}** [[#{$1} | #{item['title']}]]\n"
-          else
-            "* **#{item['start']}** #{item['title']}\n"
-          end
+      # fetch events
+      repo = CalDavReport.new(url)
+      events = repo.report( now_f, pak_f)
+
+      # prepare 'start' and sort
+      events.each do |event|
+            start = event['dtstart'][0]
+            start = Date.parse(start).strftime("%F") if ! start.nil?
+            event['start'] = start
+      end
+      events.sort! { |a,b| a['start'] <=> b['start'] }
+
+      # render
+      events.map do |event|
+            start = event['start']
+            summary = event['summary']
+            url = event['description'] || ''
+            if url =~ /(https?:\/\/\S*)/
+              "* **#{start}** [[#{$1} | #{summary}]]\n"
+            else
+              "* **#{start}** #{summary}\n"
+            end
       end.join
     rescue Exception => e
-      '.' #e.message
+      ". (#{e.message}, #{e.to_s}, #{pp(e.backtrace)})"
     end
-
   end
+
+#  def _template_calendar(env, argv)
+#    begin
+#      now  = Date.today
+#      nm =  now.next_month((argv['mon']||1).to_i)
+#      cal =  argv['cal'] || 'resitel'
+#
+#      conn = Faraday.new('https://pikomat.mff.cuni.cz', ssl: { verify: false } )
+#      # https://pikomat.mff.cuni.cz/sklep/index.php/apps/ownhacks/public?cal=resitel&start=1493856000&end=1493956000
+#      resp = conn.get('/sklep/index.php/apps/ownhacks/public', cal: cal ,start: now.strftime('%s'), end: nm.strftime('%s'))
+#      Rails.logger.fatal("calendar cal=#{cal}&start=#{now.strftime('%s')}&end=#{nm.strftime('%s')}")
+#
+#      json = JSON.load(resp.body)
+#      #"/sklep/index.php/apps/ownhacks/calendar-10.php?start=#{now.strftime('%s')}&end=#{nm.strftime('%s')}\n" +
+#      env['nocache'] = '1'
+#      json.sort {|a,b| a['start'] <=> b['start'] }.map do |item|
+#          url = item['description']
+#          if url =~ /(https?:\/\/\S*)/
+#            "* **#{item['start']}** [[#{$1} | #{item['title']}]]\n"
+#          else
+#            "* **#{item['start']}** #{item['title']}\n"
+#          end
+#      end.join
+#    rescue Exception => e
+#      '.' #e.message
+#    end
+#
+#  end
 
   def _template_include(env, argv)
     env['nocache'] = '1'

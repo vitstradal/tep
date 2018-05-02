@@ -34,6 +34,7 @@ class ApplicationController < ActionController::Base
                       params: params.to_hash,
                       host: request.remote_ip,
                       useragent: request.user_agent,
+                      referer: request.referer,
                       backtrace: exception.backtrace,
                     ).deliver_later
     render :layout => nil, template: 'tep/error'
