@@ -666,7 +666,7 @@ function _init_anketa_div(div) {
    var stat = {};
    var cols_max = 0;
    var cols_max2 = 0;
-   var $table = $(div).next();
+   var $table = $(div).next().find('table');
    //console.log("pos", pos);
    //console.log("csrf", $('meta[name=csrf-token]').attr('content'));
 

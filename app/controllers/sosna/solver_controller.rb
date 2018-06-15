@@ -456,10 +456,11 @@ class Sosna::SolverController < SosnaController
       files << file
       "#{@annual}.#{round}.txt"
     end
-    File.open("#{dir}/#{index_path}", 'w') do |f|
-      f.write(files.join("\n")+"\n")
-    end
-    add_success "created #{dir}/#{index_path}, #{files.map{|f| "#{dir}/#{f}"}.join(',')}.\n"
+#    File.open("#{dir}/#{index_path}", 'w') do |f|
+#      f.write(files.join("\n")+"\n")
+#    end
+    add_success "created #{files.map{|f| "#{dir}/#{f}"}.join(',')}.\n"
+    add_alert "add to #{dir}/#{index_path} manually"
     redirect_to :sosna_solver_aesop
   end
 

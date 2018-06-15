@@ -427,6 +427,7 @@ class Sosna::SolutionController < SosnaController
       solution.filename_orig = nil
       solution.save
       add_success "Soubor smazán"
+      return redirect_to sosna_solutions_user_url(roc, se) if is_owner
       return redirect_to sosna_solutions_user_url(roc, se, solver.id)
     end
 

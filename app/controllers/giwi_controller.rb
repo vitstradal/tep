@@ -250,6 +250,7 @@ class GiwiController < ApplicationController
       id_translit: true,
       no_escape: true,
       allow_html: true,
+      div_around_table: true,
       template_handler: self.method(:_template_handler),
     }
   end

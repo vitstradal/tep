@@ -607,3 +607,7 @@ html {
 .unicode-cross:before {
  content: "†";
 }
+
+div.table-div {
+  overflow-x: auto;
+}
