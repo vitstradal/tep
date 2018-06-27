@@ -10,7 +10,9 @@ module ApplicationHelper
     url, opt, text = opt, text, capture(&block) if block_given?
     opt ||= {}
     ico = opt.delete(:ico)
+    text = content_tag(:span, text, :class=>'hidden-xs')
     text = content_tag(:i, '', :class=> "ace-icon fa #{ico}") + " " + text if ! ico.nil?
+
     link_to text, url, opt
   end
 

@@ -58,7 +58,7 @@
         <div class="tep-navbar-brand hidden-xs" >
           <div class="secret-menu-toggler"></div>
           <a href="<%=url_for_root%>" class="navbar-brand " >
-	     <img src="<%= asset_path '/images/logo-vw290.png'%>" width="290px"/> 
+	     <img src="<%= asset_path '/images/logo-vw290.png'%>" width="290px"/>
 	  </a>
         </div>
       </div>
@@ -67,27 +67,28 @@
     <%################################################################################## %>
       <div class="navbar-header navbar-buttons pull-right" >
         <ul class="nav ace-nav">
-        <li>
-     <div id="nav-search" class="nav-search navbar-header navbar-buttons pull-right">
-       <form action="//duckduckgo.com/" class="form-search">
-         <span class="input-icon">
-           <input type="hidden" name="sites" value="pikomat.mff.cuni.cz"></input>
-           <input type="hidden" name="kl" value="cz-cs"></input>
-           <input type="hidden" name="k1" value="-1"></input>
-           <input type="hidden" name="kj" value="#438EB9"></input>
-           <input id="nav-search-input" class="nav-search-input" type="text" name="q" autocomplete="off" placeholder="Hledej ..."></input>
-           <i class="ace-icon fa fa-search nav-search-icon"></i>
-          </span>
-       </form>
-     </div>
-        </li>
-        <% if user_signed_in?  %>
-          <li><%= ilink_to  current_user.email, '#', :ico => 'fa-user', :class=> 'label-user btn btn-primary tep-transparent' %></li>
-          <li><%= ilink_to  'Logout', :destroy_user_session , :ico => 'fa-sign-out', :class => 'btn tep-transparent' %></li>
-        <% else %> 
-          <li><%= ilink_to 'Přihlášení', :new_user_session , :ico => 'fa-user', :class=> 'btn tep-transparent' %> </li>
-        <% end %>
-       </ul>
+          <li>
+            <div id="nav-search" class="nav-search navbar-header navbar-buttons pull-right">
+              <form action="//duckduckgo.com/" class="form-search">
+                <span class="input-icon">
+                  <input type="hidden" name="sites" value="pikomat.mff.cuni.cz"></input>
+                  <input type="hidden" name="kl" value="cz-cs"></input>
+                  <input type="hidden" name="k1" value="-1"></input>
+                  <input type="hidden" name="kj" value="#438EB9"></input>
+                  <input id="nav-search-input" class="nav-search-input" type="text" name="q" autocomplete="off" placeholder="Hledej ..."></input>
+                  <i class="ace-icon fa fa-search nav-search-icon"></i>
+                 </span>
+              </form>
+            </div>
+          </li>
+          <% if user_signed_in?  %>
+            <li><%= ilink_to  current_user.email, '#', :ico => 'fa-user', :class=> 'label-user btn btn-primary tep-transparent' %> </li>
+            <li><%= ilink_to  'Logout', :destroy_user_session , :ico => 'fa-sign-out', :class => 'btn tep-transparent' %></li>
+          <% else %>
+            <li><%= ilink_to 'Přihlášení', :new_user_session , :ico => 'fa-user', :class=> 'btn tep-transparent' %> </li>
+          <% end %>
+        </ul>
+        </span>
         <%#
         <div id="nav-search" class="nav-search pull-right">
           <form class="form-search">
@@ -101,7 +102,7 @@
      </div>
 
 
-    <% if false %> 
+    <% if false %>
     <div class="navbar-buttons navbar-header pull-right ">
       <ul class="nav ace-nav">
         <% if user_signed_in?  %>
@@ -227,8 +228,11 @@
     #%>
   <% if @breadcrumb %>
     <div id="breadcrumbs" class="breadcrumbs">
-      <ul class="breadcrumb">
-
+<%################################################################################## %>
+<%# akcni tlacitka %>
+<%################################################################################## %>
+       <%= yield :action_buttons %>
+       <ul class="breadcrumb">
          <% @breadcrumb.each_with_index do |b, idx| %>
            <% b.each_with_index do |bread| %>
              <% if ! bread[:active] || true %>
@@ -252,13 +256,9 @@
              <% elsif bread[:name] !~  /^index$/i %>
                <li> <%=  bread[:name].capitalize %></li>
              <% end %>
-           <% end %> 
-         <% end %> 
+           <% end %>
+         <% end %>
        </ul>
-<%################################################################################## %>
-<%# akcni tlacitka %>
-<%################################################################################## %>
-       <%= yield :action_buttons %>
        <div style='padding-left:12px' id="page-content-top2"></div>
      </div><%#breadcrumb %>
    <% end %>
@@ -306,15 +306,15 @@
                  <span class="mailcrypt" id="atvzxle5atvzxle1xqq1nfyt1nk">
                     <i class="fa fa-envelope-o"></i>
                     <img src="<%= asset_path('/mails/pikomatpikomatmffcunicz_efcfb78f82c72359cdaa34abc07699a7c1944c3b.png')%>"/>
-                 </span> 
+                 </span>
           </small>
           <% path = request.path[ url_for(:root).size .. -1 ].sub(/^web(ed)?/, '').sub(/\.html$/,'');
             docroot =  '/home/www/html/';
              ex = (File.file?(docroot + path + '.html'))
-           %> 
+           %>
            <% if ex %>
              [<a href="http://pikomat.mff.cuni.cz/retro/<%=path%>.html">retro verze</a>]
-            <% end %> 
+            <% end %>
             <div class="pull-right">
               <div class="ace-settings-item" >
                                 <select id="skin-colorpicker" class="">

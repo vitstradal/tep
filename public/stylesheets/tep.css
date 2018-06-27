@@ -13,6 +13,17 @@ button { font-family: 'AndulkaSerifBookBold',    Arial, sans-serif; }
 input  { font-family: 'AndulkaSerifBookBold',    Arial, sans-serif; }
 textarea  { font-family: 'Courier' ; }
 
+/************************
+ *  ace overide: buttony v navbaru na mobile
+ */
+@media only screen and (max-width: 479px) {
+  .navbar:not(.navbar-collapse) ul.ace-nav > li {
+    float:left !important;
+  }
+  .navbar:not(.navbar-collapse) .navbar-header {
+    float:right !important;
+  }
+}
 
 /************************
  *  forms
