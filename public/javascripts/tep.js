@@ -697,7 +697,7 @@ function _init_anketa_div(div) {
        $tr = $('<tr class="edit-row">');
        var user = ($('.label-user').text() || "anon").replace(/@.*/, '').replace(/ /, '');
 
-       $tr.append($('<td><input type="text" value="' + uc_first(user) + '"/></td>'));
+       $tr.append($('<td>').append($('<input type="text" name="name"/></td>').val(uc_first(user))));
        console.log("bf add edit row: colsMax", cols_max);
        for (var k = 1; k <= cols_max; k++) {
          var $quad =$("<span class='fa fa-circle-o'></span>");
@@ -720,12 +720,14 @@ function _init_anketa_div(div) {
        $form.append( $('<button type="submit" class="btn btn-danger">save</button>'));
        $form.submit(function () {
          var $tr = $(this).closest('tr');
-         var row = '|| ' + ($tr.find('input').val() || '???' );
+         var row = '|| ' + ($tr.find('input[name=name]').val() || '???' );
          $tr.find('td[data-state]').each(function () { row +=  ' || ' + anketa_txt[parseInt($(this).data('state')||0)] });
-         row += " ||\n";
+         row += '|| ' + ($tr.find('input[name=pozn]').val() || '') + "\n";
          $text.val(row);
          console.log('row:', row);
        });
+       var $pozn = $('<input type="text" name="pozn">');
+       $tr.append($('<td>').append($pozn));
        $tr.append($('<td>').append($form));
        $table.find('tr').first().after($tr);
       }); /* click */
