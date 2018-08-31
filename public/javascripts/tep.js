@@ -603,6 +603,16 @@ function init_fotky()
         });
 
         $('#foto-modal').on('hide.bs.modal', function () { set_hash(foto_cat); });
+        $('#foto-modal').keydown( function (ev) { 
+          var code = ev.keyCode || ev.which; 
+          var dir = (code == 37) ? 'prev' : // left arrow
+                    (code == 39) ? 'next' : //right arrow
+                                    null; // not interesting
+          if( dir != null) {
+            ev.preventDefault();
+            $(this).find('button[data-foto-dir=' + dir + ']').click();
+          }
+        });
 
         $('.foto a').click(function (ev) {
            ev.preventDefault();
