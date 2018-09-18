@@ -76,12 +76,24 @@
                                                                                                  
                                             
            </label>
+           <label for="no_solvers"> <%= check_box_tag 'no_solvers', '1', false %> Netisknout řešitele (pouze školy).
+           </label>
           </div>
         </div>
         <div class="form-group">
           <div class="col-sm-9">
            <label class="checkbox" for="skoly"> <%= check_box_tag 'skoly', '1', false %> Školy, které mají nastavené <code>want_paper</code>.
            </label>
+           <label class="checkbox" for="skoly_all"> <%= check_box_tag 'skoly_all', '1', false %> Všechny školy.
+           </label>
+          </div>
+        </div>
+        <div class="form-group">
+          <div class="col-sm-9">
+            <p><b>Id škol</b> jedno číslo na řádek,vše za středníkem bude
+            ignorováno. 
+
+            <%= text_area_tag 'skoly_ids', '', cols: 80, rows: 2 %>
           </div>
         </div>
       

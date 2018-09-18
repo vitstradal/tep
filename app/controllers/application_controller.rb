@@ -26,16 +26,16 @@ class ApplicationController < ActionController::Base
     @error = "#{exception}"
     log "#{@errid}: #{@error}"
 
-    Tep::Mailer.error(errid: @errid,
-                      action: @_action_name,
-                      error: @error,
+    Tep::Mailer.error(errid: @errid.to_s,
+                      action: @_action_name.to_s,
+                      error: @error.to_s,
                       timestamp: DateTime.now.strftime("%y-%m-%d %H:%M:%S"),
                       email: current_user.nil? ? nil : current_user.email,
                       params: params.to_hash,
                       host: request.remote_ip,
                       useragent: request.user_agent,
                       referer: request.referer,
-                      backtrace: exception.backtrace,
+                      backtrace: exception.backtrace.to_s,
                     ).deliver_later
     render :layout => nil, template: 'tep/error'
   end

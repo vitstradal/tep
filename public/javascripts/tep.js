@@ -6,6 +6,9 @@ ace.vars['base'] = '/ace';
 
 // init tep page
 jQuery(document).ready(function($) {
+        $('.delete-link').click(function () {
+          $('div#delete-file input[name=filename]').val($(this).data('path')).focus();
+        });
 
         $('.secret-menu-toggler').click(function () {
           $('#sidebar').toggleClass('hide');

@@ -15,6 +15,7 @@
                            %>"></i>
             <%= link_to file[:name], path: file[:path] %>
             <%= link_to '[Edit]', {path: file[:path], edit: :me} %>
+            <%= link_to '[Del]',  '#', {:class =>'delete-link', 'data-path' => file[:path]}  %>
            </li>
         <% end %>
       <% end %>
@@ -51,6 +52,16 @@
   <div class="form-group"> 
     <%= file_field_tag :file, :class => 'xace-file-input' %>
     <%= hidden_field_tag :path, @path_dir %>
+  </div>
+<% end%>
+
+<hr>
+
+<%= form_tag url_for(:action => :update, :path => @path, :wiki => @wiki, :delete => 'rm'), :multipart => true, :class => 'form-inline', :method =>  :post do%>
+
+  <div class="form-group" id="delete-file"> 
+    <button type='submit' class='btn btn-danger'><i class="fa fa-trash"></i> Smazat soubor</button>
+    <%= text_field_tag :filename, '', placeholder: 'full/path/for/file/to/delete.pdf', size: 80 %>
   </div>
 <% end%>
 

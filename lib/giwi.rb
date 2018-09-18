@@ -166,6 +166,8 @@ class Giwi
 
     status = SETPAGE_OK
 
+    return _del_page(path, oid, email) if text.nil?
+
     if oid != ''
 
       cur_blob  = _get_path_obj(path)
@@ -240,7 +242,6 @@ class Giwi
         #:parents => [ repo.head.target ].compact,
     Rugged::Commit.create(@repo, options)
     #Rails::logger.fatal("options:#{pp(options)}");
-    _post_commit_hook()
     return status
   end
 
@@ -252,6 +253,46 @@ class Giwi
     else
       Rails::logger.fatal("not executing #{hook_path}")
     end
+  end
+
+  def _del_page(path, oid, email)
+    status = SETPAGE_OK
+
+    Rails::logger.fatal("del page path=#{path}, email=#{email}")
+    Rails::logger.fatal("del page A1");
+
+    index = @repo.index
+    cur_tree = _get_cur_tree
+    Rails::logger.fatal("del page A11");
+    index.read_tree(cur_tree)
+    Rails::logger.fatal("del page A12");
+    index.remove(path)
+    Rails::logger.fatal("del page A13");
+
+    Rails::logger.fatal("del page A2");
+    comment = "file delete: #{path}"
+    comment = comment.force_encoding('ASCII-8BIT')
+
+    name = ''
+    name, email = [$1, $2] if email =~ /^(.*)\s*<(\S*@\S*)>$/
+
+    options = {
+        :tree => index.write_tree(@repo),
+        :author =>  { :email => email,
+                      :time  => Time.now,
+                      :name => name,
+                   },
+        :message => comment,
+        :parents => [ _get_cur_target ].compact,
+        :update_ref => 'refs/heads/' + @branch,
+    }
+        #:parents => [ repo.head.target ].compact,
+    Rails::logger.fatal("del page A3");
+    Rugged::Commit.create(@repo, options)
+    Rails::logger.fatal("del page A4");
+    _post_commit_hook()
+    Rails::logger.fatal("del page A5");
+    return status
   end
 
   def get_history(opts = {})
@@ -416,6 +457,13 @@ class GiwiNoGit < Giwi
 
   def set_page(path, text, commit_id, email = 'unknown', pos = nil)
     path_fs = File.join(@path, path)
+
+    return SETPAGE_ERROR if path =~ /\\\.\.\\/
+
+    if text.nil?
+      File.delete path_fs
+      return SETPAGE_OK
+    end
 
     if ! pos.nil?
       begin

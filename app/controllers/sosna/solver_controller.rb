@@ -59,6 +59,7 @@ class Sosna::SolverController < SosnaController
   def labels
     @annual = params[:roc] || @annual
     @ids = (params[:ids]  || '').gsub(/;.*$/,'').split(/[,\n\s]+/).map { |x| x.to_i }
+    @skoly_ids = (params[:skoly_ids]  || '').gsub(/;.*$/,'').split(/[,\n\s]+/).map { |x| x.to_i }
     log("ids:" +  @ids.to_s);
     opt_param = params[:opt] || ''
     respond_to do |format|
@@ -75,7 +76,9 @@ class Sosna::SolverController < SosnaController
          @dbg = params[:dbg]
          where = nil
          @solvers = []
-         if @ids.size > 0
+         if params[:no_solvers]
+           @solvers = []
+         elsif @ids.size > 0
            @solvers = get_sorted_solvers({ id: @ids})
          elsif params[:paper_tep_conflict]
            @round = params[:se] || @round
@@ -88,7 +91,13 @@ class Sosna::SolverController < SosnaController
            @solvers = get_sorted_solvers(where);
          end
          @schools = []
-         @schools = Sosna::School.where(want_paper: true) if params[:skoly]
+         if @skoly_ids.size > 0
+           @schools = Sosna::School.where(id: @skoly_ids)
+         elsif params[:skoly_all]
+           @schools = Sosna::School.all
+         elsif params[:skoly]
+           @schools = Sosna::School.where(want_paper: true)
+         end
          render :formats => [:pdf]
        end
     end

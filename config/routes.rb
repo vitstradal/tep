@@ -7,6 +7,7 @@ Tep::Application.routes.draw do
   # přidání akcí je třeba přidat i práva v app/models/ability.rb
   # anon:
   get  '/sosna/solver/new'                   => 'sosna/solver#new',                     :as => :sosna_solver_new
+  get  '/prihlaska'                          => 'sosna/solver#new',                     :as => :sosna_solver_new_short
   get  '/bonus/new'                          => 'sosna/solver#new_bonus',               :as => :sosna_solver_new_bonus
   get  '/sosna/solver/confirm'               => 'sosna/solver#user_solver_confirm',     :as => :sosna_solver_user_solver_confirm
   post '/sosna/solver/create'                => 'sosna/solver#create',                  :as => :sosna_solver_anon_create

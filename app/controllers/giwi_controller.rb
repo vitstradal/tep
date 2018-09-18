@@ -166,8 +166,9 @@ class GiwiController < ApplicationController
     return _handle_preview(params[:preview]) if ! params[:preview].nil?
     return _handle_file_upload(data, "#{@path}.#{fmt}", nil, false) if data
     return _handle_file_upload(file.read, filename, file.original_filename ) if file
+    return _handle_file_delete(filename, version, current_user.full_email) if params[:delete]
 
-    text = params[:text_inline] || params[:text]
+    text = params[:text_inline] || params[:text] || ''
     text.gsub!(/\r\n?/,"\n")
     text += "\n" if text[-1] != "\n"
 
@@ -206,6 +207,10 @@ class GiwiController < ApplicationController
   end
 
   private
+  def _handle_file_delete(filename, version, email)
+    status = @giwi.set_page(filename, nil, version, email)
+    redirect_to action: :show,  wiki: @wiki, path: @path, ls: '.'
+  end
 
   def _handle_redirect(redir)
     log "redir:#{redir}"
