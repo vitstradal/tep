@@ -78,9 +78,11 @@
           <tbody>
         </table>
       
-        <div class="control-group">
-          <div class="controls"><%= f.submit :class=>'btn btn-primary', :value=>'Uložit' %></div>
-        </div>
+        <% if current_user.admin? %>
+          <div class="control-group">
+            <div class="controls"><%= f.submit :class=>'btn btn-primary', :value=>'Uložit' %></div>
+          </div>
+        <% end %>
       <% end %>
     </div>
     <div class="tab-pane in" id='aesop'>
@@ -95,9 +97,11 @@
           <tbody>
         </table>
       
-        <div class="control-group">
-          <div class="controls"><%= f.submit :class=>'btn btn-primary', :value=>'Uložit' %></div>
-        </div>
+        <% if current_user.admin? %>
+          <div class="control-group">
+            <div class="controls"><%= f.submit :class=>'btn btn-primary', :value=>'Uložit' %></div>
+          </div>
+        <% end %>
       <% end %>
     </div>
   </div>

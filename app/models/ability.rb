@@ -79,6 +79,8 @@ class Ability
       can :index, Sosna::School
       can :update_scores, Sosna::Solution
 
+      can :index, Sosna::Config
+
     end
 
     # master-org, or more-org, 
