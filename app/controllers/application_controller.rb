@@ -9,9 +9,10 @@ class ApplicationController < ActionController::Base
      return ret
   end
 
-  rescue_from StandardError do |exception|
-    _error(exception)
-  end
+#  rescue_from StandardError do |exception|
+#    throw exception  if ENV['RAILS_ENV'] == 'void'
+#    _error(exception) 
+#  end
 
   rescue_from CanCan::AccessDenied do |exception|
       if current_user.nil?

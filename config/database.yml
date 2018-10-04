@@ -18,6 +18,12 @@ local:
   pool: 5
   timeout: 5000
 
+void:
+  adapter: sqlite3
+  database: var/db/void.sqlite3
+  pool: 5
+  timeout: 5000
+
 
 test:
   adapter: sqlite3

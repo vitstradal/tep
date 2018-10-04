@@ -31,6 +31,7 @@ class Giwi
   # class methods
   def self.setup
     config = yield self
+    return if config.nil?
     config.each do |wiki, opts|
       wiki = wiki.to_sym
       if opts["nogit"]

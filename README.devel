@@ -1,0 +1,55 @@
+
+== instalace ==  
+
+Je třeba nainstalovat všechny ruby knihovny. 
+BTW: ty jsou specifikovány v souboru `Gemfile` (a z něj generovaného `Gemfile.lock`)
+
+$ sudo bundle install
+
+
+== prostredi ==
+
+prostředí (evn) se říká tomu jakou konfigurací se server spustí
+
+* production -- to co běží na pikomatu
+* devel -- to co běží na pikomatu v tep-dev
+* local -- poběží na http://localhost:3000 používa gity o adresář víše, jsou to:
+  * ../web
+  * ../tepmac
+  * ../piki
+  * ../wikuk -- to není git ale pouze adresář na hraní
+* void -- také běží na http://localhost:3000, ale nepoužívá gity
+
+== zprovoznění prostředí void z čistého gitu ==
+
+vytvoří db:
+$ make void-migrate
+
+do db dá nějaká data (ze db/seed.rb)
+$ make void-seed
+
+spusti server na http://localhost:3000
+$ make void-server
+
+== zprovoznění prostředí local z čistého gitu ==
+
+vytvoří db (do souboru db/local.sqlite3):
+$ make local-migrate
+
+do db dá nějaká data (ze db/seed.rb)
+$ make local-seed
+
+spusti server na http://localhost:3000
+pokud neexistuji adresare wikin, tento prikaz na to upozroni
+a navrhe prikaz, kterym se adresare mohou naclonovat na spravne misto
+(mozna bude potreba doplnit loginname na pikoamtu)
+$ make local-server
+
+== error log ==
+
+... je v souboru `log/local.log` (reps. `log/void.log`)
+prubezne vypisovani zajisti prikaz:
+
+$ tail -f log/void.log
+(-f jakoze furt)
+

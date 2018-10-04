@@ -50,10 +50,28 @@ defaults: &defaults
     read:   :org
     update: :org
 
+void: 
+  main: &voidmain
+    url: 'wikuk'
+    templates: 'tepmac'
+    path: 'tmp/void'
+    nogit: true
+    ext: '.wiki'
+    read:   :org
+    update: :org
+  tepmac:
+    <<: *voidmain
+  piki:  
+    <<: *voidmain
+  web:  
+    <<: *voidmain
+  web_edit: 
+    <<: *voidmain
+
 local: &local
-  <<: *defaults
+#  <<: *defaults
   piki:
-    path: '/home/vitas/git/piki'
+    path: '../piki'
     url: 'piki'
     read:  :org
     templates: 'tepmac'
@@ -65,13 +83,13 @@ local: &local
   wikuk:
     url: 'wikuk'
     templates: 'tepmac'
-    path: '/home/vitas/tmp/wikuk'
+    path: '../wikuk'
     nogit: true
     ext: '.wiki'
     read:   :org
     update: :org
   tepmac:
-    path: '/home/vitas/git/tepmac'
+    path: '../tepmac'
     url: 'tepmac'
     templates: 'tepmac'
     bare: false
@@ -80,7 +98,7 @@ local: &local
     read:   :org
     update: :morg
   main:
-    path: '/home/vitas/git/web'
+    path: '../web'
     bare: false
     branch: master
     templates: 'tepmac'
@@ -89,7 +107,7 @@ local: &local
     read:   :anon
     update: :org
   web_edit:
-    path: '/home/vitas/git/web'
+    path: '../web'
     bare: true
     templates: 'tepmac'
     url: 'webed'
