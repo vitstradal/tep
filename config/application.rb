@@ -48,6 +48,8 @@ module Tep
 
     config.wiki_do_cache_parse = false
 
+    config.jabber_secret = 'wax.polish.rescue.elsewhere'
+
     #config.sosna_user_solution_max_size = 5 * 1024 * 1024
     config.sosna_user_solution_max_size = 20 * 1024 * 1024
     #config.cache_store = ActiveSupport::Cache::MemoryStore.new(:expires_in => 5.minutes)

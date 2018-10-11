@@ -31,6 +31,9 @@ class Ability
 
     #can :update, :giwi, if: :can_update?
 
+    # jabber
+    can :auth, Jabber
+
     if user.user?
       can :user_index, Sosna::Solution
       can :user_bonus, Sosna::Solution
@@ -127,6 +130,10 @@ class Ability
 
       can :index,  Sosna::Config
       can :update, Sosna::Config
+
+      can :new,  Jabber
+      can :update, Jabber
+      can :delete, Jabber
     end
 
     # Wikis

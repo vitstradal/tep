@@ -233,8 +233,6 @@ class Sosna::SolverController < SosnaController
         flash[:solver] = solver
         flash[:school] = school
         flash[:agree] = agree
-        #Rails.logger.fatal(pp("school", solver.errors.messages))
-        #Rails.logger.fatal(pp("solver", school.errors.messages)) if school
         return redirect_to :action => :new_bonus if is_bonus
         return redirect_to :action => :new
     end
@@ -317,18 +315,14 @@ class Sosna::SolverController < SosnaController
   end
 
   def update
-    Rails.logger.fatal("A0")
     params.require(:sosna_solver).permit!
     sr = params[:sosna_solver]
     school_id = params[:school].delete :id
-
-    Rails.logger.fatal("A1")
 
     begin
       school = Sosna::School.find(school_id)
     rescue
       begin
-        Rails.logger.fatal("A2")
         params.require(:sosna_school).permit!
         school = Sosna::School.new(params[:sosna_school])
         school.save
@@ -337,7 +331,6 @@ class Sosna::SolverController < SosnaController
       end
     end
 
-    Rails.logger.fatal("A3")
 
     sr.delete :user_id
 
@@ -348,8 +341,6 @@ class Sosna::SolverController < SosnaController
     else
       solver = Sosna::Solver.create(sr)
     end
-    Rails.logger.fatal("A4")
-    Rails.logger.fatal("A4.1")
 
     if !params[:is_confirm].nil?
        log "A4.5"
@@ -358,7 +349,6 @@ class Sosna::SolverController < SosnaController
        add_success "Návratka potvrzena."
        return redirect_to :sosna_solutions_user
     end
-    Rails.logger.fatal("A5")
 
     if _edit_want_send_first()
       user = User.find_by_email solver.email

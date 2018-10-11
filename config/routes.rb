@@ -93,12 +93,20 @@ Tep::Application.routes.draw do
   get  '/access'                             => 'tep#access',                   :as => :access_denied
   get  '/users(/:role)'                      => 'tep#users',                    :as => :users_list
   post '/user/new'                           => 'tep#user_new',                 :as => :user_new
-  get  '/user/:id/show'                      => 'tep#user',                     :as => :user_show
+  get  '/user/:id/show(/:tab)'               => 'tep#user',                     :as => :user_show
   patch '/user/:id/update'                   => 'tep#user_update',              :as => :user_update
   post  '/user/:id/delete'                   => 'tep#user_delete',              :as => :user_delete
   patch '/user/:id/role'                     => 'tep#user_role_change',         :as => :user_role_change
   post  '/user/:id/action/:what'             => 'tep#user_action',              :as => :user_action
   get  '/reg/:token'                         => 'tep#user_finish_registration', :as => :user_finish_registration
+
+  # post
+  patch  '/jabber/:id/update'                => 'jabber#update',                :as => :jabber_update
+  post  '/jabber/:id/delete'                 => 'jabber#delete',                :as => :jabber_delete
+  post  '/jabber/new/:user_id'               => 'jabber#new',                   :as => :jabber_new
+
+  post  '/jabber/auth'                       => 'jabber#auth',                  :as => :jabber_auth_post
+  get   '/jabber/auth'                       => 'jabber#auth',                  :as => :jabber_auth
 
   get  '/die'                                => 'tep#die', :as => :tep_die
 

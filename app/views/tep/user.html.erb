@@ -1,77 +1,148 @@
 
 <h1>Uživatel  <%= @user.email %> - editace</h1>
 
-<%= form_for @user, url: user_update_path(@user.id), html: {:class=>'form-horizontal'} do |f| %>
-    <div class="control-group">
-      <label class="control-label" for="user[email]">Email (pro změnu bude vyžadována konfirmace)</label>
-      <div class="controls"> <%= f.text_field :email %> </div>
-    </div>
+<div class="tabbable">
+  <ul id="myTab" class="nav nav-tabs">
+     <li <%=class_active_if(@tab=='config')%>> <%= link_to 'Nastavení',    '#config', 'data-toggle' => 'tab' %></li>
+     <li <%=class_active_if(@tab=='group' )%>> <%= link_to 'Skupiny',      '#group',  'data-toggle' => 'tab' %></li>
+     <li <%=class_active_if(@tab=='solver')%>> <%= link_to 'Řešitel',      '#solver', 'data-toggle' => 'tab' %></li>
+     <li <%=class_active_if(@tab=='mail'  )%>> <%= link_to 'Maily',        '#mail',   'data-toggle' => 'tab' %></li>
+     <li <%=class_active_if(@tab=='jabber')%>> <%= link_to 'Jabber',       '#jabber',  'data-toggle' => 'tab' %></li>
+     <li <%=class_active_if(@tab=='remove')%>> <%= link_to 'Smazat',       '#remove', 'data-toggle' => 'tab' %></li>
+  </ul>
 
-    <div class="control-group">
-      <label class="control-label" for="user[name]">Jméno</label>
-      <div class="controls"> <%= f.text_field :name %> </div>
-    </div>
+  <div class="tab-content">
+    <div class="tab-pane <%=active_in_if(@tab=='config')%>" id='config'>
 
-    <div class="control-group">
-      <label class="control-label" for="user[last_name]">Příjmení</label>
-      <div class="controls"> <%= f.text_field :last_name %> </div>
-    </div>
+      <%= form_for @user, url: user_update_path(@user.id), html: {:class=>'form-horizontal'} do |f| %>
+          <div class="control-group">
+            <label class="control-label" for="user[email]">Email (pro změnu bude vyžadována konfirmace)</label>
+            <div class="controls"> <%= f.text_field :email %> </div>
+          </div>
+      
+          <div class="control-group">
+            <label class="control-label" for="user[name]">Jméno</label>
+            <div class="controls"> <%= f.text_field :name %> </div>
+          </div>
+      
+          <div class="control-group">
+            <label class="control-label" for="user[last_name]">Příjmení</label>
+            <div class="controls"> <%= f.text_field :last_name %> </div>
+          </div>
+      
+          <div class="control-group">
+             <div class="controls">
+               <%= f.submit 'Uložit', :class=>'btn btn-primary'%>
+             </div>
+          </div>
+      <% end %>
+    </div> <%# tab-pane %>
+    <div class="tab-pane <%=active_in_if(@tab=='group')%>" id='group'>
+      Skupiny:Uživatel 
+      <ul>
+        <% @user.roles.each do |role|%>
+           <li><%= role %></li>
+        <% end.empty? and begin %>
+          <li><i> tento uživatel nemá žádné skupiny</i></li>
+        <% end %>
+      </ul>
+      <%= form_for @user, url: user_role_change_path(@user.id), :html => {:class => 'form-inline' } do |f| %>
+          <%= f.hidden_field :id %>
+          <%= select_tag :role, 
+             options_for_select( User.valid_roles.reverse.map { |r| (@user.has_role? r) ? "-#{r}" : "+#{r}" }),
+             :class => 'input-small'
+             %>
+          <%= f.submit value: 'Přidat/odebrat skupinu'%>
+      <% end %>
+    </div> <%# tab-pane %>
+    <div class="tab-pane <%=active_in_if(@tab=='solver')%>" id='solver'>
 
-    <div class="control-group">
-       <div class="controls">
-         <%= f.submit 'Uložit', :class=>'btn btn-primary'%>
-       </div>
-    </div>
-<% end %>
+      Řešitelé:
+      <ul>
+        <% @solvers.each do |solver| %>
+           <li><%= solver.name %>
+               <%= solver.last_name %>
+               <%= link_to "id#{solver.id}", sosna_solver_url(solver.id)%>
+               (roč<%= solver.annual %>)
+            </li>
+        <% end.empty? and begin %>
+          <li><i> tento uživatel nemá řešitele</i></li>
+        <% end %>
+      </ul>
+    </div> <%# tab-pane %>
+    <div class="tab-pane <%=active_in_if(@tab=='remove')%>" id='remove'>
+      <%= form_tag user_delete_path(id:@user.id) do %>
+         <%= submit_tag  'Smazat uživatele (nebude žádné "jsi si jistý?")', :class=>'btn btn-danger' %>
+      <% end %>
+    </div> <%# tab-pane %>
+    <div class="tab-pane <%=active_in_if(@tab=='mail')%>" id='mail'>
+      <hr/>
+      <%= form_tag user_action_path(@user.id, :send_first_email), html: {:class=>'form-horizontal'} do %>
+               <%= submit_tag 'Poslat uvítací email', :class=>'btn btn-danger'%>
+      <% end %>
+      
+      <hr/>
+      <%= form_tag user_action_path(@user.id, :send_password_reset), html: {:class=>'form-horizontal'} do %>
+               <%= submit_tag 'Poslat reset hesla', :class=>'btn btn-danger'%>
+      <% end %>
+      <hr/>
+      <% @resource = @user %>
+      <h2>Náhled mailů pro tohoto uživatele</h2>
+      
+      <h3>tep/mailer/first_login_instructions.html.erb</h3>
+      <div class="well"> <%= render file: 'tep/mailer/first_login_instructions.html.erb' %></div>
+      
+      <h3>tep/mailer/reset_password_instructions.html.erb</h3>
+      <div class="well"> <%= render file: 'tep/mailer/reset_password_instructions.html.erb' %></div>
+      
+      <h3>tep/mailer/unlock_instructions.html.erb</h3>
+      <div class="well"> <%= render file: 'tep/mailer/unlock_instructions.html.erb' %></div>
+      
+      <h3>confirmation_instructions.html.erb</h3>
+      <div class="well"> <%= render file: 'tep/mailer/confirmation_instructions.html.erb' %></div>
 
 
-<hr>
-Skupiny:
-<%= form_for @user, url: user_role_change_path(@user.id), :html => {:class => 'form-inline' } do |f| %>
-    <%= @user.roles.to_a.join(',') %>
-    <%= f.hidden_field :id %>
-    <%= select_tag :role, 
-       options_for_select( User.valid_roles.reverse.map { |r| (@user.has_role? r) ? "-#{r}" : "+#{r}" }),
-       :class => 'input-small'
-       %>
-    <%= f.submit value: 'Přidat/odebrat skupinu'%>
-<% end %>
-
-Řešitelé:
-<% @solvers.each do |solver| %>
-   <%= solver.name %> <%= solver.last_name %> <%= link_to "id#{solver.id}", sosna_solver_url(solver.id)%> (roč<%= solver.annual %>),
-<% end %>
-
-<hr>
-
-<%= form_tag user_action_path(@user.id, :send_first_email), html: {:class=>'form-horizontal'} do %>
-         <%= submit_tag 'Poslat uvítací email', :class=>'btn btn-danger'%>
-<% end %>
-
-<%= form_tag user_action_path(@user.id, :send_password_reset), html: {:class=>'form-horizontal'} do %>
-         <%= submit_tag 'Poslat reset hesla', :class=>'btn btn-danger'%>
-<% end %>
-
-<hr>
-
-<%= form_tag user_delete_path(id:@user.id) do %>
-   <%= submit_tag  'Smazat uživatele (nebude žádné "jsi si jistý?")', :class=>'btn btn-danger' %>
-<% end %>
-
-<hr>
-
-<% @resource = @user %>
-<h2>Náhled mailů pro tohoto uživatele</h2>
-
-<h3>tep/mailer/first_login_instructions.html.erb</h3>
-<div class="well"> <%= render file: 'tep/mailer/first_login_instructions.html.erb' %></div>
-
-<h3>tep/mailer/reset_password_instructions.html.erb</h3>
-<div class="well"> <%= render file: 'tep/mailer/reset_password_instructions.html.erb' %></div>
-
-<h3>tep/mailer/unlock_instructions.html.erb</h3>
-<div class="well"> <%= render file: 'tep/mailer/unlock_instructions.html.erb' %></div>
-
-<h3>confirmation_instructions.html.erb</h3>
-<div class="well"> <%= render file: 'tep/mailer/confirmation_instructions.html.erb' %></div>
-
+    </div> <%# tab-pane %>
+    <div class="tab-pane <%=active_in_if(@tab=='jabber')%>" id='jabber'>
+        <% if @user.jabber? %>
+          <% jabber = @user.jabber %>
+          <% if !jabber.nil? %>
+            <%= form_for jabber, url: jabber_update_path(jabber.id), html: {:class=>'form-horizontal'} do |f| %>
+              <div class="control-group">
+                <label class="control-label" for="jabber[jid]">JID address (musí končit @pikomat.mff.cuni.cz)</label>
+                <div class="controls"> <%= f.text_field :jid %> </div>
+              </div>
+      
+              <div class="control-group">
+                <label class="control-label" for="jabber[nick]">Nick</label>
+                <div class="controls"> <%= f.text_field :nick %> </div>
+              </div>
+      
+              <div class="control-group">
+                 <div class="controls">
+                   <%= f.submit 'Update', :class=>'btn btn-primary'%>
+                 </div>
+              </div>
+            <% end # form %>
+            <hr/>
+            <%= form_tag jabber_delete_path(jabber.id), html: {:class=>'form-horizontal'} do %>
+              <div class="control-group">
+                 <div class="controls">
+                   <%= submit_tag 'Delete jabber', :class=>'btn btn-danger'%>
+                 </div>
+              </div>
+            <% end %> 
+          <% else # jabber.nil %>
+            <%= form_tag jabber_new_path(@user.id), html: {:class=>'form-horizontal'} do |f| %>
+              <div class="control-group">
+                 <div class="controls">
+                   <%= submit_tag 'Create jabber', :class=>'btn btn-primary'%>
+                 </div>
+              </div>
+            <% end %> 
+          <% end %>
+        <% else %>
+          tento uživatel musí být ve skupině <code>jabber</code>
+        <% end %>
+    </div> <%# tab-pane %>
+  </div> <%# tab-content %>

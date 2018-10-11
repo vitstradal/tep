@@ -1,5 +1,4 @@
 # encoding: utf-8
-#require 'digest/hmac'
 
 require 'unicode_utils'
 require 'resolv'
@@ -229,6 +228,10 @@ module ApplicationHelper
      return 'class="active"'.html_safe if cond
   end
 
+  def active_in_if(cond)
+     return 'in active' if cond
+  end
+
   def load_config
     return if @config
     @config  =  { annual:20,
@@ -310,5 +313,4 @@ module ApplicationHelper
        sub: (annual_min .. annual_max).map { |a| {name: "Ročník #{a}", url: {action: action, roc:a}}}.reverse,
      }
   end
-
 end

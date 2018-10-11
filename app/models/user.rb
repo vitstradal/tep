@@ -20,9 +20,11 @@ class User < ActiveRecord::Base
   # :roles_mask is the default
   roles_attribute :roles_mask
 
+  has_one :jabber, inverse_of: :user
+
   # declare the valid roles -- do not change the order if you add more
   # roles later, always append them at the end!
-  roles :admin, :org, :user, :guest, :sklep, :morg
+  roles :admin, :org, :user, :guest, :sklep, :morg, :jabber
 
   before_create do
     roles << :user

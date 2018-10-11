@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 16) do
+ActiveRecord::Schema.define(version: 17) do
 
   create_table "informs", force: :cascade do |t|
     t.string   "form"
@@ -22,6 +22,15 @@ ActiveRecord::Schema.define(version: 16) do
   end
 
   add_index "informs", ["form"], name: "index_informs_on_form"
+
+  create_table "jabbers", force: :cascade do |t|
+    t.integer "user_id"
+    t.text    "jid"
+    t.text    "nick"
+  end
+
+  add_index "jabbers", ["jid"], name: "index_jabbers_on_jid", unique: true
+  add_index "jabbers", ["user_id"], name: "index_jabbers_on_user_id", unique: true
 
   create_table "sessions", force: :cascade do |t|
     t.string   "session_id", null: false

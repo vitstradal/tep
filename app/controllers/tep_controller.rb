@@ -34,6 +34,7 @@ class TepController < ApplicationController
 
   def user
     user_id = params[:id]
+    @tab = params[:tab] || 'config'
     @user = User.find(user_id);
     @solvers = Sosna::Solver.where(user_id: user_id)
   end
