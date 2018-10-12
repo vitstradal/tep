@@ -30,9 +30,9 @@ class JabberController < ApplicationController
 
   def auth
      jid = params[:jid]
-     pass = params[:pass]
+     password = params[:password]
      begin
-       pass = SimpleCrypt.decrypt(pass, Rails.configuration.jabber_secret)
+       password = SimpleCrypt.decrypt(password, Rails.configuration.jabber_secret)
      rescue OpenSSL::Cipher::CipherError => e
        return render :json => { status: "error", msg: 'dcr' }
      end
@@ -40,7 +40,7 @@ class JabberController < ApplicationController
      return render :json => { status: "error", msg: 'noj'} if jabber.nil?
      user = jabber.user
      return render :json => { status: "error", msg: 'nou'} if user.nil?
-     return render :json => { status: "error", msg: 'bad'} if ! user.valid_password? pass
+     return render :json => { status: "error", msg: 'bad'} if ! user.valid_password? password
      render :json => { status: "ok"}
   end
 
