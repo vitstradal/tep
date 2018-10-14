@@ -51,11 +51,11 @@
 
     */
     converse.initialize({
-        authentication: 'login',
+        authentication: 'prebind',
         auto_away: 300,
         auto_reconnect: true,
         bosh_service_url: 'https://pikomat.mff.cuni.cz/provedouci/ejabberd/bosh',
-        prebind_url:      'https://pikomat.mff.cuni.cz/jabber/preauth',
+        prebind_url:      'http://pikomat.mff.cuni.cz/jabber/prebind',
         message_archiving: 'always',
         view_mode: 'fullscreen'
     }).then(function () {

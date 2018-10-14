@@ -101,7 +101,7 @@ Tep::Application.routes.draw do
   get  '/reg/:token'                         => 'tep#user_finish_registration', :as => :user_finish_registration
 
   # post
-  get    '/jabber/preauth'                   => 'jabber#preauth',               :as => :jabber_preauth
+  get    '/jabber/prebind'                   => 'jabber#prebind',               :as => :jabber_prebind
   patch  '/jabber/:id/update'                => 'jabber#update',                :as => :jabber_update
   post   '/jabber/:id/delete'                => 'jabber#delete',                :as => :jabber_delete
   post   '/jabber/new/:user_id'              => 'jabber#new',                   :as => :jabber_new

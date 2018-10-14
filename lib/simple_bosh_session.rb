@@ -56,6 +56,8 @@ EOL
     puts res2.body if Debug
     return [rid,sid] if res2.body =~ /<success[^>]*>/
     return [nil,nil]
+  rescue SystemCallError
+    return [nil, nil]
   end
 
 end

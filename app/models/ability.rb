@@ -28,12 +28,11 @@ class Ability
 
     can :index, :aesop
     #can :index, :aesop
-
     #can :update, :giwi, if: :can_update?
 
     # jabber
     can :auth, Jabber
-    can :preauth, Jabber
+    can :prebind, Jabber
 
     if user.user?
       can :user_index, Sosna::Solution
