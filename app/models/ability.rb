@@ -33,6 +33,7 @@ class Ability
 
     # jabber
     can :auth, Jabber
+    can :preauth, Jabber
 
     if user.user?
       can :user_index, Sosna::Solution

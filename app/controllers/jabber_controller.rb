@@ -27,16 +27,23 @@ class JabberController < ApplicationController
     jabber.save
     redirect_to  user_show_path(user_id, 'jabber')
   end
+  def preauth
+    rid = session[:jabber_rid]
+    sid = session[:jabber_sid]
+    render :json => {status: 'ok', rid: rid, sid: sid }
+  end
 
   def auth
      jid = params[:jid]
      password = params[:password]
+     key = Rails.configuration.jabber_secret
+     domain = Rails.configuration.jabber_domain
      begin
-       password = SimpleCrypt.decrypt(password, Rails.configuration.jabber_secret)
+       password = SimpleCrypt.decrypt(password, key) 
      rescue OpenSSL::Cipher::CipherError => e
        return render :json => { status: "error", msg: 'dcr' }
      end
-     jabber = Jabber.find_by_jid(jid)
+     jabber = Jabber.find_by_jid("#{jid}@#{domain}")
      return render :json => { status: "error", msg: 'noj'} if jabber.nil?
      user = jabber.user
      return render :json => { status: "error", msg: 'nou'} if user.nil?

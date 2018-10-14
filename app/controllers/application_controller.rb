@@ -1,12 +1,15 @@
+require 'simple_bosh_session'
+
 class ApplicationController < ActionController::Base
   protect_from_forgery
 
   include ApplicationHelper
 
-  def after_sign_in_path_for(resource)
-     ret = params[:next] || url_for_root(resource)
-     log("after_sign_in_path_for:#{ret}, next: #{params[:next]}");
-     return ret
+  def after_sign_in_path_for(user)
+     ret_url = params[:next] || url_for_root(user)
+     password = params[:user][:password]
+     _jabber_auth(user.jabber, password) if user.jabber? && !user.jabber.nil?
+     return ret_url
   end
 
 #  rescue_from StandardError do |exception|
@@ -39,6 +42,12 @@ class ApplicationController < ActionController::Base
                       backtrace: exception.backtrace.to_s,
                     ).deliver_later
     render :layout => nil, template: 'tep/error'
+  end
+  def _jabber_auth(jabber, password)
+   bosh_url = Rails.configuration.jabber_bosh_url
+   rid, sid = SimpleBoshSession.get_session(bosh_url, jabber.jid, password)
+   session[:jabber_rid] = rid
+   session[:jabber_sid] = sid
   end
 
 end
