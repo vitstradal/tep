@@ -46,6 +46,7 @@ class ApplicationController < ActionController::Base
   def _jabber_auth(jabber, password)
    bosh_url = Rails.configuration.jabber_bosh_url
    rid, sid = SimpleBoshSession.get_session(bosh_url, jabber.jid, password)
+   #log("rid=#{rid} sid=#{sid}")
    session[:jabber_rid] = rid
    session[:jabber_sid] = sid
   end
