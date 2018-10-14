@@ -30,8 +30,8 @@ class JabberController < ApplicationController
   def prebind
     rid = session[:jabber_rid]
     sid = session[:jabber_sid]
-    return render :json => {status: 'bad'} if current_user.nil? && current_user.jabber? && current_user.jabber.nil?
-    jid = @user.jabber.jid
+    return render :json => {status: 'bad'} if current_user.nil? || !current_user.jabber? || current_user.jabber.nil?
+    jid = current_user.jabber.jid
     render :json => {status: 'ok', jid: jid, rid: rid, sid: sid }
   end
 
