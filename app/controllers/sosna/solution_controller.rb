@@ -17,12 +17,12 @@ class Sosna::SolutionController < SosnaController
 
 
   def index
-    _prepare_solvers_problems_solutions
+    _prepare_solvers_problems_solutions(want_test: true)
     _load_index
   end
 
   def lidi
-    _prepare_solvers_problems_solutions(false)
+    _prepare_solvers_problems_solutions(want_test: false)
     # dirty hack
     _sort_solvers_by_grade
     respond_to do |format|
@@ -37,7 +37,7 @@ class Sosna::SolutionController < SosnaController
   end
 
   def vysl_pik
-    _prepare_solvers_problems_solutions
+    _prepare_solvers_problems_solutions(want_test: false)
     _sort_solvers_by_rank
     headers['Content-Disposition'] = "attachment; filename=vysl#{@annual}_#{@round}.pik"
     headers['Content-Type'] = "text/plain; charset=UTF-8";
@@ -45,7 +45,7 @@ class Sosna::SolutionController < SosnaController
   end
 
   def vysl_wiki
-    _prepare_solvers_problems_solutions
+    _prepare_solvers_problems_solutions(want_test: false)
     _sort_solvers_by_rank
     headers['Content-Disposition'] = "inline; filename=vysl#{@annual}_#{@round}.wiki"
     headers['Content-Type'] = "text/plain; charset=UTF-8";
@@ -53,7 +53,7 @@ class Sosna::SolutionController < SosnaController
   end
 
   def edit
-    _prepare_solvers_problems_solutions
+    _prepare_solvers_problems_solutions(want_test: true)
     @want_edit_paper = @want_edit = @want_edit_penalisation = false
     if !params[:paper].nil?
       @want_edit_paper = true
@@ -866,7 +866,7 @@ class Sosna::SolutionController < SosnaController
      end
   end
 
-  def _prepare_solvers_problems_solutions(want_test = true)
+  def _prepare_solvers_problems_solutions(want_test: true)
     _params_roc_se_ul
     where = { annual: @annual}
     where.merge!({is_test_solver: false }) if ! want_test
