@@ -255,6 +255,7 @@ class GiwiController < ApplicationController
       id_translit: true,
       no_escape: true,
       allow_html: true,
+      allowed_schemes:  %w(http https ftp ftps mailto),
       div_around_table: true,
       template_handler: self.method(:_template_handler),
     }
