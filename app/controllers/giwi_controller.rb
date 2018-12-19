@@ -304,8 +304,8 @@ class GiwiController < ApplicationController
   # 3 mesice dopredu (from now)
   def _template_calendar(env, argv)
     begin
-      url =  argv['0'] 
-      mon =  argv['mon'] 
+      url =  argv['0']
+      mon =  argv['mon']
 
       now  = Date.today
       pak =  now.next_month((mon||1).to_i)
@@ -545,8 +545,8 @@ class GiwiController < ApplicationController
     base_url = url_for(action: :show, wiki:@wiki, path: @path)
     html = parser.to_html(@text, base_url)
     notoc = env.at('notoc', false)
-    toc  = nil 
-    toc = parser.make_toc_html  if ! notoc && parser.headings.size > 3 
+    toc  = nil
+    toc = parser.make_toc_html  if ! notoc && parser.headings.size > 3
 
     return {
       html:             html,

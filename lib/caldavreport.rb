@@ -61,14 +61,18 @@ class CalDavReport
    
     def report start, stop
         #Faraday::Connection::METHODS.add(:report)
-        conn = Faraday.new(:url => "#{@uri.scheme}://#{@uri.host}", ssl: { verify: false } )
-        resp = conn.run_request(:report, @uri.path, _report_body(start, stop), {'Content-Type'=>'application/xml', 'Depth' => '1'} ) 
         result = []
-        xml = REXML::Document.new( resp.body )
-        begin 
-          REXML::XPath.each( xml, '//c:calendar-data/', { "c"=>"urn:ietf:params:xml:ns:caldav"} ) { |c|
-              result <<   Selene.parse(c.text)['vcalendar'][0]['vevent'][0]
-          }
+        if !@uri.scheme.nil? && !@uri.host.nil?
+            pp([@uri.scheme, @uri.host])
+            conn = Faraday.new(:url => "#{@uri.scheme}://#{@uri.host}", ssl: { verify: false } )
+            resp = conn.run_request(:report, @uri.path, _report_body(start, stop), {'Content-Type'=>'application/xml', 'Depth' => '1'} ) 
+            result = []
+            xml = REXML::Document.new( resp.body )
+          begin 
+            REXML::XPath.each( xml, '//c:calendar-data/', { "c"=>"urn:ietf:params:xml:ns:caldav"} ) { |c|
+                result <<   Selene.parse(c.text)['vcalendar'][0]['vevent'][0]
+            }
+          end
         end
         return result
     end
