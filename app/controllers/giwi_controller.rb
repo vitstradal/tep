@@ -306,6 +306,7 @@ class GiwiController < ApplicationController
   # podepsano
   def _template_sign(env, argv)
     text = argv['0']
+    #log "text: #{text}"
     purpose = argv['1'] || 'giwi-sign'
     return sign_generate(text, purpose)
   end

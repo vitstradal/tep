@@ -175,6 +175,7 @@ module ApplicationHelper
 
   def email_valid_mx_record?(email)
       #mail_servers = Resolv::DNS.open.getresources(email.split('@').last, Resolv::DNS::Resource::IN::MX)
+      return false if email.nil? || email == ''
       mail_servers = Resolv::DNS.open.getresources(email.split('@').last.force_encoding('ASCII-8BIT'), Resolv::DNS::Resource::IN::MX)
       return false if mail_servers.empty?
       true
@@ -316,18 +317,38 @@ module ApplicationHelper
 
   def get_verifier(purpose)
     # FIXME: zde by se mel zamichat aplikacni 'secret
-    kg = ActiveSupport::KeyGenerator.new('fakt-secret:' + purpose)
-    return ActiveSupport::MessageVerifier.new( kg.generate_key('giwi-secret', 256), digest: 'SHA256')
+    #kg = ActiveSupport::KeyGenerator.new('fakt-secret:')
+    #verifier = ActiveSupport::MessageVerifier.new( kg.generate_key('giwi-secret', 256), digest: 'SHA256')
+    verifier = ActiveSupport::MessageVerifier.new('ahoj', serializer: YAML)
+    return verifier
   end
 
   def sign_generate(text, purpose)
     verifier = get_verifier(purpose)
-    return verifier.generate(text)
+    token = verifier.generate(text)
+    log "token:#{token}"
+    log "untoken:#{verifier.verify(token)}"
+    return token
   end
 
   def sign_verified(token, purpose)
+
+    return nil if token.nil?
+
     verifier = get_verifier(purpose)
-    return verified.verified(token)
+
+    # ve verzi rails 5.2:
+    #return verifier.verified(token)
+    log "token:#{token}"
+
+    plain = verifier.verify(token)
+    log "plain:#{plain}"
+    return plain
+
+  rescue => ex
+    log "exception:#{ex}"
+    return nil
   end
+
 
 end
