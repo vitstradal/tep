@@ -313,4 +313,21 @@ module ApplicationHelper
        sub: (annual_min .. annual_max).map { |a| {name: "Ročník #{a}", url: {action: action, roc:a}}}.reverse,
      }
   end
+
+  def get_verifier(purpose)
+    # FIXME: zde by se mel zamichat aplikacni 'secret
+    kg = ActiveSupport::KeyGenerator.new('fakt-secret:' + purpose)
+    return ActiveSupport::MessageVerifier.new( kg.generate_key('giwi-secret', 256), digest: 'SHA256')
+  end
+
+  def sign_generate(text, purpose)
+    verifier = get_verifier(purpose)
+    return verifier.generate(text)
+  end
+
+  def sign_verified(token, purpose)
+    verifier = get_verifier(purpose)
+    return verified.verified(token)
+  end
+
 end
