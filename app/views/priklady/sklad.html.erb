@@ -1,0 +1,45 @@
+
+<h1>Sklad příkladů </h1>
+
+<%#<table class="table table-hover table-condensed table-bordered"> %>
+<table class="table table-condensed table-hover table-bordered datatable">
+  <thead>
+     <tr><th>Title</th>
+         <th>Kategorie</th>
+         <th>Stav</th>
+         <th>Obtížnost</th>
+         <th>Autor</th>
+         <th title="zadání">Z</th>
+         <th title="řešení">Ř</th>
+         <th title="komentář">K</th>
+     </tr>
+  </thead>
+  <tbody>
+  <% @files_parsed.each do |item| %>
+    <% zad = item['zadání'] || '' %>
+    <% res = item['řešení']  || ''%>
+    <% kom = item['komentář']  || ''%>
+    <tr><td><%= link_to item['title'], wiki_piki_path(item['path'], edit: 'me') %></td>
+        <td><%= item['kategorie']%></td>
+        <td><%= item['stav']%></td>
+        <td><%= item['obtížnost']%></td>
+        <td><%= item['autor']%></td>
+        <td><i class="fa <%= zad.empty? ? 'fa-file-o'      : 'fa-file'      %>" title="<%= zad %>"></i></td>
+        <td><i class="fa <%= res.empty? ? 'fa-file-text-o' : 'fa-file-text' %>" title="<%= res %>"></i></td>
+        <td><i class="fa <%= kom.empty? ? 'fa-comment-o'   : 'fa-comment'   %>" title="<%= kom %>"></i></td>
+        </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<hr/>
+
+<pre>
+path: <%= @path %>
+wiki: <%= @wiki %>
+</pre>
+
+<%#= debug @files_parsed %>
+
+</pre

@@ -1,0 +1,15 @@
+<p>
+  <% @text.split(/\r?\n/).each do |line| %>
+    <%= line%> <br/>
+  <% end %>
+</p>
+
+<p>
+Vyplněná data:
+  <ul>
+  <% @ordered_data.each do |pair| %>
+    <% key, val = pair %>
+    <li><b><%=key%></b>:<%=val%></li>
+  <% end %>
+  </ul>
+</p>

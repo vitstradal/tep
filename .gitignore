@@ -1,4 +1,5 @@
 .bundle
+/log
 public/js
 public/data
 *.swp
