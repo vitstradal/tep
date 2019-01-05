@@ -84,6 +84,8 @@ class Ability
 
       can :index, Sosna::Config
 
+      can :sklad, Priklady
+
     end
 
     # master-org, or more-org, 

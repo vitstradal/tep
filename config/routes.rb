@@ -113,7 +113,9 @@ Tep::Application.routes.draw do
 
 
   get  '/faqold'                             => "tep#faq",                      :as => :faq
-  #get  '/500'                                => "tep#error",                    :as => :error
+  #get  '/500'                                => "tep#error",                   :as => :error
+
+  get  '/priklady/sklad'                      => "priklady#sklad",              :as => :priklady_sklad
 
   Giwi.giwis.each_value do |giwi|
      next if giwi.name.to_s == 'main'
