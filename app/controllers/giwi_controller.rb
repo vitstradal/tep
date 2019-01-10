@@ -487,16 +487,16 @@ class GiwiController < ApplicationController
   end
 
   def _create_new_page_text
-    @text =
-    title = @path.split(/\//).last
-    @text = "= #{title.capitalize} =\n\n"
+    @text = params[:template]
+    if @text.nil?
+      title = @path.split(/\//).last
+      @text = "= #{title.capitalize} =\n\n"
+    end
     @path = _to_ascii(@path)
     @edit = true
     @wide_display = true
     render :edit
   end
-
-
 
   def _breadcrumb_from_path(path)
 

@@ -1,13 +1,46 @@
 
 <h1>Sklad příkladů </h1>
 
+<%= a = @annual.to_i || 0 %>
+<%= link_to 'all',       priklady_sklad_path() %>,
+<%= link_to '1',       priklady_sklad_path(ob: 1) %>,
+<%= link_to '2',       priklady_sklad_path(ob: 1) %>,
+<%= link_to '3',       priklady_sklad_path(ob: 1) %>,
+<%= link_to '4',       priklady_sklad_path(ob: 1) %>,
+<%= link_to '5',       priklady_sklad_path(ob: 1) %>,
+
+<%= link_to "s.1",       priklady_sklad_path(stav:  "#{a}.1") %>,
+<%= link_to "s.2",       priklady_sklad_path(stav:  "#{a}.2") %>,
+<%= link_to "s.3",       priklady_sklad_path(stav:  "#{a}.3") %>,
+<%= link_to "s.4",       priklady_sklad_path(stav:  "#{a}.4") %>,
+<%= link_to "s.5",       priklady_sklad_path(stav:  "#{a}.5") %>,
+<%= link_to "s.6",       priklady_sklad_path(stav:  "#{a}.6") %>,
+<%= link_to "s.7",       priklady_sklad_path(stav:  "#{a}.7") %>,
+
+<%= link_to "s+1.1",       priklady_sklad_path(stav:  "#{a+1}.1") %>,
+<%= link_to "s+1.2",       priklady_sklad_path(stav:  "#{a+1}.2") %>,
+<%= link_to "s+1.3",       priklady_sklad_path(stav:  "#{a+1}.3") %>,
+
+<%= link_to 'zadáno',  priklady_sklad_path(stav: 'zadáno') %>,
+<%= link_to 'nezadáno',  priklady_sklad_path(nestav: 'zadáno') %>,
+<%= link_to 'přeprac', priklady_sklad_path(stav: 'přeprac') %>,
+<%= link_to 'schvá',   priklady_sklad_path(stav: 'schv') %>,
+<%= link_to 'log',     priklady_sklad_path(kat: 'log') %>,
+<%= link_to 'stereo',  priklady_sklad_path(kat: 'stereo') %>,
+<%= link_to 'rov',     priklady_sklad_path(kat: 'rovnice') %>,
+<%= link_to 'teorie',  priklady_sklad_path(kat: 'teorie') %>,
+<%= link_to 'her',     priklady_sklad_path(kat: 'čísel') %>,
+<%= link_to 'čísel',   priklady_sklad_path(kat: 'her') %>,
+<%= link_to 'komb',    priklady_sklad_path(kat: 'komb') %>,
+<%= link_to 'bad',     priklady_sklad_path(bad: '1') %>,
 <%#<table class="table table-hover table-condensed table-bordered"> %>
 <table class="table table-condensed table-hover table-bordered datatable">
   <thead>
-     <tr><th>Title</th>
+     <tr><th title="edit">E</th>
+         <th>Title</th>
          <th>Kategorie</th>
          <th>Stav</th>
-         <th>Obtížnost</th>
+         <th title="Obtížnost">Ob</th>
          <th>Autor</th>
          <th title="zadání">Z</th>
          <th title="řešení">Ř</th>
@@ -19,7 +52,10 @@
     <% zad = item['zadání'] || '' %>
     <% res = item['řešení']  || ''%>
     <% kom = item['komentář']  || ''%>
-    <tr><td><%= link_to item['title'], wiki_piki_path(item['path'], edit: 'me') %></td>
+    <% tit = item['title']  || ''%>
+    <% next if tit.empty? %>
+    <tr><td><%= link_to wiki_piki_path(item['path'], edit: 'me') do %> <i class="fa fa-pencil-square-o"></i> <% end %></td>
+        <td><%= link_to tit, wiki_piki_path(item['path']) %></td>
         <td><%= item['kategorie']%></td>
         <td><%= item['stav']%></td>
         <td><%= item['obtížnost']%></td>

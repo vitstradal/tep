@@ -59,7 +59,7 @@ class InformController < ApplicationController
 
   def _send_thanks_email(data, ordered_data)
     # dekovaci email (tomu kdo to vyplnil)
-    thanks_email = data['email'] || data['Email']
+    thanks_email = data['email'] || data['Email'] || data['E-mail'] || ''
     thanks_email_text = sign_verified(data.delete('thanks_email_text'), 'giwi-sign')
     thanks_email_subj = sign_verified(data.delete('thanks_email_subj'), 'giwi-sign')
     #log "thanks_email='#{thanks_email}'"
