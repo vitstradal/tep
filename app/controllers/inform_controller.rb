@@ -11,12 +11,22 @@ class InformController < ApplicationController
     @informs = Inform.where({ form: @form})
     @forms = Inform.select(:form).group(:form)
     hkeys = {}
+    order = nil
     @informs.each do |inform|
       inform.jdata.each do |k,v| 
+        if k == 'inform_order'
+          order = v
+          next
+        end
         hkeys[k] = 1 
       end
     end
-    @keys = hkeys.keys.sort
+    if ! order.nil?
+      @keys = order.split(':')
+      @keys.push('thanks_email_sent')
+    else
+      @keys = hkeys.keys.sort
+    end
     @wide_display = true
   end
 

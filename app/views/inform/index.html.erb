@@ -24,7 +24,7 @@
         <td title="<%= inform.created_at%>" ><%= count += 1 %></td>
         <td><span title="<%= inform.user_agent %>">*</span></td>
         <% @keys.each do |k| %>
-          <td><%= jdata[k] || 'undef' %></td>
+          <td><%= jdata[k] || '-' %></td>
         <% end%> 
         <%#<td> %>
           <%#= form_tag inform_del_url(inform.id)   do  %>
@@ -38,10 +38,11 @@
 
 <% if style == 'list' %>
   <% name = @keys.grep(/^Jm[ée]no/i).first %>
+  <% prijm = @keys.grep(/^Příjmení/i).first %>
   <div>
     <% @informs.each do  |inform| %>
       <% jdata = inform.jdata %>
-        <h3><%= count += 1 %>. <%= jdata[name]  %> (<%= inform.created_at%>)
+        <h3><%= count += 1 %>. <%= jdata[name]  %> <%= jdata[prijm] %> (<%= inform.created_at%>)
         <span title="<%= inform.user_agent %>">*</span>
         </h3>
         <span>
@@ -64,6 +65,7 @@
 
 <% if style == 'list2' %>
   <% name = @keys.grep(/^Jm[ée]no/i).first %>
+  <% prijm = @keys.grep(/^Příjmení/i).first %>
   <% @keys.each do |k| %>
     <h3><%= k.titleize %></h3>
       <% count = 0 %>
@@ -73,6 +75,7 @@
          <tr>
           <td><%= count += 1 %></td>
           <td><%= jdata[name] || 'undef' %></td>
+          <td><%= jdata[prijm] || 'undef' %></td>
           <td><%= jdata[k] || '.' %></td>
         </tr>
        <% end %>
