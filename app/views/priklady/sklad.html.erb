@@ -1,7 +1,6 @@
 
 <h1>Sklad příkladů </h1>
 
-<%= a = @annual.to_i || 0 %>
 <%= link_to 'all',       priklady_sklad_path() %>,
 <%= link_to '1',       priklady_sklad_path(ob: 1) %>,
 <%= link_to '2',       priklady_sklad_path(ob: 1) %>,
@@ -34,6 +33,9 @@
 <%= link_to 'komb',    priklady_sklad_path(kat: 'komb') %>,
 <%= link_to 'bad',     priklady_sklad_path(bad: '1') %>,
 <%#<table class="table table-hover table-condensed table-bordered"> %>
+
+
+
 <table class="table table-condensed table-hover table-bordered datatable">
   <thead>
      <tr><th title="edit">E</th>
@@ -71,10 +73,15 @@
 
 <hr/>
 
-<pre>
-path: <%= @path %>
-wiki: <%= @wiki %>
-</pre>
+<%= form_tag wiki_piki_path('priklady'), :method => :get, :class => 'form-inline'  do |f| %>
+  <div class="form-group"> 
+    <button type='submit' class='btn btn-success'><i class="fa  fa-lightbulb-o"></i> Nový příklad</button>
+  </div>
+  <div class="form-group"> 
+    priklady/<%= text_field_tag :path2, '', size: 40, placeholder: "Příklad šestidimenzionální průnik"%>
+    <%= hidden_field_tag :new_append, 'priklady/vzor.wiki' %>
+  </div>
+<% end %>
 
 <%#= debug @files_parsed %>
 

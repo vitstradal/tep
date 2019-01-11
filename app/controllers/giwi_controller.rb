@@ -42,6 +42,7 @@ class GiwiController < ApplicationController
     @editable = @can_update
 
     @path = params[:path]
+    @path += '/' + params[:path2] if params[:path2]
 
     @edit = params[:edit] || false
     @ls   = params[:ls]
@@ -160,6 +161,7 @@ class GiwiController < ApplicationController
     filename = params[:filename]
     version = params[:version]
     @path = params[:path]
+    @path += '/' + params[:path2] if params[:path2]
     data = params[:data]
     pos = params[:pos]
 
@@ -487,10 +489,13 @@ class GiwiController < ApplicationController
   end
 
   def _create_new_page_text
-    @text = params[:template]
     if @text.nil?
       title = @path.split(/\//).last
       @text = "= #{title.capitalize} =\n\n"
+    end
+    if params[:new_append]
+      append, _ = @giwi.get_page(params[:new_append])
+      @text += append if append
     end
     @path = _to_ascii(@path)
     @edit = true
