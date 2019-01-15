@@ -39,7 +39,7 @@
 <%################################################################################## %>
 
 
-<div id="navbar" class="navbar navbar-default">
+<div id="navbar" class="navbar navbar-default hidden-print">
   <div id="navbar-container" class="navbar-container <%if !@wide_display%>container<%end%>" >
 
 <button id="menu-toggler" class="navbar-toggle menu-toggler pull-left" type="button">
@@ -121,7 +121,7 @@
 <div class="main-container <%if !@wide_display%>container<%end%> <% if @tep_index %>tep-index<% end %>" id="main-container">
   <div class="sidebar responsive
         <%if @wide_display%>menu-min<%end%>
-        <%if @no_sidebar %>hide<%end%>"
+        <%if @no_sidebar %>hide<%end%> hidden-print"
         id="sidebar">
     <ul class="nav nav-list">
       <%= menu_li '/onas', 'O Pikomatu', ico: 'fa-square' do %>
@@ -222,7 +222,7 @@
     #        }
     #%>
   <% if @breadcrumb %>
-    <div id="breadcrumbs" class="breadcrumbs">
+    <div id="breadcrumbs" class="breadcrumbs hidden-print">
 <%################################################################################## %>
 <%# akcni tlacitka %>
 <%################################################################################## %>
@@ -293,7 +293,7 @@
 <%################################################################################## %>
 <%# paticka %>
 <%################################################################################## %>
-  <div class="footer">
+  <div class="footer hidden-print">
     <div class="footer-inner">
        <div class="footer-content">
           <small>V případě obtíží se obrať na
