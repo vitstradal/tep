@@ -24,6 +24,7 @@
   <%# stylesheet_link_tag '/ace/css/ace-part2.css' %>
   <%= stylesheet_link_tag '/stylesheets/andulka/stylesheet.css' %>
   <%= stylesheet_link_tag '/stylesheets/tep.css' %>
+  <%= stylesheet_link_tag '/stylesheets/print.css', media:'print'%>
 
 
 </head>
@@ -39,7 +40,7 @@
 <%################################################################################## %>
 
 
-<div id="navbar" class="navbar navbar-default hidden-print">
+<div id="navbar" class="navbar navbar-default no-print">
   <div id="navbar-container" class="navbar-container <%if !@wide_display%>container<%end%>" >
 
 <button id="menu-toggler" class="navbar-toggle menu-toggler pull-left" type="button">
@@ -121,7 +122,7 @@
 <div class="main-container <%if !@wide_display%>container<%end%> <% if @tep_index %>tep-index<% end %>" id="main-container">
   <div class="sidebar responsive
         <%if @wide_display%>menu-min<%end%>
-        <%if @no_sidebar %>hide<%end%> hidden-print"
+        <%if @no_sidebar %>hide<%end%> no-print"
         id="sidebar">
     <ul class="nav nav-list">
       <%= menu_li '/onas', 'O Pikomatu', ico: 'fa-square' do %>
@@ -222,7 +223,7 @@
     #        }
     #%>
   <% if @breadcrumb %>
-    <div id="breadcrumbs" class="breadcrumbs hidden-print">
+    <div id="breadcrumbs" class="breadcrumbs no-print">
 <%################################################################################## %>
 <%# akcni tlacitka %>
 <%################################################################################## %>
@@ -263,7 +264,6 @@
 
      <div class="row">
        <div id="page-content-top" class="col-xs-12">
-        <!-- page content goes here -->
 <%################################################################################## %>
 <%# alerty %>
 <%################################################################################## %>
@@ -293,7 +293,7 @@
 <%################################################################################## %>
 <%# paticka %>
 <%################################################################################## %>
-  <div class="footer hidden-print">
+  <div class="footer no-print">
     <div class="footer-inner">
        <div class="footer-content">
           <small>V případě obtíží se obrať na

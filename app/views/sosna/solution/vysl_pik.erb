@@ -1,7 +1,8 @@
 %       nr;       nrr;flg;  id;                pr;             jm;   roc; rroc;skola; 1;2; 3;4;5; 6;7; pen;sumser;sumall;bdz
 <%
-   rank_all_last = ''
-   rank_cls_last = ''
+   rank_all_last  = ''
+   rank_cls_last  = ''
+   grade_num_last = ''
    row = 0
    @solvers.each do |solver| %>
 <%=
@@ -9,19 +10,21 @@
    result = @results_by_solver[solver.id]
    school = solver.school
 
-   rank_all = result.rank_range
-   rank_cls = result.class_rank_range
+   rank_all  = result.rank_range
+   rank_cls  = result.class_rank_range
+   grade_num = solver.grade_num
 
    # flg0 - '+' pokud je poradi ruzny jako predhozi radek (tedy tisknout)
    # flg1 - '+' pokud je poradi v rocniku ruzny jako predhozi rader (tedy tisknout)
    # flg2 - '+' pokud je prvni radek stranky (stranka ma 56 radku)
-   flg0 = (rank_all == rank_all_last) ? '-' : '+'
-   flg1 = (rank_cls == rank_cls_last) ? '-' : '+'
-   flg2 = (row % 56 == 1 )            ? '+' : '-'
+   flg0 = (rank_all == rank_all_last                                ) ? '-' : '+'
+   flg1 = (rank_cls == rank_cls_last && grade_num == grade_num_last ) ? '-' : '+'
+   flg2 = (row % 56 == 1                                            ) ? '+' : '-'
    flagy = "#{flg0}#{flg1}#{flg2}"
 
-   rank_all_last = rank_all
-   rank_cls_last = rank_cls
+   rank_all_last  = rank_all
+   rank_cls_last  = rank_cls
+   grade_num_last = grade_num
 
    pen = @penalisations_by_solver[solver.id]
    pen_txt = pen.score

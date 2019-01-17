@@ -1,6 +1,8 @@
 
 <h1>Sklad příkladů </h1>
 
+<% a = @annual.to_i %>
+<%= link_to 'new',       '#new'%>,
 <%= link_to 'all',       priklady_sklad_path() %>,
 <%= link_to '1',       priklady_sklad_path(ob: 1) %>,
 <%= link_to '2',       priklady_sklad_path(ob: 1) %>,
@@ -73,7 +75,7 @@
 
 <hr/>
 
-<%= form_tag wiki_piki_path('priklady'), :method => :get, :class => 'form-inline'  do |f| %>
+<%= form_tag wiki_piki_path('priklady'), :method => :get, :class => 'form-inline',  :id => 'new' do |f| %>
   <div class="form-group"> 
     <button type='submit' class='btn btn-success'><i class="fa  fa-lightbulb-o"></i> Nový příklad</button>
   </div>
