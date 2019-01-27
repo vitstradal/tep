@@ -65,8 +65,9 @@
 
 <% if style == 'list2' %>
   <% name = @keys.grep(/^Jm[ée]no/i).first %>
-  <% prijm = @keys.grep(/^Příjmení/i).first %>
+  <% prijm = @keys.grep(/^Př[ií]jmení/i).first %>
   <% @keys.each do |k| %>
+    <% next if k == name || k == prijm %>
     <h3><%= k.titleize %></h3>
       <% count = 0 %>
       <table>
