@@ -1,5 +1,6 @@
 source 'http://rubygems.org'
 
+gem 'doorkeeper'
 gem 'posix-spawn'
 gem 'activerecord-session_store'
 gem 'combine_pdf', '~> 0.2.12'

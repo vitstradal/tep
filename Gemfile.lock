@@ -78,6 +78,8 @@ GEM
       devise (>= 4.4)
     domain_name (0.5.20180417)
       unf (>= 0.0.5, < 1.0.0)
+    doorkeeper (5.0.2)
+      railties (>= 4.2)
     erubis (2.7.0)
     faraday (0.15.3)
       multipart-post (>= 1.2, < 3)
@@ -227,6 +229,7 @@ DEPENDENCIES
   devise
   devise-encryptable
   devise-i18n
+  doorkeeper
   faraday
   ffi-locale!
   filemagic

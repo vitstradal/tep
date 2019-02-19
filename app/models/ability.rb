@@ -26,13 +26,17 @@ class Ability
     can :die, :tep
     #can :error, :tep
 
+
+    # oauth
+    can :me, :credentials
+
     can :index, :aesop
     #can :index, :aesop
     #can :update, :giwi, if: :can_update?
 
     # jabber
-    can :auth, Jabber
-    can :prebind, Jabber
+    #can :auth, Jabber
+    #can :prebind, Jabber
 
     if user.user?
       can :user_index, Sosna::Solution
@@ -133,9 +137,9 @@ class Ability
       can :index,  Sosna::Config
       can :update, Sosna::Config
 
-      can :new,  Jabber
-      can :update, Jabber
-      can :delete, Jabber
+      #can :new,  Jabber
+      #can :update, Jabber
+      #can :delete, Jabber
     end
 
     # Wikis

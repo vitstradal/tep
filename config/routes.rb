@@ -1,6 +1,7 @@
 # encoding: utf-8
 Tep::Application.routes.draw do
 
+  use_doorkeeper
   devise_for :users
 
 
@@ -116,6 +117,8 @@ Tep::Application.routes.draw do
   #get  '/500'                                => "tep#error",                   :as => :error
 
   get  '/priklady/sklad'                      => "priklady#sklad",              :as => :priklady_sklad
+
+  get  '/me'                                  => "credentials#me",              :as => :credentials_me
 
   Giwi.giwis.each_value do |giwi|
      next if giwi.name.to_s == 'main'

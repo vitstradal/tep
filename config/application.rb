@@ -35,6 +35,12 @@ module Tep
     # config.i18n.default_locale = :de
     I18n.enforce_available_locales = false
 
+    # rails will fallback to config.i18n.default_locale translation
+    config.i18n.fallbacks = true
+
+    # rails will fallback to en, no matter what is set as config.i18n.default_locale
+    config.i18n.fallbacks = [:en]
+
     # JavaScript files you want as :defaults (application.js is always included).
     # config.action_view.javascript_expansions[:defaults] = %w(jquery rails)
 

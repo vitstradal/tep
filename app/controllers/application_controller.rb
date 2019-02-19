@@ -7,8 +7,8 @@ class ApplicationController < ActionController::Base
 
   def after_sign_in_path_for(user)
      ret_url = params[:next] || url_for_root(user)
-     password = params[:user][:password]
-     _jabber_auth(user.jabber, password) if user.jabber? && !user.jabber.nil?
+     #password = params[:user][:password]
+     #_jabber_auth(user.jabber, password) if user.jabber? && !user.jabber.nil?
      return ret_url
   end
 
