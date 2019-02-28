@@ -3,11 +3,33 @@ class Sosna::SchoolController < SosnaController
 
   include ApplicationHelper
 
+  ##
+  #  GET /sosna/school/:id/show
+  #
+  # zobrazí školu
+  #
+  # *Params*
+  # id:: id školy
+  #
+  # *Provides*
+  # @school:: daná škola
+  # @solver_count_by_annual:: hash, klíč ročníky, hodnota počet řešitelů v tomto ročníku z této školy
   def show
     @school = Sosna::School.find params[:id]
     @solver_count_by_annual = Sosna::Solver.where( school_id: params[:id]).group(:annual).count 
   end
 
+  ##
+  #  GET /sosna/schools.fmt
+  #
+  # *Formats*
+  # html:: 
+  # pik:: csv
+  # *Provides*
+  # @schools:: pole škol
+  # @schools_solver_count:: poček škol v současném ročníku
+  # @izos:: hash škol, klíč je `univerzal_id` (aka izo)
+  # @shorts:: hash škol, klíč je `short`
   def index
     @schools =  Sosna::School.all.load
     @schools_solver_count = Sosna::Solver.where(annual: @annual).group(:school_id).count
@@ -35,6 +57,13 @@ class Sosna::SchoolController < SosnaController
     end
   end
 
+  ##
+  #  POST /sosna/school/:id/delete
+  #
+  # smaže školu
+  #
+  # *Params*
+  # id: id školy
   def delete
      id = params[:id]
      u = Sosna::School.find(id)
@@ -47,10 +76,31 @@ class Sosna::SchoolController < SosnaController
      redirect_to action: :index
   end
 
+  ##
+  #  POST /sosna/school/new
+  #
+  # nová škola
+  #
+  # *Params*
+  # id: id školy
+  #
+  # *Provides*
+  # @school nová škola bez parametrů
   def new
     @school  = Sosna::School.new
     render :show
   end
+
+  ##
+  #  POST /sosna/school/update
+  #
+  # aktualizace 
+  #
+  # *Params*
+  # school[]: aktualizované údaje
+  # commit:: pokud je 'Uložit next' bude po aktualizace zobrazna následující škola
+  #
+  # *Redirect*"  show
   def update
     params.require(:sosna_school).permit!
     sch = params[:sosna_school]
