@@ -2,10 +2,33 @@
 require 'json'
 
 
+##
+# Controller pro formuláře, ankety a přihlášky ve wiki.
+# Ve spolupráci s wiky makry `{{inf_*}}`.
+# see: https://pikomat.mff.cuni.cz/tepmac/inform
+#
+
 class InformController < ApplicationController
   authorize_resource
   include ApplicationHelper
 
+  ##
+  #   GET  /inform/index/(:form)
+  #
+  # *Params*
+  # form:: id formuláře, např +tabor2035+
+  # style:: způsob zobrazeni Informů:
+  #         tab:: jedna velká tabulka
+  #         list:: položky jako odrážky
+  #         list2:: tabulky po položkách
+  #
+  # *Provides*
+  # @informs::       vsechny zaslane data (Inform) pro dany formular dany `form`
+  # @form::          id form (`form`)
+  # @forms::         všechny ankety
+  # @keys::          sloupce formuráře v preferovaném pořadí
+  # @wide_display::  is set to `true`
+  #
   def index
     @form = params[:form]
     @informs = Inform.where({ form: @form})
@@ -30,11 +53,36 @@ class InformController < ApplicationController
     @wide_display = true
   end
 
+  ##
+  #  GET  /inform/tnx
+  #
+  # sem se redirectne `POST /infrom/add`
+  #
+  # *Flash*
+  # tnx, tnx2:: text s poděkováním
+  #
+  # *Profides*
+  # @tnx, @tnx2:: text s poděkováním
+  # 
   def tnx
     @tnx = flash[:tnx]
     @tnx2 = flash[:tnx2]
   end
 
+  ##
+  #  POST  /inform/add
+  #
+  # *Params*
+  # from: id formuláře
+  # redir:: kam se ma po zapsání přesměrovat 
+  # *::  ostatní parametry se přidají do Inform.data (jako json)
+  # bonz_email:: tam se bonzovaci email, hodnota je podepsaná a zakodovaná pomocí `sign_generate(email, 'gigi-gen')`, viz makro {{inf_bonz_email}}
+  # email, E-mail, Email:: tam se pošle děkovný mail, hodnota je podepsaná a zakodovaná pomocí `sign_generate`
+  #
+  # Flash
+  # tnx, tnx2: hidden položky formuláře +tnx+, +tnx2+ viz macro `{{inf_thanks}}`
+  #
+  # Redirects to `inform_tnx`
   def add
     data = {}
     params.each do |k,v|
@@ -58,6 +106,21 @@ class InformController < ApplicationController
     redirect_to :inform_tnx
   end
 
+  ##
+  #  POST /inform/del
+  #
+  # *Params* 
+  # id:: id Infrom (jeden řádek)
+  #
+  # Redirects to `inform_index_url(form)`
+  def del
+    inform = Inform.find(params['id'])
+    form = inform.form
+    inform.delete
+    redirect_to inform_index_url(form)
+  end
+
+  private
   def _send_bonz_email(data, ordered_data, form)
     # bonzovaci email (vlastnikovi ankety)
     bonz_email = sign_verified(data.delete('bonz_email'), 'giwi-sign')
@@ -100,11 +163,5 @@ class InformController < ApplicationController
     return ordered_data
   end
 
-  def del
-    inform = Inform.find(params['id'])
-    form = inform.form
-    inform.delete
-    redirect_to inform_index_url(form)
-  end
 
 end

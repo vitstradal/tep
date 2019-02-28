@@ -9,6 +9,25 @@ require 'yaml'
 require 'caldavreport'
 #require 'magick_title'
 
+##
+# Controller pro zorbazovaní (pomocí `trac-wiki` a editaci wiki, pomocí knihovny `lib/giwi.rb`).
+# 
+# == konfigurace
+#
+# je v souboru `config/wiki.yml`. V každém enviromentu (`production`, `local`...) může být různá sada wikin.
+# každá wiki má tyto konfigurační položky:
+# 
+# path:: kde se nachází git repozitář
+# bare:: jestli je git repozitár bare nebo ne (s working directory nebo pouze data)
+# branch:: která branche se má použít (`master`)
+# templates:: pokud 'tepmac'
+# url:: kam se má tato wiki namontovat (např: 'piki')
+# ext:: přípona bude připojena k cestě '.wiki'
+# read:: kdo může číst    :anon
+# nogit:: pokud je `true` nejde o git ale přímo o adresář (nebude žádné verzování)
+# update:: kdo může psát viz `app/models/user.rb`
+# cache_killer:: pokus se zapíše do této wiki, vymažese cache (pro wiki s makrama)
+
 class GiwiController < ApplicationController
   include ApplicationHelper
   def initialize
@@ -23,13 +42,26 @@ class GiwiController < ApplicationController
      super
   end
 
-  def show_root ;
+  def show_root
     show
   end
   def update_root
     update
   end
 
+  ##
+  #  GET /WIKI/(*path)
+  #
+  # *Params*
+  # cursor:: pokud jde o editaci, kurzor se umístí na toto místo
+  # path:: cesta k souboru (bude připojeno `.wiki`, nebo pokud existuje `path/index.wiki`)
+  # path2:: připojeno k path
+  # edit:: `me` nebo číslo části (katitola) která se má editovat
+  # history:: 
+  # diff:: 
+  # ls:: . 
+  # cache:: `me`
+  # preview:: `me`
   def show
     @wiki = params[:wiki] || 'main'
     @giwi = Giwi.get_giwi(@wiki)
@@ -120,35 +152,28 @@ class GiwiController < ApplicationController
     render :show
   end
 
-
-  def _handle_diff
-    authorize! :update, @giwi.auth_name
-    @giwi = Giwi.get_giwi(@wiki)
-    if @diff == 'LAST'
-      history = @giwi.get_history(count: 1)
-      @diff = history[0][:commit] if history.size > 0
-    end
-    @diff_lines = @giwi.get_diff(@diff)
-    return render :diff
-  end
-
-  def _handle_history
-    authorize! :update, @giwi.auth_name
-    @giwi = Giwi.get_giwi(@wiki)
-    @history = @giwi.get_history
-    return render :history
-  end
-
+  ##
+  #  POST /WIKI/(*path)
+  #
   # aktualizace stranky
-  # @param version verze (git-id) ze ktre se pri editaci vychazi
-  # @param file pokud jde o upload
-  # @param preview pozadovano je pouze preview, hodnota je wikitext, navrat bude json `{html=>'..'}`
-  # @param data obsah ukladaneho souboru, ale v parametru (pro
-  # @param text text aktualizovaneho textu
-  # @param pos pozice puvodniho textu v originale (ve verzi `version`), format pozice:
-  #   `pos` in form `3.0-44.20` "from start of line 3 to line 44 char 20";
-  #   `pos` in form `3-44` "from start of line 3 to start line 44 (inc \n)";
-  #   `pos` in form `3.4` "insert at line 3 after char 4";
+  #
+  # version:: verze (git-id) ze ktre se pri editaci vychazi
+
+  # file:: pokud jde o upload
+  # path:: cesta
+  # path2:: pokud je specifikována pube přilepena k `path`
+  # preview:: pozadovano je pouze preview, hodnota je wikitext, navrat bude json `{html=>'..'}`
+  # data:: obsah ukladaneho souboru, ale v parametru (pro
+  # text:: text aktualizovaneho textu
+  # delete:: cesta bude smazána
+  # part:: když se editovala pouze kapitola, bude redirect bude na tuto kapitolu
+  # new_append:: pokud bude vytvářen nový sobor, toto se připojí za titutlek
+  # cursor:: kde byl kurzor pri editaci aby se ulozeni a redirectu vratil na spravne misto
+  # edit:: bude se pokracovat v editaci(`edit=me`), jinak redirect na `show`
+  # pos:: pozice puvodniho textu v originale (ve verzi `version`), format pozice:
+  #       * `pos` in form `3.0-44.20` "from start of line 3 to line 44 char 20";
+  #       * `pos` in form `3-44` "from start of line 3 to start line 44 (inc \n)";
+  #       * `pos` in form `3.4` "insert at line 3 after char 4";
   #
   def update
     @wiki = params[:wiki] || 'main'
@@ -208,7 +233,27 @@ class GiwiController < ApplicationController
     end
   end
 
+
   private
+  def _handle_diff
+    authorize! :update, @giwi.auth_name
+    @giwi = Giwi.get_giwi(@wiki)
+    if @diff == 'LAST'
+      history = @giwi.get_history(count: 1)
+      @diff = history[0][:commit] if history.size > 0
+    end
+    @diff_lines = @giwi.get_diff(@diff)
+    return render :diff
+  end
+
+  def _handle_history
+    authorize! :update, @giwi.auth_name
+    @giwi = Giwi.get_giwi(@wiki)
+    @history = @giwi.get_history
+    return render :history
+  end
+
+
   def _handle_file_delete(filename, version, email)
     status = @giwi.set_page(filename, nil, version, email)
     redirect_to action: :show,  wiki: @wiki, path: @path, ls: '.'

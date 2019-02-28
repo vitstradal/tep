@@ -1,9 +1,20 @@
+##
+# Controller pro změnu běžné konfigurace
+#
 class Sosna::ConfigController < SosnaController
 
+  ##
+  #  GET /sosna/config
+  #
+  # viz helper `load_config` {rdoc}[rdoc-ref:ApplicationHelper.load_config]
   def index
     load_config
   end
 
+  ##
+  #  POST /sosna/config/update
+  #
+  # config[]:: všechny zadané parametry budou uloženy do tabulky `sosna_configs`
   def update
     config = params[:config]
     config.each_pair do |k,v|

@@ -209,6 +209,73 @@ module ApplicationHelper
     return 'control-group'
   end
 
+  ##
+  #
+  # nastavi
+  # @round:: série
+  # @annual:: ročník
+  # @config:: hash všech konfiguračních hodnot
+  #           annual:: ročník
+  #           round:: serie
+  #           allow_upload:: je už možný upload v aktuální sérii
+  #           show_revisions:: mohou již uživatele vidět opravy
+  #           deadlineN::      termín N té serie
+  #           showN:: ukaž Ntou serii
+  #           problemsN:: počet příkladu v Nté sérii
+  #           year:: kalendářní rok
+  #           confirmation_round:: serie v které se zobrazí žádost o konfirmaci údajů
+  #           confirmation_file_upload:: 
+  #           deadline100:: Serie 100 je bonusová
+  #           show100::
+  #           problems100::
+  #           aesop_errors_to:: email komu se posílají errory aesopu
+  def load_config
+    return if @config
+    @config  =  { annual:20,
+                  round: 1,
+                  show_revisions: 'no',
+                }
+    Sosna::Config.all.load.each {|c| @config[c.key.to_sym] =  c.value}
+    @annual = @config[:annual]
+    @round = @config[:round]
+    #log( "config: #{@config}" )
+  end
+
+  def get_verifier(purpose)
+    # FIXME: zde by se mel zamichat aplikacni 'secret
+    #kg = ActiveSupport::KeyGenerator.new('fakt-secret:')
+    #verifier = ActiveSupport::MessageVerifier.new( kg.generate_key('giwi-secret', 256), digest: 'SHA256')
+    verifier = ActiveSupport::MessageVerifier.new('ahoj', serializer: YAML)
+    return verifier
+  end
+
+  def sign_generate(text, purpose)
+    verifier = get_verifier(purpose)
+    token = verifier.generate(text)
+    log "token:#{token}"
+    log "untoken:#{verifier.verify(token)}"
+    return token
+  end
+
+  def sign_verified(token, purpose)
+
+    return nil if token.nil?
+
+    verifier = get_verifier(purpose)
+
+    # ve verzi rails 5.2:
+    #return verifier.verified(token)
+    log "token:#{token}"
+
+    plain = verifier.verify(token)
+    log "plain:#{plain}"
+    return plain
+
+  rescue => ex
+    log "exception:#{ex}"
+    return nil
+  end
+
   private
 
   def _my_current_page?(uri)
@@ -231,18 +298,6 @@ module ApplicationHelper
 
   def active_in_if(cond)
      return 'in active' if cond
-  end
-
-  def load_config
-    return if @config
-    @config  =  { annual:20,
-                  round: 1,
-                  show_revisions: 'no',
-                }
-    Sosna::Config.all.load.each {|c| @config[c.key.to_sym] =  c.value}
-    @annual = @config[:annual]
-    @round = @config[:round]
-    #log( "config: #{@config}" )
   end
 
   def get_sorted_conflict_solvers(annual, round)
@@ -314,41 +369,5 @@ module ApplicationHelper
        sub: (annual_min .. annual_max).map { |a| {name: "Ročník #{a}", url: {action: action, roc:a}}}.reverse,
      }
   end
-
-  def get_verifier(purpose)
-    # FIXME: zde by se mel zamichat aplikacni 'secret
-    #kg = ActiveSupport::KeyGenerator.new('fakt-secret:')
-    #verifier = ActiveSupport::MessageVerifier.new( kg.generate_key('giwi-secret', 256), digest: 'SHA256')
-    verifier = ActiveSupport::MessageVerifier.new('ahoj', serializer: YAML)
-    return verifier
-  end
-
-  def sign_generate(text, purpose)
-    verifier = get_verifier(purpose)
-    token = verifier.generate(text)
-    log "token:#{token}"
-    log "untoken:#{verifier.verify(token)}"
-    return token
-  end
-
-  def sign_verified(token, purpose)
-
-    return nil if token.nil?
-
-    verifier = get_verifier(purpose)
-
-    # ve verzi rails 5.2:
-    #return verifier.verified(token)
-    log "token:#{token}"
-
-    plain = verifier.verify(token)
-    log "plain:#{plain}"
-    return plain
-
-  rescue => ex
-    log "exception:#{ex}"
-    return nil
-  end
-
 
 end
