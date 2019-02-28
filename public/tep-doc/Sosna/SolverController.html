@@ -1,0 +1,1411 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Sosna::SolverController - RDoc Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../";
+  var index_rel_prefix = "../";
+</script>
+
+<script src="../js/jquery.js"></script>
+<script src="../js/darkfish.js"></script>
+
+<link href="../css/fonts.css" rel="stylesheet">
+<link href="../css/rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../table_of_contents.html#pages">Pages</a>
+    <a href="../table_of_contents.html#classes">Classes</a>
+    <a href="../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link"><a href="../SosnaController.html">SosnaController</a>
+  
+</div>
+
+    <div id="includes-section" class="nav-section">
+  <h3>Included Modules</h3>
+
+  <ul class="link-list">
+  
+  
+    <li><a class="include" href="../ApplicationHelper.html">ApplicationHelper</a>
+  
+  
+  </ul>
+</div>
+
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-i-_aesop_print_round">#_aesop_print_round</a>
+    
+    <li ><a href="#method-i-aesop">#aesop</a>
+    
+    <li ><a href="#method-i-aesop_annual">#aesop_annual</a>
+    
+    <li ><a href="#method-i-aesop_create">#aesop_create</a>
+    
+    <li ><a href="#method-i-confirm_none_to_next">#confirm_none_to_next</a>
+    
+    <li ><a href="#method-i-create">#create</a>
+    
+    <li ><a href="#method-i-create_tnx">#create_tnx</a>
+    
+    <li ><a href="#method-i-delete">#delete</a>
+    
+    <li ><a href="#method-i-dup">#dup</a>
+    
+    <li ><a href="#method-i-index">#index</a>
+    
+    <li ><a href="#method-i-labels">#labels</a>
+    
+    <li ><a href="#method-i-new">#new</a>
+    
+    <li ><a href="#method-i-new_bonus">#new_bonus</a>
+    
+    <li ><a href="#method-i-show">#show</a>
+    
+    <li ><a href="#method-i-tep_emails">#tep_emails</a>
+    
+    <li ><a href="#method-i-update">#update</a>
+    
+    <li ><a href="#method-i-update_confirm">#update_confirm</a>
+    
+    <li ><a href="#method-i-user_solver_confirm">#user_solver_confirm</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Sosna::SolverController">
+  <h1 id="class-Sosna::SolverController" class="class">
+    class Sosna::SolverController
+  </h1>
+
+  <section class="description">
+    
+  </section>
+
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-aesop" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">aesop</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="aesop-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 552</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">aesop</span>
+  <span class="ruby-identifier">_aesop_init</span>
+  <span class="ruby-ivar">@aesop_url</span> = <span class="ruby-string">&#39;https://pikomat.mff.cuni.cz/ovvp&#39;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-aesop_annual" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">aesop_annual</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>POST  /sosna/solver/aesop/:roc</pre>
+
+<p>seznam aesopu, definice formatu je v <a
+href="https://opmk.mff.cuni.cz/wiki/aesop/import">opmk.mff.cuni.cz/wiki/aesop/import</a>,
+Viz take komentare u `_aesop_print_round`.</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>roc
+<dd>
+<p>ročník</p>
+</dd></dl>
+
+<p><strong>Renders</strong> text/plain export for AESOP</p>
+          
+          
+
+          
+          <div class="method-source-code" id="aesop_annual-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 539</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">aesop_annual</span>
+  <span class="ruby-identifier">load_config</span>
+  <span class="ruby-identifier">annual</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:roc</span>] <span class="ruby-operator">||</span> <span class="ruby-ivar">@annual</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">annual</span> <span class="ruby-operator">==</span> <span class="ruby-ivar">@annual</span>
+    <span class="ruby-identifier">round</span> = <span class="ruby-ivar">@config</span>[<span class="ruby-value">:show_revisions</span>] <span class="ruby-operator">==</span> <span class="ruby-string">&#39;yes&#39;</span><span class="ruby-operator">?</span> <span class="ruby-ivar">@round</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-operator">:</span> <span class="ruby-ivar">@round</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-operator">-</span> <span class="ruby-value">1</span>
+    <span class="ruby-identifier">die</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">round</span> <span class="ruby-operator">&lt;=</span> <span class="ruby-value">0</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">round</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Problem</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">annual:</span> <span class="ruby-identifier">annual</span>).<span class="ruby-identifier">maximum</span>(<span class="ruby-value">:round</span>)
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">errors_to</span> = <span class="ruby-ivar">@config</span>[<span class="ruby-value">:aesop_errors_to</span>];
+  <span class="ruby-identifier">render</span> <span class="ruby-value">text:</span> <span class="ruby-identifier">_aesop_print_round</span>(<span class="ruby-ivar">@annual</span>.<span class="ruby-identifier">to_i</span>, <span class="ruby-ivar">@round</span>.<span class="ruby-identifier">to_i</span>, <span class="ruby-identifier">errors_to</span>), <span class="ruby-value">content_type:</span> <span class="ruby-string">&#39;text/plain&#39;</span> 
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-aesop_create" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">aesop_create</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>POST  /sosna/solver/aesop/create</pre>
+
+<p>AEZOp, vytvoří soubory pro export do AESOPu</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>roc
+<dd>
+<p>ročník</p>
+</dd><dt>se
+<dd>
+<p>séríe</p>
+</dd></dl>
+
+<p><strong>Redirect</strong> sosla_solver_aesop</p>
+          
+          
+
+          
+          <div class="method-source-code" id="aesop_create-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 502</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">aesop_create</span>
+    <span class="ruby-identifier">_aesop_init</span>
+
+    <span class="ruby-ivar">@annual</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:roc</span>] <span class="ruby-operator">||</span> <span class="ruby-ivar">@annual</span>
+    <span class="ruby-ivar">@round_max</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:se</span>] <span class="ruby-operator">||</span> <span class="ruby-ivar">@round</span>
+    <span class="ruby-identifier">errors_to</span> = <span class="ruby-ivar">@config</span>[<span class="ruby-value">:aesop_errors_to</span>];
+
+    <span class="ruby-identifier">files</span> = []
+    <span class="ruby-identifier">dir</span> = <span class="ruby-string">&quot;ovvp&quot;</span>
+    <span class="ruby-identifier">index_path</span> = <span class="ruby-string">&quot;ovvp.index.txt&quot;</span>
+    (<span class="ruby-ivar">@round_max</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-operator">..</span> <span class="ruby-ivar">@round_max</span>.<span class="ruby-identifier">to_i</span> ).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">round</span><span class="ruby-operator">|</span>
+
+      <span class="ruby-identifier">file</span> = <span class="ruby-node">&quot;ovvp.#{@annual}.#{round}.txt&quot;</span>
+      <span class="ruby-constant">File</span>.<span class="ruby-identifier">open</span>(<span class="ruby-node">&quot;#{dir}/#{file}&quot;</span>, <span class="ruby-string">&#39;w&#39;</span>) <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">f</span><span class="ruby-operator">|</span>
+          <span class="ruby-identifier">f</span>.<span class="ruby-identifier">write</span> <span class="ruby-identifier">_aesop_print_round</span>(<span class="ruby-ivar">@annual</span>.<span class="ruby-identifier">to_i</span>, <span class="ruby-identifier">round</span>, <span class="ruby-identifier">errors_to</span>)
+      <span class="ruby-keyword">end</span>
+      <span class="ruby-identifier">files</span> <span class="ruby-operator">&lt;&lt;</span> <span class="ruby-identifier">file</span>
+      <span class="ruby-node">&quot;#{@annual}.#{round}.txt&quot;</span>
+    <span class="ruby-keyword">end</span>
+<span class="ruby-comment">#    File.open(&quot;#{dir}/#{index_path}&quot;, &#39;w&#39;) do |f|</span>
+<span class="ruby-comment">#      f.write(files.join(&quot;\n&quot;)+&quot;\n&quot;)</span>
+<span class="ruby-comment">#    end</span>
+    <span class="ruby-identifier">add_success</span> <span class="ruby-node">&quot;created #{files.map{|f| &quot;#{dir}/#{f}&quot;}.join(&#39;,&#39;)}.\n&quot;</span>
+    <span class="ruby-identifier">add_alert</span> <span class="ruby-node">&quot;add to #{dir}/#{index_path} manually&quot;</span>
+    <span class="ruby-identifier">redirect_to</span> <span class="ruby-value">:sosna_solver_aesop</span>
+  <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-confirm_none_to_next" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">confirm_none_to_next</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>POST /sosna/solver/confirm_none_to_next</pre>
+
+<p>U řešitelů souasného ročníku, kteří mají `confirm_state` `none` přehodí na
+`next`</p>
+
+<p><strong>Redirect</strong> sosna_solvers</p>
+          
+          
+
+          
+          <div class="method-source-code" id="confirm_none_to_next-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 175</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">confirm_none_to_next</span>
+  <span class="ruby-identifier">solvers</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Solver</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:annual</span> <span class="ruby-operator">=&gt;</span>  <span class="ruby-ivar">@annual</span>, <span class="ruby-value">:confirm_state</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&#39;none&#39;</span>).<span class="ruby-identifier">all</span>
+  <span class="ruby-identifier">solvers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">solver</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">confirm_state</span> = <span class="ruby-string">&#39;next&#39;</span>
+    <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">save</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">add_success</span> <span class="ruby-node">&quot;Celkem #{solvers.size} uživatelů bylo převedeno do návratkového (confirmed_state =&#39;next&#39;)&quot;</span>
+  <span class="ruby-identifier">redirect_to</span> <span class="ruby-value">:sosna_solvers</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-create" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">create</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>POST  /sosna/solver/create</pre>
+
+<p>vytvoří nového řešitele (atualního ročníku), pokud je to nutné založí i
+nového uživatele</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>sosna_solve[]
+<dd>
+<p>parametry noveho uživatele</p>
+</dd><dt>school[]
+<dd>
+<p>parametry noveho školy pokud je</p>
+</dd><dt>souhlasim[]
+<dd>
+<p>zaškrtnutý souhlas</p>
+</dd></dl>
+
+<p><strong>Redirect</strong> <a
+href="SolverController.html#method-i-create_tnx">#create_tnx</a></p>
+          
+          
+
+          
+          <div class="method-source-code" id="create-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 250</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create</span>
+  <span class="ruby-identifier">load_config</span>
+  <span class="ruby-identifier">params</span>.<span class="ruby-identifier">require</span>(<span class="ruby-value">:sosna_solver</span>).<span class="ruby-identifier">permit!</span>
+  <span class="ruby-identifier">is_admin</span> =  <span class="ruby-operator">!</span><span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">admin?</span>
+
+  <span class="ruby-identifier">school_id</span> =  <span class="ruby-identifier">params</span>[<span class="ruby-value">:school</span>].<span class="ruby-identifier">delete</span> <span class="ruby-value">:id</span>
+
+  <span class="ruby-identifier">send_first</span> =  <span class="ruby-identifier">_edit_want_send_first</span>()
+  <span class="ruby-comment">#@sosna_solver=params[:sosna_solver]</span>
+  <span class="ruby-comment">#psc=@sosna_solver[:psc]</span>
+  <span class="ruby-comment">#prvni=psc[0,3]</span>
+  <span class="ruby-comment">#druhe=psc[-2,2]</span>
+  <span class="ruby-comment">#pscnove=prvni+&quot; &quot;+druhe</span>
+  <span class="ruby-comment">#@sosna_solver[:psc]=pscnove</span>
+  <span class="ruby-comment">#params[:sosna_solver]=@sosna_solver</span>
+  <span class="ruby-identifier">solver</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Solver</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:sosna_solver</span>])
+
+  <span class="ruby-identifier">is_bonus</span> = <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">confirm_state</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;bonus&#39;</span>
+
+  <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">valid?</span>
+  <span class="ruby-identifier">agree</span> = <span class="ruby-operator">!</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:souhlasim</span>].<span class="ruby-identifier">nil?</span>
+  <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:souhlasim</span>, <span class="ruby-string">&#39;Je nutno souhlasit s podmínkami&#39;</span>) <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">agree</span>
+  <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:email</span>, <span class="ruby-string">&#39;je již registrován u jiného řešitele&#39;</span>) <span class="ruby-keyword">if</span> <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Solver</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">email:</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">email</span>, <span class="ruby-value">annual:</span> <span class="ruby-ivar">@annual</span>).<span class="ruby-identifier">exists?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">solver</span>.<span class="ruby-identifier">email</span>.<span class="ruby-identifier">empty?</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">psc</span> <span class="ruby-operator">!~</span> <span class="ruby-regexp">/^\d{3} \d{2}$/</span> <span class="ruby-comment"># pokud neni ve tvaru ^DDD DD$</span>
+    <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">psc</span>=<span class="ruby-identifier">solver</span>.<span class="ruby-identifier">psc</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/[^\d]/</span>, <span class="ruby-string">&#39;&#39;</span>)   <span class="ruby-comment"># kazdou necislici nahradi &#39;&#39;-smaze</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span> (<span class="ruby-identifier">solver</span>.<span class="ruby-identifier">psc</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">5</span>)
+      <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:psc</span>, <span class="ruby-string">&#39;neobsahuje 5 číslic&#39;</span>)  <span class="ruby-comment">#hodi chybu pokud neobsahuje prave 5 cislic</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">psc</span>=<span class="ruby-identifier">solver</span>.<span class="ruby-identifier">psc</span>[<span class="ruby-value">0</span>,<span class="ruby-value">3</span>]<span class="ruby-operator">+</span><span class="ruby-string">&quot; &quot;</span><span class="ruby-operator">+</span><span class="ruby-identifier">solver</span>.<span class="ruby-identifier">psc</span>[<span class="ruby-value">-2</span>,<span class="ruby-value">2</span>] <span class="ruby-comment"># prevede do tvaru ^DDD DD$</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:email</span>, <span class="ruby-string">&#39;neexistující adresa&#39;</span>) <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">solver</span>.<span class="ruby-identifier">email</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">email_valid_mx_record?</span>(<span class="ruby-identifier">solver</span>.<span class="ruby-identifier">email</span>)
+  <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:birth</span>, <span class="ruby-string">&#39;jsi příliš stár&#39;</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">errors</span>[<span class="ruby-value">:birth</span>].<span class="ruby-identifier">blank?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">solver</span>.<span class="ruby-identifier">birth</span>.<span class="ruby-identifier">empty?</span> <span class="ruby-operator">&amp;&amp;</span> (<span class="ruby-constant">Date</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">solver</span>.<span class="ruby-identifier">birth</span>) <span class="ruby-operator">+</span> <span class="ruby-value">17</span>.<span class="ruby-identifier">years</span>) <span class="ruby-operator">&lt;</span> <span class="ruby-constant">Date</span>.<span class="ruby-identifier">today</span>
+  <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:email</span>, <span class="ruby-string">&#39;adresa nemůže být prázdná&#39;</span>) <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">is_admin</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">email</span>.<span class="ruby-identifier">empty?</span>
+
+  <span class="ruby-identifier">not_admin</span> =  <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span>  <span class="ruby-operator">!</span><span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">admin?</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">not_admin</span>
+    <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:birth</span>, <span class="ruby-string">&#39;nemůže být prázdné&#39;</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">birth</span>.<span class="ruby-identifier">blank?</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">case</span> <span class="ruby-identifier">school_id</span>
+   <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;none&#39;</span>
+     <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:skola</span>, <span class="ruby-string">&#39;Vyber školu ze seznamu nebo zadej novou&#39;</span>)
+   <span class="ruby-keyword">when</span> <span class="ruby-string">&#39;jina&#39;</span>
+    <span class="ruby-identifier">params</span>.<span class="ruby-identifier">require</span>(<span class="ruby-value">:sosna_school</span>).<span class="ruby-identifier">permit!</span>
+    <span class="ruby-identifier">school</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">School</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:sosna_school</span>])
+   <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">school</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">School</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">school_id</span>)
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">school</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">school</span>.<span class="ruby-identifier">psc</span> <span class="ruby-operator">!~</span> <span class="ruby-regexp">/^\d{3} \d{2}$/</span> <span class="ruby-comment"># pokud neni ve tvaru ^DDD DD$</span>
+      <span class="ruby-identifier">school</span>.<span class="ruby-identifier">psc</span>=<span class="ruby-identifier">school</span>.<span class="ruby-identifier">psc</span>.<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/[^\d]/</span>, <span class="ruby-string">&#39;&#39;</span>) <span class="ruby-comment"># kazdou necislici nahradi &#39;&#39;-smaze</span>
+      <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span> (<span class="ruby-identifier">school</span>.<span class="ruby-identifier">psc</span>.<span class="ruby-identifier">length</span> <span class="ruby-operator">==</span> <span class="ruby-value">5</span>)
+        <span class="ruby-identifier">school</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">add</span>(<span class="ruby-value">:psc</span>, <span class="ruby-string">&#39;neobsahuje 5 číslic&#39;</span>)  <span class="ruby-comment">#hodi chybu pokud neobsahuje prave 5 cislic</span>
+      <span class="ruby-keyword">else</span>
+        <span class="ruby-identifier">school</span>.<span class="ruby-identifier">psc</span>=<span class="ruby-identifier">school</span>.<span class="ruby-identifier">psc</span>[<span class="ruby-value">0</span>,<span class="ruby-value">3</span>]<span class="ruby-operator">+</span><span class="ruby-string">&quot; &quot;</span><span class="ruby-operator">+</span><span class="ruby-identifier">school</span>.<span class="ruby-identifier">psc</span>[<span class="ruby-value">-2</span>,<span class="ruby-value">2</span>] <span class="ruby-comment"># prevede do tvaru ^DDD DD$</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">school</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">school</span>.<span class="ruby-identifier">invalid?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">count</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+      <span class="ruby-identifier">add_alert</span> <span class="ruby-string">&quot;Pozor: ve formuláři jsou chyby&quot;</span>
+      <span class="ruby-identifier">school</span>.<span class="ruby-identifier">id</span> = <span class="ruby-value">-1</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">school_id</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;jina&#39;</span>
+      <span class="ruby-identifier">flash</span>[<span class="ruby-value">:solver</span>] = <span class="ruby-identifier">solver</span>
+      <span class="ruby-identifier">flash</span>[<span class="ruby-value">:school</span>] = <span class="ruby-identifier">school</span>
+      <span class="ruby-identifier">flash</span>[<span class="ruby-value">:agree</span>] = <span class="ruby-identifier">agree</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-identifier">redirect_to</span> <span class="ruby-value">:action</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">:new_bonus</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">is_bonus</span>
+      <span class="ruby-keyword">return</span> <span class="ruby-identifier">redirect_to</span> <span class="ruby-value">:action</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">:new</span>
+  <span class="ruby-keyword">end</span>
+
+
+  <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">school</span> = <span class="ruby-identifier">school</span>
+  <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">annual</span> = <span class="ruby-ivar">@annual</span>
+
+  <span class="ruby-identifier">user</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">find_by_email</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">email</span>.<span class="ruby-identifier">downcase</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">user</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">email</span>.<span class="ruby-identifier">empty?</span>
+      <span class="ruby-comment"># create user by email</span>
+
+      <span class="ruby-comment"># Are e-mail addresses case sensitive?</span>
+      <span class="ruby-comment">#</span>
+      <span class="ruby-comment"># Yes, according to RFC 2821, the local mailbox (the portion before @)</span>
+      <span class="ruby-comment"># is considered case-sensitive. However, typically e-mail addresses are</span>
+      <span class="ruby-comment"># not case-sensitive because of the difficulties and confusion it would</span>
+      <span class="ruby-comment"># cause between users, the server, and the administrator.</span>
+      <span class="ruby-identifier">user</span> =  <span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">email:</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">email</span>.<span class="ruby-identifier">downcase</span>, <span class="ruby-value">name:</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">name</span>, <span class="ruby-value">last_name:</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">last_name</span>, <span class="ruby-value">confirmation_sent_at:</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>,  <span class="ruby-value">roles:</span> [<span class="ruby-value">:user</span>])
+
+      <span class="ruby-identifier">user</span>.<span class="ruby-identifier">confirm</span>
+      <span class="ruby-identifier">user</span>.<span class="ruby-identifier">send_first_login_instructions</span>  <span class="ruby-keyword">if</span> <span class="ruby-identifier">send_first</span>
+      <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">user_id</span> = <span class="ruby-identifier">user</span>.<span class="ruby-identifier">id</span>
+      <span class="ruby-identifier">user</span>.<span class="ruby-identifier">save</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">user_id</span> = <span class="ruby-identifier">user</span>.<span class="ruby-identifier">id</span>
+    <span class="ruby-identifier">send_first</span> = <span class="ruby-keyword">false</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-comment"># some test</span>
+  <span class="ruby-identifier">school</span>.<span class="ruby-identifier">save</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">school</span>.<span class="ruby-identifier">id</span>.<span class="ruby-identifier">nil?</span>
+  <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">save</span>
+  <span class="ruby-identifier">redirect_to</span> <span class="ruby-value">:action</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">:create_tnx</span>, <span class="ruby-value">:send_first</span> <span class="ruby-operator">=&gt;</span>  <span class="ruby-identifier">send_first</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-create_tnx" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">create_tnx</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>GET  /sosna/solver/tnx</pre>
+
+<p>stránka s poděkováním při registraci nového řešitele</p>
+          
+          
+
+          
+          <div class="method-source-code" id="create_tnx-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 360</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">create_tnx</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-delete" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">delete</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>POST /sosna/solver/:id/delete</pre>
+
+<p>Smaše řešitele</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>id
+<dd>
+<p>id řešitele</p>
+</dd></dl>
+
+<p><strong>Redirect</strong> sosna_index</p>
+          
+          
+
+          
+          <div class="method-source-code" id="delete-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 195</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete</span>
+   <span class="ruby-identifier">id</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>]
+   <span class="ruby-identifier">u</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Solver</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">id</span>)
+   <span class="ruby-keyword">if</span> <span class="ruby-identifier">u</span>
+     <span class="ruby-identifier">u</span>.<span class="ruby-identifier">destroy</span>
+     <span class="ruby-identifier">add_success</span> <span class="ruby-string">&#39;řešitel smazán&#39;</span>
+   <span class="ruby-keyword">else</span>
+     <span class="ruby-identifier">add_alert</span> <span class="ruby-string">&#39;řešitel neexistuje&#39;</span>
+   <span class="ruby-keyword">end</span>
+   <span class="ruby-identifier">redirect_to</span> <span class="ruby-value">action:</span> <span class="ruby-value">:index</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-dup" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">dup</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>POST /sosna/solver/:id/dup(/:roc)</pre>
+
+<p>duplikovat řešitele, do součásného ročníku</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>id
+<dd>
+<p>řešitel</p>
+</dd><dt>roc
+<dd>
+<p>ročník, pokud není tak se vezme aktuální</p>
+</dd></dl>
+
+<p><strong>Redirect</strong> show novy solver</p>
+          
+          
+
+          
+          <div class="method-source-code" id="dup-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 74</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">dup</span>
+  <span class="ruby-identifier">solver_id</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>]
+  <span class="ruby-identifier">annual</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:roc</span>] <span class="ruby-operator">||</span> <span class="ruby-ivar">@annual</span>
+
+  <span class="ruby-identifier">solver</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Solver</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">solver_id</span>)
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-identifier">add_alert</span> <span class="ruby-node">&quot;no such solver #{solver_id}&quot;</span>
+    <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">sosna_solver_show</span>(<span class="ruby-identifier">solver_id</span>);
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">annual</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">annual</span>
+    <span class="ruby-identifier">add_alert</span> <span class="ruby-string">&quot;stejny rocnik pro duplikaci&quot;</span>
+    <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">sosna_solver_show</span>(<span class="ruby-identifier">solver_id</span>);
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">solver_dup</span> = <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">dup</span>;
+  <span class="ruby-identifier">solver_dup</span>.<span class="ruby-identifier">annual</span> = <span class="ruby-identifier">annual</span>
+  <span class="ruby-identifier">solver_dup</span>.<span class="ruby-identifier">save</span>
+  <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">sosna_solver_url</span>(<span class="ruby-identifier">solver_dup</span>.<span class="ruby-identifier">id</span>);
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-index" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">index</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>GET /sosna/solvers/list(/:roc)</pre>
+
+<p>seznam řešitelů ročníků</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>roc
+<dd>
+<p>ročník, pokud není vezme se aktuální</p>
+</dd><dt>school_id
+<dd>
+<p>pokud je, vezmou se pouze řešitelé této školy</p>
+</dd></dl>
+
+<p><strong>Formats</strong>: html, pik</p>
+
+<p><strong>Provides</strong></p>
+<dl class="rdoc-list note-list"><dt>@annual
+<dd>
+<p>@school_id;: @solvers;: pole řešitelů</p>
+<dl class="rdoc-list note-list"><dt>@breadcrumb
+<dd></dd></dl>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="index-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 22</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">index</span>
+  <span class="ruby-identifier">load_config</span>
+  <span class="ruby-ivar">@annual</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:roc</span>] <span class="ruby-operator">||</span> <span class="ruby-ivar">@annual</span>
+  <span class="ruby-ivar">@school_id</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:school</span>]
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@school_id</span>
+    <span class="ruby-ivar">@school</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">School</span>.<span class="ruby-identifier">find</span> <span class="ruby-ivar">@school_id</span>
+    <span class="ruby-ivar">@solvers</span> = <span class="ruby-identifier">get_sorted_solvers</span>(<span class="ruby-value">annual:</span> <span class="ruby-ivar">@annual</span>, <span class="ruby-value">school_id:</span> <span class="ruby-ivar">@school_id</span>)
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-ivar">@solvers</span> = <span class="ruby-identifier">get_sorted_solvers</span>(<span class="ruby-value">annual:</span> <span class="ruby-ivar">@annual</span>)
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-identifier">respond_to</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">format</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">format</span>.<span class="ruby-identifier">html</span> <span class="ruby-keyword">do</span>
+       <span class="ruby-ivar">@solver_names</span> =  {}
+       <span class="ruby-ivar">@solvers</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">s</span><span class="ruby-operator">|</span>
+         <span class="ruby-ivar">@solver_names</span>[<span class="ruby-identifier">s</span>.<span class="ruby-identifier">full_name</span>] = <span class="ruby-ivar">@solver_names</span>[<span class="ruby-identifier">s</span>.<span class="ruby-identifier">full_name</span>].<span class="ruby-identifier">to_i</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>
+       <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+    <span class="ruby-identifier">format</span>.<span class="ruby-identifier">pik</span> <span class="ruby-keyword">do</span>
+       <span class="ruby-identifier">headers</span>[<span class="ruby-string">&#39;Content-Disposition&#39;</span>] = <span class="ruby-node">&quot;attachment; filename=lidi-roc#{@annual}.pik&quot;</span>
+       <span class="ruby-identifier">headers</span>[<span class="ruby-string">&#39;Content-Type&#39;</span>] = <span class="ruby-string">&quot;text/plain; charset=UTF-8&quot;</span>;
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-ivar">@breadcrumb</span> = [[<span class="ruby-identifier">breadcrumb_annual_links</span>(<span class="ruby-value">:index</span>)]];
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-labels" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">labels</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>GET /sosna/solvers/labels</pre>
+
+<p>Vygeneruje štítky</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>roc
+<dd>
+<p>ročník</p>
+</dd><dt>se
+<dd>
+<p>série</p>
+</dd><dt>pokud ids
+<dd>
+<p>seznam id  řešitelů, je brán první sloupec z každého řádku (do
+&#39;;&#39;), pokud není vezmou se všicni</p>
+</dd><dt>skoly_ids
+<dd>
+<p>seznam id škol</p>
+</dd><dt>opt
+<dd>
+<p>parametry pro zobrazeni, viz popis ve formuláři</p>
+</dd><dt>no_solvers
+<dd>
+<p>nezobrazovat solvery</p>
+</dd><dt>envelope
+<dd>
+<p>pokud je, bude to obalka veliksti <a href=":p">opt</a> nebo C5</p>
+</dd><dt>dbg
+<dd>
+<p>vytisknout i ladící popisky, slouží pro zaměření</p>
+</dd><dt>paper_tep_conflict
+<dt>obalkovani
+<dt>confirmed_only
+<dd>
+<p>pouze řešitelé s `confirm_state==conf`</p>
+</dd><dt>skoly_all
+<dd>
+<p>všechny školy</p>
+</dd><dt>skoly
+<dd>
+<p>ty školy které maji `want_paper=true`</p>
+</dd></dl>
+
+<p><strong>Provides</strong></p>
+<dl class="rdoc-list note-list"><dt>@schools
+<dd>
+<p>pole škol</p>
+</dd><dt>@solvers
+<dd>
+<p>pole řešitelů</p>
+</dd><dt>@opt
+<dd>
+<p>nastavení prawn</p>
+</dd><dt>@dbg
+<dt>@envelope
+<dt>@annual, @round
+<dd>
+<p>ročník a série</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="labels-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 122</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">labels</span>
+  <span class="ruby-ivar">@annual</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:roc</span>] <span class="ruby-operator">||</span> <span class="ruby-ivar">@annual</span>
+  <span class="ruby-ivar">@ids</span> = (<span class="ruby-identifier">params</span>[<span class="ruby-value">:ids</span>]  <span class="ruby-operator">||</span> <span class="ruby-string">&#39;&#39;</span>).<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/;.*$/</span>,<span class="ruby-string">&#39;&#39;</span>).<span class="ruby-identifier">split</span>(<span class="ruby-regexp">/[,\n\s]+/</span>).<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">to_i</span> }
+  <span class="ruby-ivar">@skoly_ids</span> = (<span class="ruby-identifier">params</span>[<span class="ruby-value">:skoly_ids</span>]  <span class="ruby-operator">||</span> <span class="ruby-string">&#39;&#39;</span>).<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/;.*$/</span>,<span class="ruby-string">&#39;&#39;</span>).<span class="ruby-identifier">split</span>(<span class="ruby-regexp">/[,\n\s]+/</span>).<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">x</span><span class="ruby-operator">|</span> <span class="ruby-identifier">x</span>.<span class="ruby-identifier">to_i</span> }
+  <span class="ruby-identifier">log</span>(<span class="ruby-string">&quot;ids:&quot;</span> <span class="ruby-operator">+</span>  <span class="ruby-ivar">@ids</span>.<span class="ruby-identifier">to_s</span>);
+  <span class="ruby-identifier">opt_param</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:opt</span>] <span class="ruby-operator">||</span> <span class="ruby-string">&#39;&#39;</span>
+  <span class="ruby-identifier">respond_to</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">format</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">format</span>.<span class="ruby-identifier">html</span>
+    <span class="ruby-identifier">format</span>.<span class="ruby-identifier">pdf</span> <span class="ruby-keyword">do</span>
+       <span class="ruby-ivar">@opt</span> = {}
+       <span class="ruby-ivar">@envelope</span>= <span class="ruby-identifier">params</span>[<span class="ruby-value">:envelope</span>]
+       <span class="ruby-identifier">opt_param</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp">/\s*;\s*|\s+/</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">o</span><span class="ruby-operator">|</span>
+         <span class="ruby-ivar">@opt</span>[<span class="ruby-node">$1</span>.<span class="ruby-identifier">to_sym</span>] = <span class="ruby-node">$2</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">o</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp">/^\s*(\w+)\s*:(\S*)/</span>
+       <span class="ruby-keyword">end</span>
+
+       <span class="ruby-ivar">@prawnto_options</span> = { <span class="ruby-value">:prawn</span> <span class="ruby-operator">=&gt;</span> {<span class="ruby-value">:page_size</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@opt</span>[<span class="ruby-value">:p</span>] <span class="ruby-operator">||</span> <span class="ruby-string">&#39;C5&#39;</span>, <span class="ruby-value">:page_layout</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">:landscape</span>, }} <span class="ruby-keyword">if</span> <span class="ruby-ivar">@envelope</span>;
+
+       <span class="ruby-ivar">@dbg</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:dbg</span>]
+       <span class="ruby-identifier">where</span> = <span class="ruby-keyword">nil</span>
+       <span class="ruby-ivar">@solvers</span> = []
+       <span class="ruby-keyword">if</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:no_solvers</span>]
+         <span class="ruby-ivar">@solvers</span> = []
+       <span class="ruby-keyword">elsif</span> <span class="ruby-ivar">@ids</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+         <span class="ruby-ivar">@solvers</span> = <span class="ruby-identifier">get_sorted_solvers</span>({ <span class="ruby-value">id:</span> <span class="ruby-ivar">@ids</span>})
+       <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:paper_tep_conflict</span>]
+         <span class="ruby-ivar">@round</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:se</span>] <span class="ruby-operator">||</span> <span class="ruby-ivar">@round</span>
+         <span class="ruby-ivar">@solvers</span> = <span class="ruby-identifier">get_sorted_conflict_solvers</span>(<span class="ruby-ivar">@annual</span>, <span class="ruby-ivar">@round</span>);
+         <span class="ruby-identifier">log</span>(<span class="ruby-node">&quot;solver count=#{@solvers.size}&quot;</span>)
+       <span class="ruby-keyword">else</span>
+         <span class="ruby-identifier">where</span> = {<span class="ruby-value">annual:</span> <span class="ruby-ivar">@annual</span>, <span class="ruby-value">is_test_solver:</span> <span class="ruby-keyword">false</span>}
+         <span class="ruby-identifier">where</span>.<span class="ruby-identifier">merge!</span>({ <span class="ruby-value">where_to_send:</span> [<span class="ruby-string">&#39;home&#39;</span>, <span class="ruby-string">&#39;school&#39;</span>] }) <span class="ruby-keyword">if</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:obalkovani</span>]
+         <span class="ruby-identifier">where</span>.<span class="ruby-identifier">merge!</span>({ <span class="ruby-value">confirm_state:</span> <span class="ruby-string">&#39;conf&#39;</span>}) <span class="ruby-keyword">if</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:confirmed_only</span>]
+         <span class="ruby-ivar">@solvers</span> = <span class="ruby-identifier">get_sorted_solvers</span>(<span class="ruby-identifier">where</span>);
+       <span class="ruby-keyword">end</span>
+       <span class="ruby-ivar">@schools</span> = []
+       <span class="ruby-keyword">if</span> <span class="ruby-ivar">@skoly_ids</span>.<span class="ruby-identifier">size</span> <span class="ruby-operator">&gt;</span> <span class="ruby-value">0</span>
+         <span class="ruby-ivar">@schools</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">School</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">id:</span> <span class="ruby-ivar">@skoly_ids</span>)
+       <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:skoly_all</span>]
+         <span class="ruby-ivar">@schools</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">School</span>.<span class="ruby-identifier">all</span>
+       <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:skoly</span>]
+         <span class="ruby-ivar">@schools</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">School</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">want_paper:</span> <span class="ruby-keyword">true</span>)
+       <span class="ruby-keyword">end</span>
+       <span class="ruby-identifier">render</span> <span class="ruby-value">:formats</span> <span class="ruby-operator">=&gt;</span> [<span class="ruby-value">:pdf</span>]
+     <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-new" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">new</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre class="ruby"><span class="ruby-constant">GET</span>  <span class="ruby-identifier">sosna</span><span class="ruby-operator">/</span><span class="ruby-identifier">solver</span><span class="ruby-operator">/</span><span class="ruby-identifier">new</span>
+</pre>
+
+<p>Formulář na založení řešitele</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>schooll
+<dt>solver
+<dd></dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="new-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 215</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">new</span>
+  <span class="ruby-identifier">load_config</span>
+  <span class="ruby-ivar">@school</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">flash</span>[<span class="ruby-value">:school</span>] <span class="ruby-operator">||</span> <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">School</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-ivar">@solver</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">flash</span>[<span class="ruby-value">:solver</span>]
+  <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span> <span class="ruby-ivar">@solver</span>
+    <span class="ruby-ivar">@solver</span>= <span class="ruby-identifier">_prepare_new_solver</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-ivar">@agree</span> = <span class="ruby-identifier">flash</span>[<span class="ruby-value">:agree</span>] <span class="ruby-operator">||</span> <span class="ruby-keyword">false</span>
+  <span class="ruby-identifier">_load_schools</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-new_bonus" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">new_bonus</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre class="ruby"><span class="ruby-constant">GET</span>  <span class="ruby-identifier">sosna</span><span class="ruby-operator">/</span><span class="ruby-identifier">solver</span><span class="ruby-operator">/</span><span class="ruby-identifier">new</span>
+</pre>
+
+<p>Jako `new`, ale “bonusový uživatel”</p>
+
+<p><strong>Provides</strong></p>
+<dl class="rdoc-list note-list"><dt>@bonus
+<dd>
+<p>true</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="new_bonus-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 233</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">new_bonus</span>
+  <span class="ruby-ivar">@bonus</span> = <span class="ruby-keyword">true</span>
+  <span class="ruby-identifier">new</span>
+  <span class="ruby-identifier">render</span> <span class="ruby-value">:new</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-show" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">show</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>GET  /sosna/solver/:id</pre>
+
+<p>zobraz formulář s informacemi o řešiteli</p>
+
+<p><strong>Params</strong> id: id řešitele</p>
+
+<p><strong>Provides</strong></p>
+<dl class="rdoc-list note-list"><dt>@solver
+<dd>
+<p>aktuání řešitel</p>
+</dd><dt>@škola
+<dd>
+<p>a jeho škola</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="show-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 397</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">show</span>
+  <span class="ruby-identifier">id</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>]
+  <span class="ruby-ivar">@solver</span> = <span class="ruby-identifier">id</span> <span class="ruby-operator">?</span> <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Solver</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">id</span>) <span class="ruby-operator">:</span> <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Solver</span>.<span class="ruby-identifier">new</span>
+  <span class="ruby-ivar">@school</span> = <span class="ruby-ivar">@solver</span>.<span class="ruby-identifier">school</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">id</span>
+   <span class="ruby-ivar">@solutions</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Solution</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:solver_id</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">id</span>).<span class="ruby-identifier">all</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">load_config</span>
+  <span class="ruby-identifier">_load_schools</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-tep_emails" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">tep_emails</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>GET /sosna/solvers/tep_emails(/:roc)</pre>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>roc
+<dd>
+<p>ročník, pokud není tak se vezme aktuální</p>
+</dd></dl>
+
+<p><strong>Provides</strong></p>
+<dl class="rdoc-list note-list"><dt>@annual
+<dd>
+<p>ročník</p>
+</dd><dt>@solvers
+<dd>
+<p>pole řešitelů daného ročníku</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="tep_emails-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 57</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">tep_emails</span>
+  <span class="ruby-ivar">@annual</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:roc</span>] <span class="ruby-operator">||</span> <span class="ruby-ivar">@annual</span>
+  <span class="ruby-ivar">@solvers</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Solver</span>.<span class="ruby-identifier">where</span> <span class="ruby-value">solution_form:</span> <span class="ruby-string">&#39;tep&#39;</span>, <span class="ruby-value">annual:</span> <span class="ruby-ivar">@annual</span>, <span class="ruby-value">is_test_solver:</span> <span class="ruby-keyword">false</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-update" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">update</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>POST  /sosna/solver/update</pre>
+
+<p>aktualizace</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>sosna_solver[]
+<dd>
+<p>akutalizovane parametry řešitele</p>
+</dd><dt>is_confirm
+<dd>
+<p><strong>Provides</strong></p>
+<dl class="rdoc-list note-list"><dt>@sosna
+<dd>
+<p>aktuání řešitel</p>
+</dd><dt>@škola
+<dd>
+<p>a jeho škola</p>
+</dd></dl>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="update-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 446</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>
+  <span class="ruby-identifier">params</span>.<span class="ruby-identifier">require</span>(<span class="ruby-value">:sosna_solver</span>).<span class="ruby-identifier">permit!</span>
+  <span class="ruby-identifier">sr</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:sosna_solver</span>]
+  <span class="ruby-identifier">school_id</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:school</span>].<span class="ruby-identifier">delete</span> <span class="ruby-value">:id</span>
+
+  <span class="ruby-keyword">begin</span>
+    <span class="ruby-identifier">school</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">School</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">school_id</span>)
+  <span class="ruby-keyword">rescue</span>
+    <span class="ruby-keyword">begin</span>
+      <span class="ruby-identifier">params</span>.<span class="ruby-identifier">require</span>(<span class="ruby-value">:sosna_school</span>).<span class="ruby-identifier">permit!</span>
+      <span class="ruby-identifier">school</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">School</span>.<span class="ruby-identifier">new</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:sosna_school</span>])
+      <span class="ruby-identifier">school</span>.<span class="ruby-identifier">save</span>
+    <span class="ruby-keyword">rescue</span>
+      <span class="ruby-identifier">school</span> = <span class="ruby-keyword">nil</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+
+
+  <span class="ruby-identifier">sr</span>.<span class="ruby-identifier">delete</span> <span class="ruby-value">:user_id</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">sr</span>[<span class="ruby-value">:id</span>]
+    <span class="ruby-identifier">solver</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Solver</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">sr</span>[<span class="ruby-value">:id</span>])
+    <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">school</span> = <span class="ruby-identifier">school</span>
+    <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">update_attributes</span>(<span class="ruby-identifier">sr</span>)
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">solver</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Solver</span>.<span class="ruby-identifier">create</span>(<span class="ruby-identifier">sr</span>)
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">params</span>[<span class="ruby-value">:is_confirm</span>].<span class="ruby-identifier">nil?</span>
+     <span class="ruby-identifier">log</span> <span class="ruby-string">&quot;A4.5&quot;</span>
+     <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">confirm_state</span> = <span class="ruby-string">&#39;conf&#39;</span>
+     <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">save</span>
+     <span class="ruby-identifier">add_success</span> <span class="ruby-string">&quot;Návratka potvrzena.&quot;</span>
+     <span class="ruby-keyword">return</span> <span class="ruby-identifier">redirect_to</span> <span class="ruby-value">:sosna_solutions_user</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">_edit_want_send_first</span>()
+    <span class="ruby-identifier">user</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">find_by_email</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">email</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">user</span>.<span class="ruby-identifier">nil?</span>
+      <span class="ruby-identifier">user</span>.<span class="ruby-identifier">send_first_login_instructions</span>
+      <span class="ruby-identifier">add_success</span> <span class="ruby-string">&quot;Zaslán uvítací email&quot;</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">redirect_to</span> <span class="ruby-value">:action</span> <span class="ruby-operator">=&gt;</span>  <span class="ruby-value">:show</span> , <span class="ruby-value">:id</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">id</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-update_confirm" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">update_confirm</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>POST  /sosna/solver/update_confirm</pre>
+
+<p>aktualizace po konfirmaci</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>sosna_solver[]
+<dd>
+<p>akutalizovane parametry řešitele</p>
+</dd></dl>
+
+<p><strong>Provides</strong></p>
+<dl class="rdoc-list note-list"><dt>@sosna
+<dd>
+<p>aktuání řešitel</p>
+</dd><dt>@škola
+<dd>
+<p>a jeho škola</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="update_confirm-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 419</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update_confirm</span>
+  <span class="ruby-identifier">log</span> <span class="ruby-string">&quot;update_confirm&quot;</span>
+  <span class="ruby-ivar">@solver</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Solver</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:user_id</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">id</span>, <span class="ruby-value">:annual</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@config</span>[<span class="ruby-value">:annual</span>]).<span class="ruby-identifier">take</span>
+  <span class="ruby-identifier">sol_id</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:sosna_solver</span>][<span class="ruby-value">:id</span>].<span class="ruby-identifier">to_i</span>
+  <span class="ruby-identifier">log</span> <span class="ruby-node">&quot;sid:#{sol_id} sid2:#{@solver.id} #{sol_id == @solver.id} #{!@solver.nil? &amp;&amp; sol_id == @solver.id}&quot;</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-ivar">@solver</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">sol_id</span> <span class="ruby-operator">==</span> <span class="ruby-ivar">@solver</span>.<span class="ruby-identifier">id</span>
+    <span class="ruby-identifier">log</span> <span class="ruby-string">&quot;-&gt;update&quot;</span>
+    <span class="ruby-identifier">update</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">add_alert</span> <span class="ruby-string">&quot;Wrong solver&quot;</span>
+    <span class="ruby-identifier">log</span> <span class="ruby-string">&quot;wrong solver&quot;</span>
+    <span class="ruby-identifier">redirect_to</span> <span class="ruby-value">:sosna_solutions_user</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-user_solver_confirm" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">user_solver_confirm</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>GET  /sosna/solver/confirm</pre>
+
+<p>stránka která vyzve k ověření informacemí o řešiteli</p>
+
+<p><strong>Provides</strong></p>
+<dl class="rdoc-list note-list"><dt>@solver
+<dd>
+<p>aktuání řešitel</p>
+</dd><dt>@škola
+<dd>
+<p>a jeho škola</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="user_solver_confirm-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 371</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">user_solver_confirm</span>
+  <span class="ruby-ivar">@solver</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Solver</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">:user_id</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">id</span>, <span class="ruby-value">:annual</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-ivar">@config</span>[<span class="ruby-value">:annual</span>]).<span class="ruby-identifier">take</span>
+  <span class="ruby-ivar">@solver_is_current_user</span> = <span class="ruby-keyword">true</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span> <span class="ruby-ivar">@solver</span>
+    <span class="ruby-identifier">add_alert</span> <span class="ruby-string">&quot;Pozor: zatím nejsi letošním řešitelem, nejprve vyplň přihlašku!&quot;</span>
+    <span class="ruby-keyword">return</span> <span class="ruby-identifier">redirect_to</span> <span class="ruby-value">:controller</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">:solver</span> , <span class="ruby-value">:action</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">:new</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-ivar">@solver</span>.<span class="ruby-identifier">confirm_state</span> <span class="ruby-operator">!=</span> <span class="ruby-string">&#39;next&#39;</span>
+    <span class="ruby-identifier">add_alert</span> <span class="ruby-string">&quot;Uživatel již návratku potvrdil&quot;</span>
+    <span class="ruby-identifier">redirect_to</span> <span class="ruby-value">:sosna_solutions_user</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-ivar">@school</span> = <span class="ruby-ivar">@solver</span>.<span class="ruby-identifier">school</span>
+  <span class="ruby-identifier">_load_schools</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+     <section id="private-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Private Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-_aesop_print_round" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">_aesop_print_round</span><span
+            class="method-args">(annual, round, errors_to)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>AESOP export format:</p>
+
+<pre>https://opmk.mff.cuni.cz/wiki/aesop/import
+version   Verze formátu. Tato specifikace popisuje verzi 1.
+event   Identifikátor akce (např. ksp.rocnik.z)
+year    Rok, v němž se akce konala. Je-li akce spjata se školním rokem, patří sem první rok.
+date  Datum vytvoření exportu ve tvaru YYYY-MM-DD HH:MM:SS.
+errors-to   E-mailová adresa, na níž se mají odesílat zprávy o chybách při zpracování exportu.
+max-rank  Počet účastníků (povinné, pokud se část účastníků z nějakého důvodu neexportuje).
+max-points  Maximální možný počet získaných bodů.
+name    Křestní jméno. Může jich být více, oddělených mezerou.
+surname   Příjmení.
+street  Korespondenční adresa: ulice a domovní číslo. Pokud se jedná o obec bez ulic, pište prosím jen domovní číslo, případně název obce a domovní číslo.
+postcode  Korespondenční adresa: směrovací číslo. U českých a slovenských adres 5 číslic bez mezery.
+country   Korespondenční adresa: kód státu podle ISO 3166-1 (cz, sk, apod.). Na velikosti písmen nezáleží.
+fullname  Pokud se v adrese má na pozici jména vyskytnout něco jiného než
+           Jméno Příjmení, vložte to sem. To se dá použít, pokud chcete hezky formátovat
+           např. cizí jména, u nichž je zvykem uvádět příjmení jako první. Rozhodně se
+           cizí pořadí nepokoušejte simulovat prohozením položek name a surname.
+
+school      Identifikátor školy. Zatím jsou definované formáty „izo:XYZ“ (české
+            IZO), „sk:XYZ“ (slovenský kód školy), „aesop:XYZ“ (interní ID v AESOPovi),
+            „ufo“ (škola, kterou zatím neumíme identifikovat; takové záznamy by se měly
+            vyskytovat jen po velmi krátkou dobu).
+end-year    Rok očekávaného konce středoškolského studia.
+email       E-mailová adresa podle RFC 5322.
+rank        Pořadí ve výsledkovce. Pokud se více účastníků dělí o místo, patří sem nejmenší ze sdílených pořadí.
+points      Počet získaných bodů.
+spam-flag   „Y“ pokud účastník svolil k zasílání materiálů Matfyzu, „N“ pokud jsme se ho ptali a nesvolil. Prázdný řetězec znamená, že jsme se explicitně nezeptali.
+spam-date   Datum (YYYY-DD-MM), kdy jsme se dozvěděli hodnotu spam-flag-u.</pre>
+          
+          
+
+          
+          <div class="method-source-code" id="_aesop_print_round-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 666</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">_aesop_print_round</span>(<span class="ruby-identifier">annual</span>, <span class="ruby-identifier">round</span>, <span class="ruby-identifier">errors_to</span>) <span class="ruby-comment"># :doc:</span>
+
+
+  <span class="ruby-identifier">maturity_grade</span> = <span class="ruby-value">13</span>
+  <span class="ruby-identifier">date</span> = <span class="ruby-constant">DateTime</span>.<span class="ruby-identifier">now</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&#39;%Y-%m-%d %H:%M:%S&#39;</span>)
+  <span class="ruby-identifier">year</span> = <span class="ruby-value">2014</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">annual</span> <span class="ruby-operator">-</span> <span class="ruby-value">30</span> <span class="ruby-comment"># ve skolnim roce 2014/2015 byl rocnik 30</span>
+  <span class="ruby-identifier">event</span> = <span class="ruby-node">&quot;pikomat.#{annual}&quot;</span>
+  <span class="ruby-identifier">event</span> = <span class="ruby-string">&quot;pikomat.rocnik&quot;</span>
+  <span class="ruby-identifier">comment</span> = <span class="ruby-node">&quot;Pikomat rocnik=#{annual} serie=#{round}&quot;</span>
+
+  <span class="ruby-identifier">solvers</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Solver</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">annual:</span> <span class="ruby-identifier">annual</span>, <span class="ruby-value">is_test_solver:</span> <span class="ruby-keyword">false</span>)
+  <span class="ruby-identifier">ex</span> = []
+  <span class="ruby-identifier">ex</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-string">&#39;version&#39;</span>,       <span class="ruby-value">1</span>]
+  <span class="ruby-identifier">ex</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-string">&#39;year&#39;</span>,          <span class="ruby-identifier">year</span>]
+  <span class="ruby-identifier">ex</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-string">&#39;event&#39;</span>,         <span class="ruby-identifier">event</span>]
+  <span class="ruby-identifier">ex</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-string">&#39;id-generation&#39;</span>, <span class="ruby-identifier">year</span>]
+  <span class="ruby-identifier">ex</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-string">&#39;errors-to&#39;</span>,     <span class="ruby-identifier">errors_to</span>]
+  <span class="ruby-identifier">ex</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-string">&#39;date&#39;</span>,          <span class="ruby-identifier">date</span>]
+  <span class="ruby-identifier">ex</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-string">&#39;max-rank&#39;</span>,      <span class="ruby-identifier">solvers</span>.<span class="ruby-identifier">count</span> ]
+  <span class="ruby-identifier">ex</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-string">&#39;max-points&#39;</span>,    <span class="ruby-identifier">round</span> <span class="ruby-operator">*</span> <span class="ruby-value">30</span>]
+  <span class="ruby-identifier">ex</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-string">&#39;comment&#39;</span>,       <span class="ruby-identifier">comment</span> ]
+  <span class="ruby-identifier">ex</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-string">&#39;x-round&#39;</span>,       <span class="ruby-identifier">round</span> ]
+  <span class="ruby-identifier">ex</span> <span class="ruby-operator">&lt;&lt;</span> []
+  <span class="ruby-identifier">ex</span> <span class="ruby-operator">&lt;&lt;</span> [<span class="ruby-string">&#39;id&#39;</span>, <span class="ruby-string">&#39;name&#39;</span>, <span class="ruby-string">&#39;surname&#39;</span>, <span class="ruby-string">&#39;fullname&#39;</span>, <span class="ruby-string">&#39;school&#39;</span>, <span class="ruby-string">&#39;street&#39;</span>, <span class="ruby-string">&#39;postcode&#39;</span>, <span class="ruby-string">&#39;town&#39;</span>, <span class="ruby-string">&#39;country&#39;</span>, <span class="ruby-string">&#39;email&#39;</span>, <span class="ruby-string">&#39;end-year&#39;</span>, <span class="ruby-string">&#39;rank&#39;</span>, <span class="ruby-string">&#39;points&#39;</span>, <span class="ruby-string">&#39;spam-flag&#39;</span>, <span class="ruby-string">&#39;spam-date&#39;</span>,
+         <span class="ruby-comment">#&#39;grade&#39;,</span>
+         ]
+
+  <span class="ruby-identifier">solvers</span>.<span class="ruby-identifier">each</span>  <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">solver</span><span class="ruby-operator">|</span>
+
+    <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> [<span class="ruby-string">&#39;p.zahajska@yahoo.com&#39;</span>, <span class="ruby-string">&#39;lux.filip@gmail.com&#39;</span>  ] .<span class="ruby-identifier">include?</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">email</span>
+    <span class="ruby-identifier">school</span> = <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">school</span>
+
+    <span class="ruby-identifier">rank</span> = <span class="ruby-value">0</span>
+    <span class="ruby-identifier">points</span> = <span class="ruby-value">0</span>
+
+    <span class="ruby-identifier">res</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Result</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">annual:</span> <span class="ruby-identifier">annual</span>, <span class="ruby-value">round:</span> <span class="ruby-identifier">round</span>, <span class="ruby-value">solver_id:</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">id</span>).<span class="ruby-identifier">take</span>
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">res</span>
+      <span class="ruby-identifier">rank</span> = <span class="ruby-identifier">res</span>.<span class="ruby-identifier">rank</span>
+      <span class="ruby-identifier">points</span> = <span class="ruby-identifier">res</span>.<span class="ruby-identifier">score</span>
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-keyword">if</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">grade_num</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">grade_num</span>.<span class="ruby-identifier">to_i</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span>
+      <span class="ruby-identifier">finish_year</span> = <span class="ruby-string">&#39;&#39;</span>
+    <span class="ruby-keyword">else</span>
+      <span class="ruby-identifier">finish_year</span> = <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">finish_year</span> <span class="ruby-operator">||</span> ( <span class="ruby-identifier">year</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">maturity_grade</span> <span class="ruby-operator">-</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">grade_num</span>.<span class="ruby-identifier">to_i</span> )
+      <span class="ruby-comment">#finish_year = &quot;#{finish_year}:#{solver.grade_num}&quot;</span>
+      <span class="ruby-identifier">finish_year</span> = <span class="ruby-node">&quot;#{finish_year}&quot;</span>
+    <span class="ruby-keyword">end</span>
+
+    <span class="ruby-identifier">spam_flag</span> = <span class="ruby-string">&#39;Y&#39;</span>
+    <span class="ruby-identifier">spam_date</span> = <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">created_at</span>.<span class="ruby-identifier">strftime</span>(<span class="ruby-string">&#39;%Y-%m-%d&#39;</span>)
+    <span class="ruby-identifier">full_name</span> = <span class="ruby-node">&quot;#{solver.name} #{solver.last_name}&quot;</span>
+    <span class="ruby-identifier">ex</span> <span class="ruby-operator">&lt;&lt;</span> [  <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">id</span>, <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">last_name</span>, <span class="ruby-identifier">full_name</span>,
+             <span class="ruby-identifier">school</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&#39;ufo&#39;</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">school</span>.<span class="ruby-identifier">universal_id</span>,
+             <span class="ruby-node">&quot;#{solver.street} #{solver.num}&quot;</span>, (<span class="ruby-identifier">solver</span>.<span class="ruby-identifier">psc</span><span class="ruby-operator">||</span><span class="ruby-string">&#39;&#39;</span>).<span class="ruby-identifier">gsub</span>(<span class="ruby-string">&#39; &#39;</span>,<span class="ruby-string">&#39;&#39;</span>), <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">city</span>,
+             <span class="ruby-string">&#39;cz&#39;</span>, <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">email</span>,
+             <span class="ruby-identifier">finish_year</span>,
+             <span class="ruby-identifier">points</span>, <span class="ruby-identifier">rank</span>,
+             <span class="ruby-identifier">spam_flag</span>, <span class="ruby-identifier">spam_date</span>,
+             <span class="ruby-comment">#solver.grade_num,</span>
+             ]
+  <span class="ruby-keyword">end</span>
+ 
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">ex</span>.<span class="ruby-identifier">map</span>{  <span class="ruby-operator">|</span><span class="ruby-identifier">row</span><span class="ruby-operator">|</span> <span class="ruby-identifier">row</span>.<span class="ruby-identifier">join</span>(<span class="ruby-string">&quot;\t&quot;</span>) <span class="ruby-operator">+</span> <span class="ruby-string">&quot;\n&quot;</span> }.<span class="ruby-identifier">join</span>
+
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.0.1.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+
