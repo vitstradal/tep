@@ -1,3 +1,6 @@
+##
+# Třída definující co který uživatel může, přístupová práva jsou založena na příslušnosti uživatele ve skupině.
+#
 class Ability
   include CanCan::Ability
 

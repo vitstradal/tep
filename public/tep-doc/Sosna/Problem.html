@@ -71,8 +71,6 @@
 
   <ul class="link-list" role="directory">
     
-    <li ><a href="#method-i-_rounds_roc">#_rounds_roc</a>
-    
     <li ><a href="#method-i-rounds">#rounds</a>
     
   </ul>
@@ -88,6 +86,22 @@
 
   <section class="description">
     
+<p>Třída reprezentující tabulku sosna_problem, úloha v sérii</p>
+
+<p><strong>Colums</strong></p>
+
+<pre class="ruby"><span class="ruby-identifier">t</span>.<span class="ruby-identifier">text</span>    <span class="ruby-string">&quot;name&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">text</span>    <span class="ruby-string">&quot;short&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">text</span>    <span class="ruby-string">&quot;street&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">text</span>    <span class="ruby-string">&quot;num&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">text</span>    <span class="ruby-string">&quot;city&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">text</span>    <span class="ruby-string">&quot;psc&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">text</span>    <span class="ruby-string">&quot;state&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">text</span>    <span class="ruby-string">&quot;universal_id&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">boolean</span> <span class="ruby-string">&quot;want_paper&quot;</span>,   <span class="ruby-value">default:</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">null:</span> <span class="ruby-keyword">false</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">text</span>    <span class="ruby-string">&quot;country&quot;</span>,      <span class="ruby-value">default:</span> <span class="ruby-string">&quot;cz&quot;</span>
+</pre>
+
   </section>
 
   
@@ -121,47 +135,6 @@
        </header>
 
     
-      <div id="method-i-_rounds_roc" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">_rounds_roc</span><span
-            class="method-args">(annual)</span>
-          
-          <span class="method-click-advice">click to toggle source</span>
-          
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-          
-
-          
-          <div class="method-source-code" id="_rounds_roc-source">
-            <pre><span class="ruby-comment"># File app/models/sosna/problem.rb, line 11</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">_rounds_roc</span>(<span class="ruby-identifier">annual</span>)
-  <span class="ruby-keyword">return</span> <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Problem</span>.<span class="ruby-identifier">select</span>(<span class="ruby-string">&#39;round&#39;</span>)
-                     .<span class="ruby-identifier">where</span>({<span class="ruby-value">annual:</span> <span class="ruby-identifier">annual</span>})
-                     .<span class="ruby-identifier">group</span>(<span class="ruby-string">&#39;round&#39;</span>)
-                     .<span class="ruby-identifier">order</span>(<span class="ruby-string">&#39;round&#39;</span>)
-                     .<span class="ruby-identifier">all</span>
-                     .<span class="ruby-identifier">map</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">ul</span><span class="ruby-operator">|</span>
-                        <span class="ruby-identifier">_round_link</span>(<span class="ruby-identifier">roc</span>, <span class="ruby-identifier">ul</span>.<span class="ruby-identifier">round</span>)
-                     <span class="ruby-keyword">end</span>
-
-<span class="ruby-keyword">end</span></pre>
-          </div>
-          
-        </div>
-
-        
-
-        
-      </div>
-
-    
       <div id="method-i-rounds" class="method-detail ">
         
         <div class="method-heading">
@@ -175,13 +148,13 @@
 
         <div class="method-description">
           
-          
+          <p><strong>Returns</strong> počet serií v ročníku tohoto problému</p>
           
           
 
           
           <div class="method-source-code" id="rounds-source">
-            <pre><span class="ruby-comment"># File app/models/sosna/problem.rb, line 6</span>
+            <pre><span class="ruby-comment"># File app/models/sosna/problem.rb, line 23</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">rounds</span>
   <span class="ruby-identifier">_rounds_roc</span>(<span class="ruby-identifier">annual</span>)
 <span class="ruby-keyword">end</span></pre>

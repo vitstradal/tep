@@ -64,6 +64,8 @@
 
   <ul class="link-list" role="directory">
     
+    <li ><a href="#method-i-active_in_if">#active_in_if</a>
+    
     <li ><a href="#method-i-add_alert">#add_alert</a>
     
     <li ><a href="#method-i-add_alert_now">#add_alert_now</a>
@@ -72,7 +74,13 @@
     
     <li ><a href="#method-i-add_success_now">#add_success_now</a>
     
+    <li ><a href="#method-i-breadcrumb_annual_links">#breadcrumb_annual_links</a>
+    
     <li ><a href="#method-i-button_tag">#button_tag</a>
+    
+    <li ><a href="#method-i-class_active_if">#class_active_if</a>
+    
+    <li ><a href="#method-i-config_value">#config_value</a>
     
     <li ><a href="#method-i-country_code_to_txt">#country_code_to_txt</a>
     
@@ -80,17 +88,29 @@
     
     <li ><a href="#method-i-email_valid_mx_record-3F">#email_valid_mx_record?</a>
     
+    <li ><a href="#method-i-find_solver_for_user_id">#find_solver_for_user_id</a>
+    
     <li ><a href="#method-i-form_error">#form_error</a>
     
     <li ><a href="#method-i-form_error_class">#form_error_class</a>
     
+    <li ><a href="#method-i-get_sorted_conflict_solvers">#get_sorted_conflict_solvers</a>
+    
+    <li ><a href="#method-i-get_sorted_solvers">#get_sorted_solvers</a>
+    
     <li ><a href="#method-i-get_verifier">#get_verifier</a>
     
+    <li ><a href="#method-i-heading_with_tools">#heading_with_tools</a>
+    
     <li ><a href="#method-i-ilink_to">#ilink_to</a>
+    
+    <li ><a href="#method-i-is_bonus_round">#is_bonus_round</a>
     
     <li ><a href="#method-i-link_to_show">#link_to_show</a>
     
     <li ><a href="#method-i-load_config">#load_config</a>
+    
+    <li ><a href="#method-i-log">#log</a>
     
     <li ><a href="#method-i-menu_li">#menu_li</a>
     
@@ -140,6 +160,39 @@
        </header>
 
     
+      <div id="method-i-active_in_if" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">active_in_if</span><span
+            class="method-args">(cond)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="active_in_if-source">
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 307</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">active_in_if</span>(<span class="ruby-identifier">cond</span>)
+   <span class="ruby-keyword">return</span> <span class="ruby-string">&#39;in active&#39;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">cond</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
       <div id="method-i-add_alert" class="method-detail ">
         
         <div class="method-heading">
@@ -159,7 +212,7 @@
 
           
           <div class="method-source-code" id="add_alert-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 149</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 174</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add_alert</span>(<span class="ruby-identifier">msg</span>)
   <span class="ruby-identifier">flash</span>[<span class="ruby-value">:alerts</span>] <span class="ruby-operator">||=</span> []
   <span class="ruby-identifier">flash</span>[<span class="ruby-value">:alerts</span>].<span class="ruby-identifier">push</span>(<span class="ruby-identifier">msg</span>)
@@ -194,7 +247,7 @@
 
           
           <div class="method-source-code" id="add_alert_now-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 162</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 187</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add_alert_now</span>(<span class="ruby-identifier">msg</span>)
   <span class="ruby-identifier">flash</span>.<span class="ruby-identifier">now</span>[<span class="ruby-value">:alerts</span>] <span class="ruby-operator">||=</span> []
   <span class="ruby-identifier">flash</span>.<span class="ruby-identifier">now</span>[<span class="ruby-value">:alerts</span>].<span class="ruby-identifier">push</span>(<span class="ruby-identifier">msg</span>)
@@ -229,7 +282,7 @@
 
           
           <div class="method-source-code" id="add_success-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 155</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 180</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add_success</span>(<span class="ruby-identifier">msg</span>)
   <span class="ruby-identifier">flash</span>[<span class="ruby-value">:success</span>] <span class="ruby-operator">||=</span> []
   <span class="ruby-identifier">flash</span>[<span class="ruby-value">:success</span>].<span class="ruby-identifier">push</span>(<span class="ruby-identifier">msg</span>)
@@ -264,11 +317,61 @@
 
           
           <div class="method-source-code" id="add_success_now-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 168</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 193</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add_success_now</span>(<span class="ruby-identifier">msg</span>)
   <span class="ruby-identifier">flash</span>.<span class="ruby-identifier">now</span>[<span class="ruby-value">:success</span>] <span class="ruby-operator">||=</span> []
   <span class="ruby-identifier">flash</span>.<span class="ruby-identifier">now</span>[<span class="ruby-value">:success</span>].<span class="ruby-identifier">push</span>(<span class="ruby-identifier">msg</span>)
   <span class="ruby-identifier">log</span>(<span class="ruby-node">&quot;success #{msg}&quot;</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-breadcrumb_annual_links" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">breadcrumb_annual_links</span><span
+            class="method-args">(action = :index)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>najdi řešitele pro daného uživatele (pokud existuje)</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>user_id
+<dd>
+<p>id uživatele</p>
+</dd><dt>annual
+<dd>
+<p>ročník (default: `nil`)</p>
+</dd></dl>
+
+<p><strong>Returns</strong> <a href="Sosna/Solver.html">Sosna::Solver</a> /
+nil</p>
+          
+          
+
+          
+          <div class="method-source-code" id="breadcrumb_annual_links-source">
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 407</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">breadcrumb_annual_links</span>(<span class="ruby-identifier">action</span> = <span class="ruby-value">:index</span>)
+   <span class="ruby-identifier">annual_max</span> = <span class="ruby-ivar">@config</span>[<span class="ruby-value">:annual</span>].<span class="ruby-identifier">to_i</span>
+   <span class="ruby-identifier">annual_min</span> = <span class="ruby-value">29</span> <span class="ruby-comment"># tep started</span>
+   { <span class="ruby-value">name:</span> <span class="ruby-node">&quot;Ročník #{@annual}&quot;</span>,
+     <span class="ruby-value">url:</span> {<span class="ruby-value">roc:</span><span class="ruby-ivar">@annual</span>, <span class="ruby-value">se:</span> <span class="ruby-value">1</span>},
+     <span class="ruby-value">sub:</span> (<span class="ruby-identifier">annual_min</span> <span class="ruby-operator">..</span> <span class="ruby-identifier">annual_max</span>).<span class="ruby-identifier">map</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span> {<span class="ruby-value">name:</span> <span class="ruby-node">&quot;Ročník #{a}&quot;</span>, <span class="ruby-value">url:</span> {<span class="ruby-value">action:</span> <span class="ruby-identifier">action</span>, <span class="ruby-value">roc:</span><span class="ruby-identifier">a</span>}}}.<span class="ruby-identifier">reverse</span>,
+   }
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -293,15 +396,32 @@
 
         <div class="method-description">
           
-          <p>opt:</p>
+          <p>button s iconou, nebo odkaz který vypadá jako button</p>
 
-<pre>ico -- icon class (fa-search)</pre>
+<p><strong>params</strong></p>
+<dl class="rdoc-list note-list"><dt>text, block
+<dd>
+<p>text buttonu</p>
+</dd><dt>opt
+<dd>
+<p>opsny pro &lt;a&gt; (nebo &lt;button&gt;) a navíc:</p>
+<dl class="rdoc-list note-list"><dt>ico
+<dd>
+<p>icon class font awesome (`fa-search`)</p>
+</dd><dt>href
+<dd>
+<p>url, pokud je tag bude &lt;a&gt;</p>
+</dd><dt>type
+<dd>
+<p>button type, pokud není bude to &#39;submit&#39;</p>
+</dd></dl>
+</dd></dl>
           
           
 
           
           <div class="method-source-code" id="button_tag-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 31</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 47</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">button_tag</span> (<span class="ruby-identifier">text</span>, <span class="ruby-identifier">opt</span> = {}, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">block_given?</span>
     <span class="ruby-identifier">opt</span> = <span class="ruby-identifier">text</span>
@@ -330,6 +450,83 @@
       </div>
 
     
+      <div id="method-i-class_active_if" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">class_active_if</span><span
+            class="method-args">(cond)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="class_active_if-source">
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 303</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">class_active_if</span>(<span class="ruby-identifier">cond</span>)
+   <span class="ruby-keyword">return</span> <span class="ruby-string">&#39;class=&quot;active&quot;&#39;</span>.<span class="ruby-identifier">html_safe</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">cond</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-config_value" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">config_value</span><span
+            class="method-args">(key)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>nahraj hodnotu z <a href="Sosna/Config.html">Sosna::Config</a></p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>key
+<dd>
+<p>požadovaná konfigurační hodnota</p>
+</dd></dl>
+
+<p><strong>Returns</strong> hodnotu</p>
+          
+          
+
+          
+          <div class="method-source-code" id="config_value-source">
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 379</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">config_value</span>(<span class="ruby-identifier">key</span>)
+  <span class="ruby-comment">#return @config[key] if @config</span>
+  <span class="ruby-identifier">c</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Config</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">key:</span><span class="ruby-identifier">key</span>).<span class="ruby-identifier">first</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">c</span>.<span class="ruby-identifier">value</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">c</span>
+  <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
       <div id="method-i-country_code_to_txt" class="method-detail ">
         
         <div class="method-heading">
@@ -343,14 +540,18 @@
 
         <div class="method-description">
           
-          <p>coutry_code: cz, nebo sk r: &#39;Slovensko&#39; if &#39;sk&#39; r: nil if
-&#39;cz&#39; r: coutry_code jinak</p>
+          <p>coutry_code: cz, nebo sk</p>
+
+<pre class="ruby"><span class="ruby-identifier">country_code_to_txt</span>(<span class="ruby-string">&#39;sk&#39;</span>) <span class="ruby-comment"># =&gt; &#39;Slovensko&#39;</span>
+<span class="ruby-identifier">country_code_to_txt</span>(<span class="ruby-string">&#39;cz&#39;</span>) <span class="ruby-comment"># =&gt; nil</span>
+<span class="ruby-identifier">country_code_to_txt</span>(<span class="ruby-string">&#39;blbost&#39;</span>) <span class="ruby-comment"># =&gt; &#39;blbost&#39;</span>
+</pre>
           
           
 
           
           <div class="method-source-code" id="country_code_to_txt-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 21</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 31</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">country_code_to_txt</span>(<span class="ruby-identifier">country_code</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-string">&quot;Slovensko&quot;</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">country_code</span>  <span class="ruby-operator">==</span> <span class="ruby-string">&#39;sk&#39;</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">country_code</span>  <span class="ruby-operator">==</span> <span class="ruby-string">&#39;cz&#39;</span>
@@ -385,7 +586,7 @@
 
           
           <div class="method-source-code" id="deadline_time-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 136</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 161</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">deadline_time</span>(<span class="ruby-identifier">cfg</span>, <span class="ruby-identifier">round</span>, <span class="ruby-identifier">ignore_show</span> = <span class="ruby-keyword">false</span>)
   <span class="ruby-identifier">log</span>(<span class="ruby-node">&quot;deadline round #{round}, #{cfg}, #{cfg[:deadline1]}&quot;</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">ignore_show</span>
@@ -427,13 +628,59 @@
 
           
           <div class="method-source-code" id="email_valid_mx_record-3F-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 175</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 200</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">email_valid_mx_record?</span>(<span class="ruby-identifier">email</span>)
     <span class="ruby-comment">#mail_servers = Resolv::DNS.open.getresources(email.split(&#39;@&#39;).last, Resolv::DNS::Resource::IN::MX)</span>
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">email</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">email</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;&#39;</span>
     <span class="ruby-identifier">mail_servers</span> = <span class="ruby-constant">Resolv</span><span class="ruby-operator">::</span><span class="ruby-constant">DNS</span>.<span class="ruby-identifier">open</span>.<span class="ruby-identifier">getresources</span>(<span class="ruby-identifier">email</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&#39;@&#39;</span>).<span class="ruby-identifier">last</span>.<span class="ruby-identifier">force_encoding</span>(<span class="ruby-string">&#39;ASCII-8BIT&#39;</span>), <span class="ruby-constant">Resolv</span><span class="ruby-operator">::</span><span class="ruby-constant">DNS</span><span class="ruby-operator">::</span><span class="ruby-constant">Resource</span><span class="ruby-operator">::</span><span class="ruby-constant">IN</span><span class="ruby-operator">::</span><span class="ruby-constant">MX</span>)
     <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">mail_servers</span>.<span class="ruby-identifier">empty?</span>
     <span class="ruby-keyword">true</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-find_solver_for_user_id" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">find_solver_for_user_id</span><span
+            class="method-args">(user_id, annual = nil)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>najdi řešitele pro daného uživatele (pokud existuje)</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>user_id
+<dd>
+<p>id uživatele</p>
+</dd><dt>annual
+<dd>
+<p>ročník (default: `nil`)</p>
+</dd></dl>
+
+<p><strong>Returns</strong> <a href="Sosna/Solver.html">Sosna::Solver</a> /
+nil</p>
+          
+          
+
+          
+          <div class="method-source-code" id="find_solver_for_user_id-source">
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 394</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">find_solver_for_user_id</span>(<span class="ruby-identifier">user_id</span>, <span class="ruby-identifier">annual</span> = <span class="ruby-keyword">nil</span>)
+  <span class="ruby-identifier">annual</span> <span class="ruby-operator">||=</span> <span class="ruby-ivar">@config</span>[<span class="ruby-value">:annual</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">config_value</span>(<span class="ruby-value">:annual</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Solver</span>.<span class="ruby-identifier">where</span>(<span class="ruby-value">user_id:</span> <span class="ruby-identifier">user_id</span>, <span class="ruby-value">annual:</span> <span class="ruby-identifier">annual</span> ).<span class="ruby-identifier">first</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -464,7 +711,7 @@
 
           
           <div class="method-source-code" id="form_error-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 196</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 221</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">form_error</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">attrs</span>)
   <span class="ruby-identifier">errors</span> = []
   <span class="ruby-identifier">attrs</span>.<span class="ruby-identifier">each</span> {<span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span> <span class="ruby-identifier">errors</span>.<span class="ruby-identifier">concat</span>(<span class="ruby-identifier">obj</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">get</span>(<span class="ruby-identifier">a</span>) <span class="ruby-operator">||</span> [] ) }
@@ -501,13 +748,92 @@
 
           
           <div class="method-source-code" id="form_error_class-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 204</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 229</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">form_error_class</span>(<span class="ruby-identifier">obj</span>, <span class="ruby-operator">*</span><span class="ruby-identifier">attrs</span>)
   <span class="ruby-identifier">attrs</span>.<span class="ruby-identifier">each</span>  <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">a</span><span class="ruby-operator">|</span>
     <span class="ruby-keyword">return</span> <span class="ruby-string">&#39;control-group error&#39;</span> <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">obj</span>.<span class="ruby-identifier">errors</span>.<span class="ruby-identifier">get</span>(<span class="ruby-identifier">a</span>).<span class="ruby-identifier">nil?</span>
   <span class="ruby-keyword">end</span>
   <span class="ruby-keyword">return</span> <span class="ruby-string">&#39;control-group&#39;</span>
 <span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-get_sorted_conflict_solvers" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">get_sorted_conflict_solvers</span><span
+            class="method-args">(annual, round)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="get_sorted_conflict_solvers-source">
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 311</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_sorted_conflict_solvers</span>(<span class="ruby-identifier">annual</span>, <span class="ruby-identifier">round</span>)
+    <span class="ruby-identifier">solvers</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Solver</span>.<span class="ruby-identifier">joins</span>(<span class="ruby-value">:solutions</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">:problem</span>)
+                           .<span class="ruby-identifier">where</span>(<span class="ruby-string">&#39;annual&#39;</span> <span class="ruby-operator">=&gt;</span>  <span class="ruby-identifier">annual</span>,
+                                  <span class="ruby-string">&#39;sosna_problems.round&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">round</span>,
+                                  <span class="ruby-string">&#39;solution_form&#39;</span> <span class="ruby-operator">=&gt;</span>  <span class="ruby-string">&#39;tep&#39;</span>,
+                                  <span class="ruby-string">&#39;is_test_solver&#39;</span> <span class="ruby-operator">=&gt;</span>  <span class="ruby-keyword">false</span>,
+                                  <span class="ruby-string">&#39;sosna_solutions.has_paper_mail&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-keyword">true</span> )
+                           .<span class="ruby-identifier">group</span>(<span class="ruby-value">:id</span>)
+                           .<span class="ruby-identifier">load</span>.<span class="ruby-identifier">to_a</span>
+
+    <span class="ruby-identifier">solvers</span>.<span class="ruby-identifier">sort!</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">a</span>,<span class="ruby-identifier">b</span><span class="ruby-operator">|</span> <span class="ruby-identifier">strcollf</span>(<span class="ruby-identifier">a</span>.<span class="ruby-identifier">last_name</span>, <span class="ruby-identifier">b</span>.<span class="ruby-identifier">last_name</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">strcollf</span>(<span class="ruby-identifier">a</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">b</span>.<span class="ruby-identifier">name</span>) <span class="ruby-operator">||</span> <span class="ruby-value">0</span> }
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-get_sorted_solvers" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">get_sorted_solvers</span><span
+            class="method-args">(where = {})</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="get_sorted_solvers-source">
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 323</span>
+  <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_sorted_solvers</span>(<span class="ruby-identifier">where</span> = {})
+      <span class="ruby-identifier">solvers</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Solver</span>.<span class="ruby-identifier">includes</span>(<span class="ruby-value">:school</span>).<span class="ruby-identifier">where</span>(<span class="ruby-identifier">where</span>).<span class="ruby-identifier">load</span>.<span class="ruby-identifier">to_a</span>
+<span class="ruby-comment">#      solvers.sort! { |a,b| (a.last_name != b.last_name ) ? strcoll(a.last_name, b.last_name) :</span>
+<span class="ruby-comment">#                                                            strcoll(a.name, b.name)</span>
+<span class="ruby-comment">#                    }</span>
+      <span class="ruby-identifier">solvers</span>.<span class="ruby-identifier">sort!</span> { <span class="ruby-operator">|</span><span class="ruby-identifier">a</span>,<span class="ruby-identifier">b</span><span class="ruby-operator">|</span> <span class="ruby-identifier">strcollf</span>(<span class="ruby-identifier">a</span>.<span class="ruby-identifier">last_name</span>, <span class="ruby-identifier">b</span>.<span class="ruby-identifier">last_name</span>) <span class="ruby-operator">||</span> <span class="ruby-identifier">strcollf</span>(<span class="ruby-identifier">a</span>.<span class="ruby-identifier">name</span>, <span class="ruby-identifier">b</span>.<span class="ruby-identifier">name</span>) <span class="ruby-operator">||</span> <span class="ruby-value">0</span> }
+  <span class="ruby-keyword">end</span></pre>
           </div>
           
         </div>
@@ -537,13 +863,63 @@
 
           
           <div class="method-source-code" id="get_verifier-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 243</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 268</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_verifier</span>(<span class="ruby-identifier">purpose</span>)
   <span class="ruby-comment"># FIXME: zde by se mel zamichat aplikacni &#39;secret</span>
   <span class="ruby-comment">#kg = ActiveSupport::KeyGenerator.new(&#39;fakt-secret:&#39;)</span>
   <span class="ruby-comment">#verifier = ActiveSupport::MessageVerifier.new( kg.generate_key(&#39;giwi-secret&#39;, 256), digest: &#39;SHA256&#39;)</span>
   <span class="ruby-identifier">verifier</span> = <span class="ruby-constant">ActiveSupport</span><span class="ruby-operator">::</span><span class="ruby-constant">MessageVerifier</span>.<span class="ruby-identifier">new</span>(<span class="ruby-string">&#39;ahoj&#39;</span>, <span class="ruby-value">serializer:</span> <span class="ruby-constant">YAML</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">verifier</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-heading_with_tools" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">heading_with_tools</span><span
+            class="method-args">(title, &amp;block)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          
+          
+          
+
+          
+          <div class="method-source-code" id="heading_with_tools-source">
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 331</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">heading_with_tools</span>(<span class="ruby-identifier">title</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-identifier">body</span> = <span class="ruby-identifier">capture</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+  <span class="ruby-identifier">content_tag</span>(<span class="ruby-value">:div</span>, <span class="ruby-value">:class</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&quot;widget-box transparent collapsed&quot;</span>) <span class="ruby-keyword">do</span>
+    <span class="ruby-identifier">content_tag</span>(<span class="ruby-value">:div</span>, <span class="ruby-value">:class</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&quot;widget-header widget-header-flat&quot;</span>) <span class="ruby-keyword">do</span>
+      <span class="ruby-identifier">content_tag</span>(<span class="ruby-value">:h4</span>, <span class="ruby-identifier">title</span>, <span class="ruby-value">:class</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&quot;widget-title&quot;</span>) <span class="ruby-operator">+</span>
+      <span class="ruby-identifier">content_tag</span>(<span class="ruby-value">:div</span>, <span class="ruby-value">:class</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&quot;widget-toolbar&quot;</span>) <span class="ruby-keyword">do</span>
+        <span class="ruby-identifier">content_tag</span>(<span class="ruby-value">:a</span>, <span class="ruby-value">href:</span> <span class="ruby-string">&#39;#&#39;</span>, <span class="ruby-string">&#39;data-action&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&#39;collapse&#39;</span>) <span class="ruby-keyword">do</span>
+           <span class="ruby-identifier">content_tag</span>(<span class="ruby-value">:i</span>, <span class="ruby-string">&#39; &#39;</span>, <span class="ruby-value">:class</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&#39;ace-icon fa fa-dashboard&#39;</span>)
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span> <span class="ruby-operator">+</span>
+    <span class="ruby-identifier">content_tag</span>(<span class="ruby-value">:div</span>, <span class="ruby-value">:class</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&quot;widget-body&quot;</span>) <span class="ruby-keyword">do</span>
+      <span class="ruby-identifier">content_tag</span>(<span class="ruby-value">:div</span>, <span class="ruby-value">:class</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&quot;row&quot;</span>) <span class="ruby-keyword">do</span>
+        <span class="ruby-identifier">content_tag</span>(<span class="ruby-value">:div</span>, <span class="ruby-value">:class</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&quot;col-xs-12&quot;</span>) <span class="ruby-keyword">do</span>
+         <span class="ruby-identifier">capture</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
+        <span class="ruby-keyword">end</span>
+      <span class="ruby-keyword">end</span>
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -568,13 +944,32 @@
 
         <div class="method-description">
           
-          
+          <p>Vytvoří odkaz na link s iconou.</p>
+
+<p>*params*ta</p>
+<dl class="rdoc-list note-list"><dt>text
+<dd>
+<p>text linku</p>
+</dd><dt>url
+<dd>
+<p>kam to bude odkazovat (stejný argument jak má `link_to`)</p>
+</dd><dt>opt
+<dd>
+<p>stejné jako `link_to` a navíc:</p>
+<dl class="rdoc-list note-list"><dt>ico
+<dd>
+<p>class z font-awesome jaká icona se má použít (třeba `fa-user`).</p>
+</dd></dl>
+</dd><dt>block
+<dd>
+<p>materiál textu linku</p>
+</dd></dl>
           
           
 
           
           <div class="method-source-code" id="ilink_to-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 7</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 16</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">ilink_to</span>(<span class="ruby-identifier">text</span> = <span class="ruby-keyword">nil</span> , <span class="ruby-identifier">url</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">opt</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
   <span class="ruby-identifier">url</span>, <span class="ruby-identifier">opt</span>, <span class="ruby-identifier">text</span> = <span class="ruby-identifier">opt</span>, <span class="ruby-identifier">text</span>, <span class="ruby-identifier">capture</span>(<span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>) <span class="ruby-keyword">if</span> <span class="ruby-identifier">block_given?</span>
   <span class="ruby-identifier">opt</span> <span class="ruby-operator">||=</span> {}
@@ -583,6 +978,47 @@
   <span class="ruby-identifier">text</span> = <span class="ruby-identifier">content_tag</span>(<span class="ruby-value">:i</span>, <span class="ruby-string">&#39;&#39;</span>, <span class="ruby-value">:class</span><span class="ruby-operator">=&gt;</span> <span class="ruby-node">&quot;ace-icon fa #{ico}&quot;</span>) <span class="ruby-operator">+</span> <span class="ruby-string">&quot; &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">text</span> <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">ico</span>.<span class="ruby-identifier">nil?</span>
 
   <span class="ruby-identifier">link_to</span> <span class="ruby-identifier">text</span>, <span class="ruby-identifier">url</span>, <span class="ruby-identifier">opt</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-is_bonus_round" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">is_bonus_round</span><span
+            class="method-args">(round)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>je toto bonusová serie (interně série čislo 100)</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>round
+<dd>
+<p>číslo série</p>
+</dd></dl>
+
+<p><strong>Returns</strong> true/fal</p>
+          
+          
+
+          
+          <div class="method-source-code" id="is_bonus_round-source">
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 368</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">is_bonus_round</span>(<span class="ruby-identifier">round</span>)
+  <span class="ruby-keyword">return</span> <span class="ruby-identifier">round</span>.<span class="ruby-identifier">to_s</span> <span class="ruby-operator">==</span> <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Problem</span><span class="ruby-operator">::</span><span class="ruby-constant">BONUS_ROUND_NUM</span>.<span class="ruby-identifier">to_s</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -615,7 +1051,7 @@
 
           
           <div class="method-source-code" id="link_to_show-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 129</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 154</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">link_to_show</span>(<span class="ruby-identifier">text</span>, <span class="ruby-identifier">obj_id</span>)
   <span class="ruby-keyword">if</span> <span class="ruby-identifier">obj_id</span>
     <span class="ruby-identifier">link_to</span> <span class="ruby-identifier">text</span>, <span class="ruby-value">:action</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-string">&#39;show&#39;</span>, <span class="ruby-value">:id</span> <span class="ruby-operator">=&gt;</span>  <span class="ruby-identifier">obj_id</span>
@@ -699,7 +1135,7 @@
 
           
           <div class="method-source-code" id="load_config-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 231</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 256</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">load_config</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">if</span> <span class="ruby-ivar">@config</span>
   <span class="ruby-ivar">@config</span>  =  { <span class="ruby-value">annual:</span><span class="ruby-value">20</span>,
@@ -710,6 +1146,45 @@
   <span class="ruby-ivar">@annual</span> = <span class="ruby-ivar">@config</span>[<span class="ruby-value">:annual</span>]
   <span class="ruby-ivar">@round</span> = <span class="ruby-ivar">@config</span>[<span class="ruby-value">:round</span>]
   <span class="ruby-comment">#log( &quot;config: #{@config}&quot; )</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-log" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">log</span><span
+            class="method-args">(msg)</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <p>helper pro zalogování, level FATAL</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>msg
+<dd>
+<p>text zprávy</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="log-source">
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 357</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">log</span>(<span class="ruby-identifier">msg</span>)
+  <span class="ruby-constant">Rails</span><span class="ruby-operator">::</span><span class="ruby-identifier">logger</span>.<span class="ruby-identifier">fatal</span>(<span class="ruby-string">&quot;  &quot;</span> <span class="ruby-operator">+</span> <span class="ruby-identifier">msg</span>)
 <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -734,17 +1209,36 @@
 
         <div class="method-description">
           
-          <p>opt:</p>
+          <p>list item, s iconou a potenciálním active, pokud se aktalní url uzná, že
+“ma souvislost” s odkazovanou url</p>
 
-<pre>ico
-class
-lii</pre>
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>uri
+<dd>
+<p>link kam menu odkazuje</p>
+</dd><dt>text, block
+<dd>
+<p>text</p>
+</dd><dt>opt
+<dd>
+<p>opsny</p>
+<dl class="rdoc-list note-list"><dt>cls
+<dd>
+<p>string nebo pole stringu, class který se použije v &lt;li class=“”&gt;</p>
+</dd><dt>ico
+<dd>
+<p>font awesome class (např. `fa-user`)</p>
+</dd><dt>lii
+<dd>
+<p>true pokud jde o druhou úroveň (použite z `menu_lii()`</p>
+</dd></dl>
+</dd></dl>
           
           
 
           
           <div class="method-source-code" id="menu_li-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 58</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 83</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">menu_li</span>(<span class="ruby-identifier">uri</span>, <span class="ruby-identifier">text</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">opt</span> = {} , <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
 
   <span class="ruby-ivar">@_level</span> <span class="ruby-operator">||=</span> <span class="ruby-value">1</span>
@@ -811,13 +1305,13 @@ lii</pre>
 
         <div class="method-description">
           
-          
+          <p>list item druhé úrovně, viz `menu_li`</p>
           
           
 
           
           <div class="method-source-code" id="menu_lii-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 49</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 68</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">menu_lii</span>(<span class="ruby-identifier">uri</span>, <span class="ruby-identifier">text</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">opt</span> = {} ,  <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>)
    <span class="ruby-identifier">opt</span>.<span class="ruby-identifier">merge!</span> <span class="ruby-value">lii:</span> <span class="ruby-keyword">true</span>
    <span class="ruby-identifier">menu_li</span> <span class="ruby-identifier">uri</span>, <span class="ruby-identifier">text</span>, <span class="ruby-identifier">opt</span>, <span class="ruby-operator">&amp;</span><span class="ruby-identifier">block</span>
@@ -851,7 +1345,7 @@ lii</pre>
 
           
           <div class="method-source-code" id="sign_generate-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 251</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 276</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sign_generate</span>(<span class="ruby-identifier">text</span>, <span class="ruby-identifier">purpose</span>)
   <span class="ruby-identifier">verifier</span> = <span class="ruby-identifier">get_verifier</span>(<span class="ruby-identifier">purpose</span>)
   <span class="ruby-identifier">token</span> = <span class="ruby-identifier">verifier</span>.<span class="ruby-identifier">generate</span>(<span class="ruby-identifier">text</span>)
@@ -888,7 +1382,7 @@ lii</pre>
 
           
           <div class="method-source-code" id="sign_verified-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 259</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 284</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sign_verified</span>(<span class="ruby-identifier">token</span>, <span class="ruby-identifier">purpose</span>)
 
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">nil</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">token</span>.<span class="ruby-identifier">nil?</span>
@@ -936,7 +1430,7 @@ lii</pre>
 
           
           <div class="method-source-code" id="strcoll-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 187</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 212</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">strcoll</span>(<span class="ruby-identifier">a</span>,<span class="ruby-identifier">b</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-constant">FFILocale</span><span class="ruby-operator">::</span><span class="ruby-identifier">strcoll</span>(<span class="ruby-identifier">a</span>, <span class="ruby-identifier">b</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -969,7 +1463,7 @@ lii</pre>
 
           
           <div class="method-source-code" id="strcollf-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 191</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 216</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">strcollf</span>(<span class="ruby-identifier">a</span>,<span class="ruby-identifier">b</span>)
   <span class="ruby-identifier">ret</span> = <span class="ruby-constant">FFILocale</span><span class="ruby-operator">::</span><span class="ruby-identifier">strcoll</span>(<span class="ruby-identifier">a</span>, <span class="ruby-identifier">b</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">ret</span> <span class="ruby-operator">==</span> <span class="ruby-value">0</span> <span class="ruby-operator">?</span> <span class="ruby-keyword">false</span> <span class="ruby-operator">:</span> <span class="ruby-identifier">ret</span>
@@ -1003,7 +1497,7 @@ lii</pre>
 
           
           <div class="method-source-code" id="translit-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 183</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 208</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">translit</span>(<span class="ruby-identifier">str</span>)
   <span class="ruby-constant">UnicodeUtils</span>.<span class="ruby-identifier">nfkd</span>(<span class="ruby-identifier">str</span>).<span class="ruby-identifier">gsub</span>(<span class="ruby-regexp">/(\p{Letter})\p{Mark}+/</span>,<span class="ruby-string">&#39;\\1&#39;</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -1036,7 +1530,7 @@ lii</pre>
 
           
           <div class="method-source-code" id="url_for_root-source">
-            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 102</span>
+            <pre><span class="ruby-comment"># File app/helpers/application_helper.rb, line 127</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">url_for_root</span>(<span class="ruby-identifier">user</span> = <span class="ruby-keyword">nil</span>)
   <span class="ruby-identifier">user</span> <span class="ruby-operator">||=</span> <span class="ruby-identifier">current_user</span>
   <span class="ruby-comment">#log(&quot;user:#{pp(user)}&quot;)</span>

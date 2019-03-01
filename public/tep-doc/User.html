@@ -101,6 +101,62 @@
 
   <section class="description">
     
+<p>Třída reprezentující tabulku user, uživatele.</p>
+
+<p>Pozor: řešitel je v každém ročníku nový, neplést s uživatelem, Tedy jeden
+uživatel může mít i více řešitelů, nebo žádného. Každý řešitel by měl mít
+alepsoň jedno uživatele.</p>
+
+<p>Skupiny:</p>
+<dl class="rdoc-list note-list"><dt>admin
+<dd>
+<p>admin</p>
+</dd><dt>org
+<dd>
+<p>organizator</p>
+</dd><dt>user
+<dd>
+<p>běžný uživatel, s největší pravděpodobností řešitel</p>
+</dd><dt>guest
+<dd>
+<p>asi se nepoužívá</p>
+</dd><dt>sklep
+<dd>
+<p>může přistupovat do sklepa</p>
+</dd><dt>morg
+<dd>
+<p>more org</p>
+</dd><dt>jabber
+<dd>
+<p>obsolete</p>
+</dd></dl>
+
+<p><strong>Colums</strong></p>
+
+<pre class="ruby"><span class="ruby-identifier">t</span>.<span class="ruby-identifier">string</span>   <span class="ruby-string">&quot;email&quot;</span>,                  <span class="ruby-value">limit:</span> <span class="ruby-value">255</span>, <span class="ruby-value">default:</span> <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-value">null:</span> <span class="ruby-keyword">false</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">string</span>   <span class="ruby-string">&quot;encrypted_password&quot;</span>,     <span class="ruby-value">limit:</span> <span class="ruby-value">255</span>, <span class="ruby-value">default:</span> <span class="ruby-string">&quot;&quot;</span>, <span class="ruby-value">null:</span> <span class="ruby-keyword">false</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">string</span>   <span class="ruby-string">&quot;reset_password_token&quot;</span>,   <span class="ruby-value">limit:</span> <span class="ruby-value">255</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">datetime</span> <span class="ruby-string">&quot;reset_password_sent_at&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">datetime</span> <span class="ruby-string">&quot;remember_created_at&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">integer</span>  <span class="ruby-string">&quot;sign_in_count&quot;</span>,                      <span class="ruby-value">default:</span> <span class="ruby-value">0</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">datetime</span> <span class="ruby-string">&quot;current_sign_in_at&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">datetime</span> <span class="ruby-string">&quot;last_sign_in_at&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">string</span>   <span class="ruby-string">&quot;current_sign_in_ip&quot;</span>,     <span class="ruby-value">limit:</span> <span class="ruby-value">255</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">string</span>   <span class="ruby-string">&quot;last_sign_in_ip&quot;</span>,        <span class="ruby-value">limit:</span> <span class="ruby-value">255</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">string</span>   <span class="ruby-string">&quot;confirmation_token&quot;</span>,     <span class="ruby-value">limit:</span> <span class="ruby-value">255</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">datetime</span> <span class="ruby-string">&quot;confirmed_at&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">datetime</span> <span class="ruby-string">&quot;confirmation_sent_at&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">string</span>   <span class="ruby-string">&quot;unconfirmed_email&quot;</span>,      <span class="ruby-value">limit:</span> <span class="ruby-value">255</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">integer</span>  <span class="ruby-string">&quot;failed_attempts&quot;</span>,                    <span class="ruby-value">default:</span> <span class="ruby-value">0</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">string</span>   <span class="ruby-string">&quot;unlock_token&quot;</span>,           <span class="ruby-value">limit:</span> <span class="ruby-value">255</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">datetime</span> <span class="ruby-string">&quot;locked_at&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">integer</span>  <span class="ruby-string">&quot;roles_mask&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">datetime</span> <span class="ruby-string">&quot;created_at&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">datetime</span> <span class="ruby-string">&quot;updated_at&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">string</span>   <span class="ruby-string">&quot;name&quot;</span>,                   <span class="ruby-value">limit:</span> <span class="ruby-value">255</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">string</span>   <span class="ruby-string">&quot;last_name&quot;</span>,              <span class="ruby-value">limit:</span> <span class="ruby-value">255</span>
+</pre>
+
   </section>
 
   
@@ -133,13 +189,13 @@
 
         <div class="method-description">
           
-          
+          <p><strong>Returns</strong> kominace sloupců “#{full_name} &lt;#{email}&gt;”</p>
           
           
 
           
           <div class="method-source-code" id="full_email-source">
-            <pre><span class="ruby-comment"># File app/models/user.rb, line 34</span>
+            <pre><span class="ruby-comment"># File app/models/user.rb, line 75</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">full_email</span>
   <span class="ruby-node">&quot;#{full_name} &lt;#{email}&gt;&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -166,13 +222,14 @@
 
         <div class="method-description">
           
-          
+          <p><strong>Returns</strong> kominace sloupců, něco jako “#{name} #{last_name}”
+pokud dané spouce existují</p>
           
           
 
           
           <div class="method-source-code" id="full_name-source">
-            <pre><span class="ruby-comment"># File app/models/user.rb, line 37</span>
+            <pre><span class="ruby-comment"># File app/models/user.rb, line 81</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">full_name</span>
   <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span><span class="ruby-identifier">name</span>.<span class="ruby-identifier">nil?</span>  <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-operator">!</span><span class="ruby-identifier">last_name</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-node">&quot;#{name} #{last_name}&quot;</span>
@@ -207,13 +264,13 @@
 
         <div class="method-description">
           
-          
+          <p>zašle instrukce pro první přihlášení</p>
           
           
 
           
           <div class="method-source-code" id="send_first_login_instructions-source">
-            <pre><span class="ruby-comment"># File app/models/user.rb, line 49</span>
+            <pre><span class="ruby-comment"># File app/models/user.rb, line 95</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">send_first_login_instructions</span>
    <span class="ruby-identifier">token_raw</span> = <span class="ruby-identifier">set_reset_password_token</span>
    <span class="ruby-identifier">send_devise_notification</span>(<span class="ruby-value">:first_login_instructions</span>, <span class="ruby-identifier">token_raw</span>)

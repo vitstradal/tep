@@ -1,5 +1,16 @@
+##
+# Třída reprezentující tabulku inform
+#
+# *Colums*
+#    t.string   "form",       limit: 255
+#    t.string   "data",       limit: 255
+#    t.datetime "created_at"
+#    t.datetime "updated_at"
+#    t.text     "user_agent",             default: "unknown"
 require 'json'
 class Inform < ActiveRecord::Base
+  ##
+  # decoduje json sloupec `data`
   def jdata
     @jdata = JSON.parse(data) if @jdata.nil?
     @jdata

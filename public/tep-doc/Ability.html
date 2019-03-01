@@ -97,6 +97,9 @@
 
   <section class="description">
     
+<p>Třída definující co který uživatel může, přístupová práva jsou založena na
+příslušnosti uživatele ve skupině.</p>
+
   </section>
 
   
@@ -135,7 +138,7 @@
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File app/models/ability.rb, line 4</span>
+            <pre><span class="ruby-comment"># File app/models/ability.rb, line 7</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">user</span>)
 
   <span class="ruby-identifier">user</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span> <span class="ruby-comment"># guest user (not logged in)</span>

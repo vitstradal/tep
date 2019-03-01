@@ -118,13 +118,13 @@
 
         <div class="method-description">
           
-          
+          <p>decoduje json sloupec `data`</p>
           
           
 
           
           <div class="method-source-code" id="jdata-source">
-            <pre><span class="ruby-comment"># File app/models/inform.rb, line 3</span>
+            <pre><span class="ruby-comment"># File app/models/inform.rb, line 14</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">jdata</span>
   <span class="ruby-ivar">@jdata</span> = <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">parse</span>(<span class="ruby-identifier">data</span>) <span class="ruby-keyword">if</span> <span class="ruby-ivar">@jdata</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-ivar">@jdata</span>

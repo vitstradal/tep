@@ -4,7 +4,8 @@ require 'simple_bosh_session'
 # Controller od kterého se odvozují ostatní kotrolery v tepu.
 #
 # Je jednak kvůli řešení errorů (generuje se error_id, a zasílá se mail).
-# Druhý důvod je `after_sign_in_path_for` hook kam se přesměrovat po nalohování
+#
+# Druhý důvod je `after_sign_in_path_for` hook kam se přesměrovat po nalohování.
 #
 
 class ApplicationController < ActionController::Base
@@ -27,6 +28,7 @@ class ApplicationController < ActionController::Base
 #  end
 
   ##
+  # #### rescue_from `CanCan::AccessDenied`
   # pokud nemá člověk opravnění, 
   # * je to možná tím, že není přihlášeny,
   #   pak ho přihlaš, a po přihlášení sem přijď znova (param `next`).

@@ -101,9 +101,10 @@
     
 <p>Controller od kterého se odvozují ostatní kotrolery v tepu.</p>
 
-<p>Je jednak kvůli řešení errorů (generuje se error_id, a zasílá se mail).
-Druhý důvod je `after_sign_in_path_for` hook kam se přesměrovat po
-nalohování</p>
+<p>Je jednak kvůli řešení errorů (generuje se error_id, a zasílá se mail).</p>
+
+<p>Druhý důvod je `after_sign_in_path_for` hook kam se přesměrovat po
+nalohování.</p>
 
   </section>
 
@@ -143,7 +144,7 @@ nalohování</p>
 
           
           <div class="method-source-code" id="after_sign_in_path_for-source">
-            <pre><span class="ruby-comment"># File app/controllers/application_controller.rb, line 17</span>
+            <pre><span class="ruby-comment"># File app/controllers/application_controller.rb, line 18</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">after_sign_in_path_for</span>(<span class="ruby-identifier">user</span>)
    <span class="ruby-identifier">ret_url</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:next</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">url_for_root</span>(<span class="ruby-identifier">user</span>)
    <span class="ruby-comment">#password = params[:user][:password]</span>
@@ -173,7 +174,7 @@ nalohování</p>
 
         <div class="method-description">
           
-          <p>pokud nemá člověk opravnění,</p>
+          <p>#### rescue_from `CanCan::AccessDenied` pokud nemá člověk opravnění,</p>
 <ul><li>
 <p>je to možná tím, že není přihlášeny, pak ho přihlaš, a po přihlášení sem
 přijď znova (param `next`). pokud dojde k chybě pošli email s informacemi</p>
@@ -185,7 +186,7 @@ přijď znova (param `next`). pokud dojde k chybě pošli email s informacemi</p
 
           
           <div class="method-source-code" id="unknown-source">
-            <pre><span class="ruby-comment"># File app/controllers/application_controller.rb, line 35</span>
+            <pre><span class="ruby-comment"># File app/controllers/application_controller.rb, line 37</span>
 <span class="ruby-identifier">rescue_from</span> <span class="ruby-constant">CanCan</span><span class="ruby-operator">::</span><span class="ruby-constant">AccessDenied</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">exception</span><span class="ruby-operator">|</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">nil?</span>
       <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">new_user_session_url</span>(<span class="ruby-value">:next</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">request</span>.<span class="ruby-identifier">path</span>)

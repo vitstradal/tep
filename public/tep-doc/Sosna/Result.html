@@ -92,6 +92,25 @@
 
   <section class="description">
     
+<p>Třída reprezentující tabulku sosna_result, výsledek řešitele k dané serii.
+Obsahuje počet bodů i pořadí v sérii i celkově.</p>
+
+<p><strong>Colums</strong></p>
+
+<pre class="ruby"><span class="ruby-identifier">t</span>.<span class="ruby-identifier">integer</span>  <span class="ruby-string">&quot;annual&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">integer</span>  <span class="ruby-string">&quot;round&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">integer</span>  <span class="ruby-string">&quot;solver_id&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">text</span>     <span class="ruby-string">&quot;comment&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">integer</span>  <span class="ruby-string">&quot;score&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">integer</span>  <span class="ruby-string">&quot;round_score&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">integer</span>  <span class="ruby-string">&quot;rank&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">integer</span>  <span class="ruby-string">&quot;rank_to&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">integer</span>  <span class="ruby-string">&quot;class_rank&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">integer</span>  <span class="ruby-string">&quot;class_rank_to&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">datetime</span> <span class="ruby-string">&quot;created_at&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">datetime</span> <span class="ruby-string">&quot;updated_at&quot;</span>
+</pre>
+
   </section>
 
   
@@ -124,13 +143,15 @@
 
         <div class="method-description">
           
-          
+          <p>je v pořadí v ročníku na dané pozici sám, nebo sdílí místo s někým jiným?</p>
+
+<p><strong>Returns</strong> `false` je sám, `true` sdílí</p>
           
           
 
           
           <div class="method-source-code" id="class_rank_multi-3F-source">
-            <pre><span class="ruby-comment"># File app/models/sosna/result.rb, line 10</span>
+            <pre><span class="ruby-comment"># File app/models/sosna/result.rb, line 36</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">class_rank_multi?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">class_rank</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">class_rank_to</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">class_rank</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">class_rank_to</span>
@@ -158,13 +179,33 @@
 
         <div class="method-description">
           
-          
+          <p>Vytiskne pořadí v ročníku</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>result_last
+<dd><dl class="rdoc-list label-list"><dt><a href="Result.html">Sosna::Result</a>
+<dd>
+<p>pořadí předchozího (pokud je stejné, bude vráceno &#39;&#39;) nebo
+&#39;nil&#39;</p>
+</dd></dl>
+</dd><dt>begin_page
+<dd>
+<p>true/false pokud je nová stránka vypíše se pořadí bez ohledu na
+`result_last`</p>
+</dd></dl>
+
+<p><strong>Returns</strong></p>
+
+<pre class="ruby"><span class="ruby-string">&#39;5.--6.&#39;</span> <span class="ruby-comment"># pokud pořadí sdíleno</span>
+<span class="ruby-string">&#39;5.&#39;</span>     <span class="ruby-comment"># poud je sám</span>
+<span class="ruby-string">&#39;&#39;</span>       <span class="ruby-comment"># pokud je předchozí pořadí stejné, a není začátek stránky</span>
+</pre>
           
           
 
           
           <div class="method-source-code" id="class_rank_range-source">
-            <pre><span class="ruby-comment"># File app/models/sosna/result.rb, line 29</span>
+            <pre><span class="ruby-comment"># File app/models/sosna/result.rb, line 72</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">class_rank_range</span>(<span class="ruby-identifier">result_last</span> = <span class="ruby-keyword">nil</span>,<span class="ruby-identifier">page_begin</span> = <span class="ruby-keyword">false</span>)
   <span class="ruby-identifier">class_range</span> = <span class="ruby-identifier">class_rank_multi?</span> <span class="ruby-operator">?</span> <span class="ruby-node">&quot;#{class_rank}.--#{class_rank_to}.&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-node">&quot;#{class_rank}.&quot;</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">class_range</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">result_last</span>.<span class="ruby-identifier">nil?</span>
@@ -195,13 +236,15 @@
 
         <div class="method-description">
           
-          
+          <p>je v celkovém pořadí na dané pozici sám, nebo sdílí místo s někým jiným?</p>
+
+<p><strong>Returns</strong> `false` je sám, `true` sdílí</p>
           
           
 
           
           <div class="method-source-code" id="rank_multi-3F-source">
-            <pre><span class="ruby-comment"># File app/models/sosna/result.rb, line 5</span>
+            <pre><span class="ruby-comment"># File app/models/sosna/result.rb, line 27</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">rank_multi?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">rank</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">rank_to</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">rank</span> <span class="ruby-operator">&lt;</span> <span class="ruby-identifier">rank_to</span>
@@ -229,20 +272,33 @@
 
         <div class="method-description">
           
-          <p>def rank_disp(result_last = nil, page_begin = false)</p>
+          <p>Vytiskne celkové pořadí</p>
 
-<pre class="ruby"><span class="ruby-keyword">return</span> <span class="ruby-identifier">rank_disp</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">result_last</span>.<span class="ruby-identifier">nil?</span>
-<span class="ruby-keyword">return</span> <span class="ruby-identifier">rank</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">page_begin</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">result_last</span>.<span class="ruby-identifier">rank</span> <span class="ruby-operator">!=</span> <span class="ruby-identifier">rank</span>
-<span class="ruby-keyword">return</span> <span class="ruby-string">&#39;&#39;</span>
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>result_last
+<dd><dl class="rdoc-list label-list"><dt><a href="Result.html">Sosna::Result</a>
+<dd>
+<p>pořadí předchozího (pokud je stejné, bude vráceno &#39;&#39;) nebo
+&#39;nil&#39;</p>
+</dd></dl>
+</dd><dt>begin_page
+<dd>
+<p>true/false pokud je nová stránka vypíše se pořadí bez ohledu na
+`result_last`</p>
+</dd></dl>
+
+<p><strong>Returns</strong></p>
+
+<pre class="ruby"><span class="ruby-string">&#39;5.--6.&#39;</span> <span class="ruby-comment"># pokud pořadí sdíleno</span>
+<span class="ruby-string">&#39;5.&#39;</span>     <span class="ruby-comment"># poud je sám</span>
+<span class="ruby-string">&#39;&#39;</span>       <span class="ruby-comment"># pokud je předchozí pořadí stejné, a není začátek stránky</span>
 </pre>
-
-<p>end</p>
           
           
 
           
           <div class="method-source-code" id="rank_range-source">
-            <pre><span class="ruby-comment"># File app/models/sosna/result.rb, line 21</span>
+            <pre><span class="ruby-comment"># File app/models/sosna/result.rb, line 53</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">rank_range</span>(<span class="ruby-identifier">result_last</span> = <span class="ruby-keyword">nil</span>, <span class="ruby-identifier">page_begin</span> = <span class="ruby-keyword">false</span>)
   <span class="ruby-identifier">range</span> = <span class="ruby-identifier">rank_multi?</span> <span class="ruby-operator">?</span> <span class="ruby-node">&quot;#{rank}.--#{rank_to}.&quot;</span> <span class="ruby-operator">:</span> <span class="ruby-node">&quot;#{rank}.&quot;</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">range</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">result_last</span>.<span class="ruby-identifier">nil?</span>

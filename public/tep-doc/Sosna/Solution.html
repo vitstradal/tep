@@ -101,6 +101,23 @@
 
   <section class="description">
     
+<p>Třída reprezentující tabulku sosna_solution, řešení uživatele (každý jedne
+papír)</p>
+
+<p><strong>Colums</strong></p>
+
+<pre class="ruby"><span class="ruby-identifier">t</span>.<span class="ruby-identifier">string</span>   <span class="ruby-string">&quot;filename&quot;</span>,              <span class="ruby-value">limit:</span> <span class="ruby-value">255</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">string</span>   <span class="ruby-string">&quot;filename_orig&quot;</span>,         <span class="ruby-value">limit:</span> <span class="ruby-value">255</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">string</span>   <span class="ruby-string">&quot;filename_corr&quot;</span>,         <span class="ruby-value">limit:</span> <span class="ruby-value">255</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">string</span>   <span class="ruby-string">&quot;filename_corr_display&quot;</span>, <span class="ruby-value">limit:</span> <span class="ruby-value">255</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">integer</span>  <span class="ruby-string">&quot;score&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">integer</span>  <span class="ruby-string">&quot;problem_id&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">integer</span>  <span class="ruby-string">&quot;solver_id&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">datetime</span> <span class="ruby-string">&quot;created_at&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">datetime</span> <span class="ruby-string">&quot;updated_at&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">boolean</span>  <span class="ruby-string">&quot;has_paper_mail&quot;</span>,                    <span class="ruby-value">default:</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">null:</span> <span class="ruby-keyword">false</span>
+</pre>
+
   </section>
 
   
@@ -133,13 +150,13 @@
 
         <div class="method-description">
           
-          
+          <p><strong>Returns</strong> název souboru řešení (originál) na disku / nil</p>
           
           
 
           
           <div class="method-source-code" id="get_filename_ori-source">
-            <pre><span class="ruby-comment"># File app/models/sosna/solution.rb, line 14</span>
+            <pre><span class="ruby-comment"># File app/models/sosna/solution.rb, line 30</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_filename_ori</span>
   <span class="ruby-identifier">_get_filename</span>(<span class="ruby-keyword">true</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -166,13 +183,13 @@
 
         <div class="method-description">
           
-          
+          <p><strong>Returns</strong> název souboru opraveného řešení na disku / nil</p>
           
           
 
           
           <div class="method-source-code" id="get_filename_rev-source">
-            <pre><span class="ruby-comment"># File app/models/sosna/solution.rb, line 18</span>
+            <pre><span class="ruby-comment"># File app/models/sosna/solution.rb, line 36</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">get_filename_rev</span>
   <span class="ruby-identifier">_get_filename</span>(<span class="ruby-keyword">false</span>)
 <span class="ruby-keyword">end</span></pre>
@@ -205,7 +222,7 @@
 
           
           <div class="method-source-code" id="owner-3F-source">
-            <pre><span class="ruby-comment"># File app/models/sosna/solution.rb, line 8</span>
+            <pre><span class="ruby-comment"># File app/models/sosna/solution.rb, line 22</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">owner?</span>(<span class="ruby-identifier">user</span>)
   <span class="ruby-keyword">return</span> <span class="ruby-keyword">false</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">user</span>.<span class="ruby-identifier">nil?</span>
   <span class="ruby-keyword">return</span> <span class="ruby-identifier">solver</span>.<span class="ruby-identifier">user</span>.<span class="ruby-identifier">id</span> <span class="ruby-operator">==</span> <span class="ruby-identifier">user</span>.<span class="ruby-identifier">id</span>

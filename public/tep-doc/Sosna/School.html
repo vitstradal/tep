@@ -88,6 +88,22 @@
 
   <section class="description">
     
+<p>Třída reprezentující tabulku sosna_school, školu</p>
+
+<p><strong>Colums</strong></p>
+
+<pre class="ruby"><span class="ruby-identifier">t</span>.<span class="ruby-identifier">text</span>    <span class="ruby-string">&quot;name&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">text</span>    <span class="ruby-string">&quot;short&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">text</span>    <span class="ruby-string">&quot;street&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">text</span>    <span class="ruby-string">&quot;num&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">text</span>    <span class="ruby-string">&quot;city&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">text</span>    <span class="ruby-string">&quot;psc&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">text</span>    <span class="ruby-string">&quot;state&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">text</span>    <span class="ruby-string">&quot;universal_id&quot;</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">boolean</span> <span class="ruby-string">&quot;want_paper&quot;</span>,   <span class="ruby-value">default:</span> <span class="ruby-keyword">false</span>, <span class="ruby-value">null:</span> <span class="ruby-keyword">false</span>
+<span class="ruby-identifier">t</span>.<span class="ruby-identifier">text</span>    <span class="ruby-string">&quot;country&quot;</span>,      <span class="ruby-value">default:</span> <span class="ruby-string">&quot;cz&quot;</span>
+</pre>
+
   </section>
 
   
@@ -120,13 +136,14 @@
 
         <div class="method-description">
           
-          <p>validates_uniqueness_of :short</p>
+          <p><strong>Returns</strong> adresa zkombinovana z ostatních položek “#{street}
+#{num}, #{psc} #{city}”</p>
           
           
 
           
           <div class="method-source-code" id="address-source">
-            <pre><span class="ruby-comment"># File app/models/sosna/school.rb, line 5</span>
+            <pre><span class="ruby-comment"># File app/models/sosna/school.rb, line 22</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">address</span>
    <span class="ruby-node">&quot;#{street} #{num}, #{psc} #{city}&quot;</span>
 <span class="ruby-keyword">end</span></pre>
@@ -153,13 +170,14 @@
 
         <div class="method-description">
           
-          
+          <p><strong>Returns</strong> dlouha adresa adresa zkombinovana z ostatních
+položek “#{city}, #{name}, #{street} #{num}, #{psc} ”</p>
           
           
 
           
           <div class="method-source-code" id="long-source">
-            <pre><span class="ruby-comment"># File app/models/sosna/school.rb, line 9</span>
+            <pre><span class="ruby-comment"># File app/models/sosna/school.rb, line 28</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">long</span>
    <span class="ruby-node">&quot;#{city}, #{name}, #{street} #{num}, #{psc} &quot;</span>
 <span class="ruby-keyword">end</span></pre>
