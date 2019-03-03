@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20190201170537) do
+ActiveRecord::Schema.define(version: 18) do
 
   create_table "informs", force: :cascade do |t|
     t.string   "form",       limit: 255

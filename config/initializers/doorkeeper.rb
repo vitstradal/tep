@@ -29,7 +29,9 @@ Doorkeeper.configure do
     if current_user
       head :forbidden unless current_user.admin?
     else
-      redirect_to sign_in_url
+      #orig od matela:
+      #redirect_to sign_in_url
+      redirect_to sign_in
     end
   end
 
