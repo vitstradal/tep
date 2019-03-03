@@ -550,11 +550,17 @@ class Sosna::SolverController < SosnaController
     render text: _aesop_print_round(@annual.to_i, @round.to_i, errors_to), content_type: 'text/plain' 
   end
 
+  ##
+  #  GET  /sosna/solver/aesop
+  #
+  # stránka aesopu
+  #
+  # *Provides*
+  # @aesop_url:: v jakém ardesáři (URL) jsou exporty do AESOPU
   def aesop
     _aesop_init
     @aesop_url = 'https://pikomat.mff.cuni.cz/ovvp'
   end
-
 
   private
 

@@ -163,13 +163,21 @@
 
         <div class="method-description">
           
-          
+          <pre>GET  /sosna/solver/aesop</pre>
+
+<p>stránka aesopu</p>
+
+<p><strong>Provides</strong></p>
+<dl class="rdoc-list note-list"><dt>@aesop_url
+<dd>
+<p>v jakém ardesáři (URL) jsou exporty do AESOPU</p>
+</dd></dl>
           
           
 
           
           <div class="method-source-code" id="aesop-source">
-            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 552</span>
+            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 559</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">aesop</span>
   <span class="ruby-identifier">_aesop_init</span>
   <span class="ruby-ivar">@aesop_url</span> = <span class="ruby-string">&#39;https://pikomat.mff.cuni.cz/ovvp&#39;</span>
@@ -1320,7 +1328,7 @@ spam-date   Datum (YYYY-DD-MM), kdy jsme se dozvěděli hodnotu spam-flag-u.</pr
 
           
           <div class="method-source-code" id="_aesop_print_round-source">
-            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 666</span>
+            <pre><span class="ruby-comment"># File app/controllers/sosna/solver_controller.rb, line 672</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">_aesop_print_round</span>(<span class="ruby-identifier">annual</span>, <span class="ruby-identifier">round</span>, <span class="ruby-identifier">errors_to</span>) <span class="ruby-comment"># :doc:</span>
 
 

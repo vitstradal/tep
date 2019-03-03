@@ -133,7 +133,7 @@ class Sosna::SolutionController < SosnaController
   end
 
   ##
-  # POST '/sosna/solutions/update_papers
+  #  POST '/sosna/solutions/update_papers
   #
   # *Params*
   # roc, se, ul:: jako všude
@@ -234,6 +234,7 @@ class Sosna::SolutionController < SosnaController
     send_file zip_file_name, :filename => 'navratky.zip', :type => "application/zip"
   end
 
+
   ##
   #  POST  /sosna/solutions/upload_confirm
   #
@@ -266,6 +267,7 @@ class Sosna::SolutionController < SosnaController
     redirect_to sosna_solutions_user_url(roc, se, solver.id)
   end
 
+
   ##
   #  GET  /sosna/solutions/confirm_file
   #
@@ -277,6 +279,7 @@ class Sosna::SolutionController < SosnaController
        send_file _confirm_file_path(solver) , :filename => 'navratka.pdf', :type => 'application/pdf'
     end
   end
+
 
   ##
   #  GET /sosna/solution/:id/down_rev
@@ -312,7 +315,7 @@ class Sosna::SolutionController < SosnaController
       filename_disp = solution.get_filename_rev
     end
     send_file UPLOAD_DIR + solution.filename_corr, :filename => filename_disp, :type => 'application/pdf'
-  ends
+  end
 
   ##
   #  GET /sosna/solution/:id/down(/:ori)
@@ -380,7 +383,7 @@ class Sosna::SolutionController < SosnaController
   end
 
   ##
-  # POST /sosna/solution/upload_rev
+  #  POST /sosna/solution/upload_rev
   #
   # Upload jednotlive opravy
   #
@@ -433,7 +436,7 @@ class Sosna::SolutionController < SosnaController
   # *Params*
   # roc, se, ul:: ročník, série, úloha, pokud není vezme se aktuální
   # id::  id `Sosna::Solver`, pokud není pokusí se najít letošního řešitele,
-  #          přihlášeného uživatele; je nutné mít `:org`
+  #       přihlášeného uživatele; je nutné mít `:org`
   #
   # *Provides*
   #
@@ -519,7 +522,7 @@ class Sosna::SolutionController < SosnaController
   end
 
   ##
-  # PATCH /sosna/solution/upload
+  #  PATCH /sosna/solution/upload
   #
   # Upload řešení, (by uživatel nebo org)
   #
@@ -610,8 +613,6 @@ class Sosna::SolutionController < SosnaController
   # id:: id `Sosna::Solution`
   #
   # *Redirect* user_index
-
-  #FIXME: doc
   def resign
     solution_id  = params[:id]
     solution = Sosna::Solution.find(solution_id) or raise RuntimeError, "bad solution id: #{solution_id}"
@@ -820,6 +821,7 @@ class Sosna::SolutionController < SosnaController
     #return results_by_solver, _results
     return results_by_solver
   end
+
   def _penalisations_by_solver(solvers)
     penalisations = Sosna::Penalisation.where(:solver_id => solvers.map{ |s| s.id },
                                               :annual => @annual,

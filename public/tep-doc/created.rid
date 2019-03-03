@@ -1,4 +1,4 @@
-Sat, 02 Mar 2019 21:23:28 +0100
+Sun, 03 Mar 2019 11:17:33 +0100
 app/views/User.obsolete/passwords/new.html.erb	Fri, 05 May 2017 09:04:43 +0200
 app/views/User.obsolete/passwords/edit.html.erb	Fri, 05 May 2017 09:04:43 +0200
 app/views/User.obsolete/sessions/new.html.erb	Fri, 05 May 2017 09:04:43 +0200
@@ -77,8 +77,8 @@ app/controllers/inform_controller.rb	Thu, 28 Feb 2019 10:21:44 +0100
 app/controllers/jabber_controller.rb	Sat, 02 Mar 2019 08:27:29 +0100
 app/controllers/sosna/school_controller.rb	Thu, 28 Feb 2019 12:50:20 +0100
 app/controllers/sosna/problem_controller.rb	Thu, 28 Feb 2019 12:24:06 +0100
-app/controllers/sosna/solver_controller.rb	Thu, 28 Feb 2019 15:28:05 +0100
-app/controllers/sosna/solution_controller.rb	Sat, 02 Mar 2019 21:13:48 +0100
+app/controllers/sosna/solver_controller.rb	Sun, 03 Mar 2019 11:17:31 +0100
+app/controllers/sosna/solution_controller.rb	Sun, 03 Mar 2019 11:14:29 +0100
 app/controllers/sosna/config_controller.rb	Thu, 28 Feb 2019 12:15:24 +0100
 app/models/inform.rb	Sat, 02 Mar 2019 08:25:28 +0100
 app/models/ability.rb	Sat, 02 Mar 2019 08:24:23 +0100
