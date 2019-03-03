@@ -98,7 +98,7 @@ Tep::Application.routes.draw do
   patch '/user/:id/update'                   => 'tep#user_update',              :as => :user_update
   post  '/user/:id/delete'                   => 'tep#user_delete',              :as => :user_delete
   patch '/user/:id/role'                     => 'tep#user_role_change',         :as => :user_role_change
-  eost  '/user/:id/action/:what'             => 'tep#user_action',              :as => :user_action
+  post  '/user/:id/action/:what'             => 'tep#user_action',              :as => :user_action
   get  '/reg/:token'                         => 'tep#user_finish_registration', :as => :user_finish_registration
 
   # post
