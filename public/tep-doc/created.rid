@@ -1,4 +1,4 @@
-Fri, 01 Mar 2019 10:35:20 +0100
+Sat, 02 Mar 2019 21:23:28 +0100
 app/views/User.obsolete/passwords/new.html.erb	Fri, 05 May 2017 09:04:43 +0200
 app/views/User.obsolete/passwords/edit.html.erb	Fri, 05 May 2017 09:04:43 +0200
 app/views/User.obsolete/sessions/new.html.erb	Fri, 05 May 2017 09:04:43 +0200
@@ -68,24 +68,24 @@ app/views/sosna/school/show.html.erb	Thu, 04 Oct 2018 21:35:44 +0200
 app/views/sosna/config/index.html.erb	Thu, 11 Oct 2018 19:31:38 +0200
 app/views/sosna/index.html.erb	Fri, 05 May 2017 09:04:43 +0200
 app/controllers/giwi_controller.rb	Thu, 28 Feb 2019 11:43:02 +0100
-app/controllers/application_controller.rb	Thu, 28 Feb 2019 16:16:32 +0100
+app/controllers/application_controller.rb	Sat, 02 Mar 2019 15:44:46 +0100
 app/controllers/sosna_controller.rb	Fri, 05 May 2017 09:04:43 +0200
-app/controllers/tep_controller.rb	Tue, 27 Nov 2018 08:44:58 +0100
-app/controllers/priklady_controller.rb	Wed, 27 Feb 2019 14:10:45 +0100
+app/controllers/tep_controller.rb	Sat, 02 Mar 2019 14:21:22 +0100
+app/controllers/priklady_controller.rb	Sat, 02 Mar 2019 08:43:02 +0100
 app/controllers/credentials_controller.rb	Thu, 28 Feb 2019 10:33:35 +0100
 app/controllers/inform_controller.rb	Thu, 28 Feb 2019 10:21:44 +0100
-app/controllers/jabber_controller.rb	Wed, 27 Feb 2019 14:10:45 +0100
+app/controllers/jabber_controller.rb	Sat, 02 Mar 2019 08:27:29 +0100
 app/controllers/sosna/school_controller.rb	Thu, 28 Feb 2019 12:50:20 +0100
 app/controllers/sosna/problem_controller.rb	Thu, 28 Feb 2019 12:24:06 +0100
 app/controllers/sosna/solver_controller.rb	Thu, 28 Feb 2019 15:28:05 +0100
-app/controllers/sosna/solution_controller.rb	Wed, 27 Feb 2019 14:10:45 +0100
+app/controllers/sosna/solution_controller.rb	Sat, 02 Mar 2019 21:13:48 +0100
 app/controllers/sosna/config_controller.rb	Thu, 28 Feb 2019 12:15:24 +0100
-app/models/inform.rb	Fri, 01 Mar 2019 10:33:31 +0100
-app/models/ability.rb	Fri, 01 Mar 2019 10:35:01 +0100
+app/models/inform.rb	Sat, 02 Mar 2019 08:25:28 +0100
+app/models/ability.rb	Sat, 02 Mar 2019 08:24:23 +0100
 app/models/sosna.rb	Fri, 01 Mar 2019 10:29:52 +0100
 app/models/priklady.rb	Fri, 01 Mar 2019 10:31:48 +0100
 app/models/user.rb	Fri, 01 Mar 2019 10:28:06 +0100
-app/models/jabber.rb	Tue, 27 Nov 2018 08:44:58 +0100
+app/models/jabber.rb	Sat, 02 Mar 2019 08:24:41 +0100
 app/models/sosna/penalisation.rb	Fri, 01 Mar 2019 09:54:41 +0100
 app/models/sosna/result.rb	Fri, 01 Mar 2019 10:09:15 +0100
 app/models/sosna/school.rb	Fri, 01 Mar 2019 10:15:20 +0100
@@ -93,5 +93,5 @@ app/models/sosna/config.rb	Fri, 01 Mar 2019 09:57:09 +0100
 app/models/sosna/solver.rb	Fri, 01 Mar 2019 10:23:12 +0100
 app/models/sosna/solution.rb	Fri, 01 Mar 2019 10:18:03 +0100
 app/models/sosna/problem.rb	Fri, 01 Mar 2019 10:11:28 +0100
-app/mailers/tep/mailer.rb	Wed, 27 Feb 2019 14:10:45 +0100
+app/mailers/tep/mailer.rb	Sat, 02 Mar 2019 09:05:10 +0100
 app/helpers/application_helper.rb	Fri, 01 Mar 2019 09:34:26 +0100

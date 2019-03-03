@@ -151,13 +151,15 @@
 
         <div class="method-description">
           
-          
+          <pre>GET  /access</pre>
+
+<p>asi obsolete</p>
           
           
 
           
           <div class="method-source-code" id="access-source">
-            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 6</span>
+            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 11</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">access</span>; <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -182,13 +184,15 @@
 
         <div class="method-description">
           
-          
+          <pre>GET /die</pre>
+
+<p>Pro ladící učely, vyvolá chybu dělení nulou.</p>
           
           
 
           
           <div class="method-source-code" id="die-source">
-            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 101</span>
+            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 185</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">die</span> 
   <span class="ruby-value">0</span><span class="ruby-operator">/</span><span class="ruby-value">0</span>
 <span class="ruby-keyword">end</span></pre>
@@ -215,13 +219,15 @@
 
         <div class="method-description">
           
-          
+          <pre>GET  /faqold</pre>
+
+<p>FIXME: asi obsolete kdo vi</p>
           
           
 
           
           <div class="method-source-code" id="faq-source">
-            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 21</span>
+            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 33</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">faq</span>; <span class="ruby-keyword">end</span></pre>
           </div>
           
@@ -246,13 +252,13 @@
 
         <div class="method-description">
           
-          
+          <p><strong>OBSOLETE</strong></p>
           
           
 
           
           <div class="method-source-code" id="index-source">
-            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 7</span>
+            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 15</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">index</span>;
   <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">nil?</span>
     <span class="ruby-keyword">if</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">has_role?</span> <span class="ruby-value">:admin</span>
@@ -288,13 +294,32 @@
 
         <div class="method-description">
           
-          
+          <pre>GET /user/:id/show(/:tab)</pre>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>id
+<dd>
+<p>id uživatele</p>
+</dd><dt>tab
+<dd>
+<p>který tab se má zobrazit: `config`, `group`, `solver`, `mail`,  `jabber`</p>
+</dd></dl>
+
+<p><strong>Profides</strong></p>
+<dl class="rdoc-list note-list"><dt>@tab
+<dt>@user
+<dd>
+<p><a href="User.html">User</a></p>
+</dd><dt>@solvers
+<dd>
+<p>pole řešitelů (Sosna::Solver), kteří jsou přílsušní k uživateli</p>
+</dd></dl>
           
           
 
           
           <div class="method-source-code" id="user-source">
-            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 34</span>
+            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 67</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">user</span>
   <span class="ruby-identifier">user_id</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>]
   <span class="ruby-ivar">@tab</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:tab</span>] <span class="ruby-operator">||</span> <span class="ruby-string">&#39;config&#39;</span>
@@ -324,13 +349,31 @@
 
         <div class="method-description">
           
-          
+          <pre>POST /user/:id/action/:what</pre>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>id
+<dd>
+<p>id uživatele</p>
+</dd><dt>what
+<dd>
+<p>co se má udělat</p>
+<dl class="rdoc-list note-list"><dt>send_first_email
+<dd>
+<p>znova se pošle uvítací dopis</p>
+</dd><dt>send_password_reset
+<dd>
+<p>reset hesla a zaslání linku na reset</p>
+</dd></dl>
+</dd></dl>
+
+<p><strong>Reditect</strong> /user/:id</p>
           
           
 
           
           <div class="method-source-code" id="user_action-source">
-            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 61</span>
+            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 122</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">user_action</span>
   <span class="ruby-identifier">user_id</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>]
   <span class="ruby-identifier">user</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">user_id</span>)
@@ -373,13 +416,23 @@
 
         <div class="method-description">
           
-          
+          <pre>POST  /user/:id/delete</pre>
+
+<p>smaže uživatele</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>id
+<dd>
+<p>id uživatele</p>
+</dd></dl>
+
+<p><strong>Redirect</strong> /users</p>
           
           
 
           
           <div class="method-source-code" id="user_delete-source">
-            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 49</span>
+            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 100</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">user_delete</span>
    <span class="ruby-identifier">id</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>]
    <span class="ruby-identifier">u</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">id</span>)
@@ -414,13 +467,30 @@
 
         <div class="method-description">
           
-          
+          <pre>GET  /reg/:token</pre>
+
+<p>Tento link, .</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>token
+<dd>
+<p>token, je zaslá</p>
+</dd></dl>
+
+<p><strong>Provides</strong></p>
+<dl class="rdoc-list note-list"><dt>@token
+<dd>
+<p>token</p>
+</dd><dt>@user
+<dd>
+<p>uživatel, který má tento resetovací token</p>
+</dd></dl>
           
           
 
           
           <div class="method-source-code" id="user_finish_registration-source">
-            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 96</span>
+            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 176</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">user_finish_registration</span>
     <span class="ruby-ivar">@token</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:token</span>]
     <span class="ruby-ivar">@user</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">with_reset_password_token</span>(<span class="ruby-ivar">@token</span>)
@@ -448,13 +518,21 @@
 
         <div class="method-description">
           
-          
+          <pre>POST /user/new</pre>
+
+<p>Nový uživatel.</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>email
+<dd>
+<p><strong>Redirect</strong> /user/:id</p>
+</dd></dl>
           
           
 
           
           <div class="method-source-code" id="user_new-source">
-            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 41</span>
+            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 83</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">user_new</span>
   <span class="ruby-identifier">email</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:email</span>] <span class="ruby-operator">||</span> <span class="ruby-node">&quot;example#{rand(1000)}@example.com&quot;</span>
   <span class="ruby-identifier">user</span> =  <span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span>(<span class="ruby-value">email:</span> <span class="ruby-identifier">email</span>, <span class="ruby-value">name:</span> <span class="ruby-string">&#39;John&#39;</span>, <span class="ruby-value">last_name:</span> <span class="ruby-string">&#39;Smith&#39;</span>, <span class="ruby-value">confirmation_sent_at:</span> <span class="ruby-constant">Time</span>.<span class="ruby-identifier">now</span>,  <span class="ruby-value">roles:</span> [<span class="ruby-value">:user</span>])
@@ -485,13 +563,26 @@
 
         <div class="method-description">
           
-          
+          <pre>PATCH /user/:id/role</pre>
+
+<p>Přidá nebo odebre uživateli grupu.</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>id
+<dd>
+<p>id uživatele</p>
+</dd><dt>role
+<dd>
+<p>kterou roli (skupinu), kterou přidat/odebrat</p>
+</dd></dl>
+
+<p><strong>Redirect</strong> /user/:id</p>
           
           
 
           
           <div class="method-source-code" id="user_role_change-source">
-            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 105</span>
+            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 199</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">user_role_change</span>
   <span class="ruby-identifier">user</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">find</span> <span class="ruby-identifier">params</span>[<span class="ruby-value">:user</span>][<span class="ruby-value">:id</span>];
   <span class="ruby-identifier">add</span>, <span class="ruby-identifier">role</span>  = <span class="ruby-identifier">params</span>[<span class="ruby-value">:role</span>].<span class="ruby-identifier">split</span> <span class="ruby-regexp">//</span>, <span class="ruby-value">2</span>
@@ -535,13 +626,24 @@
 
         <div class="method-description">
           
-          
+          <pre>PATCH /user/:id/update</pre>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>id
+<dd>
+<p>id uživatele</p>
+</dd><dt>user[]
+<dd>
+<p>aktualizovaná data</p>
+</dd></dl>
+
+<p><strong>Redirect</strong> /user/:id</p>
           
           
 
           
           <div class="method-source-code" id="user_update-source">
-            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 81</span>
+            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 150</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">user_update</span>
   <span class="ruby-identifier">params</span>.<span class="ruby-identifier">require</span>(<span class="ruby-value">:user</span>).<span class="ruby-identifier">permit!</span>
   <span class="ruby-identifier">user_id</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>]
@@ -579,13 +681,26 @@
 
         <div class="method-description">
           
-          
+          <pre>GET /users</pre>
+
+<p>seznam uživatelů <strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>role
+<dd>
+<p>filtruj jen uživatelé s rolí</p>
+</dd></dl>
+
+<p><strong>Provides</strong></p>
+<dl class="rdoc-list note-list"><dt>@role
+<dt>@users
+<dd>
+<p>pole <a href="User.html">User</a></p>
+</dd></dl>
           
           
 
           
           <div class="method-source-code" id="users-source">
-            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 23</span>
+            <pre><span class="ruby-comment"># File app/controllers/tep_controller.rb, line 45</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">users</span>
   <span class="ruby-ivar">@role</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:role</span>] 
   <span class="ruby-keyword">if</span> <span class="ruby-ivar">@role</span>

@@ -105,6 +105,8 @@
 
   <section class="description">
     
+<p><strong>OBSOLETE</strong>, z dob kdy /klep mel bezet na jabberu</p>
+
   </section>
 
   
@@ -143,7 +145,7 @@
 
           
           <div class="method-source-code" id="auth-source">
-            <pre><span class="ruby-comment"># File app/controllers/jabber_controller.rb, line 38</span>
+            <pre><span class="ruby-comment"># File app/controllers/jabber_controller.rb, line 40</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">auth</span>
    <span class="ruby-identifier">jid</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:jid</span>]
    <span class="ruby-identifier">password</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:password</span>]
@@ -190,7 +192,7 @@
 
           
           <div class="method-source-code" id="delete-source">
-            <pre><span class="ruby-comment"># File app/controllers/jabber_controller.rb, line 56</span>
+            <pre><span class="ruby-comment"># File app/controllers/jabber_controller.rb, line 58</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete</span>
   <span class="ruby-identifier">jabber</span> = <span class="ruby-constant">Jabber</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>])
   <span class="ruby-identifier">user_id</span> =  <span class="ruby-identifier">jabber</span>.<span class="ruby-identifier">user</span>.<span class="ruby-identifier">id</span>
@@ -226,7 +228,7 @@
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File app/controllers/jabber_controller.rb, line 14</span>
+            <pre><span class="ruby-comment"># File app/controllers/jabber_controller.rb, line 16</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">new</span>
   <span class="ruby-identifier">user_id</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:user_id</span>]
   <span class="ruby-identifier">user</span> = <span class="ruby-constant">User</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">user_id</span>)
@@ -272,7 +274,7 @@
 
           
           <div class="method-source-code" id="prebind-source">
-            <pre><span class="ruby-comment"># File app/controllers/jabber_controller.rb, line 30</span>
+            <pre><span class="ruby-comment"># File app/controllers/jabber_controller.rb, line 32</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">prebind</span>
   <span class="ruby-identifier">rid</span> = <span class="ruby-identifier">session</span>[<span class="ruby-value">:jabber_rid</span>]
   <span class="ruby-identifier">sid</span> = <span class="ruby-identifier">session</span>[<span class="ruby-value">:jabber_sid</span>]
@@ -309,7 +311,7 @@
 
           
           <div class="method-source-code" id="update-source">
-            <pre><span class="ruby-comment"># File app/controllers/jabber_controller.rb, line 7</span>
+            <pre><span class="ruby-comment"># File app/controllers/jabber_controller.rb, line 9</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>
   <span class="ruby-identifier">params</span>.<span class="ruby-identifier">require</span>(<span class="ruby-value">:jabber</span>).<span class="ruby-identifier">permit!</span>
   <span class="ruby-identifier">jabber</span> = <span class="ruby-constant">Jabber</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>])

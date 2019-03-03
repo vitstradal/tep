@@ -84,8 +84,6 @@
     
     <li ><a href="#method-i-after_sign_in_path_for">#after_sign_in_path_for</a>
     
-    <li ><a href="#method-i-unknown">#unknown</a>
-    
   </ul>
 </div>
 
@@ -105,6 +103,17 @@
 
 <p>Druhý důvod je `after_sign_in_path_for` hook kam se přesměrovat po
 nalohování.</p>
+
+<h3 id="class-ApplicationController-label-rescue_from+-60CanCan-3A-3AAccessDenied-60">rescue_from `CanCan::AccessDenied`<span><a href="#class-ApplicationController-label-rescue_from+-60CanCan-3A-3AAccessDenied-60">&para;</a> <a href="#top">&uarr;</a></span></h3>
+
+<p>pokud nemá člověk opravnění,</p>
+<ul><li>
+<p>je to možná tím, že není přihlášeny, pak ho přihlaš, a po přihlášení sem
+přijď znova (param `next`). pokud dojde k chybě pošli email s informacemi</p>
+</li><li>
+<p>pokud je přihlášený a nemá přistup, vyhoď chybu, pošli email s chybou <a
+href="Tep/Mailer.html#method-i-error">error</a></p>
+</li></ul>
 
   </section>
 
@@ -144,55 +153,12 @@ nalohování.</p>
 
           
           <div class="method-source-code" id="after_sign_in_path_for-source">
-            <pre><span class="ruby-comment"># File app/controllers/application_controller.rb, line 18</span>
+            <pre><span class="ruby-comment"># File app/controllers/application_controller.rb, line 25</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">after_sign_in_path_for</span>(<span class="ruby-identifier">user</span>)
    <span class="ruby-identifier">ret_url</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:next</span>] <span class="ruby-operator">||</span> <span class="ruby-identifier">url_for_root</span>(<span class="ruby-identifier">user</span>)
    <span class="ruby-comment">#password = params[:user][:password]</span>
    <span class="ruby-comment">#_jabber_auth(user.jabber, password) if user.jabber? &amp;&amp; !user.jabber.nil?</span>
    <span class="ruby-keyword">return</span> <span class="ruby-identifier">ret_url</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-          
-        </div>
-
-        
-
-        
-      </div>
-
-    
-      <div id="method-i-unknown" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">unknown</span><span
-            class="method-args">()</span>
-          
-          <span class="method-click-advice">click to toggle source</span>
-          
-        </div>
-        
-
-        <div class="method-description">
-          
-          <p>#### rescue_from `CanCan::AccessDenied` pokud nemá člověk opravnění,</p>
-<ul><li>
-<p>je to možná tím, že není přihlášeny, pak ho přihlaš, a po přihlášení sem
-přijď znova (param `next`). pokud dojde k chybě pošli email s informacemi</p>
-</li><li>
-<p>pokud je přihlášený a nemá přistup, vyhoď chybu</p>
-</li></ul>
-          
-          
-
-          
-          <div class="method-source-code" id="unknown-source">
-            <pre><span class="ruby-comment"># File app/controllers/application_controller.rb, line 37</span>
-<span class="ruby-identifier">rescue_from</span> <span class="ruby-constant">CanCan</span><span class="ruby-operator">::</span><span class="ruby-constant">AccessDenied</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">exception</span><span class="ruby-operator">|</span>
-    <span class="ruby-keyword">if</span> <span class="ruby-identifier">current_user</span>.<span class="ruby-identifier">nil?</span>
-      <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">new_user_session_url</span>(<span class="ruby-value">:next</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">request</span>.<span class="ruby-identifier">path</span>)
-    <span class="ruby-keyword">else</span>
-      <span class="ruby-identifier">_error</span>(<span class="ruby-identifier">exception</span>)
-    <span class="ruby-keyword">end</span>
 <span class="ruby-keyword">end</span></pre>
           </div>
           

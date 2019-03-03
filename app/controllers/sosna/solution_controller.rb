@@ -1,26 +1,55 @@
 # encoding: utf-8
 require 'pp'
 require 'fileutils'
-#require 'rubygems'
 require 'zip'
 require 'tempfile'
 require 'combine_pdf'
-#require 'prawn'
-#require 'prawn/templates'
 
 class Sosna::SolutionController < SosnaController
 
   include ApplicationHelper
   include ActionView::Helpers::NumberHelper
-  #UPLOAD_DIR = "public/uploads/"
+
   UPLOAD_DIR = "var/uploads/"
 
-
+  ##
+  #  GET  /sosna/solutions(/:roc(/:se(/:ul)))
+  #
+  # *Params*
+  # roc:: ročník, pokud není vezme se aktuální
+  # se:: série, pokud není vezme se aktuální
+  # ul:: úloha
+  # sous:: pokud se má filtrovat na sous
+  #
+  # *Provides*
+  # @breadcrumb::
+  # @want_edit::
+  # @want_edit_paper::
+  # @want_edit_penalisation::
+  # @solvers:: pole Sosna::Solver
+  # @problems:: pole Sosna::Problem
+  # @solutions_by_solver:: hash solver_id => pole Sosna::Solution
+  # @penalisations_by_solver:: hash solver.id => Sosna::Problem
+  # @results_by_solver:: hash solver.id => Sosna::Result
   def index
     _prepare_solvers_problems_solutions(want_test: true)
     _load_index
   end
 
+  ##
+  #  GET  /sosna/solutions/lidi(/:roc(/:se(/:ul)))
+  #
+  # export seznamu lidí, format `csv`, `pik`.
+  #
+  # *Params*
+  # roc, se, ul:: ročník, série, úloha, pokud není vezme se aktuální
+  #
+  # *Provide*
+  # @solvers, @problems, @solutions_by_solver, @penalisations_by_solver, @results_by_solver:: jako `index`
+  #
+  # *Template*
+  # * app/views/sosna/solution/lidi.csv.erb
+  # * app/views/sosna/solution/lidi.pik.erb
   def lidi
     _prepare_solvers_problems_solutions(want_test: false)
     # dirty hack
@@ -36,6 +65,18 @@ class Sosna::SolutionController < SosnaController
     end
   end
 
+  ##
+  #  GET  /sosna/solutions/vysl(/:roc(/:se(/:ul)))
+  #
+  # export seznamu lidí `.pik`.
+  #
+  # *Params*
+  # roc, se, ul:: ročník, série, úloha, pokud není vezme se aktuální
+  #
+  # *Provide*
+  # @solvers, @problems, @solutions_by_solver, @penalisations_by_solver, @results_by_solver:: jako `index`
+  #
+  # *Template* app/views/sosna/solution/vysl_pik.erb
   def vysl_pik
     _prepare_solvers_problems_solutions(want_test: false)
     _sort_solvers_by_rank
@@ -44,6 +85,18 @@ class Sosna::SolutionController < SosnaController
     render layout: nil
   end
 
+  ##
+  #  GET  /sosna/solutions/vyslwiki(/:roc(/:se(/:ul)))
+  #
+  # export vysledkovky `.wiki`.
+  #
+  # *Params*
+  # roc, se, ul:: ročník, série, úloha, pokud není vezme se aktuální
+  #
+  # *Provide*
+  # @solvers, @problems, @solutions_by_solver, @penalisations_by_solver, @results_by_solver:: jako `index`
+  #
+  # *Template* app/views/sosna/solution/vysl_wiki.erb
   def vysl_wiki
     _prepare_solvers_problems_solutions(want_test: false)
     _sort_solvers_by_rank
@@ -52,6 +105,20 @@ class Sosna::SolutionController < SosnaController
     render layout: nil
   end
 
+  ##
+  #  GET  /sosna/solutions/:roc/:se/edit
+  #  GET  /sosna/solutions/:roc/:se/:ul/edit
+  #
+  # *Params*
+  # roc, se, ul:: ročník, série, úloha, pokud není vezme se aktuální
+  # paper:: chci editovat papery
+  # penalisation:: chci editovat penalizaci
+  #
+  # *Provide*
+  # @solvers, @problems, @solutions_by_solver, @penalisations_by_solver, @results_by_solver:: jako `index`
+  # @want_edit, @want_edit_paper, @want_edit_penalisation:: co se chce editovat
+  #
+  # *Render* index
   def edit
     _prepare_solvers_problems_solutions(want_test: true)
     @want_edit_paper = @want_edit = @want_edit_penalisation = false
@@ -65,6 +132,14 @@ class Sosna::SolutionController < SosnaController
     render :index
   end
 
+  ##
+  # POST '/sosna/solutions/update_papers
+  #
+  # *Params*
+  # roc, se, ul:: jako všude
+  # paper[]:: hash solution.id => 1 / nil
+  #
+  # *Redirect* edit
   def update_papers
     roc, se, ul = params[:roc], params[:se], params[:ul]
     paper = params[:paper] || {}
@@ -79,6 +154,16 @@ class Sosna::SolutionController < SosnaController
     redirect_to action: :edit, roc: roc, se: se, ul: ul, paper: 'yes'
   end
 
+  ##
+  #  POST /sosna/solutions/update_penalisations
+  #
+  # *Params*
+  # roc, se, ul:: jako všude
+  # penalisation_score[]:: hash penalisation.id => score  / nil
+  # penalisation_title[]:: hash penalisation.id => title (kometář) / nil
+  #
+  # *Redirect* edit
+  #
   def update_penalisations
     roc, se, ul = params[:roc], params[:se], params[:ul]
     scores = params[:penalisation_score] || {}
@@ -98,6 +183,15 @@ class Sosna::SolutionController < SosnaController
     redirect_to action: :edit, roc: roc, se: se, ul: ul, penalisation: 'yes'
   end
 
+  ##
+  #  POST /sosna/solutions/update_scores
+  #
+  # *Params*
+  # roc, se, ul:: jako všude
+  # score[]:: hash penalisation.id => score  / nil
+  # penalisation_title[]:: hash solution.id => počet bodů / nil
+  #
+  # *Redirect* edit
   def update_scores
     roc, se, ul = params[:roc], params[:se], params[:ul]
     scores = params[:score] || {}
@@ -118,6 +212,8 @@ class Sosna::SolutionController < SosnaController
     redirect_to action: :edit, roc: roc, se: se, ul: ul
   end
 
+  ##
+  #  GET  '/sosna/solution/confirm_files'            => 'sosna/solution#get_confirm_files',    :as => :sosna_solutions_get_confirm_files
   def get_confirm_files
     zip_file = Tempfile.new(['confirmations', '.zip'], UPLOAD_DIR)
     zip_file_name = zip_file.path
@@ -138,6 +234,16 @@ class Sosna::SolutionController < SosnaController
     send_file zip_file_name, :filename => 'navratky.zip', :type => "application/zip"
   end
 
+  ##
+  #  POST  /sosna/solutions/upload_confirm
+  #
+  # Upload souboru s návratkou.
+  #
+  # *Params*
+  # roc, se, ul:: jako všude
+  # confirm_file::
+  #
+  # *Redirect* user_index
   def upload_confirm_file
 
     confirm_file = params[:confirm_file]
@@ -160,6 +266,11 @@ class Sosna::SolutionController < SosnaController
     redirect_to sosna_solutions_user_url(roc, se, solver.id)
   end
 
+  ##
+  #  GET  /sosna/solutions/confirm_file
+  #
+  # Dwondload Upload potvrzením údajů.
+  #
   def get_confirm_file
     solver = Sosna::Solver.where(annual: @annual, user_id: current_user.id).first
     if ! solver.nil?
@@ -167,10 +278,13 @@ class Sosna::SolutionController < SosnaController
     end
   end
 
-  def _confirm_file_path(solver)
-         UPLOAD_DIR + "confirm-file-#{solver.id}.pdf"
-  end
-
+  ##
+  #  GET /sosna/solution/:id/down_rev
+  #
+  # Download opravy. Pokud aktuální uživatel neni `org`, může jen pokud svoje řešení.
+  #
+  # *Params*
+  # id:: id Sosna::Solution
   def download_rev
     solution = Sosna::Solution.find id = params[:id]
     if ! solution
@@ -198,10 +312,17 @@ class Sosna::SolutionController < SosnaController
       filename_disp = solution.get_filename_rev
     end
     send_file UPLOAD_DIR + solution.filename_corr, :filename => filename_disp, :type => 'application/pdf'
-  end
+  ends
 
+  ##
+  #  GET /sosna/solution/:id/down(/:ori)
+  #
+  # Download řešení. Pokud aktuální uživatel neni `org`, může jen pokud svoje řešení.
+  #
+  # *Params*
+  # id:: id Sosna::Solution
+  # ori::  ??? nepoužívá se
   def download
-
     solution = Sosna::Solution.find id = params[:id]
     filename = solution.filename_orig
     filename_disp = solution.filename_orig
@@ -214,29 +335,20 @@ class Sosna::SolutionController < SosnaController
     send_file UPLOAD_DIR + solution.filename, :filename => filename_disp, :type => 'application/pdf'
   end
 
-#  def show
-#      @solution = Sosna::Solution.find params[:id]
-#  end
-
+  ##
+  #  GET /sosna/solutions/user(/:roc(/:se(/:id)))+
   #
-  # - URL
-  #```
-  #  /sosna/solutions/user(/:roc(/:se(/:id)))+
-  #```
-  # - `roc`  ročník
-  # - `serie`
-  # - `bla`   id solvera, pokud není pokusí se najít letošního řešitele,
-  #          přihlášeného uživatele; je nutné mít +:org+
+  # *Params*
+  # roc, se, ul:: ročník, série, úloha, pokud není vezme se aktuální
+  # rev:: pokud se chce oprava.
   #
-  # do templaty:
-  #
-  # @param @annual rok
-  # @param @solver+] +Sosna::Solver+
-  # @param @is_current+] *true* když se je aktualní ročník a serie
-  # @param @solver_is_current_user+] *true* když, se dívá uživatel dívá na sebe
-  # @param @problems]  pole +Sosna::Problem+ úloh dané série
-  # @param @solutions_by_solver]  +{ solver.id => { problem.problem_no => solution }}+
-  #
+  # *Provides*
+  # @annual:: ročník
+  # @solver:: `Sosna::Solver`
+  # @is_current:: `true` když se je aktualní ročník a serie
+  # @solver_is_current_user:: *true* když, se dívá uživatel dívá na sebe
+  # @problems::  pole `Sosna::Problem` úloh dané série
+  # @solutions_by_solver::  hash solver.id => { problem.problem_no => solution }
   def downall
     want_rev = ! params[:rev].nil?
     problems = _problems_from_roc_se_ul
@@ -267,6 +379,16 @@ class Sosna::SolutionController < SosnaController
     #File.delete zip_file_name
   end
 
+  ##
+  # POST /sosna/solution/upload_rev
+  #
+  # Upload jednotlive opravy
+  #
+  # *Params*
+  # roc, se, ul:: ročník, série, úloha, pokud není vezme se aktuální
+  # file_rev:: upload
+  #
+  # *Redirect* user_index
   def upload_rev
     rfile = params[:file_rev]
     roc = params[:roc]
@@ -305,22 +427,22 @@ class Sosna::SolutionController < SosnaController
     redirect_to :action =>  :index, :roc => roc, :se => se, :ul => ul
   end
 
+  ##
+  #  GET  /sosna/solutions/user(/:roc(/:se(/:id)))
   #
-  # [URL]    +/sosna/solutions/user(/:roc(/:se(/:id)))+
-  # @param roc  ročník
-  # @param  serie
-  # @param   id solvera, pokud není pokusí se najít letošního řešitele,
-  #          přihlášeného uživatele; je nutné mít +:org+
+  # *Params*
+  # roc, se, ul:: ročník, série, úloha, pokud není vezme se aktuální
+  # id::  id `Sosna::Solver`, pokud není pokusí se najít letošního řešitele,
+  #          přihlášeného uživatele; je nutné mít `:org`
   #
-  # do templaty:
+  # *Provides*
   #
-  # @param @annual rok
-  # @param @solver+] +Sosna::Solver+
-  # @param @is_current+] *true* když se je aktualní ročník a serie
-  # @param @solver_is_current_user+] *true* když, se dívá uživatel dívá na sebe
-  # @param @problems]  pole +Sosna::Problem+ úloh dané série
-  # @param @solutions_by_solver]  +{ solver.id => { problem.problem_no => solution }}+
-  #
+  # @annual:: rok
+  # @solver:: +Sosna::Solver+
+  # @is_current:: `true* když se je aktualní ročník a serie
+  # @solver_is_current_user:: `true` když, se dívá uživatel dívá na sebe
+  # @problems::  pole `Sosna::Problem` úloh dané série
+  # @solutions_by_solver::  hash solver.id => { problem.problem_no => solution }
   def user_index
 
     @annual = params[:roc] || @config[:annual]
@@ -377,6 +499,18 @@ class Sosna::SolutionController < SosnaController
     end
   end
 
+  ##
+  #  GET  /sosna/solutions/bonus
+  #
+  # Upload bonusové serie je trošku speciální, ale v postatě se využívá `user_index`
+  #
+  # *Params*
+  # se:: série
+  #
+  # *Provides*
+  # @hide_non_bonus_in_breadcrumb:: true
+  #
+  # *Render* user_index
   def user_bonus
     params[:se] = Sosna::Problem::BONUS_ROUND_NUM.to_s
     @hide_non_bonus_in_breadcrumb = true
@@ -384,6 +518,16 @@ class Sosna::SolutionController < SosnaController
     render :user_index
   end
 
+  ##
+  # PATCH /sosna/solution/upload
+  #
+  # Upload řešení, (by uživatel nebo org)
+  #
+  # *Params*
+  # sosna_solution.solution_file:: upload
+  # sosna_solution.id:: id `Sosna::Solution`
+  #
+  # *Redirect* user_index
   def upload
     solution_file = params[:sosna_solution][:solution_file]
     solution_id  = params[:sosna_solution][:id]
@@ -457,6 +601,17 @@ class Sosna::SolutionController < SosnaController
     redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
   end
 
+  ##
+  #  POST  /sosna/solution/:id/resing
+  #
+  # Způsobí znova vepsání hlaviček do `.pdf`. Může jen `admin`
+  #
+  # *Params*
+  # id:: id `Sosna::Solution`
+  #
+  # *Redirect* user_index
+
+  #FIXME: doc
   def resign
     solution_id  = params[:id]
     solution = Sosna::Solution.find(solution_id) or raise RuntimeError, "bad solution id: #{solution_id}"
@@ -472,6 +627,16 @@ class Sosna::SolutionController < SosnaController
     roc = problem.annual
     redirect_to sosna_solutions_user_url(roc, se, solution.solver.id)
   end
+
+  ##
+  #  POST  /sosna/solution/:id/nosign
+  #
+  # Návrat k originálu, bez vepsané hlavičky hlaviček, v některých (nějaké generátory pdf) případech totiž vepisování způsobí, že celé pdf je poškozené a nejde přečíst.
+  #
+  # *Params*
+  # id:: id `Sosna::Solution`
+  #
+  # *Redirect* user_index
   def nosign
     solution_id  = params[:id]
     solution = Sosna::Solution.find(solution_id) or raise RuntimeError, "bad solution id: #{solution_id}"
@@ -488,15 +653,23 @@ class Sosna::SolutionController < SosnaController
     se = problem.round
     roc = problem.annual
     redirect_to sosna_solutions_user_url(roc, se, solution.solver.id)
-
   end
 
-  # pocitani vysledku
+
+  ##
+  #  POST /sosna/solution/update_results
+  #
+  # *Pocitani výsledků*
   #
   # pocet bodu se pocita ze seti nejlepsich prikladu (ze sedmi)
   # pripocte se pocet bodu za minulou serii (pokdu byla)
   # a spocita se poradi (a pokud ma stejne bodu tak interval porad)
   # a spocita se poradi v rocniku (a pokud ma stejne bodu tak interval poradi)
+  #
+  # *Params*
+  # roc, se, ul:: ročník, série, úloha, pokud není vezme se aktuální
+  #
+  # *Redirect* index
   def update_results
     roc, se, ul = _params_roc_se_ul
 
@@ -603,7 +776,6 @@ class Sosna::SolutionController < SosnaController
     redirect_to :action =>  :index , :roc => roc, :se => se
   end
 
-
   private
 
   # scores hash of integers (key are problem_no, values are score)
@@ -621,7 +793,6 @@ class Sosna::SolutionController < SosnaController
     return sum, comment
   end
 
-
   def _get_results(solvers, roc, se)
     Sosna::Result.where(:solver_id => solvers.map{ |s| s.id },
                                               :annual => roc,
@@ -630,6 +801,7 @@ class Sosna::SolutionController < SosnaController
   end
 
   # r: { solver_id => [ result1,  result2, ... ], ... }
+
   def _get_results_by_solver(solvers, roc, se, want_create = true)
     _results = _get_results(solvers, roc, se)
     results_by_solver = {}
@@ -791,6 +963,7 @@ class Sosna::SolutionController < SosnaController
       begin
         pdf = CombinePDF.load(template)
 
+        # FIXME
         # combine_pdf zatím neumí utf, takže musíme hlavičku odháčkovat
         # také neumí změnit font.
 
@@ -957,5 +1130,10 @@ class Sosna::SolutionController < SosnaController
                        .maximum('round')
      max.to_s
   end
+
+  def _confirm_file_path(solver)
+         UPLOAD_DIR + "confirm-file-#{solver.id}.pdf"
+  end
+
 
 end

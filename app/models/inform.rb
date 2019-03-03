@@ -1,3 +1,4 @@
+require 'json'
 ##
 # Třída reprezentující tabulku inform
 #
@@ -7,7 +8,6 @@
 #    t.datetime "created_at"
 #    t.datetime "updated_at"
 #    t.text     "user_agent",             default: "unknown"
-require 'json'
 class Inform < ActiveRecord::Base
   ##
   # decoduje json sloupec `data`

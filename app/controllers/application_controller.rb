@@ -7,6 +7,13 @@ require 'simple_bosh_session'
 #
 # Druhý důvod je `after_sign_in_path_for` hook kam se přesměrovat po nalohování.
 #
+# === rescue_from `CanCan::AccessDenied`
+#
+# pokud nemá člověk opravnění, 
+# * je to možná tím, že není přihlášeny,
+#   pak ho přihlaš, a po přihlášení sem přijď znova (param `next`).
+#   pokud dojde k chybě pošli email s informacemi
+# * pokud je přihlášený a nemá přistup, vyhoď chybu, pošli email s chybou {error}[rdoc-ref:Tep::Mailer.error]
 
 class ApplicationController < ActionController::Base
   protect_from_forgery
@@ -27,13 +34,6 @@ class ApplicationController < ActionController::Base
 #    _error(exception)
 #  end
 
-  ##
-  # #### rescue_from `CanCan::AccessDenied`
-  # pokud nemá člověk opravnění, 
-  # * je to možná tím, že není přihlášeny,
-  #   pak ho přihlaš, a po přihlášení sem přijď znova (param `next`).
-  #   pokud dojde k chybě pošli email s informacemi
-  # * pokud je přihlášený a nemá přistup, vyhoď chybu
   rescue_from CanCan::AccessDenied do |exception|
       if current_user.nil?
         redirect_to new_user_session_url(:next => request.path)
@@ -62,15 +62,14 @@ class ApplicationController < ActionController::Base
     render :layout => nil, template: 'tep/error'
   end
 
-  ##
-  # obsolete, pokusy s jabberem
-  def _jabber_auth(jabber, password)
-   bosh_url = Rails.configuration.jabber_bosh_url
-   rid, sid = SimpleBoshSession.get_session(bosh_url, jabber.jid, password)
-   #log("rid=#{rid} sid=#{sid}")
-   session[:jabber_rid] = rid
-   session[:jabber_sid] = sid
-  end
-
+###  ##
+###  # obsolete, pokusy s jabberem
+###  def _jabber_auth(jabber, password)
+###   bosh_url = Rails.configuration.jabber_bosh_url
+###   rid, sid = SimpleBoshSession.get_session(bosh_url, jabber.jid, password)
+###   #log("rid=#{rid} sid=#{sid}")
+###   session[:jabber_rid] = rid
+###   session[:jabber_sid] = sid
+###  end
 
 end

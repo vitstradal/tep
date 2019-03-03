@@ -97,7 +97,7 @@
 
   <section class="description">
     
-<p>Třída definující co který uživatel může, přístupová práva jsou založena na
+<p>Třída definující, co který uživatel může. Přístupová práva jsou založena na
 příslušnosti uživatele ve skupině.</p>
 
   </section>
@@ -132,19 +132,27 @@ příslušnosti uživatele ve skupině.</p>
 
         <div class="method-description">
           
-          
+          <p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>user
+<dd>
+<p>viz kupiny u <a href="User.html">User</a>. Viz source co přesně kdo může.</p>
+</dd></dl>
+
+<p>Příklad:</p>
+
+<pre class="ruby"><span class="ruby-identifier">can</span> <span class="ruby-value">:add</span>, <span class="ruby-constant">Infrom</span> <span class="ruby-comment"># v controlleru `Inform` může volat metodu `add`</span>
+</pre>
           
           
 
           
           <div class="method-source-code" id="new-source">
-            <pre><span class="ruby-comment"># File app/models/ability.rb, line 7</span>
+            <pre><span class="ruby-comment"># File app/models/ability.rb, line 13</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">initialize</span>(<span class="ruby-identifier">user</span>)
 
   <span class="ruby-identifier">user</span> <span class="ruby-operator">||=</span> <span class="ruby-constant">User</span>.<span class="ruby-identifier">new</span> <span class="ruby-comment"># guest user (not logged in)</span>
 
   <span class="ruby-comment"># https://github.com/ryanb/cancan/wiki/Defining-Abilities</span>
-
   <span class="ruby-comment"># public</span>
 
   <span class="ruby-identifier">can</span> <span class="ruby-value">:add</span>, <span class="ruby-constant">Inform</span>

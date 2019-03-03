@@ -1,15 +1,20 @@
 ##
-# Třída definující co který uživatel může, přístupová práva jsou založena na příslušnosti uživatele ve skupině.
+# Třída definující, co který uživatel může. Přístupová práva jsou založena na příslušnosti uživatele ve skupině.
 #
 class Ability
   include CanCan::Ability
 
+  ##
+  # *Params*
+  # user:: viz kupiny u {User}[rdoc-ref:User]. Viz source co přesně kdo může.
+  # 
+  # Příklad:
+  #  can :add, Infrom # v controlleru `Inform` může volat metodu `add`
   def initialize(user)
 
     user ||= User.new # guest user (not logged in)
 
     # https://github.com/ryanb/cancan/wiki/Defining-Abilities
-
     # public
 
     can :add, Inform

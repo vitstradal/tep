@@ -1,5 +1,7 @@
 require 'simple_crypt'
 
+##
+# *OBSOLETE*, z dob kdy /klep mel bezet na jabberu
 class JabberController < ApplicationController
   authorize_resource
   include ApplicationHelper

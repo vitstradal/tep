@@ -3,8 +3,16 @@ require 'pp'
 class TepController < ApplicationController
 
   include ApplicationHelper
+  authorize_resource :class => false
 
+  ##
+  #  GET  /access
+  #
+  # asi obsolete
   def access; end
+
+  ##
+  # *OBSOLETE*
   def index;
     if ! current_user.nil?
       if current_user.has_role? :admin
@@ -18,9 +26,23 @@ class TepController < ApplicationController
     redirect_to(wiki_main_path(path: 'index'))
   end
 
-  authorize_resource :class => false
+
+  ##
+  #  GET  /faqold
+  #
+  # FIXME: asi obsolete kdo vi
   def faq; end
 
+  ##
+  #  GET /users
+  # 
+  # seznam uživatelů
+  # *Params*
+  # role:: filtruj jen uživatelé s rolí
+  #
+  # *Provides*
+  # @role::
+  # @users:: pole User
   def users
     @role = params[:role] 
     if @role
@@ -32,6 +54,17 @@ class TepController < ApplicationController
     
   end
 
+  ##
+  #  GET /user/:id/show(/:tab)
+  #
+  # *Params*
+  # id:: id uživatele
+  # tab:: který tab se má zobrazit: `config`, `group`, `solver`, `mail`,  `jabber`
+  #
+  # *Profides*
+  # @tab::
+  # @user:: User
+  # @solvers:: pole řešitelů (Sosna::Solver), kteří jsou přílsušní k uživateli
   def user
     user_id = params[:id]
     @tab = params[:tab] || 'config'
@@ -39,6 +72,15 @@ class TepController < ApplicationController
     @solvers = Sosna::Solver.where(user_id: user_id)
   end
 
+  ##
+  #  POST /user/new
+  #
+  # Nový uživatel.
+  #
+  # *Params*
+  # email::
+  #
+  # *Redirect* /user/:id
   def user_new
     email = params[:email] || "example#{rand(1000)}@example.com"
     user =  User.new(email: email, name: 'John', last_name: 'Smith', confirmation_sent_at: Time.now,  roles: [:user])
@@ -47,6 +89,15 @@ class TepController < ApplicationController
     redirect_to :action => :user, :id =>  user.id
   end
 
+  ##
+  #  POST  /user/:id/delete
+  #
+  # smaže uživatele
+  #
+  # *Params*
+  # id:: id uživatele
+  #
+  # *Redirect* /users
   def user_delete
      id = params[:id]
      u = User.find(id)
@@ -59,6 +110,16 @@ class TepController < ApplicationController
      redirect_to action: :users
   end
 
+  ##
+  #  POST /user/:id/action/:what
+  #
+  # *Params*
+  # id:: id uživatele
+  # what:: co se má udělat
+  #        send_first_email:: znova se pošle uvítací dopis
+  #        send_password_reset:: reset hesla a zaslání linku na reset
+  #
+  # *Reditect* /user/:id
   def user_action
     user_id = params[:id]
     user = User.find(user_id)
@@ -79,6 +140,14 @@ class TepController < ApplicationController
     redirect_to action: :user, id: user_id
   end
 
+  ##
+  #  PATCH /user/:id/update
+  #
+  # *Params*
+  # id:: id uživatele
+  # user[]:: aktualizovaná data
+  #
+  # *Redirect* /user/:id
   def user_update
     params.require(:user).permit!
     user_id = params[:id]
@@ -94,15 +163,40 @@ class TepController < ApplicationController
     redirect_to action: :user, id: user_id
   end
 
+  ##
+  #  GET  /reg/:token
+  #
+  # Tento link, .
+  #
+  # *Params*
+  # token:: token, je zaslá
+  #
+  # *Provides*
+  # @token:: token
+  # @user:: uživatel, který má tento resetovací token
   def user_finish_registration
       @token = params[:token]
       @user = User.with_reset_password_token(@token)
   end
 
+  ##
+  #  GET /die
+  #
+  # Pro ladící učely, vyvolá chybu dělení nulou.
   def die 
     0/0
   end
 
+  ##
+  #  PATCH /user/:id/role
+  #
+  # Přidá nebo odebre uživateli grupu.
+  #
+  # *Params*
+  # id:: id uživatele
+  # role:: kterou roli (skupinu), kterou přidat/odebrat
+  #
+  # *Redirect* /user/:id
   def user_role_change
     user = User.find params[:user][:id];
     add, role  = params[:role].split //, 2
@@ -123,5 +217,4 @@ class TepController < ApplicationController
     #redirect_to :users_list
     redirect_to(user_show_path(id: user.id))
   end
-
 end

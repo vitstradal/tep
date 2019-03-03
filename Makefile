@@ -79,7 +79,7 @@ ttest:
 	rake test
 .PHONY: doc
 doc:
-	rdoc app --op public/tep-doc
+	rdoc app -o public/tep-doc
 
 aesop:
 	rails  r  -e production script/aesop.rb

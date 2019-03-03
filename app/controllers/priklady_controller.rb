@@ -1,7 +1,27 @@
 # encoding: utf-8
 
+##
+#
 class PrikladyController < ApplicationController
   include ApplicationHelper
+
+  ##
+  #  GET /priklady/sklad
+  #
+  # *Params*
+  # kat:: vyhledej v `kategorie`
+  # ob::  vyhledej v `obtížnost`
+  # tit:: vyhledej v `title`
+  # stav:: vyhledej v `stav`
+  # nestav:: vyhledej negativně v `stav`
+  # bad:: pokud je neprazdné, filtruj ty které mají nevyplněnou povinnou položku prázdnou (`kategorie`, `obtiznost`, `zadání`, `řešení`, `stav`)
+  #
+  # *Provides*
+  # @path::
+  # @files_parsed:: seznam souborů, jeden soubor je hash ve kterém je naparsovaný soubor s příkladem.
+  #                 title:: titulek
+  #                 path:: cesta k souboru
+  #                 kategorie, obtiznost, zadání, řešení, stav:: to co v souboru v odpovídajících sekcích
   def sklad
     load_config
     kat = params[:kat]
@@ -19,7 +39,7 @@ class PrikladyController < ApplicationController
        path =  file[:path]
        next if  path !~ /\.wiki$/
        text, blobid = @giwi.get_page(path)
-       item = parse_one(text, path)
+       item = _parse_one(text, path)
        next if ! kat.nil?  && item['kategorie'].to_s.index(kat).nil?
        next if ! ob.nil?   && item['obtížnost'].to_s.index(ob).nil?
        next if ! tit.nil?  && item['title'].to_s.index(tit).nil?
@@ -34,7 +54,8 @@ class PrikladyController < ApplicationController
     end
   end
 
-  def parse_one(text, path)
+  private
+  def _parse_one(text, path)
     #item = {:path => path, :text => text}
     item = { 'path' => path }
     kat = part = nil

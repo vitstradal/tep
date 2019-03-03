@@ -82,8 +82,6 @@
 
   <ul class="link-list" role="directory">
     
-    <li ><a href="#method-i-parse_one">#parse_one</a>
-    
     <li ><a href="#method-i-sklad">#sklad</a>
     
   </ul>
@@ -118,58 +116,6 @@
        </header>
 
     
-      <div id="method-i-parse_one" class="method-detail ">
-        
-        <div class="method-heading">
-          <span class="method-name">parse_one</span><span
-            class="method-args">(text, path)</span>
-          
-          <span class="method-click-advice">click to toggle source</span>
-          
-        </div>
-        
-
-        <div class="method-description">
-          
-          
-          
-          
-
-          
-          <div class="method-source-code" id="parse_one-source">
-            <pre><span class="ruby-comment"># File app/controllers/priklady_controller.rb, line 36</span>
-<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">parse_one</span>(<span class="ruby-identifier">text</span>, <span class="ruby-identifier">path</span>)
-  <span class="ruby-comment">#item = {:path =&gt; path, :text =&gt; text}</span>
-  <span class="ruby-identifier">item</span> = { <span class="ruby-string">&#39;path&#39;</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">path</span> }
-  <span class="ruby-identifier">kat</span> = <span class="ruby-identifier">part</span> = <span class="ruby-keyword">nil</span>
-  <span class="ruby-comment">#log &quot;text #{text}&quot;</span>
-  <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">text</span>.<span class="ruby-identifier">nil?</span>
-    <span class="ruby-identifier">text</span>.<span class="ruby-identifier">split</span>(<span class="ruby-regexp">/\r?\n/</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">line</span><span class="ruby-operator">|</span>
-      <span class="ruby-keyword">if</span> <span class="ruby-identifier">line</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp">/^\*\*([^*]*)\*\*(.*)/</span>
-        <span class="ruby-identifier">_kat</span>, <span class="ruby-identifier">_part</span> = <span class="ruby-node">$1</span>, <span class="ruby-node">$2</span>
-        <span class="ruby-identifier">item</span>[<span class="ruby-identifier">kat</span>] = <span class="ruby-identifier">part</span>.<span class="ruby-identifier">strip</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">kat</span>
-        <span class="ruby-identifier">kat</span>, <span class="ruby-identifier">part</span> = <span class="ruby-identifier">_kat</span>, <span class="ruby-identifier">_part</span>
-      <span class="ruby-keyword">elsif</span> <span class="ruby-identifier">line</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp">/^=+\s*([^=]*)\s*=*/</span>
-        <span class="ruby-identifier">item</span>[<span class="ruby-string">&#39;title&#39;</span>] = <span class="ruby-node">$1</span>.<span class="ruby-identifier">strip</span>
-      <span class="ruby-keyword">else</span>
-        <span class="ruby-comment">#log &quot;part #{part} line #{line}&quot;</span>
-        <span class="ruby-identifier">part</span> = ( <span class="ruby-identifier">part</span>.<span class="ruby-identifier">nil?</span> <span class="ruby-operator">?</span> <span class="ruby-string">&#39;&#39;</span> <span class="ruby-operator">:</span>  <span class="ruby-identifier">part</span> <span class="ruby-operator">+</span> <span class="ruby-string">&quot;\n&quot;</span> ) <span class="ruby-operator">+</span> <span class="ruby-identifier">line</span>
-      <span class="ruby-keyword">end</span>
-    <span class="ruby-keyword">end</span>
-    <span class="ruby-identifier">item</span>[<span class="ruby-identifier">kat</span>] = <span class="ruby-identifier">part</span>.<span class="ruby-identifier">strip</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">kat</span>
-  <span class="ruby-keyword">end</span>
-  <span class="ruby-keyword">return</span> <span class="ruby-identifier">item</span>
-<span class="ruby-keyword">end</span></pre>
-          </div>
-          
-        </div>
-
-        
-
-        
-      </div>
-
-    
       <div id="method-i-sklad" class="method-detail ">
         
         <div class="method-heading">
@@ -183,13 +129,53 @@
 
         <div class="method-description">
           
-          
+          <pre>GET /priklady/sklad</pre>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>kat
+<dd>
+<p>vyhledej v `kategorie`</p>
+</dd><dt>ob
+<dd>
+<p>vyhledej v `obtížnost`</p>
+</dd><dt>tit
+<dd>
+<p>vyhledej v `title`</p>
+</dd><dt>stav
+<dd>
+<p>vyhledej v `stav`</p>
+</dd><dt>nestav
+<dd>
+<p>vyhledej negativně v `stav`</p>
+</dd><dt>bad
+<dd>
+<p>pokud je neprazdné, filtruj ty které mají nevyplněnou povinnou položku
+prázdnou (`kategorie`, `obtiznost`, `zadání`, `řešení`, `stav`)</p>
+</dd></dl>
+
+<p><strong>Provides</strong></p>
+<dl class="rdoc-list note-list"><dt>@path
+<dt>@files_parsed
+<dd>
+<p>seznam souborů, jeden soubor je hash ve kterém je naparsovaný soubor s
+příkladem.</p>
+<dl class="rdoc-list note-list"><dt>title
+<dd>
+<p>titulek</p>
+</dd><dt>path
+<dd>
+<p>cesta k souboru</p>
+</dd><dt>kategorie, obtiznost, zadání, řešení, stav
+<dd>
+<p>to co v souboru v odpovídajících sekcích</p>
+</dd></dl>
+</dd></dl>
           
           
 
           
           <div class="method-source-code" id="sklad-source">
-            <pre><span class="ruby-comment"># File app/controllers/priklady_controller.rb, line 4</span>
+            <pre><span class="ruby-comment"># File app/controllers/priklady_controller.rb, line 24</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">sklad</span>
   <span class="ruby-identifier">load_config</span>
   <span class="ruby-identifier">kat</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:kat</span>]
@@ -207,7 +193,7 @@
      <span class="ruby-identifier">path</span> =  <span class="ruby-identifier">file</span>[<span class="ruby-value">:path</span>]
      <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span>  <span class="ruby-identifier">path</span> <span class="ruby-operator">!~</span> <span class="ruby-regexp">/\.wiki$/</span>
      <span class="ruby-identifier">text</span>, <span class="ruby-identifier">blobid</span> = <span class="ruby-ivar">@giwi</span>.<span class="ruby-identifier">get_page</span>(<span class="ruby-identifier">path</span>)
-     <span class="ruby-identifier">item</span> = <span class="ruby-identifier">parse_one</span>(<span class="ruby-identifier">text</span>, <span class="ruby-identifier">path</span>)
+     <span class="ruby-identifier">item</span> = <span class="ruby-identifier">_parse_one</span>(<span class="ruby-identifier">text</span>, <span class="ruby-identifier">path</span>)
      <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">kat</span>.<span class="ruby-identifier">nil?</span>  <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">item</span>[<span class="ruby-string">&#39;kategorie&#39;</span>].<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">index</span>(<span class="ruby-identifier">kat</span>).<span class="ruby-identifier">nil?</span>
      <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">ob</span>.<span class="ruby-identifier">nil?</span>   <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">item</span>[<span class="ruby-string">&#39;obtížnost&#39;</span>].<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">index</span>(<span class="ruby-identifier">ob</span>).<span class="ruby-identifier">nil?</span>
      <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">tit</span>.<span class="ruby-identifier">nil?</span>  <span class="ruby-operator">&amp;&amp;</span> <span class="ruby-identifier">item</span>[<span class="ruby-string">&#39;title&#39;</span>].<span class="ruby-identifier">to_s</span>.<span class="ruby-identifier">index</span>(<span class="ruby-identifier">tit</span>).<span class="ruby-identifier">nil?</span>

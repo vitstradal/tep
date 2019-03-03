@@ -92,6 +92,9 @@
 
   <section class="description">
     
+<p>Třída na rozesílání mailů, templaty pro maily jsou v
+`app/views/tep/mailer/`</p>
+
   </section>
 
   
@@ -124,13 +127,21 @@
 
         <div class="method-description">
           
-          
+          <p>pošle mail s informacemi o chybě, na ehm `vitas@matfyz.cz`</p>
+
+<p><strong>Tempate</strong> app/views/tep/mailer/error.html.erb</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>data
+<dd>
+<p>hash, jeho obsah bude poslan v mailu</p>
+</dd></dl>
           
           
 
           
           <div class="method-source-code" id="error-source">
-            <pre><span class="ruby-comment"># File app/mailers/tep/mailer.rb, line 21</span>
+            <pre><span class="ruby-comment"># File app/mailers/tep/mailer.rb, line 53</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">error</span>(<span class="ruby-identifier">data</span>)
   <span class="ruby-identifier">errid</span> = <span class="ruby-identifier">data</span>[<span class="ruby-value">:errid</span>]
   <span class="ruby-ivar">@data</span> = <span class="ruby-identifier">data</span>.<span class="ruby-identifier">deep_stringify_keys</span>
@@ -159,13 +170,22 @@
 
         <div class="method-description">
           
-          
+          <p><strong>Tempate</strong>
+app/views/tep/mailer/first_login_instructions.html.erb</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>record
+<dt>token
+<dd>
+<p>token</p>
+</dd><dt>opts
+<dd></dd></dl>
           
           
 
           
           <div class="method-source-code" id="first_login_instructions-source">
-            <pre><span class="ruby-comment"># File app/mailers/tep/mailer.rb, line 2</span>
+            <pre><span class="ruby-comment"># File app/mailers/tep/mailer.rb, line 11</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">first_login_instructions</span>(<span class="ruby-identifier">record</span>, <span class="ruby-identifier">token</span>, <span class="ruby-identifier">opts</span>={})
   <span class="ruby-ivar">@token</span> = <span class="ruby-identifier">token</span>
   <span class="ruby-identifier">devise_mail</span>(<span class="ruby-identifier">record</span>, <span class="ruby-value">:first_login_instructions</span>)
@@ -193,13 +213,25 @@
 
         <div class="method-description">
           
-          
+          <p><strong>Tempate</strong> app/views/tep/mailer/inform_bonz_email.html.erb</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>to
+<dd>
+<p>to</p>
+</dd><dt>subj
+<dd>
+<p>subject</p>
+</dd><dt>data
+<dt>ordered_data
+<dt>form
+<dd></dd></dl>
           
           
 
           
           <div class="method-source-code" id="inform_bonz_email-source">
-            <pre><span class="ruby-comment"># File app/mailers/tep/mailer.rb, line 7</span>
+            <pre><span class="ruby-comment"># File app/mailers/tep/mailer.rb, line 26</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">inform_bonz_email</span>(<span class="ruby-identifier">to</span>, <span class="ruby-identifier">subj</span>, <span class="ruby-identifier">data</span>, <span class="ruby-identifier">ordered_data</span>, <span class="ruby-identifier">form</span>)
   <span class="ruby-ivar">@ordered_data</span> = <span class="ruby-identifier">ordered_data</span>
   <span class="ruby-ivar">@data</span> = <span class="ruby-identifier">data</span>
@@ -229,13 +261,22 @@
 
         <div class="method-description">
           
-          
+          <p><strong>Tempate</strong> app/views/tep/mailer/inform_thanks_email.html.erb</p>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>to, subj, text
+<dd>
+<p>email, subject, a text poděkování</p>
+</dd><dt>ordered_data
+<dd>
+<p>pole položek `[[key1, value2], [k2,v2], …]`</p>
+</dd></dl>
           
           
 
           
           <div class="method-source-code" id="inform_thanks_email-source">
-            <pre><span class="ruby-comment"># File app/mailers/tep/mailer.rb, line 14</span>
+            <pre><span class="ruby-comment"># File app/mailers/tep/mailer.rb, line 39</span>
 <span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">inform_thanks_email</span>(<span class="ruby-identifier">to</span>, <span class="ruby-identifier">subj</span>, <span class="ruby-identifier">text</span>, <span class="ruby-identifier">ordered_data</span>)
   <span class="ruby-ivar">@ordered_data</span> = <span class="ruby-identifier">ordered_data</span>
   <span class="ruby-ivar">@text</span> = <span class="ruby-identifier">text</span> <span class="ruby-operator">||</span> <span class="ruby-string">&#39;Děkujeme za vyplnění formuláře&#39;</span>
