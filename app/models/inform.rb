@@ -9,6 +9,7 @@ require 'json'
 #    t.datetime "updated_at"
 #    t.text     "user_agent",             default: "unknown"
 class Inform < ActiveRecord::Base
+  attr_accessor :rest
   ##
   # decoduje json sloupec `data`
   def jdata

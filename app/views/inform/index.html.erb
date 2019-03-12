@@ -8,6 +8,7 @@
 
 <% count = 0 %>
 
+<%#########################################%>
 <% if style.nil? || style == 'tab'  %>
 
   <table class='table'>
@@ -36,6 +37,7 @@
   </table>
 <% end %>
 
+<%#########################################%>
 <% if style == 'list' %>
   <% name = @keys.grep(/^Jm[ée]no/i).first %>
   <% prijm = @keys.grep(/^Příjmení/i).first %>
@@ -63,6 +65,7 @@
   <hr/>
 <% end %>
 
+<%#########################################%>
 <% if style == 'list2' %>
   <% name = @keys.grep(/^Jm[ée]no/i).first %>
   <% prijm = @keys.grep(/^Př[ií]jmení/i).first %>

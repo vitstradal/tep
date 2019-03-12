@@ -36,6 +36,10 @@ class InformController < ApplicationController
     hkeys = {}
     order = nil
     @informs.each do |inform|
+      # Přijmení => Příjemní
+      if inform.jdata.has_key? 'Přijmení' and ! inform.jdata.has_key? 'Příjmení'
+        inform.jdata['Příjmení'] = inform.jdata.delete('Přijmení')
+      end
       inform.jdata.each do |k,v| 
         if k == 'inform_order'
           order = v
@@ -44,12 +48,17 @@ class InformController < ApplicationController
         hkeys[k] = 1 
       end
     end
+
     if ! order.nil?
       @keys = order.split(':')
       @keys.push('thanks_email_sent')
+      hkeys.keys.sort.each do |key|
+        @keys.push(key) if ! @keys.include? key
+      end
     else
       @keys = hkeys.keys.sort
     end
+
     @wide_display = true
   end
 
