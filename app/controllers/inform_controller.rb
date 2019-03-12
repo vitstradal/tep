@@ -50,7 +50,8 @@ class InformController < ApplicationController
     end
 
     if ! order.nil?
-      @keys = order.split(':')
+      # Přijmení -> Příjmení
+      @keys = order.split(':').map{|k|k=='Přijmení'?'Příjmení':k}
       @keys.push('thanks_email_sent')
       hkeys.keys.sort.each do |key|
         @keys.push(key) if ! @keys.include? key
