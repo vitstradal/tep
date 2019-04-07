@@ -11,6 +11,7 @@ class Sosna::Problem < ActiveRecord::Base
   has_many :solutions
 
   BONUS_ROUND_NUM = 100
+  BONUS_PROBLEM_NUM = 100
 
   ##
   # 
@@ -19,6 +20,14 @@ class Sosna::Problem < ActiveRecord::Base
     _rounds_roc(annual)
   end
 
+  ##
+  # *Returns* `problem_no` (1,2,...) ale v případě bonusové úlohy ('B', 'B2', ...)
+  # bonusová úloha se pozná tak, že `problem_no` je 100, nebo více
+  def short_name
+    return problem_no if problem_no < BONUS_ROUND_NUM
+    return 'B' if problem_no == BONUS_ROUND_NUM
+    return 'B' + (problem_no - BONUS_ROUND_NUM).to_s
+  end
 
   private
   def _rounds_roc(annual)

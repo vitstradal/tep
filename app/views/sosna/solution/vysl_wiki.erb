@@ -1,5 +1,5 @@
 = Výsledková listina po <%=@round%>. sérii <%=@annual%>. ročníku Pikomatu MFF UK=
-<% head_problems = @problems.map{|p| "= #{p.problem_no} ="}.join("||")
+<% head_problems = @problems.map{|p| "= #{p.short_name} ="}.join("||")
 %>
 
 ||=   Pořadí =||= v ročníku =||= Roč =||=         Příjmení =||=         Jméno =||=  Ročník =||= Škola =||<%= head_problems %>||=  P =||= BS =||= Body =||

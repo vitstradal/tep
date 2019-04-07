@@ -1,4 +1,12 @@
-%       nr;       nrr;flg;  id;                pr;             jm;   roc; rroc;skola; 1;2; 3;4;5; 6;7; pen;sumser;sumall;bdz
+<% 
+   ulohy_head = '';
+   @problems.each_with_index do |pr,i|
+     # mezery pred prvni ulohou a pak pred kazdou treti
+     ulohy_head += ' ' if  i % 3 == 2 || i == 0
+     # cislo ulohy (aka problem_no), ale pro bonusove ulohy pouze 'B'
+     ulohy_head += "#{pr.short_name.to_s};" 
+   end
+%>%       nr;       nrr;flg;  id;                pr;             jm;   roc; rroc;skola;<%=ulohy_head%> pen;sumser;sumall;bdz
 <%
    rank_all_last  = ''
    rank_cls_last  = ''

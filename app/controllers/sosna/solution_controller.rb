@@ -684,7 +684,7 @@ class Sosna::SolutionController < SosnaController
     results_last = _get_results_by_solver(solvers, roc, se.to_i - 1, false)
 
     # priklady v teto serii
-    problems = Sosna::Problem.where(:annual => roc, :round => se)
+    problems = Sosna::Problem.where(:annual => roc, :round => se).where(Sosna::Problem.arel_table[:problem_no].lt(Sosna::Problem::BONUS_PROBLEM_NUM))
 
     # penalizace za tuto serii
     pens = Sosna::Penalisation.where(:annual => roc, :round => se)
@@ -796,8 +796,8 @@ class Sosna::SolutionController < SosnaController
 
   def _get_results(solvers, roc, se)
     Sosna::Result.where(:solver_id => solvers.map{ |s| s.id },
-                                              :annual => roc,
-                                              :round => se).load
+                        :annual => roc,
+                        :round => se).load
 
   end
 
@@ -1128,7 +1128,7 @@ class Sosna::SolutionController < SosnaController
   def _max_round_non_bonus(annual)
      max = Sosna::Problem
                        .where({annual: annual})
-                       .where(arel_table[:round].lt(Sosna::Problem::BONUS_ROUND_NUM))
+                       .where(Sosna::Problem.arel_table[:round].lt(Sosna::Problem::BONUS_ROUND_NUM))
                        .maximum('round')
      max.to_s
   end
