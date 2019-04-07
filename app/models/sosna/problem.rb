@@ -2,16 +2,11 @@
 # Třída reprezentující tabulku sosna_problem, úloha v sérii
 #
 # *Colums*
-#    t.text    "name"
-#    t.text    "short"
-#    t.text    "street"
-#    t.text    "num"
-#    t.text    "city"
-#    t.text    "psc"
-#    t.text    "state"
-#    t.text    "universal_id"
-#    t.boolean "want_paper",   default: false, null: false
-#    t.text    "country",      default: "cz"
+#      t.string  "title",      limit: 255
+#      t.integer "annual"
+#      t.integer "round"
+#      t.integer "problem_no"
+
 class Sosna::Problem < ActiveRecord::Base
   has_many :solutions
 
