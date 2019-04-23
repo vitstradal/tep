@@ -193,6 +193,14 @@ function editor_tool_button_switch($el, editor)
      editor.focus();
      ace.data.set('vi', on ? 'on' : 'off' );
      break;
+  case 'wide':
+     if ( on ) {
+       $('#editor-container').removeClass('col-sm-6').addClass('col-sm-12');
+     }
+     else {
+       $('#editor-container').removeClass('col-sm-12').addClass('col-sm-6');
+     }
+     break;
   case 'prev':
      console.log("auto preview", on);
      editor.auto_preview = on;
@@ -200,6 +208,11 @@ function editor_tool_button_switch($el, editor)
      break;
   }
 }
+
+function set_wide_editor(want_wide) {
+  $('#widenowide').prop('checked', want_wide).change();
+}
+     console.log('wide');
 
 function editor_try_preview(editor)
 {
@@ -321,6 +334,7 @@ function editor_show_url(editor, url)
    $.get(
      url,
      function (data, textStatus, jqXHR) {
+       set_wide_editor(false);
        $('#preview-div').html(data['html']||'error');
        init_icons(editor);
      }
@@ -344,6 +358,7 @@ function editor_preview(editor)
      data: { preview: wiki},
      success: function (data, textStatus, jqXHR) {
        //console.log("data", data, "status", textStatus, jqXHR);
+       set_wide_editor(false);
        $('#preview-div').html(data['html']||'error');
        if( typeof MathJax == 'object' ) {
          MathJax.Hub.Typeset();
@@ -439,43 +454,15 @@ function uc_first(s) {
 
 function _init_textarea_with_ace($textarea) {
 
-        //var mode = textarea.data('editor');
-        //var mode = 'tracwiki';
-        var mode;
-        mode = 'tracwiki';
-        var cont = $textarea.closest('.textarea-container');
+        var mode = 'tracwiki';
 
-        var editDiv = $('<div>', {
-                position: 'absolute',
-                width: cont.width(),
-                height: cont.height(),
-                'float': 'left',
-                'class': cont.attr('class')
-        }).insertBefore($textarea);
+        var editor = ace.edit('editor-pre', { autoScrollEditorIntoView: true, 
+                                              useWrapMode : true,
+                                            });
 
+        $textarea.hide();
 
-var $consoleEl = $('<div>HU</div>', {
-                       position: 'absolute',
-                       width: '550px',
-                       height: '80px',
-                       'float': 'left',
-                       border: '1px solid black',
-                       'class': 'textarea-container col-xs-6'
-                       });
-
-
-//editDiv.append($consoleEl);
-//consoleEl.style.cssText = "position:fixed; bottom:1px; right:0;//border:1px solid #baf; z-index:100";
-
-
-        //textarea.css('visibility', 'hidden');
-        $textarea.css('display', 'none');
-
-        var editor = ace.edit(editDiv[0]);
-        editor.getSession().setValue($textarea.val());
         editor.getSession().setMode("ace/mode/" + mode);
-        editor.getSession().setUseWrapMode(true);
-
         //editor.setTheme("ace/theme/twilight");
         //ace.require("ace/ext/chromevox");
 
@@ -497,6 +484,7 @@ var $consoleEl = $('<div>HU</div>', {
 
                         // toggle vi|nevi mode by pressing vi|nevi switch
                         'ctrl-m':       function () { $('#vinovi').click();},
+                        'ctrl-v':       function () { $('#widenowide').click();},
                         'ctrl-alt-enter':       function () { $('#prevmode').click();},
 
                         // disable default bindings
