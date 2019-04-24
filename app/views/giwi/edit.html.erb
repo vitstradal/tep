@@ -59,16 +59,18 @@
      <a class="btn btn-xs btn-white btn-info" data-edit="preview" title="Preview (Alt-Enter)"> <i class=" ace-icon fa fa-eye"></i></a>
     </div>
 
-    <div class="btn-group pull-right">
-      <button data-toggle="dropdown" class="btn btn-xs btn-info dropdown-toggle">Templates<span class="ace-icon fa fa-caret-down icon-on-right"></span></button>
-      <ul class="dropdown-menu dropdown-warning">
-        <% @used_templates.sort.each do |template,defined| %>
-          <% next if template =~ /^\// %>
-          <% path =  template %>
-          <li><%= link_to template, wiki_tepmac_url(path) %> </li>
-        <% end %>
-      </ul>
-    </div>
+    <% if ! @used_templates.nil? %>
+      <div class="btn-group pull-right">
+        <button data-toggle="dropdown" class="btn btn-xs btn-info dropdown-toggle">Templates<span class="ace-icon fa fa-caret-down icon-on-right"></span></button>
+        <ul class="dropdown-menu dropdown-warning">
+          <% @used_templates.sort.each do |template,defined| %>
+            <% next if template =~ /^\// %>
+            <% path =  template %>
+            <li><%= link_to template, wiki_tepmac_url(path) %> </li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
 
     <div class="btn-group pull-right">
       <label class='pull-right' title='toggle vi-mode Ctrl-M'>

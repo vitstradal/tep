@@ -195,9 +195,11 @@ function editor_tool_button_switch($el, editor)
      break;
   case 'wide':
      if ( on ) {
+       console.log("wide on");
        $('#editor-container').removeClass('col-sm-6').addClass('col-sm-12');
      }
      else {
+       console.log("wide off");
        $('#editor-container').removeClass('col-sm-12').addClass('col-sm-6');
      }
      break;
@@ -210,6 +212,7 @@ function editor_tool_button_switch($el, editor)
 }
 
 function set_wide_editor(want_wide) {
+  console.log("wide");
   $('#widenowide').prop('checked', want_wide).change();
 }
      console.log('wide');
@@ -385,8 +388,12 @@ function editor_table(editor) {
         align[i] = [];
         var row = rows[i];
         var cells = row.split(/\|\|/);
-        cells.shift();
-        cells.pop();
+        if( cells.length > 1 && cells[0].length == 0  ) {
+          cells.shift();
+        }
+        if( cells.length > 1 && cells[cells.length-1].length == 0  ) {
+          cells.pop();
+        }
         console.log("row", row, cells);
         for(var j=0; j < cells.length;j++) {
           var cell = cells[j];
@@ -456,15 +463,13 @@ function _init_textarea_with_ace($textarea) {
 
         var mode = 'tracwiki';
 
-        var editor = ace.edit('editor-pre', { autoScrollEditorIntoView: true, 
-                                              useWrapMode : true,
+        var editor = ace.edit('editor-pre', { autoScrollEditorIntoView : true,
                                             });
 
         $textarea.hide();
 
         editor.getSession().setMode("ace/mode/" + mode);
-        //editor.setTheme("ace/theme/twilight");
-        //ace.require("ace/ext/chromevox");
+        editor.getSession().setUseWrapMode(true);
 
         editor.setTheme("ace/theme/tomorrow");
         editor.renderer.setShowGutter(true);
