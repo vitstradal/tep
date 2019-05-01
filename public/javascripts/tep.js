@@ -194,6 +194,7 @@ function editor_tool_button_switch($el, editor)
      ace.data.set('vi', on ? 'on' : 'off' );
      break;
   case 'wide':
+     ace.data.set('wide', on ? 'on' : 'off' );
      if ( on ) {
        console.log("wide on");
        $('#editor-container').removeClass('col-sm-6').addClass('col-sm-12');
@@ -202,6 +203,7 @@ function editor_tool_button_switch($el, editor)
        console.log("wide off");
        $('#editor-container').removeClass('col-sm-12').addClass('col-sm-6');
      }
+     editor.resize(true);
      break;
   case 'prev':
      console.log("auto preview", on);
@@ -408,6 +410,7 @@ function editor_table(editor) {
           if( (maxs[j] || 0) < cell_length ) {
               maxs[j] = cell_length;
           }
+          console.log("cell=", j, cell_length, cell);
         }
      }
      txt = '';
@@ -416,7 +419,7 @@ function editor_table(editor) {
        txt += "||";
        for(var j=0; j < row.length; j++) {
           var cell = table[i][j];
-          var spcs = "                          ".substr(0, maxs[j] + 4 - cell.length );
+          var spcs = ' '.repeat( maxs[j] - cell.length );
           var ch = align[i][j] == 'h' ? '=' : ' ';
           txt += ch +  cell + spcs + ch +'||';
        }
@@ -465,7 +468,6 @@ function _init_textarea_with_ace($textarea) {
 
         var editor = ace.edit('editor-pre', { autoScrollEditorIntoView : true,
                                             });
-
         $textarea.hide();
 
         editor.getSession().setMode("ace/mode/" + mode);
@@ -481,7 +483,6 @@ function _init_textarea_with_ace($textarea) {
                         'ctrl-b':       function () { editor_tool_action('bold', editor); },
                         'ctrl-e':       function () { editor_tool_action('table', editor); },
                         'ctrl-i':       function () { editor_tool_action('italic', editor); },
-                        //'ctrl-$':     function () { editor_tool_action('math', editor); },
                         'ctrl-escape':  function () { editor_cancel(editor);  },
                         'ctrl-enter':   function () { editor_save(editor, false);  },
                         'shift-enter':  function () { editor_save(editor, true);  },
