@@ -1,0 +1,21 @@
+Někdo vyplnil inform <%=link_to @form||'-', inform_index_url(@form) %>:
+
+<% was = {}%>
+<ul>
+<% @ordered_data.each do |pair| %>
+  <% key, val = pair %>
+  <% was[key] = true %>
+  <li><b><%=key%></b>:<%=val%></li>
+<% end %>
+</ul>
+
+<ul>
+<% @data.keys.sort.each do |key| %>
+  <% next if was[key] %>
+  <% next if key == 'inform_order' %>
+  <% val = @data[key] %>
+  <li><b><%=key%></b>:<%=val%></li>
+<% end %>
+</ul>
+
+Tvůj Tep

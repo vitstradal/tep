@@ -193,6 +193,18 @@ function editor_tool_button_switch($el, editor)
      editor.focus();
      ace.data.set('vi', on ? 'on' : 'off' );
      break;
+  case 'wide':
+     ace.data.set('wide', on ? 'on' : 'off' );
+     if ( on ) {
+       console.log("wide on");
+       $('#editor-container').removeClass('col-sm-6').addClass('col-sm-12');
+     }
+     else {
+       console.log("wide off");
+       $('#editor-container').removeClass('col-sm-12').addClass('col-sm-6');
+     }
+     editor.resize(true);
+     break;
   case 'prev':
      console.log("auto preview", on);
      editor.auto_preview = on;
@@ -200,6 +212,12 @@ function editor_tool_button_switch($el, editor)
      break;
   }
 }
+
+function set_wide_editor(want_wide) {
+  console.log("wide");
+  $('#widenowide').prop('checked', want_wide).change();
+}
+     console.log('wide');
 
 function editor_try_preview(editor)
 {
@@ -321,6 +339,7 @@ function editor_show_url(editor, url)
    $.get(
      url,
      function (data, textStatus, jqXHR) {
+       set_wide_editor(false);
        $('#preview-div').html(data['html']||'error');
        init_icons(editor);
      }
@@ -344,6 +363,7 @@ function editor_preview(editor)
      data: { preview: wiki},
      success: function (data, textStatus, jqXHR) {
        //console.log("data", data, "status", textStatus, jqXHR);
+       set_wide_editor(false);
        $('#preview-div').html(data['html']||'error');
        if( typeof MathJax == 'object' ) {
          MathJax.Hub.Typeset();
@@ -370,8 +390,12 @@ function editor_table(editor) {
         align[i] = [];
         var row = rows[i];
         var cells = row.split(/\|\|/);
-        cells.shift();
-        cells.pop();
+        if( cells.length > 1 && cells[0].length == 0  ) {
+          cells.shift();
+        }
+        if( cells.length > 1 && cells[cells.length-1].length == 0  ) {
+          cells.pop();
+        }
         console.log("row", row, cells);
         for(var j=0; j < cells.length;j++) {
           var cell = cells[j];
@@ -386,24 +410,46 @@ function editor_table(editor) {
           if( (maxs[j] || 0) < cell_length ) {
               maxs[j] = cell_length;
           }
+          console.log("cell=", j, cell_length, cell);
         }
      }
-     txt = '';
-     for(var i=0; i < table.length; i++ ) {
-       var row = table[i];
-       txt += "||";
-       for(var j=0; j < row.length; j++) {
-          var cell = table[i][j];
-          var spcs = "                          ".substr(0, maxs[j] + 4 - cell.length );
-          var ch = align[i][j] == 'h' ? '=' : ' ';
-          txt += ch +  cell + spcs + ch +'||';
-       }
-       txt += "\n";
-     }
+     //txt = editor_table_formater_basic(table, maxs, align);
+     txt = editor_table_formater_mediawiki(table, maxs, align);
   }
+
   editor.insert( txt );
   editor.focus();
 }
+
+function editor_table_formater_basic(table, maxs, align) {
+  var txt = '';
+  for(var i=0; i < table.length; i++ ) {
+    var row = table[i];
+    txt += "||";
+    for(var j=0; j < row.length; j++) {
+       var cell = table[i][j];
+       var spcs = ' '.repeat( maxs[j] - cell.length );
+       var ch = align[i][j] == 'h' ? '=' : ' ';
+       txt += ch +  cell + spcs + ch +'||';
+    }
+    txt += "\n";
+  }
+  return txt;
+}
+
+function editor_table_formater_mediawiki(table, maxs, align) {
+  var txt = "{|\n";
+  for(var i=0; i < table.length; i++ ) {
+    if( i > 0 ) {
+      txt += "|-\n";
+    }
+    for(var j=0; j < table[i].length; j++) {
+       txt += "| " + table[i][j] + "\n"
+    }
+  }
+  return txt + "|}\n";
+}
+
 
 function editor_wrap(editor, pre, post) {
   var txt = editor.session.getTextRange(editor.getSelectionRange());
@@ -439,45 +485,14 @@ function uc_first(s) {
 
 function _init_textarea_with_ace($textarea) {
 
-        //var mode = textarea.data('editor');
-        //var mode = 'tracwiki';
-        var mode;
-        mode = 'tracwiki';
-        var cont = $textarea.closest('.textarea-container');
+        var mode = 'tracwiki';
 
-        var editDiv = $('<div>', {
-                position: 'absolute',
-                width: cont.width(),
-                height: cont.height(),
-                'float': 'left',
-                'class': cont.attr('class')
-        }).insertBefore($textarea);
+        var editor = ace.edit('editor-pre', { autoScrollEditorIntoView : true,
+                                            });
+        $textarea.hide();
 
-
-var $consoleEl = $('<div>HU</div>', {
-                       position: 'absolute',
-                       width: '550px',
-                       height: '80px',
-                       'float': 'left',
-                       border: '1px solid black',
-                       'class': 'textarea-container col-xs-6'
-                       });
-
-
-//editDiv.append($consoleEl);
-//consoleEl.style.cssText = "position:fixed; bottom:1px; right:0;//border:1px solid #baf; z-index:100";
-
-
-        //textarea.css('visibility', 'hidden');
-        $textarea.css('display', 'none');
-
-        var editor = ace.edit(editDiv[0]);
-        editor.getSession().setValue($textarea.val());
         editor.getSession().setMode("ace/mode/" + mode);
         editor.getSession().setUseWrapMode(true);
-
-        //editor.setTheme("ace/theme/twilight");
-        //ace.require("ace/ext/chromevox");
 
         editor.setTheme("ace/theme/tomorrow");
         editor.renderer.setShowGutter(true);
@@ -489,7 +504,6 @@ var $consoleEl = $('<div>HU</div>', {
                         'ctrl-b':       function () { editor_tool_action('bold', editor); },
                         'ctrl-e':       function () { editor_tool_action('table', editor); },
                         'ctrl-i':       function () { editor_tool_action('italic', editor); },
-                        //'ctrl-$':     function () { editor_tool_action('math', editor); },
                         'ctrl-escape':  function () { editor_cancel(editor);  },
                         'ctrl-enter':   function () { editor_save(editor, false);  },
                         'shift-enter':  function () { editor_save(editor, true);  },
@@ -497,12 +511,13 @@ var $consoleEl = $('<div>HU</div>', {
 
                         // toggle vi|nevi mode by pressing vi|nevi switch
                         'ctrl-m':       function () { $('#vinovi').click();},
+                        'shift-ctrl-v':       function () { $('#widenowide').click();},
                         'ctrl-alt-enter':       function () { $('#prevmode').click();},
 
                         // disable default bindings
                         'ctrl-l':null,
                         'ctrl-t':null,
-                        'ctrl-r':null,
+                        //'ctrl-r':null,
                       })
 
         var pos_str = form.find('input[name=cursor]').val();

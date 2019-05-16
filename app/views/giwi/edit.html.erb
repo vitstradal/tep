@@ -58,64 +58,59 @@
      <a class="btn btn-xs btn-white btn-warning" data-edit="save" title="Save and show (Ctrl-Enter)"> <i class=" ace-icon fa fa-floppy-o"></i></a>
      <a class="btn btn-xs btn-white btn-info" data-edit="preview" title="Preview (Alt-Enter)"> <i class=" ace-icon fa fa-eye"></i></a>
     </div>
-  </div>
-  <div class="row">
 
-    <div class="col-sm-6">
-      <div class="row">
-        <div class="textarea-container col-xs-12">
-          <%= text_area_tag :text, @text, style:'float:left', class: 'span9 aceeditor ctrl-enter-submit', id: 'textedit', cols: 100, rows: 24%>
-        </div>
+    <% if ! @used_templates.nil? %>
+      <div class="btn-group pull-right">
+        <button data-toggle="dropdown" class="btn btn-xs btn-info dropdown-toggle">Templates<span class="ace-icon fa fa-caret-down icon-on-right"></span></button>
+        <ul class="dropdown-menu dropdown-warning">
+          <% @used_templates.sort.each do |template,defined| %>
+            <% next if template =~ /^\// %>
+            <% path =  template %>
+            <li><%= link_to template, wiki_tepmac_url(path) %> </li>
+          <% end %>
+        </ul>
       </div>
-      <div class="row">
-        <div class="col-xs-12">
-          <div class="cmdline" style="width:100%;height:2em;position:relative;">huu</div>
-        </div>
-      </div>
-    </div>
+    <% end %>
 
-    <div class="col-sm-6">
-      <div style="float:left" id="preview-div"></div>
-    </div>
-  </div>
-  <div style="clear:both"></div>
-  <%= button_tag  'Zpět',   :class=>'btn',            :ico => 'fa-reply', :href => url_for(path: @path)  %>
-  <%= button_tag  'Uložit', :class=>'btn btn-danger', ico: 'fa-floppy-o'  %>
-
-
+    <div class="btn-group pull-right">
       <label class='pull-right' title='toggle vi-mode Ctrl-M'>
-        <input id='vinovi' type="checkbox" data-edit='vi' name="myoption" class="ace ace-switch xswitch-field-1" <%if cookies['ace.vi'.to_sym]=='on'%>checked="checked"<%end%>/>
+        <input id='vinovi' type="checkbox" data-edit='vi' name="vinovi" class="ace ace-switch xswitch-field-1" <%if cookies['ace.vi'.to_sym]=='on'%>checked="checked"<%end%>/>
         <span class="lbl" data-lbl="&nbsp;vi&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;nevi"></span>
       </label>
-
+  
       <label class='pull-right' title='automatic preview Ctrl-Alt-Enter'>
         <input id='prevmode' type="checkbox" data-edit='prev' name="pre" class="ace ace-switch xswitch-field-1" <%if cookies['ace.prev'.to_sym]=='on'%>checked="checked"<%end%>/>
         <span class="lbl" data-lbl="auto&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;růčo"></span>
       </label>
+  
+      <label class='pull-right' title='toggle wide-mode Shift-Ctrl-V'>
+        <input id='widenowide' type="checkbox" data-edit='wide' name="widenowide" class="ace ace-switch xswitch-field-1" <%if cookies['ace.wide'.to_sym]=='on'%>checked="checked"<%end%>/>
+        <span class="lbl" data-lbl="wide&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;slim"></span>
+      </label>
+    </div>
+  </div>
+  <div class="row">
+
+    <div class="col-sm-12">
+      <div class="row">
+        <div class="col-xs-12">
+          <div class="cmdline" style="width:100%;height:1em;position:relative;"></div>
+        </div>
+      </div>
+      <div class="row">
+        <div id='editor-container' class="textarea-container col-xs-12">
+          <%= text_area_tag :text, @text, style:'float:left', class: 'span9 aceeditor ctrl-enter-submit', id: 'textedit', cols: 200, rows: 30%>
+          <pre style='height:600px;width:100%' id='editor-pre'><%=@text%></pre> 
+        </div>
+
+        <div class="col-sm-6">
+          <div style="float:left" id="preview-div"></div>
+        </div>
+      </div>
     </div>
 
-   <% if false %>
-    <script>
-                var toolbar = new jsToolBar(document.getElementById('textedit'));
-                <% if @giwi.help_link %>toolbar.help_link = '<%= url_for(:root) + @giwi.help_link %>'; <% end %>
-                toolbar.draw();
-   </script>
-  <% end %>
+  </div>
 <% end #form %>
-<% if @used_templates %>
-  Templates:
-  <ul>
-  <% @used_templates.sort.each do |template,defined| %>
-    <% next if template =~ /^\// %>
-    <% path =  template %>
-    templates: '<%= @giwi.templates %>'
-    url: '<%= @giwi.url %>'
-
-    <li><%= link_to template, wiki_tepmac_url(path) %>
-        <%= link_to "[edit]", wiki_tepmac_url(path , edit: 'me')%> : <%= defined %>,</li>
-  <% end %>
-  </ul>
-<% end %>
 
 <% content_for :action_buttons do %>
   <div class="pull-right">

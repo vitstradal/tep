@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class Sosna::ProblemController - RDoc Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "../";
+  var index_rel_prefix = "../";
+</script>
+
+<script src="../js/jquery.js"></script>
+<script src="../js/darkfish.js"></script>
+
+<link href="../css/fonts.css" rel="stylesheet">
+<link href="../css/rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="../index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="../table_of_contents.html#pages">Pages</a>
+    <a href="../table_of_contents.html#classes">Classes</a>
+    <a href="../table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link"><a href="../SosnaController.html">SosnaController</a>
+  
+</div>
+
+    <div id="includes-section" class="nav-section">
+  <h3>Included Modules</h3>
+
+  <ul class="link-list">
+  
+  
+    <li><a class="include" href="../ApplicationHelper.html">ApplicationHelper</a>
+  
+  
+  </ul>
+</div>
+
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-i-delete">#delete</a>
+    
+    <li ><a href="#method-i-index">#index</a>
+    
+    <li ><a href="#method-i-new_round">#new_round</a>
+    
+    <li ><a href="#method-i-show">#show</a>
+    
+    <li ><a href="#method-i-update">#update</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-Sosna::ProblemController">
+  <h1 id="class-Sosna::ProblemController" class="class">
+    class Sosna::ProblemController
+  </h1>
+
+  <section class="description">
+    
+  </section>
+
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-delete" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">delete</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>POST /sosna/problem/(:id)</pre>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>id
+<dd>
+<p>id příkladu</p>
+</dd></dl>
+
+<p><strong>Redirects</strong>: index</p>
+          
+          
+
+          
+          <div class="method-source-code" id="delete-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/problem_controller.rb, line 33</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">delete</span>
+   <span class="ruby-identifier">id</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>]
+   <span class="ruby-identifier">u</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Problem</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">id</span>)
+   <span class="ruby-keyword">if</span> <span class="ruby-identifier">u</span>
+     <span class="ruby-identifier">u</span>.<span class="ruby-identifier">destroy</span>
+     <span class="ruby-identifier">add_success</span> <span class="ruby-string">&#39;Uloha smazána&#39;</span>
+   <span class="ruby-keyword">else</span>
+     <span class="ruby-identifier">add_alert</span> <span class="ruby-string">&#39;no such uloha&#39;</span>
+   <span class="ruby-keyword">end</span>
+   <span class="ruby-identifier">redirect_to</span> <span class="ruby-value">action:</span> <span class="ruby-value">:index</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-index" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">index</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>GET /sosna/problems</pre>
+
+<p><strong>Provides</strong></p>
+<dl class="rdoc-list note-list"><dt>@problems
+<dd>
+<p>pole příkladů, setřízene od nejnovějšího</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="index-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/problem_controller.rb, line 10</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">index</span>
+    <span class="ruby-ivar">@problems</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Problem</span>.<span class="ruby-identifier">order</span>(<span class="ruby-string">&#39;annual desc, round desc,  problem_no asc&#39;</span>).<span class="ruby-identifier">load</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-new_round" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">new_round</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>POST /sosna/problem/new_round</pre>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>annual
+<dd>
+<p>ročník</p>
+</dd><dt>round
+<dd>
+<p>série</p>
+</dd><dt>count
+<dd>
+<p>počet příkladů v séríí</p>
+</dd></dl>
+
+<p><strong>Redirects</strong>: index</p>
+          
+          
+
+          
+          <div class="method-source-code" id="new_round-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/problem_controller.rb, line 53</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">new_round</span>
+   <span class="ruby-identifier">annual</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:annual</span>]
+   <span class="ruby-identifier">round</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:round</span>]
+   <span class="ruby-identifier">count</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:count</span>].<span class="ruby-identifier">to_i</span>
+   (<span class="ruby-value">1</span><span class="ruby-operator">..</span><span class="ruby-identifier">count</span>).<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">problem_no</span><span class="ruby-operator">|</span>
+      <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Problem</span>.<span class="ruby-identifier">create</span>({ <span class="ruby-value">:annual</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">annual</span>,
+                            <span class="ruby-value">:round</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">round</span>,
+                            <span class="ruby-value">:problem_no</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">problem_no</span>,
+                            <span class="ruby-value">:title</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-node">&quot;Úloha č. #{problem_no}&quot;</span>,
+                            })
+   <span class="ruby-keyword">end</span>
+   <span class="ruby-identifier">redirect_to</span> <span class="ruby-value">:action</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-value">:index</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-show" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">show</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>GET /sosna/problem/(:id)</pre>
+
+<p><strong>Param</strong></p>
+<dl class="rdoc-list note-list"><dt>id
+<dd>
+<p>id příkladů</p>
+</dd></dl>
+
+<p><strong>Provides</strong></p>
+<dl class="rdoc-list note-list"><dt>@problem
+<dd>
+<p>příklad</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="show-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/problem_controller.rb, line 22</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">show</span>
+  <span class="ruby-ivar">@problem</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Problem</span>.<span class="ruby-identifier">find_or_new</span>(<span class="ruby-identifier">params</span>[<span class="ruby-value">:id</span>])
+  <span class="ruby-identifier">logger</span>.<span class="ruby-identifier">fatal</span> <span class="ruby-node">&quot;id #{@problem.id}&quot;</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-update" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">update</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>POST /sosna/problem/update</pre>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>sosna_problem
+<dt>commit
+<dd>
+<p>po update edituj další příkad</p>
+</dd></dl>
+
+<p><strong>Redirects</strong>: index</p>
+          
+          
+
+          
+          <div class="method-source-code" id="update-source">
+            <pre><span class="ruby-comment"># File app/controllers/sosna/problem_controller.rb, line 74</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">update</span>
+  <span class="ruby-identifier">params</span>.<span class="ruby-identifier">require</span>(<span class="ruby-value">:sosna_problem</span>).<span class="ruby-identifier">permit!</span>
+  <span class="ruby-identifier">p</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:sosna_problem</span>]
+  <span class="ruby-identifier">commit</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:commit</span>]
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">p</span>[<span class="ruby-value">:id</span>]
+    <span class="ruby-identifier">problem</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Problem</span>.<span class="ruby-identifier">find</span> <span class="ruby-identifier">p</span>[<span class="ruby-value">:id</span>]
+    <span class="ruby-identifier">problem</span>.<span class="ruby-identifier">update_attributes</span> <span class="ruby-identifier">p</span>
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-identifier">problem</span> = <span class="ruby-constant">Sosna</span><span class="ruby-operator">::</span><span class="ruby-constant">Problem</span>.<span class="ruby-identifier">create</span> <span class="ruby-identifier">p</span>
+  <span class="ruby-keyword">end</span>
+
+  <span class="ruby-keyword">if</span> <span class="ruby-identifier">commit</span> <span class="ruby-operator">=~</span> <span class="ruby-regexp">/Ulo.*it a dal/</span>
+     <span class="ruby-identifier">redirect_to</span> <span class="ruby-value">:action</span><span class="ruby-operator">=&gt;</span> <span class="ruby-value">:show</span>, <span class="ruby-value">:id</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">problem</span>.<span class="ruby-identifier">id</span> <span class="ruby-operator">+</span> <span class="ruby-value">1</span>
+  <span class="ruby-keyword">else</span> 
+     <span class="ruby-identifier">redirect_to</span> <span class="ruby-value">:action</span><span class="ruby-operator">=&gt;</span> <span class="ruby-value">:show</span>, <span class="ruby-value">:id</span> <span class="ruby-operator">=&gt;</span> <span class="ruby-identifier">problem</span>.<span class="ruby-identifier">id</span>
+  <span class="ruby-keyword">end</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.0.1.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+

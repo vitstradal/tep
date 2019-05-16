@@ -1,5 +1,5 @@
 = Výsledková listina po <%=@round%>. sérii <%=@annual%>. ročníku Pikomatu MFF UK=
-<% head_problems = @problems.map{|p| "= #{p.problem_no} ="}.join("||")
+<% head_problems = @problems.map{|p| "= #{p.short_name} ="}.join("||")
 %>
 
 ||=   Pořadí =||= v ročníku =||= Roč =||=         Příjmení =||=         Jméno =||=  Ročník =||= Škola =||<%= head_problems %>||=  P =||= BS =||= Body =||
@@ -7,7 +7,7 @@
 
    rank_all_last = ''
    rank_cls_last = ''
-   result_last = nil
+   grade_num_last = ''
    row = 0
    @solvers.each do |solver| %>
 <%=
@@ -15,17 +15,22 @@
    result = @results_by_solver[solver.id]
    school = solver.school
 
-   rank_all = result.rank_range(result_last)
-   rank_cls = result.class_rank_range(result_last)
-   result_last  = result
+   rank_all  = result.rank_range
+   rank_cls  = result.class_rank_range
+   grade_num = solver.grade_num
 
-   flg0 = (rank_all == rank_all_last) ? '+' : '-'
-   flg1 = (rank_cls == rank_cls_last) ? '+' : '-'
-   flg2 = (row % 56 == 1 )            ? '+' : '-'
-   flagy = "#{flg0}#{flg1}#{flg2}"
+   rank_all = '' if rank_all == rank_all_last
+   rank_cls = '' if rank_cls == rank_cls_last && grade_num == grade_num_last
 
-   rank_all_last = rank_all
-   rank_cls_last = rank_cls
+   #flg0 = (rank_all == rank_all_last                                ) ? '-' : '+'
+   #flg1 = (rank_cls == rank_cls_last && grade_num == grade_num_last ) ? '-' : '+'
+   #flg2 = (row % 56 == 1                                            ) ? '+' : '-'
+   #flg2 = (row % 56 == 1                                            ) ? '+' : '-'
+   #flagy = "#{flg0}#{flg1}#{flg2}"
+
+   rank_all_last  = rank_all
+   rank_cls_last  = rank_cls
+   grade_num_last = grade_num
 
 
    #format vysledkovky

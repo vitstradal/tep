@@ -1,0 +1,90 @@
+
+<h1>Sklad příkladů </h1>
+
+<% a = @annual.to_i %>
+<%= link_to 'new',       '#new'%>,
+<%= link_to 'all',       priklady_sklad_path() %>,
+<%= link_to '1',       priklady_sklad_path(ob: 1) %>,
+<%= link_to '2',       priklady_sklad_path(ob: 1) %>,
+<%= link_to '3',       priklady_sklad_path(ob: 1) %>,
+<%= link_to '4',       priklady_sklad_path(ob: 1) %>,
+<%= link_to '5',       priklady_sklad_path(ob: 1) %>,
+
+<%= link_to "s.1",       priklady_sklad_path(stav:  "#{a}.1") %>,
+<%= link_to "s.2",       priklady_sklad_path(stav:  "#{a}.2") %>,
+<%= link_to "s.3",       priklady_sklad_path(stav:  "#{a}.3") %>,
+<%= link_to "s.4",       priklady_sklad_path(stav:  "#{a}.4") %>,
+<%= link_to "s.5",       priklady_sklad_path(stav:  "#{a}.5") %>,
+<%= link_to "s.6",       priklady_sklad_path(stav:  "#{a}.6") %>,
+<%= link_to "s.7",       priklady_sklad_path(stav:  "#{a}.7") %>,
+
+<%= link_to "s+1.1",       priklady_sklad_path(stav:  "#{a+1}.1") %>,
+<%= link_to "s+1.2",       priklady_sklad_path(stav:  "#{a+1}.2") %>,
+<%= link_to "s+1.3",       priklady_sklad_path(stav:  "#{a+1}.3") %>,
+
+<%= link_to 'zadáno',  priklady_sklad_path(stav: 'zadáno') %>,
+<%= link_to 'nezadáno',  priklady_sklad_path(nestav: 'zadáno') %>,
+<%= link_to 'přeprac', priklady_sklad_path(stav: 'přeprac') %>,
+<%= link_to 'schvá',   priklady_sklad_path(stav: 'schv') %>,
+<%= link_to 'log',     priklady_sklad_path(kat: 'log') %>,
+<%= link_to 'stereo',  priklady_sklad_path(kat: 'stereo') %>,
+<%= link_to 'rov',     priklady_sklad_path(kat: 'rovnice') %>,
+<%= link_to 'teorie',  priklady_sklad_path(kat: 'teorie') %>,
+<%= link_to 'her',     priklady_sklad_path(kat: 'čísel') %>,
+<%= link_to 'čísel',   priklady_sklad_path(kat: 'her') %>,
+<%= link_to 'komb',    priklady_sklad_path(kat: 'komb') %>,
+<%= link_to 'bad',     priklady_sklad_path(bad: '1') %>,
+<%#<table class="table table-hover table-condensed table-bordered"> %>
+
+
+
+<table class="table table-condensed table-hover table-bordered datatable">
+  <thead>
+     <tr><th title="edit">E</th>
+         <th>Title</th>
+         <th>Kategorie</th>
+         <th>Stav</th>
+         <th title="Obtížnost">Ob</th>
+         <th>Autor</th>
+         <th title="zadání">Z</th>
+         <th title="řešení">Ř</th>
+         <th title="komentář">K</th>
+     </tr>
+  </thead>
+  <tbody>
+  <% @files_parsed.each do |item| %>
+    <% zad = item['zadání'] || '' %>
+    <% res = item['řešení']  || ''%>
+    <% kom = item['komentář']  || ''%>
+    <% tit = item['title']  || ''%>
+    <% next if tit.empty? %>
+    <tr><td><%= link_to wiki_piki_path(item['path'], edit: 'me') do %> <i class="fa fa-pencil-square-o"></i> <% end %></td>
+        <td><%= link_to tit, wiki_piki_path(item['path']) %></td>
+        <td><%= item['kategorie']%></td>
+        <td><%= item['stav']%></td>
+        <td><%= item['obtížnost']%></td>
+        <td><%= item['autor']%></td>
+        <td><i class="fa <%= zad.empty? ? 'fa-file-o'      : 'fa-file'      %>" title="<%= zad %>"></i></td>
+        <td><i class="fa <%= res.empty? ? 'fa-file-text-o' : 'fa-file-text' %>" title="<%= res %>"></i></td>
+        <td><i class="fa <%= kom.empty? ? 'fa-comment-o'   : 'fa-comment'   %>" title="<%= kom %>"></i></td>
+        </td>
+    </tr>
+  <% end %>
+  </tbody>
+</table>
+
+<hr/>
+
+<%= form_tag wiki_piki_path('priklady'), :method => :get, :class => 'form-inline',  :id => 'new' do |f| %>
+  <div class="form-group"> 
+    <button type='submit' class='btn btn-success'><i class="fa  fa-lightbulb-o"></i> Nový příklad</button>
+  </div>
+  <div class="form-group"> 
+    priklady/<%= text_field_tag :path2, '', size: 40, placeholder: "Příklad šestidimenzionální průnik"%>
+    <%= hidden_field_tag :new_append, 'priklady/vzor.wiki' %>
+  </div>
+<% end %>
+
+<%#= debug @files_parsed %>
+
+</pre

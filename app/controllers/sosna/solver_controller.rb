@@ -4,6 +4,22 @@ class Sosna::SolverController < SosnaController
 
   include ApplicationHelper
 
+  ##
+  #  GET /sosna/solvers/list(/:roc)
+  #
+  # seznam řešitelů ročníků
+  #
+  # *Params*
+  # roc:: ročník, pokud není vezme se aktuální
+  # school_id:: pokud je, vezmou se pouze řešitelé této školy
+  #
+  # *Formats*: html, pik
+  #
+  # *Provides*
+  # @annual::
+  # @school_id;:
+  # @solvers;: pole řešitelů
+  # @breadcrumb:: 
   def index
     load_config
     @annual = params[:roc] || @annual
@@ -30,11 +46,31 @@ class Sosna::SolverController < SosnaController
     @breadcrumb = [[breadcrumb_annual_links(:index)]];
   end
 
+  ##
+  #  GET /sosna/solvers/tep_emails(/:roc)
+  #
+  # *Params*
+  # roc:: ročník, pokud není tak se vezme aktuální
+  #
+  # *Provides*
+  # @annual:: ročník
+  # @solvers:: pole řešitelů daného ročníku
   def tep_emails
     @annual = params[:roc] || @annual
     @solvers = Sosna::Solver.where solution_form: 'tep', annual: @annual, is_test_solver: false
   end
 
+
+  ##
+  #  POST /sosna/solver/:id/dup(/:roc)
+  #
+  # duplikovat řešitele, do součásného ročníku
+  #
+  # *Params*
+  # id:: řešitel
+  # roc:: ročník, pokud není tak se vezme aktuální
+  #
+  # *Redirect* show novy solver
 
   def dup
     solver_id = params[:id]
@@ -56,6 +92,34 @@ class Sosna::SolverController < SosnaController
     redirect_to sosna_solver_url(solver_dup.id);
   end
 
+  ##
+  #  GET /sosna/solvers/labels
+  #
+  # Vygeneruje štítky
+  #
+  # *Params*
+  # roc:: ročník
+  # se:: série
+  # pokud ids::  seznam id  řešitelů, je brán první sloupec z každého řádku (do ';'), pokud není vezmou se všicni
+  # skoly_ids:: seznam id škol
+  # opt:: parametry pro zobrazeni, viz popis ve formuláři
+  # no_solvers:: nezobrazovat solvery
+  # envelope:: pokud je, bude to obalka veliksti opt[:p] nebo C5
+  # dbg:: vytisknout i ladící popisky, slouží pro zaměření
+  # paper_tep_conflict::
+  # obalkovani::
+  # confirmed_only:: pouze řešitelé s `confirm_state==conf`
+  # skoly_all:: všechny školy
+  # skoly:: ty školy které maji `want_paper=true`
+  #
+  # *Provides*
+  # @schools:: pole škol
+  # @solvers:: pole řešitelů
+  # @opt:: nastavení prawn
+  # @dbg::
+  # @envelope::
+  # @annual, @round:: ročník a série
+  #
   def labels
     @annual = params[:roc] || @annual
     @ids = (params[:ids]  || '').gsub(/;.*$/,'').split(/[,\n\s]+/).map { |x| x.to_i }
@@ -103,6 +167,12 @@ class Sosna::SolverController < SosnaController
     end
   end
 
+  ##
+  #  POST /sosna/solver/confirm_none_to_next
+  #
+  # U řešitelů souasného ročníku, kteří mají `confirm_state` `none` přehodí na `next`
+  #
+  # *Redirect* sosna_solvers
   def confirm_none_to_next
     solvers = Sosna::Solver.where(:annual =>  @annual, :confirm_state => 'none').all
     solvers.each do |solver|
@@ -113,11 +183,16 @@ class Sosna::SolverController < SosnaController
     redirect_to :sosna_solvers
   end
 
-#  def delete_zero_solvers
-#    add_alert "not yet implemented"
-#    redirect_to :sosna_solvers
-#  end
 
+  ##
+  #  POST /sosna/solver/:id/delete
+  #
+  # Smaše řešitele
+  #
+  # *Params*
+  # id:: id řešitele
+  #
+  # *Redirect* sosna_index
   def delete
      id = params[:id]
      u = Sosna::Solver.find(id)
@@ -130,16 +205,14 @@ class Sosna::SolverController < SosnaController
      redirect_to action: :index
   end
 
-  def _load_schools
-    @schools = Sosna::School.all.load
-    @schools_sorted = @schools.sort_by { |s|
-      # kažedé číslo v názvu města dopň na deset cifer
-      # Praha 1  => Praha 0001
-      # Praha 10 => Praha 0010
-      # (toto bude klíč k třízení, nebude se zobrazovat)
-      "#{s.city}-#{s.long}".gsub(/\d+/){|m| '0'*(10 - m.size) + m }
-    }
-  end
+  ##
+  #  GET  sosna/solver/new
+  #
+  # Formulář na založení řešitele
+  #
+  # *Params*
+  # schooll::
+  # solver::
   def new
     load_config
     @school ||= flash[:school] || Sosna::School.new
@@ -151,19 +224,30 @@ class Sosna::SolverController < SosnaController
     _load_schools
   end
 
+  ##
+  #  GET  sosna/solver/new
+  #
+  # Jako `new`, ale "bonusový uživatel"
+  #
+  # *Provides*
+  # @bonus:: true
   def new_bonus
     @bonus = true
     new
     render :new
   end
 
-  #def new_tnx end
-
-  def _edit_want_send_first
-    return false if !current_user.nil? && current_user.admin? && params[:send_first].nil?
-    return true
-  end
-
+  ##
+  #  POST  /sosna/solver/create
+  #
+  # vytvoří nového řešitele (atualního ročníku), pokud je to nutné založí i nového uživatele
+  #
+  # *Params*
+  # sosna_solve[]:: parametry noveho uživatele
+  # school[]:: parametry noveho školy pokud je
+  # souhlasim[]:: zaškrtnutý souhlas
+  #
+  # *Redirect* create_tnx
   def create
     load_config
     params.require(:sosna_solver).permit!
@@ -270,9 +354,21 @@ class Sosna::SolverController < SosnaController
     redirect_to :action => :create_tnx, :send_first =>  send_first
   end
 
+  ##
+  #  GET  /sosna/solver/tnx
+  #
+  # stránka s poděkováním při registraci nového řešitele
   def create_tnx
   end
 
+  ##
+  #  GET  /sosna/solver/confirm
+  #
+  # stránka která vyzve k ověření informacemí o řešiteli
+  #
+  # *Provides*
+  # @solver:: aktuání řešitel
+  # @škola:: a jeho škola
   def user_solver_confirm
     @solver = Sosna::Solver.where(:user_id => current_user.id, :annual => @config[:annual]).take
     @solver_is_current_user = true
@@ -288,6 +384,17 @@ class Sosna::SolverController < SosnaController
     _load_schools
   end
 
+  ##
+  #  GET  /sosna/solver/:id
+  #
+  # zobraz formulář s informacemi o řešiteli
+  #
+  # *Params*
+  # id: id řešitele
+  #
+  # *Provides*
+  # @solver:: aktuání řešitel
+  # @škola:: a jeho škola
   def show
     id = params[:id]
     @solver = id ? Sosna::Solver.find(id) : Sosna::Solver.new
@@ -299,6 +406,17 @@ class Sosna::SolverController < SosnaController
     _load_schools
   end
 
+  ##
+  #  POST  /sosna/solver/update_confirm 
+  #
+  # aktualizace po konfirmaci
+  #
+  # *Params*
+  # sosna_solver[]:: akutalizovane parametry řešitele
+  #
+  # *Provides*
+  # @sosna:: aktuání řešitel
+  # @škola:: a jeho škola
   def update_confirm
     log "update_confirm"
     @solver = Sosna::Solver.where(:user_id => current_user.id, :annual => @config[:annual]).take
@@ -314,6 +432,18 @@ class Sosna::SolverController < SosnaController
     end
   end
 
+  ##
+  #  POST  /sosna/solver/update
+  #
+  # aktualizace 
+  #
+  # *Params*
+  # sosna_solver[]:: akutalizovane parametry řešitele
+  # is_confirm:: 
+  #
+  # *Provides*
+  # @sosna:: aktuání řešitel
+  # @škola:: a jeho škola
   def update
     params.require(:sosna_solver).permit!
     sr = params[:sosna_solver]
@@ -359,6 +489,101 @@ class Sosna::SolverController < SosnaController
     end
     redirect_to :action =>  :show , :id => solver.id
   end
+
+  ##
+  #  POST  /sosna/solver/aesop/create
+  #
+  # AEZOp, vytvoří soubory pro export do AESOPu
+  #
+  # *Params*
+  # roc:: ročník 
+  # se::  séríe
+  #
+  # *Redirect* sosla_solver_aesop
+  def aesop_create
+    _aesop_init
+
+    @annual = params[:roc] || @annual
+    @round_max = params[:se] || @round
+    errors_to = @config[:aesop_errors_to];
+
+    files = []
+    dir = "ovvp"
+    index_path = "ovvp.index.txt"
+    (@round_max.to_i .. @round_max.to_i ).each do |round|
+
+      file = "ovvp.#{@annual}.#{round}.txt"
+      File.open("#{dir}/#{file}", 'w') do |f|
+          f.write _aesop_print_round(@annual.to_i, round, errors_to)
+      end
+      files << file
+      "#{@annual}.#{round}.txt"
+    end
+#    File.open("#{dir}/#{index_path}", 'w') do |f|
+#      f.write(files.join("\n")+"\n")
+#    end
+    add_success "created #{files.map{|f| "#{dir}/#{f}"}.join(',')}.\n"
+    add_alert "add to #{dir}/#{index_path} manually"
+    redirect_to :sosna_solver_aesop
+  end
+
+  ##
+  #  POST  /sosna/solver/aesop/:roc
+  #
+  # seznam aesopu, definice formatu je v https://opmk.mff.cuni.cz/wiki/aesop/import, 
+  # Viz take komentare u `_aesop_print_round`.
+  #
+  # *Params*
+  # roc:: ročník 
+  #
+  # *Renders* text/plain export for AESOP
+  def aesop_annual
+    load_config
+    annual = params[:roc] || @annual
+    if annual == @annual
+      round = @config[:show_revisions] == 'yes'? @round.to_i : @round.to_i - 1
+      die if round <= 0
+    else
+      round = Sosna::Problem.where(annual: annual).maximum(:round)
+    end
+    errors_to = @config[:aesop_errors_to];
+    render text: _aesop_print_round(@annual.to_i, @round.to_i, errors_to), content_type: 'text/plain' 
+  end
+
+  ##
+  #  GET  /sosna/solver/aesop
+  #
+  # stránka aesopu
+  #
+  # *Provides*
+  # @aesop_url:: v jakém ardesáři (URL) jsou exporty do AESOPU
+  def aesop
+    _aesop_init
+    @aesop_url = 'https://pikomat.mff.cuni.cz/ovvp'
+  end
+
+  private
+
+  def _aesop_init
+    load_config
+  end
+
+  def _load_schools
+    @schools = Sosna::School.all.load
+    @schools_sorted = @schools.sort_by { |s|
+      # kažedé číslo v názvu města dopň na deset cifer
+      # Praha 1  => Praha 0001
+      # Praha 10 => Praha 0010
+      # (toto bude klíč k třízení, nebude se zobrazovat)
+      "#{s.city}-#{s.long}".gsub(/\d+/){|m| '0'*(10 - m.size) + m }
+    }
+  end
+
+  def _edit_want_send_first
+    return false if !current_user.nil? && current_user.admin? && params[:send_first].nil?
+    return true
+  end
+
   def _send_user_auto_creation_instructions(user)
        #user.send_confirmation_instructions
        user.generate_confirmation_token! if user.confirmation_token.nil?
@@ -411,93 +636,41 @@ class Sosna::SolverController < SosnaController
     render text: 'not yet'
   end
 
-  def aesop_annual
-    load_config
-    annual = params[:roc] || @annual
-    if annual == @annual
-      round = @config[:show_revisions] == 'yes'? @round.to_i : @round.to_i - 1
-      die if round <= 0
-    else
-      round = Sosna::Problem.where(annual: annual).maximum(:round)
-    end
-    errors_to = @config[:aesop_errors_to];
-    render text: _aesop_print_round(@annual.to_i, @round.to_i, errors_to), content_type: 'text/plain' 
-  end
-
-  def aesop
-    _aesop_init
-    @aesop_url = 'https://pikomat.mff.cuni.cz/ovvp'
-  end
-
-  def _aesop_init
-    load_config
-    #@round_max = Sosna::Config.where(key: 'round') .take.value.to_i
-    # FIXME:
-    #@round_max = 6 if @round_max >= Sosna::Problem::BONUS_ROUND_NUM
-  end
-
-  def aesop_create
-    _aesop_init
-
-    @annual = params[:roc] || @annual
-    @round_max = params[:se] || @round
-    errors_to = @config[:aesop_errors_to];
-
-    files = []
-    dir = "ovvp"
-    index_path = "ovvp.index.txt"
-    (@round_max.to_i .. @round_max.to_i ).each do |round|
-
-      file = "ovvp.#{@annual}.#{round}.txt"
-      File.open("#{dir}/#{file}", 'w') do |f|
-          f.write _aesop_print_round(@annual.to_i, round, errors_to)
-      end
-      files << file
-      "#{@annual}.#{round}.txt"
-    end
-#    File.open("#{dir}/#{index_path}", 'w') do |f|
-#      f.write(files.join("\n")+"\n")
-#    end
-    add_success "created #{files.map{|f| "#{dir}/#{f}"}.join(',')}.\n"
-    add_alert "add to #{dir}/#{index_path} manually"
-    redirect_to :sosna_solver_aesop
-  end
 
 
 
-# https://opmk.mff.cuni.cz/wiki/aesop/import
-# version   Verze formátu. Tato specifikace popisuje verzi 1.
-# event   Identifikátor akce (např. ksp.rocnik.z)
-# year    Rok, v němž se akce konala. Je-li akce spjata se školním rokem, patří sem první rok.
-# date  Datum vytvoření exportu ve tvaru YYYY-MM-DD HH:MM:SS.
-# errors-to   E-mailová adresa, na níž se mají odesílat zprávy o chybách při zpracování exportu.
-# max-rank  Počet účastníků (povinné, pokud se část účastníků z nějakého důvodu neexportuje).
-# max-points  Maximální možný počet získaných bodů.
-
-
-
-# name    Křestní jméno. Může jich být více, oddělených mezerou.
-# surname   Příjmení.
-# street  Korespondenční adresa: ulice a domovní číslo. Pokud se jedná o obec bez ulic, pište prosím jen domovní číslo, případně název obce a domovní číslo.
-# postcode  Korespondenční adresa: směrovací číslo. U českých a slovenských adres 5 číslic bez mezery.
-# country   Korespondenční adresa: kód státu podle ISO 3166-1 (cz, sk, apod.). Na velikosti písmen nezáleží.
-# fullname  Pokud se v adrese má na pozici jména vyskytnout něco jiného než
-#            Jméno Příjmení, vložte to sem. To se dá použít, pokud chcete hezky formátovat
-#            např. cizí jména, u nichž je zvykem uvádět příjmení jako první. Rozhodně se
-#            cizí pořadí nepokoušejte simulovat prohozením položek name a surname.
+##
+# AESOP export format:
+#  https://opmk.mff.cuni.cz/wiki/aesop/import
+#  version   Verze formátu. Tato specifikace popisuje verzi 1.
+#  event   Identifikátor akce (např. ksp.rocnik.z)
+#  year    Rok, v němž se akce konala. Je-li akce spjata se školním rokem, patří sem první rok.
+#  date  Datum vytvoření exportu ve tvaru YYYY-MM-DD HH:MM:SS.
+#  errors-to   E-mailová adresa, na níž se mají odesílat zprávy o chybách při zpracování exportu.
+#  max-rank  Počet účastníků (povinné, pokud se část účastníků z nějakého důvodu neexportuje).
+#  max-points  Maximální možný počet získaných bodů.
+#  name    Křestní jméno. Může jich být více, oddělených mezerou.
+#  surname   Příjmení.
+#  street  Korespondenční adresa: ulice a domovní číslo. Pokud se jedná o obec bez ulic, pište prosím jen domovní číslo, případně název obce a domovní číslo.
+#  postcode  Korespondenční adresa: směrovací číslo. U českých a slovenských adres 5 číslic bez mezery.
+#  country   Korespondenční adresa: kód státu podle ISO 3166-1 (cz, sk, apod.). Na velikosti písmen nezáleží.
+#  fullname  Pokud se v adrese má na pozici jména vyskytnout něco jiného než
+#             Jméno Příjmení, vložte to sem. To se dá použít, pokud chcete hezky formátovat
+#             např. cizí jména, u nichž je zvykem uvádět příjmení jako první. Rozhodně se
+#             cizí pořadí nepokoušejte simulovat prohozením položek name a surname.
 #
-# school      Identifikátor školy. Zatím jsou definované formáty „izo:XYZ“ (české
-#             IZO), „sk:XYZ“ (slovenský kód školy), „aesop:XYZ“ (interní ID v AESOPovi),
-#             „ufo“ (škola, kterou zatím neumíme identifikovat; takové záznamy by se měly
-#             vyskytovat jen po velmi krátkou dobu).
-# end-year    Rok očekávaného konce středoškolského studia.
-# email       E-mailová adresa podle RFC 5322.
-# rank        Pořadí ve výsledkovce. Pokud se více účastníků dělí o místo, patří sem nejmenší ze sdílených pořadí.
-# points      Počet získaných bodů.
-# spam-flag   „Y“ pokud účastník svolil k zasílání materiálů Matfyzu, „N“ pokud jsme se ho ptali a nesvolil. Prázdný řetězec znamená, že jsme se explicitně nezeptali.
-# spam-date   Datum (YYYY-DD-MM), kdy jsme se dozvěděli hodnotu spam-flag-u.
+#  school      Identifikátor školy. Zatím jsou definované formáty „izo:XYZ“ (české
+#              IZO), „sk:XYZ“ (slovenský kód školy), „aesop:XYZ“ (interní ID v AESOPovi),
+#              „ufo“ (škola, kterou zatím neumíme identifikovat; takové záznamy by se měly
+#              vyskytovat jen po velmi krátkou dobu).
+#  end-year    Rok očekávaného konce středoškolského studia.
+#  email       E-mailová adresa podle RFC 5322.
+#  rank        Pořadí ve výsledkovce. Pokud se více účastníků dělí o místo, patří sem nejmenší ze sdílených pořadí.
+#  points      Počet získaných bodů.
+#  spam-flag   „Y“ pokud účastník svolil k zasílání materiálů Matfyzu, „N“ pokud jsme se ho ptali a nesvolil. Prázdný řetězec znamená, že jsme se explicitně nezeptali.
+#  spam-date   Datum (YYYY-DD-MM), kdy jsme se dozvěděli hodnotu spam-flag-u.
 
-  def _aesop_print_round(annual, round, errors_to)
+  def _aesop_print_round(annual, round, errors_to) # :doc:
 
 
     maturity_grade = 13
@@ -563,6 +736,4 @@ class Sosna::SolverController < SosnaController
     return ex.map{  |row| row.join("\t") + "\n" }.join
 
   end
-
-
 end

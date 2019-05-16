@@ -116,10 +116,10 @@
      <th>Řešitel</th>
      <th>Škola</th>
     <% @problems.each do |pr| %>
-     <th>u<%=pr.problem_no%></th>
+     <th>u<%=pr.short_name%></th>
     <% end %>
     <% @problems.each do |pr| %>
-     <th title="Body za úlohu č. <%=pr.problem_no%>">B<%=pr.problem_no%></th>
+     <th title="Body za úlohu č. <%=pr.problem_no%>">B<%=pr.short_name%></th>
     <% end %>
     <th title="penalizace">Pen<% if @want_edit_penalisation%> / Důvod<%end%></th>
     <% if !@want_edit && !@want_edit_paper && ! @want_edit_penalisation %>

@@ -1,3 +1,17 @@
+##
+# Třída reprezentující tabulku sosna_solution, řešení uživatele (každý jedne papír)
+#
+# *Colums*
+#    t.string   "filename",              limit: 255
+#    t.string   "filename_orig",         limit: 255
+#    t.string   "filename_corr",         limit: 255
+#    t.string   "filename_corr_display", limit: 255
+#    t.integer  "score"
+#    t.integer  "problem_id"
+#    t.integer  "solver_id"
+#    t.datetime "created_at"
+#    t.datetime "updated_at"
+#    t.boolean  "has_paper_mail",                    default: false, null: false
 class Sosna::Solution < ActiveRecord::Base
 
   #fixme: helpery asi nepatri do modelu, ale tady se poziva 'translit', tak so  stim?
@@ -11,10 +25,14 @@ class Sosna::Solution < ActiveRecord::Base
   end
 
 
+  ##
+  # *Returns* název souboru řešení (originál) na disku / nil
   def get_filename_ori
     _get_filename(true)
   end
 
+  ##
+  # *Returns* název souboru opraveného řešení na disku / nil
   def get_filename_rev
     _get_filename(false)
   end

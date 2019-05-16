@@ -1,6 +1,7 @@
 # encoding: utf-8
 Tep::Application.routes.draw do
 
+  use_doorkeeper
   devise_for :users
 
 
@@ -101,7 +102,7 @@ Tep::Application.routes.draw do
   get  '/reg/:token'                         => 'tep#user_finish_registration', :as => :user_finish_registration
 
   # post
-  get    '/jabber/preauth'                   => 'jabber#preauth',               :as => :jabber_preauth
+  get    '/jabber/prebind'                   => 'jabber#prebind',               :as => :jabber_prebind
   patch  '/jabber/:id/update'                => 'jabber#update',                :as => :jabber_update
   post   '/jabber/:id/delete'                => 'jabber#delete',                :as => :jabber_delete
   post   '/jabber/new/:user_id'              => 'jabber#new',                   :as => :jabber_new
@@ -113,7 +114,11 @@ Tep::Application.routes.draw do
 
 
   get  '/faqold'                             => "tep#faq",                      :as => :faq
-  #get  '/500'                                => "tep#error",                    :as => :error
+  #get  '/500'                                => "tep#error",                   :as => :error
+
+  get  '/priklady/sklad'                      => "priklady#sklad",              :as => :priklady_sklad
+
+  get  '/me'                                  => "credentials#me",              :as => :credentials_me
 
   Giwi.giwis.each_value do |giwi|
      next if giwi.name.to_s == 'main'

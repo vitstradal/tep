@@ -1,5 +1,7 @@
 require 'simple_crypt'
 
+##
+# *OBSOLETE*, z dob kdy /klep mel bezet na jabberu
 class JabberController < ApplicationController
   authorize_resource
   include ApplicationHelper
@@ -17,7 +19,7 @@ class JabberController < ApplicationController
     jabber = Jabber.new(user_id: user_id)
     nick = user.email.split('@', 2)[0]
     i = ''
-    begin 
+    begin
       jid = "#{nick}#{i}@pikomat.mff.cuni.cz"
       i = i == '' ? 2 : i+1
     end while !Jabber.find_by_jid(jid).nil?
@@ -27,10 +29,12 @@ class JabberController < ApplicationController
     jabber.save
     redirect_to  user_show_path(user_id, 'jabber')
   end
-  def preauth
+  def prebind
     rid = session[:jabber_rid]
     sid = session[:jabber_sid]
-    render :json => {status: 'ok', rid: rid, sid: sid }
+    return render :json => {status: 'bad'} if current_user.nil? || !current_user.jabber? || current_user.jabber.nil?
+    jid = current_user.jabber.jid
+    render :json => {status: 'ok', jid: jid, rid: rid, sid: sid }
   end
 
   def auth
@@ -39,7 +43,7 @@ class JabberController < ApplicationController
      key = Rails.configuration.jabber_secret
      domain = Rails.configuration.jabber_domain
      begin
-       password = SimpleCrypt.decrypt(password, key) 
+       password = SimpleCrypt.decrypt(password, key)
      rescue OpenSSL::Cipher::CipherError => e
        return render :json => { status: "error", msg: 'dcr' }
      end

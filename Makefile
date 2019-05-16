@@ -79,8 +79,7 @@ ttest:
 	rake test
 .PHONY: doc
 doc:
-	yardoc -r Readme.md -m markdown
-	#yardoc -m markdown -r Readme.md
+	rdoc app -o public/tep-doc
 
 aesop:
 	rails  r  -e production script/aesop.rb

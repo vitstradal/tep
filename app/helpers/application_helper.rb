@@ -5,6 +5,15 @@ require 'resolv'
 
 module ApplicationHelper
 
+  ##
+  # Vytvoří odkaz na link s iconou.
+  #
+  # *params*ta
+  # text:: text linku
+  # url:: kam to bude odkazovat (stejný argument jak má `link_to`) 
+  # opt:: stejné jako `link_to` a navíc:
+  #       ico:: class z font-awesome jaká icona se má použít (třeba `fa-user`).
+  # block:: materiál textu linku
   def ilink_to(text = nil , url = nil, opt = nil, &block)
     url, opt, text = opt, text, capture(&block) if block_given?
     opt ||= {}
@@ -15,10 +24,11 @@ module ApplicationHelper
     link_to text, url, opt
   end
 
+  ##
   # coutry_code: cz, nebo sk
-  # r: 'Slovensko' if 'sk'
-  # r: nil if 'cz'
-  # r: coutry_code jinak
+  #   country_code_to_txt('sk') # => 'Slovensko'
+  #   country_code_to_txt('cz') # => nil
+  #   country_code_to_txt('blbost') # => 'blbost'
   def country_code_to_txt(country_code)
     return "Slovensko" if country_code  == 'sk'
     return nil if country_code  == 'cz'
@@ -26,9 +36,15 @@ module ApplicationHelper
   end
 
 
-  # opt:
-  #  ico -- icon class (fa-search)
+  ##
+  # button s iconou, nebo odkaz který vypadá jako button
   #
+  # *params*
+  # text, block:: text buttonu
+  # opt:: opsny pro \<a> (nebo \<button>) a navíc:
+  #       ico:: icon class font awesome (`fa-search`)
+  #       href:: url, pokud je tag bude \<a>
+  #       type:: button type, pokud není bude to 'submit'
   def button_tag (text, opt = {}, &block)
     if block_given?
       opt = text
@@ -47,15 +63,24 @@ module ApplicationHelper
        end
     end
   end
+
+  ##
+  # list item druhé úrovně, viz `menu_li`
   def menu_lii(uri, text = nil, opt = {} ,  &block)
      opt.merge! lii: true
      menu_li uri, text, opt, &block
   end
 
-  # opt:
-  #  ico
-  #  class
-  #  lii
+  ##
+  # list item, s iconou a potenciálním active, pokud se aktalní url uzná, že "ma souvislost" s odkazovanou url
+  # 
+  # *Params*
+  # uri:: link kam menu odkazuje
+  # text, block:: text
+  # opt:: opsny
+  #       cls:: string nebo pole stringu, class který se použije v \<li class=""> 
+  #       ico:: font awesome class (např. `fa-user`)
+  #       lii:: true pokud jde o druhou úroveň (použite z `menu_lii()`
   def menu_li(uri, text = nil, opt = {} , &block)
 
     @_level ||= 1
@@ -175,6 +200,7 @@ module ApplicationHelper
 
   def email_valid_mx_record?(email)
       #mail_servers = Resolv::DNS.open.getresources(email.split('@').last, Resolv::DNS::Resource::IN::MX)
+      return false if email.nil? || email == ''
       mail_servers = Resolv::DNS.open.getresources(email.split('@').last.force_encoding('ASCII-8BIT'), Resolv::DNS::Resource::IN::MX)
       return false if mail_servers.empty?
       true
@@ -208,30 +234,26 @@ module ApplicationHelper
     return 'control-group'
   end
 
-  private
-
-  def _my_current_page?(uri)
-      cur_ori = cur_uri = request.fullpath
-      his_uri = url_for(uri)
-
-      return true if cur_uri == his_uri
-      return false if his_uri.size < 1
-
-      his_uri = his_uri.sub( /s$/, '')
-      his_uri += '/'
-      cur_uri += '/'
-      ret = cur_uri[0,his_uri.size] == his_uri
-      #print "cur: #{cur_uri} cur_ori #{cur_ori}, his: #{his_uri}, ret: #{ret}\n"
-      return ret;
-  end
-  def class_active_if(cond)
-     return 'class="active"'.html_safe if cond
-  end
-
-  def active_in_if(cond)
-     return 'in active' if cond
-  end
-
+  ##
+  #
+  # nastavi
+  # @round:: série
+  # @annual:: ročník
+  # @config:: hash všech konfiguračních hodnot
+  #           annual:: ročník
+  #           round:: serie
+  #           allow_upload:: je už možný upload v aktuální sérii
+  #           show_revisions:: mohou již uživatele vidět opravy
+  #           deadlineN::      termín N té serie
+  #           showN:: ukaž Ntou serii
+  #           problemsN:: počet příkladu v Nté sérii
+  #           year:: kalendářní rok
+  #           confirmation_round:: serie v které se zobrazí žádost o konfirmaci údajů
+  #           confirmation_file_upload:: 
+  #           deadline100:: Serie 100 je bonusová
+  #           show100::
+  #           problems100::
+  #           aesop_errors_to:: email komu se posílají errory aesopu
   def load_config
     return if @config
     @config  =  { annual:20,
@@ -242,6 +264,49 @@ module ApplicationHelper
     @annual = @config[:annual]
     @round = @config[:round]
     #log( "config: #{@config}" )
+  end
+
+  def get_verifier(purpose)
+    # FIXME: zde by se mel zamichat aplikacni 'secret
+    #kg = ActiveSupport::KeyGenerator.new('fakt-secret:')
+    #verifier = ActiveSupport::MessageVerifier.new( kg.generate_key('giwi-secret', 256), digest: 'SHA256')
+    verifier = ActiveSupport::MessageVerifier.new('ahoj', serializer: YAML)
+    return verifier
+  end
+
+  def sign_generate(text, purpose)
+    verifier = get_verifier(purpose)
+    token = verifier.generate(text)
+    log "token:#{token}"
+    log "untoken:#{verifier.verify(token)}"
+    return token
+  end
+
+  def sign_verified(token, purpose)
+
+    return nil if token.nil?
+
+    verifier = get_verifier(purpose)
+
+    # ve verzi rails 5.2:
+    #return verifier.verified(token)
+    log "token:#{token}"
+
+    plain = verifier.verify(token)
+    log "plain:#{plain}"
+    return plain
+
+  rescue => ex
+    log "exception:#{ex}"
+    return nil
+  end
+
+  def class_active_if(cond)
+     return 'class="active"'.html_safe if cond
+  end
+
+  def active_in_if(cond)
+     return 'in active' if cond
   end
 
   def get_sorted_conflict_solvers(annual, round)
@@ -285,14 +350,33 @@ module ApplicationHelper
     end
   end
 
+  ##
+  # helper pro zalogování, level FATAL
+  #
+  # *Params*
+  # msg:: text zprávy
   def log(msg)
     Rails::logger.fatal("  " + msg)
   end
 
+  ##
+  # je toto bonusová serie (interně série čislo 100)
+  #
+  # *Params*
+  # round:: číslo série
+  #
+  # *Returns* true/fal
   def is_bonus_round(round)
     return round.to_s == Sosna::Problem::BONUS_ROUND_NUM.to_s
   end
 
+  ##
+  # nahraj hodnotu z Sosna::Config
+  #
+  # *Params*
+  # key:: požadovaná konfigurační hodnota
+  #
+  # *Returns* hodnotu 
   def config_value(key)
     #return @config[key] if @config
     c = Sosna::Config.where(key:key).first
@@ -300,11 +384,27 @@ module ApplicationHelper
     return nil
   end
 
+  ##
+  # najdi řešitele pro daného uživatele (pokud existuje)
+  #
+  # *Params*
+  # user_id:: id uživatele 
+  # annual:: ročník (default: `nil`)
+  #
+  # *Returns* Sosna::Solver / nil
   def find_solver_for_user_id(user_id, annual = nil)
     annual ||= @config[:annual] || config_value(:annual)
     return Sosna::Solver.where(user_id: user_id, annual: annual ).first
   end
 
+  ##
+  # najdi řešitele pro daného uživatele (pokud existuje)
+  #
+  # *Params*
+  # user_id:: id uživatele 
+  # annual:: ročník (default: `nil`)
+  #
+  # *Returns* Sosna::Solver / nil
   def breadcrumb_annual_links(action = :index)
      annual_max = @config[:annual].to_i
      annual_min = 29 # tep started
@@ -313,4 +413,22 @@ module ApplicationHelper
        sub: (annual_min .. annual_max).map { |a| {name: "Ročník #{a}", url: {action: action, roc:a}}}.reverse,
      }
   end
+
+  private
+
+  def _my_current_page?(uri)
+      cur_ori = cur_uri = request.fullpath
+      his_uri = url_for(uri)
+
+      return true if cur_uri == his_uri
+      return false if his_uri.size < 1
+
+      his_uri = his_uri.sub( /s$/, '')
+      his_uri += '/'
+      cur_uri += '/'
+      ret = cur_uri[0,his_uri.size] == his_uri
+      #print "cur: #{cur_uri} cur_ori #{cur_ori}, his: #{his_uri}, ret: #{ret}\n"
+      return ret;
+  end
+
 end

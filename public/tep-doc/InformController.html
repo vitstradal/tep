@@ -1,0 +1,396 @@
+<!DOCTYPE html>
+
+<html>
+<head>
+<meta charset="UTF-8">
+
+<title>class InformController - RDoc Documentation</title>
+
+<script type="text/javascript">
+  var rdoc_rel_prefix = "./";
+  var index_rel_prefix = "./";
+</script>
+
+<script src="./js/jquery.js"></script>
+<script src="./js/darkfish.js"></script>
+
+<link href="./css/fonts.css" rel="stylesheet">
+<link href="./css/rdoc.css" rel="stylesheet">
+
+
+
+<body id="top" role="document" class="class">
+<nav role="navigation">
+  <div id="project-navigation">
+    <div id="home-section" role="region" title="Quick navigation" class="nav-section">
+  <h2>
+    <a href="./index.html" rel="home">Home</a>
+  </h2>
+
+  <div id="table-of-contents-navigation">
+    <a href="./table_of_contents.html#pages">Pages</a>
+    <a href="./table_of_contents.html#classes">Classes</a>
+    <a href="./table_of_contents.html#methods">Methods</a>
+  </div>
+</div>
+
+    <div id="search-section" role="search" class="project-section initially-hidden">
+  <form action="#" method="get" accept-charset="utf-8">
+    <div id="search-field-wrapper">
+      <input id="search-field" role="combobox" aria-label="Search"
+             aria-autocomplete="list" aria-controls="search-results"
+             type="text" name="search" placeholder="Search" spellcheck="false"
+             title="Type to search, Up and Down to navigate, Enter to load">
+    </div>
+
+    <ul id="search-results" aria-label="Search Results"
+        aria-busy="false" aria-expanded="false"
+        aria-atomic="false" class="initially-hidden"></ul>
+  </form>
+</div>
+
+  </div>
+
+  
+
+  <div id="class-metadata">
+    
+    <div id="parent-class-section" class="nav-section">
+  <h3>Parent</h3>
+
+  
+  <p class="link"><a href="ApplicationController.html">ApplicationController</a>
+  
+</div>
+
+    <div id="includes-section" class="nav-section">
+  <h3>Included Modules</h3>
+
+  <ul class="link-list">
+  
+  
+    <li><a class="include" href="ApplicationHelper.html">ApplicationHelper</a>
+  
+  
+  </ul>
+</div>
+
+    
+    <!-- Method Quickref -->
+<div id="method-list-section" class="nav-section">
+  <h3>Methods</h3>
+
+  <ul class="link-list" role="directory">
+    
+    <li ><a href="#method-i-add">#add</a>
+    
+    <li ><a href="#method-i-del">#del</a>
+    
+    <li ><a href="#method-i-index">#index</a>
+    
+    <li ><a href="#method-i-tnx">#tnx</a>
+    
+  </ul>
+</div>
+
+  </div>
+</nav>
+
+<main role="main" aria-labelledby="class-InformController">
+  <h1 id="class-InformController" class="class">
+    class InformController
+  </h1>
+
+  <section class="description">
+    
+<p>Controller pro formuláře, ankety a přihlášky ve wiki. Ve spolupráci s wiky
+makry `{{inf_*}}`. see: <a
+href="https://pikomat.mff.cuni.cz/tepmac/inform">pikomat.mff.cuni.cz/tepmac/inform</a></p>
+
+  </section>
+
+  
+  <section id="5Buntitled-5D" class="documentation-section">
+    
+
+    
+
+    
+
+    
+
+    
+     <section id="public-instance-5Buntitled-5D-method-details" class="method-section">
+       <header>
+         <h3>Public Instance Methods</h3>
+       </header>
+
+    
+      <div id="method-i-add" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">add</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>POST  /inform/add</pre>
+
+<p><strong>Params</strong> from: id formuláře</p>
+<dl class="rdoc-list note-list"><dt>redir
+<dd>
+<p>kam se ma po zapsání přesměrovat</p>
+</dd><dt>*
+<dd>
+<p>ostatní parametry se přidají do Inform.data (jako json)</p>
+</dd><dt>bonz_email
+<dd>
+<p>tam se bonzovaci email, hodnota je podepsaná a zakodovaná pomocí
+`sign_generate(email, &#39;gigi-gen&#39;)`, viz makro {{inf_bonz_email}}</p>
+</dd><dt>email, E-mail, Email
+<dd>
+<p>tam se pošle děkovný mail, hodnota je podepsaná a zakodovaná pomocí
+`sign_generate`</p>
+</dd></dl>
+
+<p>Flash tnx, tnx2: hidden položky formuláře <code>tnx</code>,
+<code>tnx2</code> viz macro `{{inf_thanks}}`</p>
+
+<p>Redirects to `inform_tnx`</p>
+          
+          
+
+          
+          <div class="method-source-code" id="add-source">
+            <pre><span class="ruby-comment"># File app/controllers/inform_controller.rb, line 86</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">add</span>
+  <span class="ruby-identifier">data</span> = {}
+  <span class="ruby-identifier">params</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span>
+    <span class="ruby-keyword">next</span> <span class="ruby-keyword">if</span> <span class="ruby-identifier">k</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;controller&#39;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">k</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;action&#39;</span> <span class="ruby-operator">||</span> <span class="ruby-identifier">k</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;authenticity_token&#39;</span>
+    <span class="ruby-identifier">data</span>[<span class="ruby-identifier">k</span>] = <span class="ruby-identifier">v</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-identifier">form</span> = <span class="ruby-identifier">data</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">&#39;form&#39;</span>) <span class="ruby-operator">||</span> <span class="ruby-string">&#39;unk&#39;</span>
+  <span class="ruby-identifier">redir</span> = <span class="ruby-identifier">data</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">&#39;redir&#39;</span>)
+
+  <span class="ruby-identifier">flash</span>[<span class="ruby-value">:tnx</span>] = <span class="ruby-identifier">data</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">&#39;tnx&#39;</span>) <span class="ruby-operator">||</span> <span class="ruby-string">&quot;Děkujeme.&quot;</span>
+  <span class="ruby-identifier">flash</span>[<span class="ruby-value">:tnx2</span>] = <span class="ruby-identifier">data</span>.<span class="ruby-identifier">delete</span>(<span class="ruby-string">&#39;tnx2&#39;</span>)
+
+  <span class="ruby-identifier">ordered_data</span> = <span class="ruby-identifier">_order_data</span>(<span class="ruby-identifier">data</span>)
+  <span class="ruby-identifier">_send_thanks_email</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">ordered_data</span>)
+  <span class="ruby-identifier">_send_bonz_email</span>(<span class="ruby-identifier">data</span>, <span class="ruby-identifier">ordered_data</span>, <span class="ruby-identifier">form</span>)
+
+  <span class="ruby-identifier">datastr</span> = <span class="ruby-constant">JSON</span>.<span class="ruby-identifier">dump</span>(<span class="ruby-identifier">data</span>);
+
+  <span class="ruby-constant">Inform</span>.<span class="ruby-identifier">create</span>(<span class="ruby-value">form:</span>  <span class="ruby-identifier">form</span>, <span class="ruby-value">data:</span> <span class="ruby-identifier">datastr</span>, <span class="ruby-value">user_agent:</span> <span class="ruby-identifier">request</span>.<span class="ruby-identifier">env</span>[<span class="ruby-string">&#39;HTTP_USER_AGENT&#39;</span>] <span class="ruby-operator">||</span> <span class="ruby-string">&#39;unknown&#39;</span>);
+
+  <span class="ruby-identifier">redirect_to</span> <span class="ruby-value">:inform_tnx</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-del" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">del</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>POST /inform/del</pre>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>id
+<dd>
+<p>id Infrom (jeden řádek)</p>
+</dd></dl>
+
+<p>Redirects to `inform_index_url(form)`</p>
+          
+          
+
+          
+          <div class="method-source-code" id="del-source">
+            <pre><span class="ruby-comment"># File app/controllers/inform_controller.rb, line 116</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">del</span>
+  <span class="ruby-identifier">inform</span> = <span class="ruby-constant">Inform</span>.<span class="ruby-identifier">find</span>(<span class="ruby-identifier">params</span>[<span class="ruby-string">&#39;id&#39;</span>])
+  <span class="ruby-identifier">form</span> = <span class="ruby-identifier">inform</span>.<span class="ruby-identifier">form</span>
+  <span class="ruby-identifier">inform</span>.<span class="ruby-identifier">delete</span>
+  <span class="ruby-identifier">redirect_to</span> <span class="ruby-identifier">inform_index_url</span>(<span class="ruby-identifier">form</span>)
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-index" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">index</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>GET  /inform/index/(:form)</pre>
+
+<p><strong>Params</strong></p>
+<dl class="rdoc-list note-list"><dt>form
+<dd>
+<p>id formuláře, např <code>tabor2035</code></p>
+</dd><dt>style
+<dd>
+<p>způsob zobrazeni Informů:</p>
+<dl class="rdoc-list note-list"><dt>tab
+<dd>
+<p>jedna velká tabulka</p>
+</dd><dt>list
+<dd>
+<p>položky jako odrážky</p>
+</dd><dt>list2
+<dd>
+<p>tabulky po položkách</p>
+</dd></dl>
+</dd></dl>
+
+<p><strong>Provides</strong></p>
+<dl class="rdoc-list note-list"><dt>@informs
+<dd>
+<p>vsechny zaslane data (Inform) pro dany formular dany `form`</p>
+</dd><dt>@form
+<dd>
+<p>id form (`form`)</p>
+</dd><dt>@forms
+<dd>
+<p>všechny ankety</p>
+</dd><dt>@keys
+<dd>
+<p>sloupce formuráře v preferovaném pořadí</p>
+</dd><dt>@wide_display
+<dd>
+<p>is set to `true`</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="index-source">
+            <pre><span class="ruby-comment"># File app/controllers/inform_controller.rb, line 32</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">index</span>
+  <span class="ruby-ivar">@form</span> = <span class="ruby-identifier">params</span>[<span class="ruby-value">:form</span>]
+  <span class="ruby-ivar">@informs</span> = <span class="ruby-constant">Inform</span>.<span class="ruby-identifier">where</span>({ <span class="ruby-value">form:</span> <span class="ruby-ivar">@form</span>})
+  <span class="ruby-ivar">@forms</span> = <span class="ruby-constant">Inform</span>.<span class="ruby-identifier">select</span>(<span class="ruby-value">:form</span>).<span class="ruby-identifier">group</span>(<span class="ruby-value">:form</span>)
+  <span class="ruby-identifier">hkeys</span> = {}
+  <span class="ruby-identifier">order</span> = <span class="ruby-keyword">nil</span>
+  <span class="ruby-ivar">@informs</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">inform</span><span class="ruby-operator">|</span>
+    <span class="ruby-identifier">inform</span>.<span class="ruby-identifier">jdata</span>.<span class="ruby-identifier">each</span> <span class="ruby-keyword">do</span> <span class="ruby-operator">|</span><span class="ruby-identifier">k</span>,<span class="ruby-identifier">v</span><span class="ruby-operator">|</span> 
+      <span class="ruby-keyword">if</span> <span class="ruby-identifier">k</span> <span class="ruby-operator">==</span> <span class="ruby-string">&#39;inform_order&#39;</span>
+        <span class="ruby-identifier">order</span> = <span class="ruby-identifier">v</span>
+        <span class="ruby-keyword">next</span>
+      <span class="ruby-keyword">end</span>
+      <span class="ruby-identifier">hkeys</span>[<span class="ruby-identifier">k</span>] = <span class="ruby-value">1</span> 
+    <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-keyword">if</span> <span class="ruby-operator">!</span> <span class="ruby-identifier">order</span>.<span class="ruby-identifier">nil?</span>
+    <span class="ruby-ivar">@keys</span> = <span class="ruby-identifier">order</span>.<span class="ruby-identifier">split</span>(<span class="ruby-string">&#39;:&#39;</span>)
+    <span class="ruby-ivar">@keys</span>.<span class="ruby-identifier">push</span>(<span class="ruby-string">&#39;thanks_email_sent&#39;</span>)
+  <span class="ruby-keyword">else</span>
+    <span class="ruby-ivar">@keys</span> = <span class="ruby-identifier">hkeys</span>.<span class="ruby-identifier">keys</span>.<span class="ruby-identifier">sort</span>
+  <span class="ruby-keyword">end</span>
+  <span class="ruby-ivar">@wide_display</span> = <span class="ruby-keyword">true</span>
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+      <div id="method-i-tnx" class="method-detail ">
+        
+        <div class="method-heading">
+          <span class="method-name">tnx</span><span
+            class="method-args">()</span>
+          
+          <span class="method-click-advice">click to toggle source</span>
+          
+        </div>
+        
+
+        <div class="method-description">
+          
+          <pre>GET  /inform/tnx</pre>
+
+<p>sem se redirectne `POST /infrom/add`</p>
+
+<p><strong>Flash</strong></p>
+<dl class="rdoc-list note-list"><dt>tnx, tnx2
+<dd>
+<p>text s poděkováním</p>
+</dd></dl>
+
+<p><strong>Profides</strong></p>
+<dl class="rdoc-list note-list"><dt>@tnx, @tnx2
+<dd>
+<p>text s poděkováním</p>
+</dd></dl>
+          
+          
+
+          
+          <div class="method-source-code" id="tnx-source">
+            <pre><span class="ruby-comment"># File app/controllers/inform_controller.rb, line 67</span>
+<span class="ruby-keyword">def</span> <span class="ruby-identifier ruby-title">tnx</span>
+  <span class="ruby-ivar">@tnx</span> = <span class="ruby-identifier">flash</span>[<span class="ruby-value">:tnx</span>]
+  <span class="ruby-ivar">@tnx2</span> = <span class="ruby-identifier">flash</span>[<span class="ruby-value">:tnx2</span>]
+<span class="ruby-keyword">end</span></pre>
+          </div>
+          
+        </div>
+
+        
+
+        
+      </div>
+
+    
+    </section>
+  
+  </section>
+</main>
+
+
+<footer id="validator-badges" role="contentinfo">
+  <p><a href="https://validator.w3.org/check/referer">Validate</a>
+  <p>Generated by <a href="https://ruby.github.io/rdoc/">RDoc</a> 6.0.1.
+  <p>Based on <a href="http://deveiate.org/projects/Darkfish-RDoc/">Darkfish</a> by <a href="http://deveiate.org">Michael Granger</a>.
+</footer>
+
