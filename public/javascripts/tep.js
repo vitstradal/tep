@@ -413,22 +413,43 @@ function editor_table(editor) {
           console.log("cell=", j, cell_length, cell);
         }
      }
-     txt = '';
-     for(var i=0; i < table.length; i++ ) {
-       var row = table[i];
-       txt += "||";
-       for(var j=0; j < row.length; j++) {
-          var cell = table[i][j];
-          var spcs = ' '.repeat( maxs[j] - cell.length );
-          var ch = align[i][j] == 'h' ? '=' : ' ';
-          txt += ch +  cell + spcs + ch +'||';
-       }
-       txt += "\n";
-     }
+     //txt = editor_table_formater_basic(table, maxs, align);
+     txt = editor_table_formater_mediawiki(table, maxs, align);
   }
+
   editor.insert( txt );
   editor.focus();
 }
+
+function editor_table_formater_basic(table, maxs, align) {
+  var txt = '';
+  for(var i=0; i < table.length; i++ ) {
+    var row = table[i];
+    txt += "||";
+    for(var j=0; j < row.length; j++) {
+       var cell = table[i][j];
+       var spcs = ' '.repeat( maxs[j] - cell.length );
+       var ch = align[i][j] == 'h' ? '=' : ' ';
+       txt += ch +  cell + spcs + ch +'||';
+    }
+    txt += "\n";
+  }
+  return txt;
+}
+
+function editor_table_formater_mediawiki(table, maxs, align) {
+  var txt = "{|\n";
+  for(var i=0; i < table.length; i++ ) {
+    if( i > 0 ) {
+      txt += "|-\n";
+    }
+    for(var j=0; j < table[i].length; j++) {
+       txt += "| " + table[i][j] + "\n"
+    }
+  }
+  return txt + "|}\n";
+}
+
 
 function editor_wrap(editor, pre, post) {
   var txt = editor.session.getTextRange(editor.getSelectionRange());
@@ -490,13 +511,13 @@ function _init_textarea_with_ace($textarea) {
 
                         // toggle vi|nevi mode by pressing vi|nevi switch
                         'ctrl-m':       function () { $('#vinovi').click();},
-                        'ctrl-v':       function () { $('#widenowide').click();},
+                        'shift-ctrl-v':       function () { $('#widenowide').click();},
                         'ctrl-alt-enter':       function () { $('#prevmode').click();},
 
                         // disable default bindings
                         'ctrl-l':null,
                         'ctrl-t':null,
-                        'ctrl-r':null,
+                        //'ctrl-r':null,
                       })
 
         var pos_str = form.find('input[name=cursor]').val();

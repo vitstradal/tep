@@ -17,7 +17,7 @@ gem 'cancan'
 gem 'rake'
 gem 'role_model'
 gem 'rubyzip'
-gem 'trac-wiki', '~> 0.3.37'
+gem 'trac-wiki', '~> 0.3.38'
 gem 'prawn', '~> 0.15.0'
 gem 'prawn-templates'
 gem 'prawnto'
@@ -26,7 +26,8 @@ gem 'sanitize'
 gem 'unicode_utils'
 gem 'magick_title', '>= 0.2.0' 
 
-gem 'ffi-locale', github: 'k3rni/ffi-locale'
+#gem 'ffi-locale', github: 'k3rni/ffi-locale'
+gem 'ffi-locale', :git => 'https://github.com/k3rni/ffi-locale'
 # never use ffi-locale without gitgub!!!
 #gem "ffi-locale"
 
