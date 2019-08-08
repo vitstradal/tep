@@ -9,7 +9,8 @@ class CredentialsController <  ApplicationController
   #
   # vratí json s informacemi přihlášeným uživatelem, pokud je přihlášen přes oauth2, souvisi s `doorkeeper`
   def me
-    render json: _current_resource_owner
+    user = _current_resource_owner
+    render json: { internalid: user.id, id: user.email  }
   end
 
   private
