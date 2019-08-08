@@ -78,7 +78,7 @@ class Sosna::SolutionController < SosnaController
   #
   # *Template* app/views/sosna/solution/vysl_pik.erb
   def vysl_pik
-    _prepare_solvers_problems_solutions(want_test: false)
+    _prepare_solvers_problems_solutions(want_test: false, want_bonus: false)
     _sort_solvers_by_rank
     headers['Content-Disposition'] = "attachment; filename=vysl#{@annual}_#{@round}.pik"
     headers['Content-Type'] = "text/plain; charset=UTF-8";
@@ -98,7 +98,7 @@ class Sosna::SolutionController < SosnaController
   #
   # *Template* app/views/sosna/solution/vysl_wiki.erb
   def vysl_wiki
-    _prepare_solvers_problems_solutions(want_test: false)
+    _prepare_solvers_problems_solutions(want_test: false, want_bonus: false)
     _sort_solvers_by_rank
     headers['Content-Disposition'] = "inline; filename=vysl#{@annual}_#{@round}.wiki"
     headers['Content-Type'] = "text/plain; charset=UTF-8";
@@ -1041,12 +1041,13 @@ class Sosna::SolutionController < SosnaController
      end
   end
 
-  def _prepare_solvers_problems_solutions(want_test: true)
+  def _prepare_solvers_problems_solutions(want_test: true, want_bonus: true)
     _params_roc_se_ul
     where = { annual: @annual}
     where.merge!({is_test_solver: false }) if ! want_test
     @solvers = get_sorted_solvers(where)
     @problems = _problems_from_roc_se_ul
+    @problems = @problems.select {|pr| !pr.bonus?} if ! want_bonus
     @solutions_by_solver = _solutions_by_solver @solvers, @problems
     @penalisations_by_solver = _penalisations_by_solver @solvers
     @results_by_solver = _get_results_by_solver(@solvers, @annual, @round)
@@ -1059,7 +1060,7 @@ class Sosna::SolutionController < SosnaController
   def _prepare_solvers_by_ranks
   end
 
-  def _problems_from_roc_se_ul
+  def _problems_from_roc_se_ul()
     roc, se, ul = _params_roc_se_ul
     if ul
       return Sosna::Problem.where(:annual => roc, :round => se, :problem_no => ul)

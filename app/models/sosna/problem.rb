@@ -28,6 +28,9 @@ class Sosna::Problem < ActiveRecord::Base
     return 'B' if problem_no == BONUS_ROUND_NUM
     return 'B' + (problem_no - BONUS_ROUND_NUM).to_s
   end
+  def bonus?
+    return problem_no >= BONUS_ROUND_NUM
+  end
 
   private
   def _rounds_roc(annual)
