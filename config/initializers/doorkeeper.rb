@@ -11,7 +11,7 @@ Doorkeeper.configure do
       if @user.nil?
         redirect_to(new_user_session_url(next:request.fullpath))
       elsif ! @user.org?
-        render text: 'Not org user, cannt talk'
+        render text: 'Not org user, cannt oauth'
       else
         @user 
       end
