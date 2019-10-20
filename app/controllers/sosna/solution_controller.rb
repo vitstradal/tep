@@ -477,6 +477,9 @@ class Sosna::SolutionController < SosnaController
       @solver_is_current_user = true
     end
 
+    if ! @solver && current_user.org?
+      return redirect_to wiki_piki_path('/')
+    end
     if ! @solver
       add_alert "Pozor: zatím nejsi letošním řešitelem, nejprve vyplň přihlašku!"
       return redirect_to :controller => :solver , :action => :new
