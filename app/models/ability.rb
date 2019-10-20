@@ -125,6 +125,7 @@ class Ability
       can :aesop_index, Sosna::Solver
       can :aesop_annual, Sosna::Solver
       can :aesop_create, Sosna::Solver
+      can :aesop_refresh_index, Sosna::Solver
 
       can :confirm_none_to_next, Sosna::Solver
 

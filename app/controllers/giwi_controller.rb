@@ -7,7 +7,7 @@ require 'iconv'
 require 'json'
 require 'yaml'
 require 'caldavreport'
-#require 'magick_title'
+require 'magick_title'
 
 ##
 # Controller pro zorbazovaní (pomocí `trac-wiki` a editaci wiki, pomocí knihovny `lib/giwi.rb`).
@@ -387,9 +387,9 @@ class GiwiController < ApplicationController
       events.sort! { |a,b| a['start'] <=> b['start'] }
 
       # render
-      events.map do |event|
+      ret = events.map do |event|
             start = event['start']
-            summary = event['summary']
+            summary = event['summary'].strip.gsub('\,', ',')
             url = event['description'] || ''
             if url =~ /(https?:\/\/\S*)/
               "* **#{start}** [[#{$1} | #{summary}]]\n"
@@ -397,6 +397,8 @@ class GiwiController < ApplicationController
               "* **#{start}** #{summary}\n"
             end
       end.join
+      Rails.logger.info("calendar cal=#{ret}");
+      return "\n#{ret}\n"
     rescue Exception => e
       ". (#{e.message}, #{e.to_s}, #{pp(e.backtrace)})"
     end

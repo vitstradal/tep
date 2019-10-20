@@ -6,7 +6,6 @@
 <% cur_file = "ovvp.#{@annual}.#{@round}.txt" %>
 <ul>
   <li><%= link_to  'Jakna AESOP', wiki_piki_url('jakna/aesop') %>
-  <li><%= link_to  'index', @aesop_url %></li>
   <li><%= link_to  'ovvp.index.txt', "#{@aesop_url}/ovvp.index.txt"%></li>
   <li><%= link_to  cur_file , "#{@aesop_url}/#{cur_file}" %></li>
 </ul>
@@ -18,3 +17,7 @@
        %><%= select_tag 'se', options_for_select((1..7), @config[:round].to_i) %>.txt
   <button class="btn btn-danger" type="submit" >Vytvořit</button>
 <% end %>
+<hr/>
+<%= form_tag :action => :aesop_refresh_index  do |f| %>
+  <button class="btn btn-danger" type="submit" >Refresh index</button>
+  <% end %>

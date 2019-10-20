@@ -506,25 +506,51 @@ class Sosna::SolverController < SosnaController
     @annual = params[:roc] || @annual
     @round_max = params[:se] || @round
     errors_to = @config[:aesop_errors_to];
+    aesop_dir = @config[:aesop_dir]
 
     files = []
-    dir = "ovvp"
     index_path = "ovvp.index.txt"
     (@round_max.to_i .. @round_max.to_i ).each do |round|
 
       file = "ovvp.#{@annual}.#{round}.txt"
-      File.open("#{dir}/#{file}", 'w') do |f|
+      File.open("#{aesop_dir}/#{file}", 'w') do |f|
           f.write _aesop_print_round(@annual.to_i, round, errors_to)
       end
       files << file
       "#{@annual}.#{round}.txt"
     end
-#    File.open("#{dir}/#{index_path}", 'w') do |f|
+#    File.open("#{aesop_dir}/#{index_path}", 'w') do |f|
 #      f.write(files.join("\n")+"\n")
 #    end
-    add_success "created #{files.map{|f| "#{dir}/#{f}"}.join(',')}.\n"
-    add_alert "add to #{dir}/#{index_path} manually"
+    _aesop_refresh_aesop_index
+    add_success "created #{files.map{|f| "#{aesop_dir}/#{f}"}.join(',')}.\n"
+    add_success "index #{aesop_dir}/#{index_path} recreated"
     redirect_to :sosna_solver_aesop
+  end
+
+
+  ##
+  #  POST  /sosna/solver/aesop/refres-index
+  #
+  # vezme adresar seznam aesopu (@config[:aesop_dir]) soubory da do indexu (ovvp.index.txt)
+  #
+  #
+  # *Redirect* /sosna/solver/aespop
+  def aesop_refresh_index
+    _aesop_refresh_aesop_index
+    aesop_dir = @config[:aesop_dir]
+    index_path = 'ovvp.index.txt'
+    add_success "index #{aesop_dir}/#{index_path} recreated"
+    redirect_to :sosna_solver_aesop
+  end
+
+  def _aesop_refresh_aesop_index
+    aesop_dir = @config[:aesop_dir]
+    index_file = 'ovvp.index.txt'
+    dir_ls = Dir.each_child(aesop_dir).select { |file| file != 'Trash' && file != index_file && file !~ /^\./  }
+    File.open("#{aesop_dir}/#{index_file}", 'w') do |file|
+      dir_ls.sort.each { |file_name| file.puts(file_name) }
+    end
   end
 
   ##

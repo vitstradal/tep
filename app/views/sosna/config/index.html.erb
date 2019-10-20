@@ -94,6 +94,11 @@
               <td><%= text_field :config, :aesop_errors_to, value: @config[:aesop_errors_to] %></td>
               <td>komu bude chodit protesty, pokud nastanou problémy v <%=link_to 'AESOPu', sosna_solver_aesop_path%> </td>
             </tr>
+            <tr>
+              <th>AESOP Dir</th>
+              <td><%= text_field :config, :aesop_dir, value: @config[:aesop_dir] %></td>
+              <td>kde je fyzicky na disku adresář se soubory aesop.</td>
+            </tr>
           <tbody>
         </table>
       

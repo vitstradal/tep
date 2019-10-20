@@ -28,7 +28,18 @@ jQuery(document).ready(function($) {
 
         var bgimg = $('body').data('background-image');
         if( bgimg ) {
-          $('body').css('background-image', "url(" + bgimg + ")");
+          console.log('bgimg', bgimg);
+          if( bgimg == 'pb2019' ) {
+            $('body').addClass('pb2019');
+            $('#sidebar-collapse').click();
+            $('a.navbar-brand img').attr('src', '/setkani/pikobrani2019/pb2019-logo.png');
+            $('#nav-search-input').attr('placeholder', 'už nehledej ... ');
+            $('link[type="image/x-icon"]').attr('href', '/setkani/pikobrani2019/pikomat.png');
+            $('span.input-icon i.ace-icon').removeClass('nav-search-icon');
+          }
+          else {
+            $('body').css('background-image', "url(" + bgimg + ")");
+          }
         }
         // data tables
 	jQuery.extend( jQuery.fn.dataTableExt.oSort, {

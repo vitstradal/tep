@@ -622,3 +622,39 @@ html {
 div.table-div {
   overflow-x: auto;
 }
+
+body.pb2019 {
+  background-image: url(/setkani/pikobrani2019/pb2019-3.jpg);
+  /* background-image: url(/setkani/pikobrani2019/pb2019-4.jpg); */
+  /* background-image: url(/setkani/pikobrani2019/pb2019-3.jpg); */
+  background-size: 100%;
+}
+
+body.pb2019 .navbar {
+  background: #b94343;
+}
+
+body.pb2019 .sidebar {
+  display: none;
+}
+
+body.pb2019 li,
+body.pb2019 a {
+  color: #b94343;
+}
+
+body.pb2019 .ace-settings-item {
+  display: none;
+}
+
+body.pb2019 a.btn.btn-primary {
+  background-color: #b94343 !important;
+}
+
+body.pb2019 i.fa {
+  color: #b94343 ;
+}
+
+body.pb2019 i.fa.fa-search.nav-search-ico  {
+  color: #b94343 ;
+}

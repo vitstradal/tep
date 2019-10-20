@@ -36,6 +36,7 @@ Tep::Application.routes.draw do
   get  '/sosna/solver/aesop/index'                       => 'sosna/solver#aesop_index',      :as => :sosna_solver_aesop_index
   get  '/sosna/solver/aesop/:roc'                        => 'sosna/solver#aesop_annual',     :as => :sosna_solver_aesop_annual
   post '/sosna/solver/aesop/create'                      => 'sosna/solver#aesop_create',     :as => :sosna_solver_aesop_create
+  post '/sosna/solver/aesop/refres-index'                => 'sosna/solver#aesop_refresh_index',     :as => :sosna_solver_aesop_refres_index
 
 
   get  '/sosna/solution/:id/down_rev'       => 'sosna/solution#download_rev', :as => :sosna_solution_download_rev
