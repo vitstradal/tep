@@ -656,7 +656,8 @@ function init_fotky()
            console.log('h', wh , hh);
            $('#foto-modal img').attr('src', bigimg)
                             .css('height', wh - 50)
-                            .css('width', 'auto');
+                            .css('width', 'auto')
+                            .css('image-orientation', 'from-image');
            $('#foto-modal a').attr('href', bigimg);
            $('#foto-modal .modal-title').text(title);
 
