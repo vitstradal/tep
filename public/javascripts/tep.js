@@ -156,12 +156,19 @@ jQuery(document).ready(function($) {
       // macro youtube
       $('.youtube').each(function () {
                 var video = $(this).data('v');
-                console.log('youtube', video);
-                $(this).append($('<iframe width="560" height="315" '+
-                                           'src="https://www.youtube-nocookie.com/embed/'+escape(video)+'?rel=0&amp;controls=0&amp;showinfo=0" '+
+                // autoplay nefunguje, kdyz se to tam appendne po loadu stranky, nevim proc.
+                var autoplay = $(this).data('autoplay') || 1;
+                //var pct = $(this).data('pct') || 100;
+                var w = $(this).parent().width();
+                if( w > 1024 ) { w = 1024 }
+                var h = w *315/560 ;
+                //console.log('youtube', video, "pct", pct);
+                $(this).append($('<iframe width="'+w+'" height="'+h+'" '+
+                                           'src="https://www.youtube.com/embed/'+escape(video)+'?autoplay=1&amp;controls=0&amp;origin=https://pikomat.mff.cuni.cz/" ' +
+                                           'align="left" '+
+                                           'type="text/html" '+
                                            'frameborder="0" allowfullscreen></iframe>'
                                ));
-        
       });
 
 });

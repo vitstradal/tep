@@ -658,3 +658,11 @@ body.pb2019 i.fa {
 body.pb2019 i.fa.fa-search.nav-search-ico  {
   color: #b94343 ;
 }
+
+/*  facebook */
+.widget-box.facebook-box img {
+ margin: 0.5em;
+}
+.widget-box.facebook-box .widget-main {
+  text-align: center;
+}
