@@ -170,6 +170,9 @@ jQuery(document).ready(function($) {
                                            'frameborder="0" allowfullscreen></iframe>'
                                ));
       });
+      /* pseudo CAPTCHA, tedy robot neumi javascript */
+      $('.js-hide').css('display', 'none');
+      $('form[data-action]').each(function () { $(this).attr('action', $(this).data('action')); });
 
 });
 
