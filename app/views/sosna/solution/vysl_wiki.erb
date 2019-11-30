@@ -2,7 +2,7 @@
 <% head_problems = @problems.map{|p| "= #{p.short_name} ="}.join("||")
 %>
 
-||=   Pořadí =||= v ročníku =||= Roč =||=         Příjmení =||=         Jméno =||=  Ročník =||= Škola =||<%= head_problems %>||=  P =||= BS =||= Body =||
+||=   Pořadí =||= v ročníku =||= Roč =||=         Příjmení =||=         Jméno =||= Škola =||<%= head_problems %>||=  P =||= BS =||= Body =||
 <%
 
    rank_all_last = ''
@@ -28,8 +28,8 @@
    #flg2 = (row % 56 == 1                                            ) ? '+' : '-'
    #flagy = "#{flg0}#{flg1}#{flg2}"
 
-   rank_all_last  = rank_all
-   rank_cls_last  = rank_cls
+   rank_all_last  = rank_all   if ! rank_all.empty?
+   rank_cls_last  = rank_cls   if ! rank_cls.empty?
    grade_num_last = grade_num
 
 
@@ -62,7 +62,6 @@
      '%18s' % solver.last_name,
      '%15s' % solver.name,
      #'%9s'  % solver.grade,
-     '%2s'  % solver.grade_num,
      '%7s'  % (school.nil? ? 's' : school.short),
      '  ' + body.join(' ||   '),
      '%4s'  % pen.score,
