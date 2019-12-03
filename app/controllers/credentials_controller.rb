@@ -17,9 +17,32 @@ class CredentialsController <  ApplicationController
                    groups:      groups,
                    email:       user.email,
                    name:        user.email,
+                   username:    user.email,
+                   login:       user.email,
                    firstName:   user.name,
                    lastName:    user.last_name,
-                   displayName: user.full_name 
+                   displayName: user.full_name
+                  }
+  end
+
+
+# type GitLabUser struct {
+#         Id       int64  `json:"id"`
+#         Username string `json:"username"`
+#         Login    string `json:"login"`
+#         Email    string `json:"email"`
+#         Name     string `json:"name"`
+#}
+
+  def me_gitlab
+    user = _current_resource_owner
+    groups = user.is_org? ? 'org' :  ''
+    render json: {
+                   id:          user.id,
+                   username:    user.email,
+                   login:       user.email,
+                   email:       user.email,
+                   name:        user.name,
                   }
   end
 

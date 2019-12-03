@@ -119,6 +119,7 @@ Tep::Application.routes.draw do
 
   get  '/priklady/sklad'                      => "priklady#sklad",              :as => :priklady_sklad
 
+  get  '/me/gitlab'                           => "credentials#me_gitlab",       :as => :credentials_me_gitlab
   get  '/me'                                  => "credentials#me",              :as => :credentials_me
 
   Giwi.giwis.each_value do |giwi|

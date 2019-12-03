@@ -78,6 +78,14 @@
             </div>
           </li>
           <% if user_signed_in?  %>
+            <% if current_user.is_org? %>
+              <li class="xpurple">
+                <a class="tep-transparent" title="not loged" id="klep-link" href='/klep/login'>
+                  <i class="light-grey ace-icon fa fa-bell xicon-animated-bell"></i>
+                  <span class="hide badge badge-important">8</span>
+                </a>
+              </li>
+            <% end %>
             <li><%= ilink_to  current_user.email, '#', :ico => 'fa-user', :class=> 'label-user btn btn-primary tep-transparent' %> </li>
             <li><%= ilink_to  'Logout', :destroy_user_session , :ico => 'fa-sign-out', :class => 'btn tep-transparent' %></li>
           <% else %>
@@ -183,6 +191,7 @@
             <%= menu_lii wiki_web_edit_path('index', :ls => '.'),       'Web Edit'%>
             <%= menu_lii wiki_piki_path('opravovatele'),                'Opravovatelé'%>
             <%= menu_lii wiki_piki_path('priklady'),                    'Příklady'%>
+            <%= menu_lii 'https://pikomat.mff.cuni.cz/klep',            'Klep' %>
             <%= menu_lii 'https://pikomat.mff.cuni.cz/sklep',           'Sklep' %>
             <%= menu_lii 'https://pikomat.mff.cuni.cz/sklep/index.php/apps/calendar/',           'Sklepový kalendář' %>
           </ul>
