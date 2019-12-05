@@ -79,10 +79,12 @@
           </li>
           <% if user_signed_in?  %>
             <% if current_user.is_org? %>
-              <li class="xpurple">
-                <a class="tep-transparent" title="not loged" id="klep-link" href='/klep/login'>
-                  <i class="light-grey ace-icon fa fa-bell xicon-animated-bell"></i>
-                  <span class="hide badge badge-important">8</span>
+              <li>
+                <a id="klep-link" class="tep-transparent" title="not loged" href='/klep/login' target='_blank'>
+                  <% want_grey = session[:klep_user_id].nil? %>
+                  <% count = session[:klep_msg_count]||0%>
+                  <i id='klep-icon' class="<%if want_grey%>light-grey <%end%>ace-icon fa fa-bell xicon-animated-bell"></i>
+                  <span id="klep-count" class="<%if count == 0%>hide<%end%> badge badge-important"><%=count%></span>
                 </a>
               </li>
             <% end %>

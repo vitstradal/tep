@@ -98,6 +98,8 @@ class Ability
 
       can :sklad, Priklady
 
+      can :status, :klep
+
     end
 
     # master-org, or more-org, 
@@ -142,6 +144,7 @@ class Ability
       can :user_delete,      :tep
       can :user_action,      :tep
       can :user_role_change, :tep
+
 
       can :index,  Sosna::Config
       can :update, Sosna::Config

@@ -10,6 +10,7 @@ class CredentialsController <  ApplicationController
   # vratí json s informacemi přihlášeným uživatelem, pokud je přihlášen přes oauth2, souvisi s `doorkeeper`
   def me
     user = _current_resource_owner
+    return render json: {} if user.nil?
     groups = user.is_org? ? 'org' :  ''
     render json: { internalid:  user.id,
                    id:          user.email,
@@ -26,6 +27,9 @@ class CredentialsController <  ApplicationController
   end
 
 
+# toto je pro klep, autorizace pomoci gitlabu
+# coz je oauth, akorat ze na /me vyzaduje prestou strukturu
+# (nestaci poloziky pridat do stavajiciho /me, nechutna mu kdyz tam je neco navic)
 # type GitLabUser struct {
 #         Id       int64  `json:"id"`
 #         Username string `json:"username"`
@@ -33,9 +37,9 @@ class CredentialsController <  ApplicationController
 #         Email    string `json:"email"`
 #         Name     string `json:"name"`
 #}
-
   def me_gitlab
     user = _current_resource_owner
+    return render json: {} if user.nil?
     groups = user.is_org? ? 'org' :  ''
     render json: {
                    id:          user.id,

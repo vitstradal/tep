@@ -174,6 +174,8 @@ jQuery(document).ready(function($) {
       $('.js-hide').css('display', 'none');
       $('form[data-action]').each(function () { $(this).attr('action', $(this).data('action')); });
 
+      $('#klep-link').each(function() { update_klep_status() });
+
 });
 
 /* f otogal */
@@ -832,4 +834,30 @@ function _init_anketa_div(div) {
   }
   $table.append($tr);
   //console.log('tab', tab);
+}
+
+function update_klep_status() {
+
+  $.get('/klepstatus', function (data, textStatus, jqXHR) {
+       var msg_count = data.msg_count;
+       console.log("klep status", msg_count);
+       set_klep_status(msg_count);
+       setTimeout(function () {update_klep_status()}, 20000)
+  });
+}
+
+function set_klep_status(msg_count) {
+   if( msg_count === undefined || msg_count === null ) {
+     //hide count, grey bell
+     $('#klep-icon').addClass('light-grey');
+     $('#klep-count').addClass('hide');
+   } else if( msg_count == 0  ) {
+     // hide count, ring not grey
+     $('#klep-icon').removeClass('light-grey');
+     $('#klep-count').addClass('hide');
+   } else { // msg_count > 0
+     // show and set count, ring not grey
+     $('#klep-icon').removeClass('light-grey');
+     $('#klep-count').text(msg_count).removeClass('hide');
+   }
 }
