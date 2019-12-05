@@ -839,6 +839,7 @@ function _init_anketa_div(div) {
 function update_klep_status() {
 
   $.get('/klepstatus', function (data, textStatus, jqXHR) {
+       // data: { "msg_count": 44 }
        var msg_count = data.msg_count;
        console.log("klep status", msg_count);
        set_klep_status(msg_count);
