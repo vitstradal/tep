@@ -841,7 +841,7 @@ function update_klep_status() {
   $.get('/klepstatus', function (data, textStatus, jqXHR) {
        // data: { "msg_count": 44 }
        var msg_count = data.msg_count;
-       console.log("klep status", msg_count);
+       //console.log("klep status", msg_count);
        set_klep_status(msg_count);
        setTimeout(function () {update_klep_status()}, 20000)
   });
@@ -861,4 +861,24 @@ function set_klep_status(msg_count) {
      $('#klep-icon').removeClass('light-grey');
      $('#klep-count').text(msg_count).removeClass('hide');
    }
+   title_count(msg_count);
+}
+
+
+function title_count(count) {
+
+  var $title = $('title');
+
+  var title_text = $title.data('title');
+  if( title_text == null ) {
+    title_text = $title.text();
+    $title.data('title', title_text);
+  }
+
+  if( count > 0 ) {
+    $title.text('('+count+') ' + title_text);
+  }
+  else {
+    $title.text(title_text);
+  }
 }

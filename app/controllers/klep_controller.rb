@@ -62,9 +62,11 @@ class KlepController < ApplicationController
           channels_count += 1
       end
     end
-    msg_count =  teams[0]['msg_count'] + channels_count
+    teams_msg_count = teams[0]['msg_count']
+    msg_count =  teams_msg_count + channels_count
     mention_count =  teams[0]['mention_count']
     session[:klep_msg_count] = msg_count
+    #render :json => { :msg_count => msg_count, mem: members_msg_count_by_channel_id, cha: channels_count_by_channel_id, tea: teams_msg_count, uid: klep_user_id }
     render :json => { :msg_count => msg_count }
   rescue Exception => e
     render :json => { msg_count: 0,  mention_count: 0, err: e.to_s, trace: e.backtrace}
