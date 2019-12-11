@@ -861,24 +861,60 @@ function set_klep_status(msg_count) {
      $('#klep-icon').removeClass('light-grey');
      $('#klep-count').text(msg_count).removeClass('hide');
    }
-   title_count(msg_count);
+   animate_title(msg_count);
 }
 
-
-function title_count(count) {
+function animate_title(count) {
+  var want_run = count > 0 ? true : false;
 
   var $title = $('title');
+  var timer = $title.data('timer');
 
+  if( want_run ) {
+    // want run: star timer
+    if( timer  )  {
+      // unless it is runnging
+      return;
+    }
+    var time_state = 0;
+    var timer = setInterval(function () {
+       var want_star = (time_state % 2  == 0)  ?  true : false;
+       show_title(count, want_star);
+       time_state++;
+    }, 1000);
+    $title.data('timer', timer);
+  }
+  else {
+    if(  timer )  {
+      clearInterval(timer);
+      $title.removeData('timer');
+    }
+  }
+
+  show_title(count, false);
+}
+
+//show title once 
+function show_title(count, want_star) {
+
+  var $title = $('title');
   var title_text = $title.data('title');
+
   if( title_text == null ) {
     title_text = $title.text();
     $title.data('title', title_text);
   }
-
-  if( count > 0 ) {
-    $title.text('('+count+') ' + title_text);
+  if( count == 0 ) {
+    $title.text(title_text);
+    $('#ikona').attr('href', 'images/ikonka32.ico');
+  }
+  else if( want_star ) {
+    $title.text('(*) ' + title_text);
+    $('#ikona').attr('href', 'images/ikonka32-green.ico');
   }
   else {
-    $title.text(title_text);
+    $title.text('('+count+') ' + title_text);
+    $('#ikona').attr('href', 'images/ikonka32-red.ico');
   }
 }
+

@@ -59,7 +59,7 @@ class KlepController < ApplicationController
       |channel_id, total_msg_count|
       member_msg_count = members_msg_count_by_channel_id[channel_id]
       if !member_msg_count.nil?  && total_msg_count > member_msg_count
-          channels_count += 1
+          channels_count += total_msg_count - member_msg_count
       end
     end
     teams_msg_count = teams[0]['msg_count']
