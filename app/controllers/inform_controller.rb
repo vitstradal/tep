@@ -99,11 +99,13 @@ class InformController < ApplicationController
       next if k == 'controller' || k == 'action' || k == 'authenticity_token'
       data[k] = v
     end
-    form = data.delete('form') || 'unk'
+    form = sign_verified(data.delete('form'), 'giwi-sign')
     redir = data.delete('redir')
 
     flash[:tnx] = data.delete('tnx') || "Děkujeme."
     flash[:tnx2] = data.delete('tnx2')
+
+    return redirect_to :inform_tnx if form.nil?
 
     ordered_data = _order_data(data)
     _send_thanks_email(data, ordered_data)

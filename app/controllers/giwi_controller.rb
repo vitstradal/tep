@@ -375,6 +375,7 @@ class GiwiController < ApplicationController
       pak_f = pak.strftime('%Y%m%dT000000')
 
       # fetch events
+      Rails.logger.info("calendar url=#{url}");
       repo = CalDavReport.new(url)
       events = repo.report( now_f, pak_f)
 

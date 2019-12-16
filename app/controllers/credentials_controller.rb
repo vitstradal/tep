@@ -11,7 +11,12 @@ class CredentialsController <  ApplicationController
   def me
     user = _current_resource_owner
     return render json: {} if user.nil?
-    groups = user.is_org? ? 'org' :  ''
+    groups = []
+    groups.push 'org' if user.org?
+    groups.push 'admin' if user.admin?
+
+    Rails::logger.fatal("groups:" + groups.join(' '))
+
     render json: { internalid:  user.id,
                    id:          user.email,
                    identifier:  user.email,
