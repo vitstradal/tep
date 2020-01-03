@@ -318,6 +318,7 @@ class GiwiController < ApplicationController
     return _template_include(env, argv) if tname == 'include'
     return _template_calendar(env, argv) if tname == 'owncalendar'
     return _template_sign(env, argv) if tname == 'sign'
+    return _template_random_string(env, argv) if tname == 'randomstring'
 
     part = 0
     if tname =~ /\A\//
@@ -350,6 +351,11 @@ class GiwiController < ApplicationController
       return ret if part == 0
       part -= 1
     end
+  end
+  # usage: {{randomstring}}
+  # random string
+  def _template_random_string(env, argv)
+    return rand(36**25).to_s(36)
   end
 
   # usage: {{sign text}}
@@ -433,10 +439,22 @@ class GiwiController < ApplicationController
 #
 #  end
 
+  ##
+  # {{include PAGE}}  -- PAGE (bez přípony)
+  # {{include PAGE|wiki=main}}  -- PAGE z jíné wiki (piki strfrom another wiki
   def _template_include(env, argv)
     env['nocache'] = '1'
-    path =  argv['00']
-    text, _ = @giwi.get_page(path + @giwi.ext)
+    path =  argv['0']
+
+    wiki = argv['wiki']
+    giwi = @giwi
+    if ! wiki.nil?
+      giwi = Giwi.get_giwi(wiki)
+      return "no such wiki (#{wiki})" if giwi.nil?
+      authorize! :show, giwi.auth_name
+    end
+
+    text, _ = giwi.get_page(path + giwi.ext)
     return "no such page (#{path})" if text.nil?
     return text
   end
