@@ -147,7 +147,13 @@
          <% end # if tep vs papper %>
       </td>
       <td><%= link_to solver.full_name, { controller: :solver, action: :show, id: solver.id }  %></td>
-      <td><%= solver.school.nil? ? '-' : solver.school.short %></td>
+      <td><% if !solver.school.nil? %> 
+             <% sch = solver.school %>
+             <span title="<%= sch.long %>"><%= link_to sch.short||'?', :controller =>  'sosna/school', :action => :show, :id => sch.id %></span>
+          <% else %>
+              -
+          <% end %>
+      </td>
       <% @problems.each do |pr| %>
          <% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  %>
          <% ready = (!sol.filename.nil? && !sol.filename_corr.nil? || sol.has_paper_mail ) && !sol.score.nil? %>
