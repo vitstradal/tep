@@ -16,6 +16,7 @@
             <%= link_to file[:name], path: file[:path] %>
             <%= link_to '[Edit]', {path: file[:path], edit: :me} %>
             <%= link_to '[Del]',  '#', {:class =>'delete-link', 'data-path' => file[:path]}  %>
+            <%= link_to '[Hist]',  {path: file[:path], history: file[:path]} %>
            </li>
         <% end %>
       <% end %>
@@ -24,6 +25,7 @@
       <div class="col-sm-6">
         <% @dirs.each do |dir| %>
           <li><i class="fa fa-folder-o blue"></i> <%= link_to dir[:name] + '/', ls:'.', path: dir[:path] + '/index' %>
+                                                  <%= link_to '[Hist]',  {path: dir[:name], history: dir[:name]} %>
           </li>
         <% end %>
       </div>

@@ -7,6 +7,7 @@ require 'diff3'
 class Giwi
 
   SETPAGE_OK = 0
+  COMMENT_MAX_LEN = 75
   SETPAGE_MERGE_OK = 1
   SETPAGE_MERGE_COLLISONS = 2
   SETPAGE_MERGE_DIFF = 3
@@ -93,7 +94,7 @@ class Giwi
         false
     else
         true
-    end 
+    end
   end
 
 
@@ -220,8 +221,15 @@ class Giwi
     index.add(:path => path, :oid => text_oid, :mode  => 0100644 )
 
     if path =~ /\.(wiki|txt)$/
-      fstline = text.each_line.first.chomp.strip
-      comment = "#{fstline}"
+      add_line = index.diff(cur_tree).each_line.detect { |line| line.line_origin == :deletion }
+      #del_line = index.diff(cur_tree).each_line.detect { |line| line.line_origin == :addition }
+
+      if ! add_line.nil?
+        comment = add_line
+      else
+        fstline = text.each_line.first.chomp.strip[0, COMMENT_MAX_LEN]
+        comment = "#{fstline}"
+      end
     else
       comment = "file: #{path}"
     end
@@ -296,14 +304,22 @@ class Giwi
     return status
   end
 
+  ##
+  # opts.count .. how deep history
+  #     .path  .. which file
+  #     .oid .. from commit
   def get_history(opts = {})
-    commit =  @repo.head.target
+    oid = opts[:oid]
+    path = opts[:path]
+    commit =  oid.nil? ? @repo.head.target : @repo.lookup(oid)
     history = []
     count = 1
     count_max = opts[:count] || 500
-    while commit.parents.size > 0 && count <= count_max
-      parent = commit.parents[0]
-      diff = parent.diff(commit)
+    diff_opts = path.nil? ? {} : { disable_pathspec_match: true, paths: [ path ] }
+
+    while count <= count_max
+      commit, parent, diff = _get_prev_diff(commit, diff_opts)
+      break if commit.nil?
 
       files = []
       diff.deltas.each do |d|
@@ -319,23 +335,53 @@ class Giwi
       name = author[:name].force_encoding('utf-8').encode
       time = author[:time]
 
-      history.push({ :message => message, :commit => commit.oid, :files =>  files , :author =>  { :email => email, :name => name, :time => time} })
+      history.push( { message: message, commit: commit.oid, files: files, author: { email: email, name: name, time: time } })
       commit = parent
       count += 1
     end
     return history
   end
 
+   ##
+   # r: commit, parent, diff_opts
+   # r: nil if not
+   def _get_prev_diff(commit, diff_opts)
+      while true
+        return nil if commit.parents.size == 0
+        parent = commit.parents[0]
+
+        diff = parent.diff(commit, diff_opts)
+        return nil if diff.nil?
+
+        return [commit, parent, diff] if diff.size > 0
+        commit = parent
+      end
+      return nil
+    end
+
+
+  ##
+  # r: {
+  #       message: "commit message"
+  #       diff_lines: [ { content: "textline" , line_orign:  , author:}
+  #                   ]
+  #    }
   def get_diff(commit_oid)
     commit =  @repo.lookup(commit_oid)
-    parent = commit.parents[0]
-    diff = parent.diff(commit)
+    parent_commit = commit.parents[0]
+
+    # diff is Grit::Diff
+    diff = parent_commit.diff(commit)
     #pp diff.deltas
-    return diff.each_line.map do |l|
-            { content: l.content.force_encoding('utf-8').encode, 
-              line_origin: l.line_origin,
+    
+    file = diff.deltas.first.new_file[:path].force_encoding('utf-8').encode
+
+    diff_lines =  diff.each_line.map do |line|
+            { content: line.content.force_encoding('utf-8').encode,
+              line_origin: line.line_origin,
             }
     end
+    return {  author: commit.author, message: commit.message, file: file, diff_lines: _prepare_diff_lines(diff_lines) }
   end
 
   private
@@ -406,7 +452,7 @@ class Giwi
           prefix ||= ''
         end
 
-        # konec koncove radky 
+        # konec koncove radky
         endline = lines[eline] || ''
         postfix = endline[eoff .. -1] || ''
 
@@ -417,6 +463,53 @@ class Giwi
       else
         raise "bad pos (#{pos})"
       end
+  end
+
+  def _comment_from_diff(add, del)
+     return add if add.size < COMMENT_MAX_LEN
+     return "#{add[0,COMMENT_MAX_LEN-1]}…"
+  end
+  ##
+  # lines = [ { content: "text line", line_origin: :addition :deletion :content :file_header  }
+  # najdeme dva po sobe jdouci bloky :addition  a :deletion a zkusime u nich najit blizsi editace
+  # pridame :prefix :posfix  (int ve znacich) co maji spolecneho, 0 = nic
+  def _prepare_diff_lines(lines)
+    last_deletion_idx = nil
+    lines.each_with_index do  |curline, idx|
+      line_origin = curline[:line_origin]
+      if line_origin == :deletion
+        last_deletion_idx = idx if last_deletion_idx.nil?
+      elsif line_origin == :addition
+        if ! last_deletion_idx.nil?
+          delline = lines[last_deletion_idx]
+          content_del = delline[:content]
+          content_add = curline[:content]
+          prefix_len, postfix_len = _prepare_diff_lines_one_line(content_del, content_add)
+          if prefix_len > 0 || postfix_len > 0
+            curline[:prefix]  = delline[:prefix]  = prefix_len
+            curline[:postfix] = delline[:postfix] = postfix_len
+          end
+          last_deletion_idx += 1
+          last_deletion_idx = nil if lines[last_deletion_idx][:line_origin] != :deletion
+        end
+      else
+        last_deletion_idx = nil
+      end
+    end
+  end
+
+  ##
+  # r: [prefix_len, postfix_len ]
+  # r: [0, 0] completely different
+  # tj line_add[0,prefix_len],
+  #    line_add[prefix_len .. -postfix_len -1]
+  #    line_add[line_add.size-posfix_len .. -1]
+  def _prepare_diff_lines_one_line(line_add, line_del)
+    len = line_add.size
+    prefix_len  = len.times{ |i| break i if line_add[i] != line_del[i] }
+    return [prefix_len, 0] if prefix_len == len
+    postfix_len = len.times{ |i| break i if line_add[-i-1] != line_del[-i-1] }
+    return [prefix_len, postfix_len]
   end
 end
 

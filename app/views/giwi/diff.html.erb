@@ -4,16 +4,26 @@
   <% ['pikomat-l', 'tabor'].each do  |email|  %>
     <%= button_tag "Send to #{email}", :class=>'btn btn-success', :href => "mailto:#{email}@pikomat.mff.cuni.cz?subject=Novinky&body=#{body}" %>
   <% end %>
-  <%= button_tag 'Historie', :class=>'btn btn-primary', :href => url_for(path: @path, :history => '.'), ico: 'fa-university' %>
+  <%= button_tag 'Historie', :class=>'btn btn-primary', :href => url_for(path: @path, :history => @diff_file), ico: 'fa-university' %>
 </div>
 
-<h1>Diff</h1>
-<pre>
+<h1>Diff <%=@diff_file%></h1>
+<div>msg:  <%= @diff_message %></div>
+<div>au:   <%= @diff_author[:name] %></div>
+<div>date: <%= @diff_author[:time] %></div>
+<%if ! @prev_commit.nil? %>
+  <%= button_tag "<<< Předchozí změna", :class=>'btn btn-success', :href => url_for(path: @path, diff: @prev_commit[:commit]),
+      title:  "#{@prev_commit[:message]}\n#{@prev_commit[:author][:name]}\n#{@prev_commit[:author][:time]}\n"
+    %>
+<%else%>
+  <%= button_tag "<<< Předchozí změna", :class=>'btn disabled btn-success', disabled: "disabled" %>
+<%end%>
+
+<pre class="diff">
 <% @diff_lines.each do |line| %><%
    o = line[:line_origin]
    if o == :addition || o == :deletion
-    %><span class="diff-<%=o%>"><%= line[:content].rstrip%></span>
-<%
+    %><span class="diff-<%=o%>" title="<%=pp line%>"><%= diff_line line%></span><%
    elsif o == :file_header  && line[:content] =~ /^diff --git a\/(\S*)/
     path = $1
     %><%= link_to url_for(wiki: @wiki, path: path) do  %><%= path%> <span class="fa fa-file-o"></span><% end %> <%= link_to  url_for(wiki:@wiki, path: path, edit: 'me') do %><span class="fa fa-edit"></span><% end %>:

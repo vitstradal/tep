@@ -11,12 +11,12 @@ require 'magick_title'
 
 ##
 # Controller pro zorbazovaní (pomocí `trac-wiki` a editaci wiki, pomocí knihovny `lib/giwi.rb`).
-# 
+#
 # == konfigurace
 #
 # je v souboru `config/wiki.yml`. V každém enviromentu (`production`, `local`...) může být různá sada wikin.
 # každá wiki má tyto konfigurační položky:
-# 
+#
 # path:: kde se nachází git repozitář
 # bare:: jestli je git repozitár bare nebo ne (s working directory nebo pouze data)
 # branch:: která branche se má použít (`master`)
@@ -57,9 +57,9 @@ class GiwiController < ApplicationController
   # path:: cesta k souboru (bude připojeno `.wiki`, nebo pokud existuje `path/index.wiki`)
   # path2:: připojeno k path
   # edit:: `me` nebo číslo části (katitola) která se má editovat
-  # history:: 
-  # diff:: 
-  # ls:: . 
+  # history::
+  # diff::
+  # ls:: .
   # cache:: `me`
   # preview:: `me`
   def show
@@ -79,7 +79,7 @@ class GiwiController < ApplicationController
     @edit = params[:edit] || false
     @ls   = params[:ls]
     @history  = params[:history]
-    @diff  = params[:diff]
+    @diff_oid  = params[:diff]
     @part = false
     @cache = params[:cache] || ''
 
@@ -95,8 +95,8 @@ class GiwiController < ApplicationController
 
     return _handle_preview(params[:preview])  if ! params[:preview].nil?
     return _handle_ls if @ls
-    return _handle_history if @history
-    return _handle_diff if @diff
+    return _handle_history(@history) if @history
+    return _handle_diff if @diff_oid
     return _handle_csrf if fmt == 'csrf'
     return _handle_special_edit(@path, fmt) if @edit && %w(svg).include?(fmt)
 
@@ -241,18 +241,26 @@ class GiwiController < ApplicationController
   def _handle_diff
     authorize! :update, @giwi.auth_name
     @giwi = Giwi.get_giwi(@wiki)
-    if @diff == 'LAST'
+    if @diff_oid == 'LAST'
       history = @giwi.get_history(count: 1)
-      @diff = history[0][:commit] if history.size > 0
+      @diff_commit = history[0][:commit] if history.size > 0
     end
-    @diff_lines = @giwi.get_diff(@diff)
+    diff_data = @giwi.get_diff(@diff_oid)
+    @diff_data = diff_data
+    @diff_message =  diff_data[:message]
+    @diff_author =    diff_data[:author]
+    @diff_file =    diff_data[:file]
+    @diff_lines =    diff_data[:diff_lines]
+    nic, @prev_commit  = @giwi.get_history(count: 2, oid: @diff_oid, path: @diff_file)
     return render :diff
   end
 
-  def _handle_history
+  def _handle_history(path)
     authorize! :update, @giwi.auth_name
     @giwi = Giwi.get_giwi(@wiki)
-    @history = @giwi.get_history
+    opts= {}
+    opts[:path] = path if ! path.nil? && path != '.'
+    @history = @giwi.get_history(opts)
     return render :history
   end
 
@@ -696,6 +704,7 @@ class GiwiController < ApplicationController
     end
     return ret
   end
+
 
 end
 
