@@ -24,8 +24,9 @@
     <% if @dirs.size > 0 %>
       <div class="col-sm-6">
         <% @dirs.each do |dir| %>
-          <li><i class="fa fa-folder-o blue"></i> <%= link_to dir[:name] + '/', ls:'.', path: dir[:path] + '/index' %>
-                                                  <%= link_to '[Hist]',  {path: dir[:name], history: dir[:name]} %>
+          <li><i class="fa fa-folder-o blue"></i>
+            <%= link_to dir[:name] + '/', ls:'.', path: dir[:path] + '/index' %>
+            <%if dir[:name] != '..' %><%= link_to '[Hist]',  {path: dir[:name], history: dir[:path]} %><%end%>
           </li>
         <% end %>
       </div>
@@ -35,7 +36,7 @@
 
 
 <hr>
-<%= button_tag 'Historie', :class=>'btn btn-primary', :href => url_for(path: @path, :history => '.'), ico: 'fa-university' %>
+<%= button_tag 'Historie souborů v tomto adresáři', :class=>'btn btn-primary', :href => url_for(path: @path, :history => @path), ico: 'fa-university' %>
 <hr>
 <%= form_tag url_for(:action => :show, :wiki => @wiki) , method: :get do%>
   <button type='submit' class='btn btn-success'><i class="fa fa-file-o"></i> Nová stránka</button>

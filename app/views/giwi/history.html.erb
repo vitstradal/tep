@@ -1,6 +1,10 @@
+<div class="pull-right">
+  <%= button_tag 'Zobraz stránku', :class=>'btn btn-primary', :href => url_for(path: @path), ico: 'fa-file' %>
+  <%= button_tag 'Seznam stránek', :class=>'btn btn-primary', :href => url_for(path: @path, :ls => '.'), ico: 'fa-list' %>
+  <%= button_tag 'Celá historie', :class=>'btn btn-primary', :href => url_for(path: @path, :history => '.'), ico: 'fa-university' %>
+</div>
 
-<% require 'date' %>
-<h1>Historie</h1>
+<h1>Historie <%= @history_path == '.' ? '' : @history_path %> </h1>
 
 <ul>
 <% @history.each do |h| %>

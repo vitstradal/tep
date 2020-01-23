@@ -78,7 +78,7 @@ class GiwiController < ApplicationController
 
     @edit = params[:edit] || false
     @ls   = params[:ls]
-    @history  = params[:history]
+    history_path  = params[:history]
     @diff_oid  = params[:diff]
     @part = false
     @cache = params[:cache] || ''
@@ -95,7 +95,7 @@ class GiwiController < ApplicationController
 
     return _handle_preview(params[:preview])  if ! params[:preview].nil?
     return _handle_ls if @ls
-    return _handle_history(@history) if @history
+    return _handle_history(history_path) if history_path
     return _handle_diff if @diff_oid
     return _handle_csrf if fmt == 'csrf'
     return _handle_special_edit(@path, fmt) if @edit && %w(svg).include?(fmt)
@@ -243,7 +243,7 @@ class GiwiController < ApplicationController
     @giwi = Giwi.get_giwi(@wiki)
     if @diff_oid == 'LAST'
       history = @giwi.get_history(count: 1)
-      @diff_commit = history[0][:commit] if history.size > 0
+      @diff_oid = history[0][:commit] if history.size > 0
     end
     diff_data = @giwi.get_diff(@diff_oid)
     @diff_data = diff_data
@@ -255,11 +255,12 @@ class GiwiController < ApplicationController
     return render :diff
   end
 
-  def _handle_history(path)
+  def _handle_history(history_path)
     authorize! :update, @giwi.auth_name
     @giwi = Giwi.get_giwi(@wiki)
     opts= {}
-    opts[:path] = path if ! path.nil? && path != '.'
+    opts[:path] = history_path if ! history_path.nil? && history_path != '.'
+    @history_path = history_path
     @history = @giwi.get_history(opts)
     return render :history
   end

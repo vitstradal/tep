@@ -423,10 +423,13 @@ module ApplicationHelper
     prefix  = line[:prefix]
     postfix = line[:postfix]
     return content if prefix.nil? || postfix.nil? || ( prefix == 0 && postfix == 0 ) 
-    return content if prefix + postfix == content.size
     ret = ''.html_safe
     ret += content[0, prefix] if prefix > 0
-    ret += content_tag(:span, content[prefix .. -postfix-1], class:"more")
+    if prefix + postfix < content.size
+      ret += content_tag(:span, content[prefix .. -postfix-1], class:"more")
+    else
+      ret += content_tag(:span, '', class:"empty")
+    end
     ret += content[-postfix .. -1]  if postfix > 0
     return ret
   end

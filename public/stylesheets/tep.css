@@ -521,6 +521,12 @@ a.mailcrypt {
 .diff-deletion .more {
   background-color: rgb(243, 174, 182);
 }
+.diff-deletion .empty {
+  border: 2px solid rgb(243, 174, 182);
+}
+.diff-addition .empty {
+  border: 2px solid rgb(162, 232, 179);
+}
 
 pre.diff {
  white-space: pre-wrap;

@@ -1,9 +1,8 @@
 
 <% body =  ( @diff_lines.find_all{ |line| line[:line_origin] == :addition  }.map{|line| line[:content]}.join("\n") ) %>
 <div class="pull-right">
-  <% ['pikomat-l', 'tabor'].each do  |email|  %>
-    <%= button_tag "Send to #{email}", :class=>'btn btn-success', :href => "mailto:#{email}@pikomat.mff.cuni.cz?subject=Novinky&body=#{body}" %>
-  <% end %>
+  <%= button_tag 'Zobraz stránku', :class=>'btn btn-primary', :href => url_for(path: @diff_file), ico: 'fa-file' %>
+  <%= button_tag 'Seznam stránek', :class=>'btn btn-primary', :href => url_for(path: @diff_file, :ls => '.'), ico: 'fa-list' %>
   <%= button_tag 'Historie', :class=>'btn btn-primary', :href => url_for(path: @path, :history => @diff_file), ico: 'fa-university' %>
 </div>
 
@@ -12,7 +11,7 @@
 <div>au:   <%= @diff_author[:name] %></div>
 <div>date: <%= @diff_author[:time] %></div>
 <%if ! @prev_commit.nil? %>
-  <%= button_tag "<<< Předchozí změna", :class=>'btn btn-success', :href => url_for(path: @path, diff: @prev_commit[:commit]),
+  <%= button_tag "<<< Předchozí změna #{@diff_file}", :class=>'btn btn-success', :href => url_for(path: @path, diff: @prev_commit[:commit]),
       title:  "#{@prev_commit[:message]}\n#{@prev_commit[:author][:name]}\n#{@prev_commit[:author][:time]}\n"
     %>
 <%else%>
