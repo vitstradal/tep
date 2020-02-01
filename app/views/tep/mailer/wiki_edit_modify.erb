@@ -1,0 +1,52 @@
+<head>
+  <style>
+    /****
+     * historie diff
+     */
+    .diff-addition {
+      background-color: rgb(220, 245, 227)
+    }
+    .diff-addition .more {
+      background-color: rgb(162, 232, 179);
+    }
+    .diff-deletion {
+      background-color: rgb(245, 228, 230);
+    }
+    .diff-deletion .more {
+      background-color: rgb(243, 174, 182);
+    }
+    .diff-deletion .empty {
+      border: 2px solid rgb(243, 174, 182);
+    }
+    .diff-addition .empty {
+      border: 2px solid rgb(162, 232, 179);
+    }
+    pre.diff {
+     white-space: pre-wrap;
+    }
+  </style>
+</head>
+<pre>
+path:  <%=link_to  "#{@wiki}/#{@path}",  @url%>
+diff:  <%=link_to  'diff',  @url_diff%>
+who:   <%= @who %>
+<%#path: <%= @path %>
+<%#wiki: <%= @wiki %>
+</pre>
+
+Změny <%= @path %>:
+<pre class="diff">
+<% @diff_data[:diff_lines].each do |line| %><%
+   o = line[:line_origin]
+   if o == "addition"
+    %>+<span class="diff-<%=o%>"><%= diff_line line%></span><%
+   elsif o == "deletion"
+    %>-<span class="diff-<%=o%>"><%= diff_line line%></span><%
+   elsif o == "context"
+    %> <%= line[:content] -%><%
+   end
+end %>
+</pre>
+<hr>
+
+tvůj Tep

@@ -24,6 +24,7 @@ class Giwi
   attr_accessor :ext
   attr_accessor :help_link
   attr_accessor :templates
+  attr_accessor :notify
   @ext = ""
 
   mattr_accessor :giwis
@@ -225,7 +226,7 @@ class Giwi
       #del_line = index.diff(cur_tree).each_line.detect { |line| line.line_origin == :addition }
 
       if ! add_line.nil?
-        comment = add_line
+        comment = add_line.content
       else
         fstline = text.each_line.first.chomp.strip[0, COMMENT_MAX_LEN]
         comment = "#{fstline}"
@@ -308,39 +309,62 @@ class Giwi
   # opts.count .. how deep history
   #     .path  .. which file
   #     .oid .. from commit
+  #     .start_start_oid  .. history starts (1 commit) before start_oid
   def get_history(opts = {})
     oid = opts[:oid]
     path = opts[:path]
+    start_parent_oid = opts[:start_parent_oid]
+    count_max = opts[:count] || 500
     commit =  oid.nil? ? @repo.head.target : @repo.lookup(oid)
     history = []
     count = 1
-    count_max = opts[:count] || 500
     diff_opts = path.nil? ? {} : { disable_pathspec_match: true, paths: [ path ] }
+
+    if ! start_parent_oid.nil?
+      last_commit = nil
+      last_diff = nil
+      commit =  @repo.head.target
+      while true
+        commit, parent, diff = _get_prev_diff(commit, diff_opts)
+        return [] if commit.nil?
+        if commit.oid == start_parent_oid
+          return [] if last_commit.nil? || last_diff.nil?
+          return [_create_history_item(last_commit, last_diff) ]
+        end
+        last_commit = commit
+        last_diff = diff
+        commit = parent
+      end
+    end
 
     while count <= count_max
       commit, parent, diff = _get_prev_diff(commit, diff_opts)
       break if commit.nil?
-
-      files = []
-      diff.deltas.each do |d|
-        files.push({ :new_file =>  d.new_file[:path].force_encoding('utf-8').encode,
-                     :old_file => d.old_file[:path].force_encoding('utf-8').encode,
-                     :binary =>  d.binary
-                   })
-      end
-
-      message = commit.message.force_encoding('utf-8').encode
-      author = commit.author
-      email = author[:email].force_encoding('utf-8').encode
-      name = author[:name].force_encoding('utf-8').encode
-      time = author[:time]
-
-      history.push( { message: message, commit: commit.oid, files: files, author: { email: email, name: name, time: time } })
+      history.push( _create_history_item(commit, diff) )
       commit = parent
       count += 1
     end
     return history
   end
+
+  def _create_history_item(commit, diff)
+    files = []
+    diff.deltas.each do |d|
+      files.push({ :new_file =>  d.new_file[:path].force_encoding('utf-8').encode,
+                   :old_file => d.old_file[:path].force_encoding('utf-8').encode,
+                   :binary =>  d.binary
+                 })
+    end
+
+    message = commit.message.force_encoding('utf-8').encode
+    author = commit.author
+    email = author[:email].force_encoding('utf-8').encode
+    name = author[:name].force_encoding('utf-8').encode
+    time = author[:time]
+    return { message: message, commit: commit.oid, files: files, author: { email: email, name: name, time: time } }
+  end
+
+
 
    ##
    # r: commit, parent, diff_opts
@@ -366,13 +390,22 @@ class Giwi
   #       diff_lines: [ { content: "textline" , line_orign:  , author:}
   #                   ]
   #    }
-  def get_diff(commit_oid)
-    commit =  @repo.lookup(commit_oid)
+  def get_diff(commit_oid = nil, top_commit_oid = nil, path= nil)
+    commit =  commit_oid.nil? ? @repo.head.target : @repo.lookup(commit_oid)
     parent_commit = commit.parents[0]
 
+    opt = {}
+    opt[:paths] = [path] if !path.nil? 
+    top_commit = commit
+    if ! top_commit_oid.nil?
+      top_commit = top_commit_oid == 'HEAD' ?  @repo.last_commit :
+                                           @repo.lookup(top_commit_oid)
+    end
+
     # diff is Grit::Diff
-    diff = parent_commit.diff(commit)
+    diff = parent_commit.diff(top_commit, opt)
     #pp diff.deltas
+    return nil if diff.nil? || diff.deltas.size <= 0
     
     file = diff.deltas.first.new_file[:path].force_encoding('utf-8').encode
 

@@ -4,6 +4,8 @@ var anketa_td_class = [ 'anketa-nic', 'anketa-yes', 'anketa-maybe', 'anketa-no',
 var anketa_txt =    [ ' ', 'y', '?', 'n' ];
 ace.vars['base'] = '/ace';
 
+
+
 // init tep page
 jQuery(document).ready(function($) {
         $('.delete-link').click(function () {
@@ -151,6 +153,8 @@ jQuery(document).ready(function($) {
       $('textarea.aceeditor').each(function () {
                 var $textarea = $(this);
                 _init_textarea_with_ace($textarea);
+                // load update version, when user click on browsers 'back'
+                reload_on_browser_back();
       });
 
       // macro youtube
@@ -918,3 +922,12 @@ function show_title(count, want_star) {
   }
 }
 
+// hack based on from https://stackoverflow.com/questions/43043113/how-to-force-reloading-a-page-when-using-browser-back-button
+function reload_on_browser_back() {
+  window.addEventListener( "pageshow", function ( event ) {
+    var historyTraversal = event.persisted || ( typeof window.performance != "undefined" && window.performance.navigation.type === 2 );
+    if ( historyTraversal ) {
+      window.location.reload();
+    }
+  });
+}

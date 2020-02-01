@@ -79,7 +79,8 @@ class GiwiController < ApplicationController
     @edit = params[:edit] || false
     @ls   = params[:ls]
     history_path  = params[:history]
-    @diff_oid  = params[:diff]
+    diff_oid  = params[:diff]
+    diff_to  = params[:diff_to]
     @part = false
     @cache = params[:cache] || ''
 
@@ -96,7 +97,7 @@ class GiwiController < ApplicationController
     return _handle_preview(params[:preview])  if ! params[:preview].nil?
     return _handle_ls if @ls
     return _handle_history(history_path) if history_path
-    return _handle_diff if @diff_oid
+    return _handle_diff(diff_oid, diff_to) if diff_oid
     return _handle_csrf if fmt == 'csrf'
     return _handle_special_edit(@path, fmt) if @edit && %w(svg).include?(fmt)
 
@@ -214,6 +215,7 @@ class GiwiController < ApplicationController
       end
     end
 
+    _notify if status ==  Giwi::SETPAGE_OK
     if status !=  Giwi::SETPAGE_OK
       if status ==  Giwi::SETPAGE_MERGE_OK
          add_alert "Pozor: při editaci nastala kolize, ale podařilo se jí automaticky vyřešit"
@@ -238,20 +240,28 @@ class GiwiController < ApplicationController
 
 
   private
-  def _handle_diff
+  def _handle_diff(diff_oid, diff_to)
     authorize! :update, @giwi.auth_name
     @giwi = Giwi.get_giwi(@wiki)
-    if @diff_oid == 'LAST'
+    if diff_oid == 'LAST'
       history = @giwi.get_history(count: 1)
-      @diff_oid = history[0][:commit] if history.size > 0
+      diff_oid = history[0][:commit] if history.size > 0
     end
-    diff_data = @giwi.get_diff(@diff_oid)
+#    top_oid = nil
+#    if ! diff_to.nil?
+#      top_oid = 'HEAD'
+#    end
+    Rails::logger.fatal("diff_oid=#{diff_oid}")
+    diff_data = @giwi.get_diff(diff_oid, diff_to, "#{@path}.*")
+    @diff_oid = diff_oid
+    @diff_to = diff_to
     @diff_data = diff_data
     @diff_message =  diff_data[:message]
     @diff_author =    diff_data[:author]
     @diff_file =    diff_data[:file]
     @diff_lines =    diff_data[:diff_lines]
-    nic, @prev_commit  = @giwi.get_history(count: 2, oid: @diff_oid, path: @diff_file)
+    @next_commit, _    = @giwi.get_history(count: 1, start_parent_oid: diff_oid, path: @diff_file)
+    _, @prev_commit  = @giwi.get_history(count: 2,              oid: diff_oid, path: @diff_file)
     return render :diff
   end
 
@@ -419,6 +429,30 @@ class GiwiController < ApplicationController
       ". (#{e.message}, #{e.to_s}, #{pp(e.backtrace)})"
     end
   end
+
+  ##
+  #
+  #
+  #
+  def _notify
+    return if @giwi.notify.nil? || @giwi.notify.size == 0
+    @giwi.notify.each do |notify_item|
+      Rails.logger.info("notify #{notify_item['email']} path:#{@path}");
+      next if ! @path.start_with?(notify_item['path'])
+      diff_data = @giwi.get_diff()
+      return if diff_data.nil? # no diff
+
+      diff_data[:author][:time] = diff_data[:author][:time].to_s
+      diff_data[:diff_lines].each { |line| line[:line_origin] = line[:line_origin].to_s }
+
+      Rails.logger.info("notify #{notify_item['email']} path:#{@path} diff_data=#{diff_data}");
+      who = current_user.email
+      url = url_for(path: @path);
+      url_diff = url_for(path: @path, diff: 'LAST');
+      Tep::Mailer.wiki_edit_modify(notify_item['email'], @wiki.to_s, @path, who, url, url_diff, diff_data).deliver_later
+      end
+  end
+
 
 #  def _template_calendar(env, argv)
 #    begin

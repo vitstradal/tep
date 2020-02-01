@@ -10,6 +10,11 @@ defaults: &defaults
     help_link: 'wiki/tep/doc/wiki#start'
     read:   :org
     update: :org
+    notify: 
+       - path: 'vzoraky/'
+         email: 'letak-l@pikomat.mff.cuni.cz'
+       - path: 'jakna/'
+         email: 'vitas@matfyz.cz'
   tepmac:
     path: '/home/www/git/tepmac.git'
     url: 'tepmac'

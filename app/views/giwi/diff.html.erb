@@ -3,19 +3,35 @@
 <div class="pull-right">
   <%= button_tag 'Zobraz stránku', :class=>'btn btn-primary', :href => url_for(path: @diff_file), ico: 'fa-file' %>
   <%= button_tag 'Seznam stránek', :class=>'btn btn-primary', :href => url_for(path: @diff_file, :ls => '.'), ico: 'fa-list' %>
-  <%= button_tag 'Historie', :class=>'btn btn-primary', :href => url_for(path: @path, :history => @diff_file), ico: 'fa-university' %>
+  <%= button_tag 'Historie souboru', :class=>'btn btn-primary', :href => url_for(path: @path, :history => @diff_file), ico: 'fa-university' %>
 </div>
 
-<h1>Diff <%=@diff_file%></h1>
-<div>msg:  <%= @diff_message %></div>
-<div>au:   <%= @diff_author[:name] %></div>
-<div>date: <%= @diff_author[:time] %></div>
+<h1>Změna <%=@diff_file%></h1>
+<div><b><%= @diff_message %></b></div>
+<div><%= @diff_author[:name] %></div>
+<div><%= @diff_author[:time] %></div>
+
+
 <%if ! @prev_commit.nil? %>
-  <%= button_tag "<<< Předchozí změna #{@diff_file}", :class=>'btn btn-success', :href => url_for(path: @path, diff: @prev_commit[:commit]),
-      title:  "#{@prev_commit[:message]}\n#{@prev_commit[:author][:name]}\n#{@prev_commit[:author][:time]}\n"
+  <%= button_tag "<<< Předchozí změna", :class=>'btn btn-success', :href => url_for(path: @path, diff: @prev_commit[:commit], diff_to:@diff_to),
+      title:  "#{@prev_commit[:message].strip}\n#{@prev_commit[:author][:name]}\n#{@prev_commit[:author][:time]}\n"
     %>
 <%else%>
   <%= button_tag "<<< Předchozí změna", :class=>'btn disabled btn-success', disabled: "disabled" %>
+<%end%>
+
+<%if  @diff_to  && @diff_to == 'HEAD' %>
+  <%= button_tag "Pouze tato změna", :class=>'btn btn-success', :href => url_for(path: @path, diff: @diff_oid) %>
+<%else%>
+  <%= button_tag "Změny až po aktuální verzi", :class=>'btn btn-success', :href => url_for(path: @path, diff: @diff_oid, diff_to: 'HEAD' ) %>
+<%end%>
+
+<%if ! @next_commit.nil? %>
+  <%= button_tag "Následující změna >>>", :class=>'btn btn-success', :href => url_for(path: @path, diff: @next_commit[:commit], diff_to:@diff_to),
+      title:  "#{@next_commit[:message].strip}\n#{@next_commit[:author][:name]}\n#{@next_commit[:author][:time]}\n"
+    %>
+<%else%>
+  <%= button_tag "Následující změna >>>", :class=>'btn disabled btn-success', disabled: "disabled" %>
 <%end%>
 
 <pre class="diff">
