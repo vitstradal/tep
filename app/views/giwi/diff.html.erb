@@ -1,55 +1,75 @@
 
-<% body =  ( @diff_lines.find_all{ |line| line[:line_origin] == :addition  }.map{|line| line[:content]}.join("\n") ) %>
-<div class="pull-right">
-  <%= button_tag 'Zobraz stránku', :class=>'btn btn-primary', :href => url_for(path: @diff_file), ico: 'fa-file' %>
-  <%= button_tag 'Seznam stránek', :class=>'btn btn-primary', :href => url_for(path: @diff_file, :ls => '.'), ico: 'fa-list' %>
-  <%= button_tag 'Historie souboru', :class=>'btn btn-primary', :href => url_for(path: @path, :history => @diff_file), ico: 'fa-university' %>
-</div>
+<% if @diff_cur.nil? %>
+  Diff not found
+<% else %>
+  <% diff_message =  @diff_cur[:message]
+     diff_author =   @diff_cur[:author]
+     diff_file =     @diff_cur[:file]
+     diff_lines =    @diff_cur[:diff_lines]
+  %>
+  <div class="pull-right">
+    <%= button_tag 'Zobraz stránku', :class=>'btn btn-primary', :href => url_for(path: diff_file), ico: 'fa-file' %>
+    <%= button_tag 'Seznam stránek', :class=>'btn btn-primary', :href => url_for(path: diff_file, :ls => '.'), ico: 'fa-list' %>
+    <%= button_tag 'Historie souboru', :class=>'btn btn-primary', :href => url_for(path: @path, :history => diff_file), ico: 'fa-university' %>
+  </div>
 
-<h1>Změna <%=@diff_file%></h1>
-<div><b><%= @diff_message %></b></div>
-<div><%= @diff_author[:name] %></div>
-<div><%= @diff_author[:time] %></div>
+  <h3>Změna <%= diff_file%></h3>
+  <div><b><%= diff_message %></b></div>
+  <div><%= diff_author[:name] %></div>
+  <div><%= diff_author[:time] %></div>
 
 
-<%if ! @prev_commit.nil? %>
-  <%= button_tag "<<< Předchozí změna", :class=>'btn btn-success', :href => url_for(path: @path, diff: @prev_commit[:commit], diff_to:@diff_to),
-      title:  "#{@prev_commit[:message].strip}\n#{@prev_commit[:author][:name]}\n#{@prev_commit[:author][:time]}\n"
-    %>
-<%else%>
-  <%= button_tag "<<< Předchozí změna", :class=>'btn disabled btn-success', disabled: "disabled" %>
-<%end%>
+  <%if ! @prev_commit.nil? %>
+    <% title = "#{@prev_commit[:message].strip}\n#{@prev_commit[:author][:name]}\n#{@prev_commit[:author][:time]}\n" %>
+    <%= button_tag class: 'btn btn-success left',
+                   href:  url_for(path: @path, diff: @prev_commit[:commit], diff_to:@diff_to),
+                   ico: :fa_arrow_left,
+                   title: title do %>
+      <%= @prev_commit[:author][:time] %><br/>
+      <%= @prev_commit[:author][:name] %><br/>
+      <b><%= @prev_commit[:message].strip[0..30] %></b>
+    <% end %>
+  <%else%>
+    <%= button_tag 'Předchozí změna', :class=>'btn disabled btn-success', disabled: "disabled", ico: :fa_arrow_left %>
+  <%end%>
 
-<%if  @diff_to  && @diff_to == 'HEAD' %>
-  <%= button_tag "Pouze tato změna", :class=>'btn btn-success', :href => url_for(path: @path, diff: @diff_oid) %>
-<%else%>
-  <%= button_tag "Změny až po aktuální verzi", :class=>'btn btn-success', :href => url_for(path: @path, diff: @diff_oid, diff_to: 'HEAD' ) %>
-<%end%>
+  <%if  @diff_to  && @diff_to == 'HEAD' %>
+    <%= button_tag 'Pouze tato změna', :class=>'btn btn-success', href: url_for(path: @path, diff: @diff_oid), ico: :fa_columns%>
+  <%else%>
+    <%= button_tag class: 'btn btn-success',
+                   href: url_for(path: @path, diff: @diff_oid, diff_to: 'HEAD' ),
+                   ico: :fa_angle_double_up do %>
+      Změny až po aktuální verzi
+    <%end%>
+  <%end%>
 
-<%if ! @next_commit.nil? %>
-  <%= button_tag "Následující změna >>>", :class=>'btn btn-success', :href => url_for(path: @path, diff: @next_commit[:commit], diff_to:@diff_to),
-      title:  "#{@next_commit[:message].strip}\n#{@next_commit[:author][:name]}\n#{@next_commit[:author][:time]}\n"
-    %>
-<%else%>
-  <%= button_tag "Následující změna >>>", :class=>'btn disabled btn-success', disabled: "disabled" %>
-<%end%>
-
-<pre class="diff">
-<% @diff_lines.each do |line| %><%
-   o = line[:line_origin]
-   if o == :addition || o == :deletion
-    %><span class="diff-<%=o%>" title="<%=pp line%>"><%= diff_line line%></span><%
-   elsif o == :file_header  && line[:content] =~ /^diff --git a\/(\S*)/
-    path = $1
-    %><%= link_to url_for(wiki: @wiki, path: path) do  %><%= path%> <span class="fa fa-file-o"></span><% end %> <%= link_to  url_for(wiki:@wiki, path: path, edit: 'me') do %><span class="fa fa-edit"></span><% end %>:
-<%
-   elsif o == :context
-    %><%= line[:content] -%><%
-   elsif o == :hunk_header
-    %>---
-<%
-   end
-end %>
-</pre>
-
+  <%if ! @next_commit.nil? %>
+    <%= button_tag class: 'btn btn-success right',
+                   href:   url_for(path: @path, diff: @next_commit[:commit], diff_to:@diff_to),
+                   ico:  :fa_arrow_right do %>
+      <%= @next_commit[:author][:time] %> 
+      <%= @next_commit[:author][:name] %><br/>
+      <b><%= @next_commit[:message].strip[0..30]%></b>
+    <% end %>
+  <%else%>
+    <%= button_tag "Následující změna", ico: :fa_arrow_right, :class=>'btn disabled btn-success', disabled: "disabled" %>
+  <%end%>
+  <pre class="diff">
+  <% diff_lines.each do |line| %><%
+     o = line[:line_origin]
+     if o == :addition || o == :deletion
+      %><span class="diff-<%=o%>" title="<%=pp line%>"><%= diff_line line%></span><%
+     elsif o == :file_header  && line[:content] =~ /^diff --git a\/(\S*)/
+      path = $1
+      %><%= link_to url_for(wiki: @wiki, path: path) do  %><%= path%> <span class="fa fa-file-o"></span><% end %> <%= link_to  url_for(wiki:@wiki, path: path, edit: 'me') do %><span class="fa fa-edit"></span><% end %>:
+  <%
+     elsif o == :context
+      %><%= line[:content] -%><%
+     elsif o == :hunk_header
+      %>---
+  <%
+     end
+  end %>
+  </pre>
+<%end # diff_cur not nil  %>
 

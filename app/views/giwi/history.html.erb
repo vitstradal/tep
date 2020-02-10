@@ -21,9 +21,10 @@
                %>
     <% file_name = h[:files][0][:new_file] %>
     <% dbg = h.pretty_inspect %>
-    <%= link_to  url_for(path: file_name, history: file_name) , {title:  'historie'} do %><span class="fa fa-university"></span><%end%>
+    <%= link_to  url_for(path: file_name, history: file_name) , {title:  'historie pouze tohoto souboru'} do %><span class="fa fa-university"></span><%end%>
     <%= link_to  url_for(path: file_name) , {title:  'view'} do %> <span class="fa fa-file-o"></span>  <% end %>
-    <%= link_to  url_for(path: file_name, edit: 'me') , {:title =>  'edit'} do %> <span class="fa fa-edit"></span>  <% end %>
+    <%= link_to  url_for(path: file_name, edit: 'me') , {:title =>  'edit'} do %> <%=icon :fa_edit%>  <% end %>
+    <%= link_to  url_for(path: file_name, diff: commit_oid, diff_to:'HEAD') , {:title =>  'všechny zmeny od tud'} do %> <%=icon :fa_angle_double_up%> <% end %>
     <%= link_to url_for(path: file_name, diff: commit_oid) , {:title =>  'diff'} do %>
       <span class="fa fa-columns"></span> <%= title %>
     <% end %>

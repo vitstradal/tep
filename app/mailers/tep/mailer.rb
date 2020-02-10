@@ -32,6 +32,18 @@ class Tep::Mailer < Devise::Mailer
   end
 
   ##
+  # *Tempate* app/views/tep/mailer/inform_thanks_email.html.erb
+  #
+  # *Params*
+  # to, subj, text:: email, subject, a text poděkování
+  # ordered_data:: pole položek `[[key1, value2], [k2,v2], ...]`
+  def inform_thanks_email(to, subj, text, ordered_data)
+    @ordered_data = ordered_data
+    @text = text || 'Děkujeme za vyplnění formuláře'
+    subj ||= "PIKOMAT: Vyplnění formuláře"
+    mail(to: to, from: 'tep@pikomat.mff.cuni.cz', subject: subj)
+  end
+  ##
   # *Tempate* app/views/tep/mailer/wiki_edit_modify.html.erb
   #
   # *Params*
@@ -47,6 +59,7 @@ class Tep::Mailer < Devise::Mailer
     subj = "PIKOMAT: změna #{@wiki}/#{@path}"
     mail(to: to, from: 'tep@pikomat.mff.cuni.cz', subject: subj)
   end
+
 
   ##
   # pošle mail s informacemi o chybě, na ehm `vitas@matfyz.cz`

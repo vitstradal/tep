@@ -57,11 +57,14 @@ module ApplicationHelper
 
     content_tag(tag, opt ) do
        if ico
-         content_tag(:i, '', :class => "ace-icon fa #{ico}") + " " + text
+         icon(ico) + " " + text
        else
          text
        end
     end
+  end
+  def icon(icon_name)
+    content_tag(:span, '', :class => "ace-icon fa #{icon_name.to_s.gsub('_','-')}")
   end
 
   ##

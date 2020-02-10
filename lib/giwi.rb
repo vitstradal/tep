@@ -307,18 +307,21 @@ class Giwi
 
   ##
   # opts.count .. how deep history
-  #     .path  .. which file
-  #     .oid .. from commit
-  #     .start_start_oid  .. history starts (1 commit) before start_oid
+  #     .path  .. which file (pattern ie index.*)
+  #     .oid .. from commit (or nil if HEAD)
+  #     .start_start_oid  .. history starts (1 commit) before start_oid (or dil if not)
   def get_history(opts = {})
     oid = opts[:oid]
     path = opts[:path]
     start_parent_oid = opts[:start_parent_oid]
     count_max = opts[:count] || 500
+    Rails::logger.fatal("oid=#{oid} oid.nil=#{oid.nil?}")
     commit =  oid.nil? ? @repo.head.target : @repo.lookup(oid)
     history = []
     count = 1
     diff_opts = path.nil? ? {} : { disable_pathspec_match: true, paths: [ path ] }
+
+    Rails::logger.fatal("commit=#{commit||'N'} diff_opts=#{diff_opts.inspect}")
 
     if ! start_parent_oid.nil?
       last_commit = nil
@@ -339,6 +342,8 @@ class Giwi
 
     while count <= count_max
       commit, parent, diff = _get_prev_diff(commit, diff_opts)
+      #Rails::logger.fatal("- commit=#{commit||'N'} diff=#{diff.inspect}")
+
       break if commit.nil?
       history.push( _create_history_item(commit, diff) )
       commit = parent
@@ -382,7 +387,6 @@ class Giwi
       end
       return nil
     end
-
 
   ##
   # r: {

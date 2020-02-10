@@ -96,9 +96,15 @@ class GiwiController < ApplicationController
 
     return _handle_preview(params[:preview])  if ! params[:preview].nil?
     return _handle_ls if @ls
+    return _handle_csrf if fmt == 'csrf'
+
+    @path_full = _try_find_path_full(@path, fmt)
+    log("path_full= #{@path_full}");
+
+    # tady by to chtelo vymyslet skutecnou cestu k souboru
+
     return _handle_history(history_path) if history_path
     return _handle_diff(diff_oid, diff_to) if diff_oid
-    return _handle_csrf if fmt == 'csrf'
     return _handle_special_edit(@path, fmt) if @edit && %w(svg).include?(fmt)
 
     # FIXME: 'json' zde byl z nejakeho duvodu, ale byje se to se zasilanim helpu, icon a pod  do editacniho okna
@@ -111,29 +117,20 @@ class GiwiController < ApplicationController
 
     _breadcrumb_from_path(@path)
 
-    if @edit && @can_update
-      _handle_edit
-      return render :edit, formats:[:html]
+    _handle_edit if @edit && @can_update
+
+    if @path_full.nil?
+      # cesta ve wiki neexituje
+      return _create_new_page_text if  @can_update
+      return _not_found
     end
 
     path_ext = @path + @giwi.ext
-    log "path:#{path_ext}"
-    @text, @version = @giwi.get_page(path_ext)
+    log "path:#{@path_full}"
+    @text, @version = @giwi.get_page(@path_full)
 
-    if ! @text
-      path_idx  = @path + '/index'
-      if @giwi.file?(path_idx + @giwi.ext)
-
-         @path = path_idx
-         path_ext = @path + @giwi.ext
-         @text, @version = @giwi.get_page(path_ext)
-
-      else
-        return _create_new_page_text if  @can_update
-        return _not_found
-      end
-    end
-    @path = path_ext
+    #FIXME: toto neni moc dobre
+    @path = @path_full
 
     page = _cached_or_parse_and_cache
 
@@ -151,9 +148,42 @@ class GiwiController < ApplicationController
 
     @no_sidebar = true if @tep_index
 
-
     return render :json => { :html =>  @html } if params[:format] == 'json' && @can_update
     render :show
+  end
+
+  ##
+  # _try_find_path_full(path, fmt)
+  # path: cesta/nekam fmt: ico
+  #
+  # zkusi postupne nalez v repozitari tyto soubory:
+  # * cesta/nekam.co
+  # * cesta/nekam.co.wiki
+  # * cesta/nekam.co/index.wiki
+  # * nil pokud vse selze
+  def _try_find_path_full(path, fmt)
+
+    path = "index" if path.nil? || path.empty?
+    path = "#{path}.#{fmt}" if !fmt.nil? && !fmt.empty?
+    return path if @giwi.file? path
+
+
+    path_wiki = "#{path}#{@giwi.ext}"
+    log('xxxA')
+
+    return path_wiki if @giwi.file? path_wiki
+    log("xxxB #{path_wiki}")
+
+    if @giwi.dir? path
+      index = "#{path}/index#{@giwi.ext}"
+      log('xxxC')
+      return index if @giwi.file? index
+      log('xxxD')
+    end
+    log('xxxE')
+
+    #not found
+    return nil
   end
 
   ##
@@ -244,23 +274,21 @@ class GiwiController < ApplicationController
     authorize! :update, @giwi.auth_name
     @giwi = Giwi.get_giwi(@wiki)
     if diff_oid == 'LAST'
-      history = @giwi.get_history(count: 1)
+      history = @giwi.get_history(count: 1, path:"#{@path}#{@giwi.ext}")
+      diff_oid = nil
       diff_oid = history[0][:commit] if history.size > 0
+      log("af history, size=#{history.size}");
     end
 #    top_oid = nil
 #    if ! diff_to.nil?
 #      top_oid = 'HEAD'
 #    end
-    Rails::logger.fatal("diff_oid=#{diff_oid}")
-    diff_data = @giwi.get_diff(diff_oid, diff_to, "#{@path}.*")
-    @diff_oid = diff_oid
-    @diff_to = diff_to
-    @diff_data = diff_data
-    @diff_message =  diff_data[:message]
-    @diff_author =    diff_data[:author]
-    @diff_file =    diff_data[:file]
-    @diff_lines =    diff_data[:diff_lines]
-    @next_commit, _    = @giwi.get_history(count: 1, start_parent_oid: diff_oid, path: @diff_file)
+    Rails::logger.fatal("diff_oid=#{diff_oid}, path=#{@path}")
+    @diff_cur  = @giwi.get_diff(diff_oid, diff_to, "#{@path}.*")
+    @diff_oid  = diff_oid
+    @diff_to   = diff_to
+
+    @next_commit, _  = @giwi.get_history(count: 1, start_parent_oid: diff_oid, path: @diff_file)
     _, @prev_commit  = @giwi.get_history(count: 2,              oid: diff_oid, path: @diff_file)
     return render :diff
   end
@@ -277,6 +305,7 @@ class GiwiController < ApplicationController
 
 
   def _handle_file_delete(filename, version, email)
+    authorize! :update, @giwi.auth_name
     status = @giwi.set_page(filename, nil, version, email)
     redirect_to action: :show,  wiki: @wiki, path: @path, ls: '.'
   end
@@ -516,9 +545,7 @@ class GiwiController < ApplicationController
   end
 
   def _handle_preview(wiki)
-
      authorize! :update, @giwi.auth_name
-
      parser = _get_parser
      html = parser.to_html(wiki)
      render :json => { :html => html }
@@ -579,7 +606,7 @@ class GiwiController < ApplicationController
     @wide_display = true
     if @edit == 'me'
        @edit = true
-       return
+       return render :edit, formats:[:html]
     end
 
     die "wrong edit value" if @edit !~  /^\d+$/
@@ -598,6 +625,7 @@ class GiwiController < ApplicationController
         @part = nil
       end
     end
+    return render :edit, formats:[:html]
   end
 
   def _create_new_page_text

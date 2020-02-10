@@ -78,11 +78,28 @@ class Sosna::SolutionController < SosnaController
   #
   # *Template* app/views/sosna/solution/vysl_pik.erb
   def vysl_pik
+    roc, se, ul = _params_roc_se_ul
+    if ! _results_updated?(roc, se)
+      add_alert 'Výsledky nejsou aktuální, použij "Generuj výsledky"'
+      return redirect_to sosna_solutions_org_path(roc, se);
+    end
     _prepare_solvers_problems_solutions(want_test: false, want_bonus: false)
     _sort_solvers_by_rank
-    headers['Content-Disposition'] = "attachment; filename=vysl#{@annual}_#{@round}.pik"
+    headers['Content-Disposition'] = "attachment; filename=vysl#{roc}_#{se}.pik"
     headers['Content-Type'] = "text/plain; charset=UTF-8";
     render layout: nil
+  end
+
+  def _results_updated?(annual, round)
+    solvers = get_sorted_solvers(annual: annual).to_a
+    res_min = Sosna::Result.where(annual:annual, round: round, solver_id: solvers.map{ |s| s.id } ).minimum(:updated_at)
+    sol_max = Sosna::Solution.joins(:problem).where('sosna_problems.annual' => annual, 'sosna_problems.round' =>  round).maximum(:updated_at)
+    pen_max = Sosna::Penalisation.where(annual:annual, round: round).maximum(:updated_at)
+    rrr = Sosna::Result.where(annual: annual, round: round, updated_at: res_min).first
+    log("res_min=#{res_min} sol_max=#{sol_max} pen_max=#{pen_max} annual=#{annual} round=#{round} rrr=#{rrr.inspect}")
+    return false if res_min < sol_max
+    return false if res_min < pen_max
+    return true
   end
 
   ##
@@ -98,9 +115,14 @@ class Sosna::SolutionController < SosnaController
   #
   # *Template* app/views/sosna/solution/vysl_wiki.erb
   def vysl_wiki
+    roc, se, ul = _params_roc_se_ul
+    if ! _results_updated?(roc, se)
+      add_alert 'Výsledky nejsou aktuální, použij "Vygeneruj výsledky"'
+      return redirect_to sosna_solutions_org_path(roc, se)
+    end
     _prepare_solvers_problems_solutions(want_test: false, want_bonus: false)
     _sort_solvers_by_rank
-    headers['Content-Disposition'] = "inline; filename=vysl#{@annual}_#{@round}.wiki"
+    headers['Content-Disposition'] = "inline; filename=vysl#{roc}_#{se}.wiki"
     headers['Content-Type'] = "text/plain; charset=UTF-8";
     render layout: nil
   end
@@ -773,7 +795,10 @@ class Sosna::SolutionController < SosnaController
     end
 
     # a ulozit vysledky
-    results_by_solver.each {|id,res| res.save}
+    results_by_solver.each do |id,res|
+      res.save
+      res.touch
+    end
 
     # presmerovat na zobrazeni tabukly
     add_success "výsledky pro rocnik #{roc} serie #{se} byly přegenrovány"

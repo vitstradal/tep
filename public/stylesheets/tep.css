@@ -684,4 +684,9 @@ body.pb2019 i.fa.fa-search.nav-search-ico  {
   text-align: center;
 }
 
-rgb(172, 242, 189)
+.left {
+ text-align: left;
+}
+.right {
+ text-align: right;
+}

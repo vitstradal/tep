@@ -910,15 +910,15 @@ function show_title(count, want_star) {
   }
   if( count == 0 ) {
     $title.text(title_text);
-    $('#ikona').attr('href', 'images/ikonka32.ico');
+    $('#ikona').attr('href', '/images/ikonka32.ico');
   }
   else if( want_star ) {
     $title.text('(*) ' + title_text);
-    $('#ikona').attr('href', 'images/ikonka32-green.ico');
+    $('#ikona').attr('href', '/images/ikonka32-green.ico');
   }
   else {
     $title.text('('+count+') ' + title_text);
-    $('#ikona').attr('href', 'images/ikonka32-red.ico');
+    $('#ikona').attr('href', '/images/ikonka32-red.ico');
   }
 }
 
