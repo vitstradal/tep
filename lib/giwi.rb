@@ -273,13 +273,9 @@ class Giwi
 
     index = @repo.index
     cur_tree = _get_cur_tree
-    Rails::logger.fatal("del page A11");
     index.read_tree(cur_tree)
-    Rails::logger.fatal("del page A12");
     index.remove(path)
-    Rails::logger.fatal("del page A13");
 
-    Rails::logger.fatal("del page A2");
     comment = "file delete: #{path}"
     comment = comment.force_encoding('ASCII-8BIT')
 
@@ -297,11 +293,8 @@ class Giwi
         :update_ref => 'refs/heads/' + @branch,
     }
         #:parents => [ repo.head.target ].compact,
-    Rails::logger.fatal("del page A3");
     Rugged::Commit.create(@repo, options)
-    Rails::logger.fatal("del page A4");
     _post_commit_hook()
-    Rails::logger.fatal("del page A5");
     return status
   end
 
@@ -315,13 +308,11 @@ class Giwi
     path = opts[:path]
     start_parent_oid = opts[:start_parent_oid]
     count_max = opts[:count] || 500
-    Rails::logger.fatal("oid=#{oid} oid.nil=#{oid.nil?}")
     commit =  oid.nil? ? @repo.head.target : @repo.lookup(oid)
     history = []
     count = 1
     diff_opts = path.nil? ? {} : { disable_pathspec_match: true, paths: [ path ] }
 
-    Rails::logger.fatal("commit=#{commit||'N'} diff_opts=#{diff_opts.inspect}")
 
     if ! start_parent_oid.nil?
       last_commit = nil
@@ -342,7 +333,6 @@ class Giwi
 
     while count <= count_max
       commit, parent, diff = _get_prev_diff(commit, diff_opts)
-      #Rails::logger.fatal("- commit=#{commit||'N'} diff=#{diff.inspect}")
 
       break if commit.nil?
       history.push( _create_history_item(commit, diff) )
@@ -492,8 +482,6 @@ class Giwi
         # konec koncove radky
         endline = lines[eline] || ''
         postfix = endline[eoff .. -1] || ''
-
-        #Rails::logger.fatal("pos(#{pos}) bline(#{bline}) bof(#{boff}) bofzero(#{boff==0?1:0}) eline(#{eline}) eoff(#{eoff}) pre(#{prefix}) post(#{post_part})")
 
         lines[bline .. eline] = prefix + part + postfix
         lines.join("\n")

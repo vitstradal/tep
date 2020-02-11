@@ -117,7 +117,7 @@ class GiwiController < ApplicationController
 
     _breadcrumb_from_path(@path)
 
-    _handle_edit if @edit && @can_update
+    return _handle_edit if @edit && @can_update
 
     if @path_full.nil?
       # cesta ve wiki neexituje
@@ -169,18 +169,13 @@ class GiwiController < ApplicationController
 
 
     path_wiki = "#{path}#{@giwi.ext}"
-    log('xxxA')
 
     return path_wiki if @giwi.file? path_wiki
-    log("xxxB #{path_wiki}")
 
     if @giwi.dir? path
       index = "#{path}/index#{@giwi.ext}"
-      log('xxxC')
       return index if @giwi.file? index
-      log('xxxD')
     end
-    log('xxxE')
 
     #not found
     return nil
@@ -274,22 +269,16 @@ class GiwiController < ApplicationController
     authorize! :update, @giwi.auth_name
     @giwi = Giwi.get_giwi(@wiki)
     if diff_oid == 'LAST'
-      history = @giwi.get_history(count: 1, path:"#{@path}#{@giwi.ext}")
+      history = @giwi.get_history(count: 1, path: @path_full)
       diff_oid = nil
       diff_oid = history[0][:commit] if history.size > 0
-      log("af history, size=#{history.size}");
     end
-#    top_oid = nil
-#    if ! diff_to.nil?
-#      top_oid = 'HEAD'
-#    end
-    Rails::logger.fatal("diff_oid=#{diff_oid}, path=#{@path}")
-    @diff_cur  = @giwi.get_diff(diff_oid, diff_to, "#{@path}.*")
+    @diff_cur  = @giwi.get_diff(diff_oid, diff_to, @path_full)
     @diff_oid  = diff_oid
     @diff_to   = diff_to
 
-    @next_commit, _  = @giwi.get_history(count: 1, start_parent_oid: diff_oid, path: @diff_file)
-    _, @prev_commit  = @giwi.get_history(count: 2,              oid: diff_oid, path: @diff_file)
+    @next_commit, _  = @giwi.get_history(count: 1, start_parent_oid: diff_oid, path: @path_full)
+    _, @prev_commit  = @giwi.get_history(count: 2,              oid: diff_oid, path: @path_full)
     return render :diff
   end
 
@@ -410,7 +399,6 @@ class GiwiController < ApplicationController
   # podepsano
   def _template_sign(env, argv)
     text = argv['0']
-    #log "text: #{text}"
     purpose = argv['1'] || 'giwi-sign'
     return sign_generate(text, purpose)
   end
@@ -569,7 +557,6 @@ class GiwiController < ApplicationController
 
     email = current_user.full_email
     status = Giwi.get_giwi(@wiki).set_page(filename, data, '', email)
-    log "url::#{url_for(action: :show, wiki: @wiki, path: @path, ls: '.')}"
 
     return redirect_to url_for(action: :show, wiki: @wiki, path: @path, ls: '.') if redirect
     render text: 'tnx'
@@ -657,7 +644,6 @@ class GiwiController < ApplicationController
       else
         cur_path = part
       end
-      #log("wiki (#{@wiki}) is main #{ @wiki.to_s == 'main' ? 'yes' : 'no'}")
       url = if @wiki.to_s == 'main'
                  wiki_main_path(path: cur_path)
             else
@@ -697,7 +683,6 @@ class GiwiController < ApplicationController
     env = parser.env
     return {} if env.nil?
 
-    #log("Text #{@text}")
     base_url = url_for(action: :show, wiki:@wiki, path: @path)
     html = parser.to_html(@text, base_url)
     notoc = env.at('notoc', false)
