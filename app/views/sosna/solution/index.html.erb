@@ -8,6 +8,7 @@
         <%= button_tag "řešitelé .csv", :class=> 'btn btn-primary', ico: 'fa-table', href: sosna_solutions_lidi_url(format: 'csv') %>
         <%= button_tag "body.pik", :class=> 'btn btn-primary', ico: 'fa-th', href: sosna_solutions_lidi_url(format: 'pik') %>
         <%= button_tag "navratky.zip", :class=> 'btn btn-primary', ico: 'fa-check', href: sosna_solutions_get_confirm_files_url %>
+        <%= button_tag "body za serie v rocniku ", :class=> 'btn btn-primary', ico: 'fa-check', href: sosna_solutions_rocnik_url %>
       </div>
       <div class="btn-group">
         <% vysl_file = "vysl#{@annual}_#{@round}" %>

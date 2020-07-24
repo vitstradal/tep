@@ -77,6 +77,7 @@ class Ability
       can :downall, Sosna::Solution
       can :upload_rev, Sosna::Solution
       can :user_index_org, Sosna::Solution
+      can :rocnik, Sosna::Solution
 
       can :index, Sosna::Problem
       can :show, Sosna::Problem
@@ -132,6 +133,8 @@ class Ability
       can :confirm_none_to_next, Sosna::Solver
 
       can :delete, Sosna::Solver
+      can :spam, Sosna::Solver
+      can :do_spam, Sosna::Solver
       can :delete, Sosna::School
       can :delete, Sosna::Problem
       can :resign, Sosna::Solution

@@ -575,6 +575,51 @@ class Sosna::SolverController < SosnaController
     errors_to = @config[:aesop_errors_to];
     render text: _aesop_print_round(@annual.to_i, @round.to_i, errors_to), content_type: 'text/plain' 
   end
+  ##
+  #  GET  /sosna/solver/spam
+  #
+  # formular spamu
+  #
+  # *Provides*
+
+  def spam
+    load_config
+    @url = wiki_main_url("/archiv/rocnik#{@annual}/zad#{@round}")
+    #@emails = Sosna::Solver.join(:sosna_solutions).where(annual: @annual).where.not(score: nil).map{ |s| s.email }
+  end
+
+  ##
+  #  PUSH  /sosna/solver/spam
+  #
+  # stránka aesopu
+  #
+  # *Provides*
+  def do_spam
+    load_config
+    dryrun = params[:dryrun]
+    tome = params[:tome]
+
+    emails = []
+    emails += params[:email].lines if !params[:email].nil?
+    count = 0
+    emails.push current_user.email if !tome.nil?
+
+    emails.each do |email|
+      next if email.nil?
+      next if email.empty?
+
+      url = wiki_main_url("/archiv/rocnik#{@annual}/zad#{@round}")
+      if dryrun
+        add_success "NEposláno #{email}"
+      else
+        add_success "posláno #{email}"
+        Tep::Mailer.solution_notification(email.strip, url, @annual, @round).deliver_later
+      end
+      count += 1
+    end
+    add_success "spam poslan, počet=#{count}"
+    redirect_to action: :spam
+  end
 
   ##
   #  GET  /sosna/solver/aesop

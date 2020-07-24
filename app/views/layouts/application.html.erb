@@ -145,7 +145,8 @@
       <% end %>
       <%= menu_li '/onas', 'Zadání', ico: 'fa-edit' do %>
         <ul class="submenu">
-          <%= menu_lii wiki_main_path('archiv/aktualni'),   'Aktuální série' %>
+          <%= menu_lii wiki_main_path('archiv/aktualni'),      'Aktuální série' %>
+          <%= menu_lii wiki_main_path('archiv/vysledkovka'),   'Výsledková listina' %>
           <%= menu_lii wiki_main_path('archiv'),            'Archiv příkladů' %>
 
            <% if is_bonus_active %>
@@ -204,6 +205,7 @@
           <ul class="submenu">
             <%= menu_lii :users_list,       'Uživatelé' %>
             <%= menu_lii :sosna_configs,   'Konfigurace' %>
+            <%= menu_lii :sosna_solver_spam,   'Spam' %>
             <%= menu_lii :sosna_schools,       'Školy' %>
             <%= menu_lii :sosna_problems,      'Úlohy' %>
             <%= menu_lii :sosna_solver_aesop,  'Aesop' %>

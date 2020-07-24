@@ -60,7 +60,6 @@ class Tep::Mailer < Devise::Mailer
     mail(to: to, from: 'tep@pikomat.mff.cuni.cz', subject: subj)
   end
 
-
   ##
   # pošle mail s informacemi o chybě, na ehm `vitas@matfyz.cz`
   #
@@ -72,5 +71,19 @@ class Tep::Mailer < Devise::Mailer
     errid = data[:errid]
     @data = data.deep_stringify_keys
     mail(to: 'vitas@matfyz.cz', from: 'tep@pikomat.mff.cuni.cz', subject: "Tep Error #{errid}")
+  end
+
+  ##
+  # *Tempate* app/views/tep/mailer/solution-notification.html.erb
+
+  #
+  # *Params*
+  # user:: user
+  def solution_notification(email , url, annual, round)
+    @email = email
+    @round = round
+    @annual = annual
+    @url = url
+    mail(to: email, from: 'tep@pikomat.mff.cuni.cz', subject: "Pikomat: vzorová řešení")
   end
 end

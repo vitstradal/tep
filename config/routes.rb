@@ -2,6 +2,7 @@
 Tep::Application.routes.draw do
 
   use_doorkeeper
+  # use_doorkeeper_openid_connect
   devise_for :users
 
 
@@ -14,6 +15,8 @@ Tep::Application.routes.draw do
   post '/sosna/solver/create'                => 'sosna/solver#create',                  :as => :sosna_solver_anon_create
   get  '/sosna/solver/tnx'                   => 'sosna/solver#create_tnx',              :as => :sosna_solver_create_tnx
   post '/sosna/solver/confirm_none_to_next'  => 'sosna/solver#confirm_none_to_next',    :as => :sosna_solver_confirm_none_to_next
+  get  '/sosna/solver/spam'                  => 'sosna/solver#spam',                    :as => :sosna_solver_spam 
+  post '/sosna/solver/spam'                  => 'sosna/solver#do_spam',                 :as => :sosna_solver_do_spam
 #  post '/sosna/solver/delete_zero_solvers'   => 'sosna/solver#delete_zero_solvers',     :as => :sosna_solver_delete_zero_solvers
 
   get   '/inform/index/(:form)'                 => 'inform#index',            :as => :inform_index
@@ -45,6 +48,7 @@ Tep::Application.routes.draw do
 
   # org:
   get  '/sosna/solutions/lidi(/:roc(/:se(/:ul)))' => 'sosna/solution#lidi',           :as => :sosna_solutions_lidi
+  get  '/sosna/solutions/rocnik(/:roc)'         => 'sosna/solution#rocnik',           :as => :sosna_solutions_rocnik
   get  '/sosna/solutions/vysl(/:roc(/:se(/:ul)))' => 'sosna/solution#vysl_pik',       :as => :sosna_solutions_vysl_pik
   get  '/sosna/solutions/vyslwiki(/:roc(/:se(/:ul)))' => 'sosna/solution#vysl_wiki',  :as => :sosna_solutions_vysl_wiki
 
