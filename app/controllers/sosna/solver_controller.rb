@@ -584,7 +584,7 @@ class Sosna::SolverController < SosnaController
 
   def spam
     load_config
-    @url = wiki_main_url("/archiv/rocnik#{@annual}/zad#{@round}")
+    @url = wiki_main_url("archiv/rocnik#{@annual}/zad#{@round}")
     #@emails = Sosna::Solver.join(:sosna_solutions).where(annual: @annual).where.not(score: nil).map{ |s| s.email }
   end
 
@@ -608,7 +608,7 @@ class Sosna::SolverController < SosnaController
       next if email.nil?
       next if email.empty?
 
-      url = wiki_main_url("/archiv/rocnik#{@annual}/zad#{@round}")
+      url = wiki_main_url("archiv/rocnik#{@annual}/zad#{@round}")
       if dryrun
         add_success "NEposláno #{email}"
       else

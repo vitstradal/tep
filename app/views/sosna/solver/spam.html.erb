@@ -2,36 +2,43 @@
 <h1>Spam <%= @annual %>. ročník <%= @round %>. série </h1>
 
 
-<%= link_to "zde", @url %>
+Link: <%= link_to @url, @url %>, <%= link_to "zde", @url %>.
 
 <%= form_tag sosna_solver_do_spam_url, :class=>'form-horizontal' do %>
   <div>
 
     <div class="form-group">
-      <%= label_tag :solver_confirm_state, "Vzor mailu ", :class =>  'col-sm-3 control-label no-padding-right'%>
-      <div class="col-sm-9">
-         <%= select_tag "template",
-                 options_for_select([['soultion_notification','solution_notification'],
-                                    ])
+        <%= label_tag :solver_confirm_state, "Vzor mailu ", :class =>  'col-sm-3 control-label no-padding-right'%>
+        <div class="col-sm-9">
+           <%= select_tag "template",
+               options_for_select([['soultion_notification','solution_notification'],
+                                      ])
            %>
-      </div>
-    </div>
-    <div class="col-sm-offset-3 col-sm-9">
-        <label class="checkbox" for="last_round"> <%= check_box_tag 'last_round', value=1, checked = false  %>
-        řešitelé poslední série (poslali řešení ale mohou mít 0 bodů).
-        </label>
+        </div>
     </div>
 
-    <div class="col-sm-offset-3 col-sm-9">
-        <label class="checkbox" for="all_rounds"> <%= check_box_tag 'all_rounds', value=1, checked = false  %>
-        řešitelé poslali alespoň jednu s=rii (ale mohou mít 0 bodů).
-        </label>
+    <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-9">
+            <label class="checkbox" for="last_round"> <%= check_box_tag 'last_round', value=1, checked = false  %>
+                řešitelé poslední série (poslali řešení ale mohou mít 0 bodů).
+            </label>
+        </div>
     </div>
 
-    <div class="col-sm-offset-3 col-sm-9">
-        <label class="checkbox" for="tome"> <%= check_box_tag 'tome', value=1, checked = true  %>
-        poslat sobě (<%= current_user.email %>)
-        </label>
+    <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-9">
+            <label class="checkbox" for="all_rounds"> <%= check_box_tag 'all_rounds', value=1, checked = false  %>
+                řešitelé poslali alespoň jednu sérii (ale mohou mít 0 bodů).
+            </label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-9">
+            <label class="checkbox" for="tome"> <%= check_box_tag 'tome', value=1, checked = true  %>
+                poslat sobě (<%= current_user.email %>)
+            </label>
+        </div>
     </div>
 
     <div class="form-group">
@@ -41,10 +48,12 @@
         </div>
     </div>
 
-    <div class="col-sm-offset-3 col-sm-9">
-        <label class="checkbox" for="dryrun"> <%= check_box_tag 'dryrun', value=1, checked = true  %>
-        pouze vyzkoušet, neposílat, (dry run)
-        </label>
+    <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-9">
+            <label class="checkbox" for="dryrun"> <%= check_box_tag 'dryrun', value=1, checked = true  %>
+            pouze vyzkoušet, neposílat, (dry run)
+            </label>
+        </div>
     </div>
 
     <div class="form-group">

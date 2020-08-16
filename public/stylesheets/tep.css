@@ -647,6 +647,11 @@ body.pb2019 {
   background-size: 100%;
 }
 
+body.pb2019.ps22srp {
+  background-image: url(/setkani/22srp.png);
+  background-size: 100%;
+}
+
 body.pb2019 .navbar {
   background: #b94343;
 }
