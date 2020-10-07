@@ -528,6 +528,7 @@ class Sosna::SolutionController < SosnaController
     end
 
     if ! @solver && current_user.org?
+      add_alert "Pozor: zatím nejsi letošním řešitelem, a navíc jsi org!"
       return redirect_to wiki_piki_path('/')
     end
     if ! @solver
