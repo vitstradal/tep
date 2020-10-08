@@ -227,11 +227,11 @@ function editor_tool_button_switch($el, editor)
      ace.data.set('wide', on ? 'on' : 'off' );
      if ( on ) {
        console.log("wide on");
-       $('#editor-container').removeClass('col-sm-6').addClass('col-sm-12');
+       $('#editor-container').removeClass('col-xs-6').addClass('col-xs-12');
      }
      else {
        console.log("wide off");
-       $('#editor-container').removeClass('col-sm-12').addClass('col-sm-6');
+       $('#editor-container').removeClass('col-xs-12').addClass('col-xs-6');
      }
      editor.resize(true);
      break;

@@ -84,14 +84,14 @@
       </label>
   
       <label class='pull-right' title='toggle wide-mode Shift-Ctrl-V'>
-        <input id='widenowide' type="checkbox" data-edit='wide' name="widenowide" class="ace ace-switch xswitch-field-1" <%if cookies['ace.wide'.to_sym]=='on'%>checked="checked"<%end%>/>
+        <input id='widenowide' type="checkbox" data-edit='wide' name="widenowide" class="ace ace-switch xswitch-field-1" <%if cookies['ace.wide'.to_sym]!='off'%>checked="checked"<%end%>/>
         <span class="lbl" data-lbl="wide&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;slim"></span>
       </label>
     </div>
   </div>
   <div class="row">
 
-    <div class="col-sm-12">
+    <div class="col-xs-12">
       <div class="row">
         <div class="col-xs-12">
           <div class="cmdline" style="width:100%;height:1em;position:relative;"></div>
@@ -103,7 +103,7 @@
           <pre style='height:600px;width:100%' id='editor-pre'><%=@text%></pre> 
         </div>
 
-        <div class="col-sm-6">
+        <div class="col-xs-6">
           <div style="float:left" id="preview-div"></div>
         </div>
       </div>
