@@ -3,6 +3,7 @@ require 'pp'
 require 'fileutils'
 require 'zip'
 require 'tempfile'
+require 'prawn'
 require 'combine_pdf'
 
 class Sosna::SolutionController < SosnaController
@@ -586,7 +587,7 @@ class Sosna::SolutionController < SosnaController
   #
   # *Redirect* user_index
   def upload
-    solution_file = params[:sosna_solution][:solution_file]
+    solution_files = params[:sosna_solution][:solution_file]
     solution_id  = params[:sosna_solution][:id]
 
     # find solution
@@ -622,8 +623,7 @@ class Sosna::SolutionController < SosnaController
       end
     end
 
-
-    if solution_file.nil?
+    if solution_files.nil?
       solution.filename = nil
       solution.filename_orig = nil
       solution.save
@@ -632,30 +632,78 @@ class Sosna::SolutionController < SosnaController
       return redirect_to sosna_solutions_user_url(roc, se, solver.id)
     end
 
+    filename = solution.get_filename_ori
+    destination_pdf = UPLOAD_DIR + filename
+
+    solution_files = [ solution_files ] if ! solution_files.is_a? Array
+
+    if solution_files.size == 0
+      add_success "Soubor nenalezen"
+      return redirect_to sosna_solutions_user_url(roc, se, solver.id)
+    end
+
+    filename_orig = solution_files[0].original_filename.sub(/\.(png|jpeg|jpg)$/i, '.pdf')
+
+    if solution_files.size == 1 && solution_files[0].original_filename =~ /\.pdf$/i
+      _upload_handle_pdf(solution_files[0], destination_pdf) or return redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
+    else
+      _upload_handle_images(solution_files, destination_pdf) or return redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
+    end
+
+    # save file
+
+    _sign_pdf(solution, destination_pdf)
+
+    # update solution
+    solution.filename = filename
+    solution.filename_orig = filename_orig
+    solution.save
+    add_success 'Soubor úspěšně nahrán'
+
+    redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
+  end
+
+  def _upload_handle_pdf(solution_file, destination_pdf)
+
     if solution_file.original_filename !~ /\.pdf$/i
       add_alert 'Pozor: pouze soubory ve formátu .pdf'
-      return redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
+      return false
     end
 
     max_size =  Rails.configuration.sosna_user_solution_max_size || (20 * 1024 * 1024)
     if solution_file.size > max_size
       add_alert "Soubor je příliš velký (větší než #{number_to_human_size max_size})."
-      return redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
+      return false
     end
+    File.open(destination_pdf, 'wb') {  |f| f.write(solution_file.read) }
+    return true
+  end
 
-    # save file
-    filename = solution.get_filename_ori
-    File.open(UPLOAD_DIR + filename, 'wb') {  |f| f.write(solution_file.read) }
+  def _upload_handle_images(solution_files, destination_pdf)
 
-    _sign_pdf(solution, UPLOAD_DIR + filename)
-
-    # update solution
-    solution.filename = filename
-    solution.filename_orig = solution_file.original_filename
-    solution.save
-    add_success 'Soubor úspěšně nahrán'
-
-    redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
+    solution_files.each do |solution_file|
+      if solution_file.original_filename !~ /\.(jpeg|jpg|png)/i
+        add_alert 'Pozor: pouze soubory ve formátu PDF, JPG nebo PNG'
+        return false
+      end
+      max_size =  Rails.configuration.sosna_user_solution_max_size || (20 * 1024 * 1024)
+      if solution_file.size > max_size
+        add_alert "Soubor je příliš velký (větší než #{number_to_human_size max_size})."
+        return false
+      end
+    end
+    Prawn::Document.generate(destination_pdf) do |pdf|
+      solution_files.each do |solution_file|
+        # PDF regions involve bounding boxes.
+        # The default bounding box is simply the page itself.
+        # The :fit option tells Prawn to scale the image to the current
+        # bounding box (in other words, the current page)
+        pdf.image solution_file.path, :fit => [pdf.bounds.right, pdf.bounds.top]
+        # Insert a page break, unless this is the last page
+        pdf.start_new_page unless pdf.page_count == solution_files.length
+      end
+    end
+    return true
   end
 
   ##

@@ -54,7 +54,7 @@
        <td>  <%= form_for  sol, :html => {:class=> 'form-inline', :multipart => true}, :url => :sosna_solution_upload do |f|  %>
                <%= f.hidden_field :id %>
                    <div style="display:inline-block;width:200px;height:16px">
-                     <%= f.file_field :solution_file , :class => 'ace-file-input', :accept => 'application/pdf', 'max-size' => max_size  %>
+                     <%= f.file_field :solution_file , :multiple => true, :class => 'ace-file-input', :accept => 'application/pdf,image/jpeg,image/png', 'max-size' => max_size  %>
                    </div>
                    <%= f.submit :class => 'btn btn-primary', :value => '<' %>
           <% end %>
@@ -137,8 +137,13 @@
   <% end %>
   <%#  wft: nefunkcni: number_to_human_size ? %>
   <li> Nahrávej řešení menší než <%= max_size / (1024*1024) %>MB.</li>
-  <li>Soubor musí být ve formátu PDF.</li>
-  <li>Pokud omylem nahraješ řešení ke špatné úloze nebo v něm najdeš později chybu, můžeš úlohu nahrát znovu (nesmí však být již po termínu odevzdání).</li>
+  <li>Soubor musí být ve formátu PDF, nebo obrázky JPEG nebo PNG.</li>
+  <li>Pokud nahráváš řešení s obrázkem (JPG nebo PNG) a řešení má více stránek
+      nahraj všechny stránky zároveň. Zpětným stažením výsledného PDF si ověř,
+      že jsi nahrál všechny stránky.</li>
+  <li>Pokud omylem nahraješ řešení ke špatné úloze nebo v něm najdeš později
+      chybu, můžeš úlohu nahrát znovu (nesmí však být již po termínu
+      odevzdání).</li>
   <li> Špatně nahraný soubor můžeš smazat i tak, že nevybereš žádný soubor a klikneš na <button class="btn btn-xs btn-primary">&lt;</button>.</li>
   <li>Doporučujeme ve vlastním zájmu nahrávat řešení s takovými názvy, aby bylo poznat, o jakou úlohu se jedná (např. <code>Uloha1.pdf</code>). Není to ale nutné.</li>
 </ul>

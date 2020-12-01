@@ -11,7 +11,15 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 18) do
+ActiveRecord::Schema.define(version: 20191211084239) do
+
+  create_table "ar_internal_metadata", primary_key: "key", force: :cascade do |t|
+    t.string   "value"
+    t.datetime "created_at", limit: 6, null: false
+    t.datetime "updated_at", limit: 6, null: false
+  end
+
+  add_index "ar_internal_metadata", ["key"], name: "sqlite_autoindex_ar_internal_metadata_1", unique: true
 
   create_table "informs", force: :cascade do |t|
     t.string   "form",       limit: 255
