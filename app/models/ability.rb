@@ -57,6 +57,7 @@ class Ability
 
       can :user_solver_confirm, Sosna::Solver
       can :update_confirm, Sosna::Solver
+      can :info, :tepna
     end
 
     if user.org?
