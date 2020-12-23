@@ -1,5 +1,7 @@
 # encoding: utf-8
 require 'ffi-locale'
+require 'trac-wiki'
+
 class Sosna::SolverController < SosnaController
 
   include ApplicationHelper
@@ -598,12 +600,33 @@ class Sosna::SolverController < SosnaController
     load_config
     dryrun = params[:dryrun]
     tome = params[:tome]
+    all_rounds = params[:all_rounds]
+    wiki = params[:wiki] || '**empty**'
+    subject = params[:subject]
+    all_solvers = params[:all_solvers]
+    emails_txt =  params[:emails] || ''
+    where_to_send_email = params[:where_to_send_email]
 
-    emails = []
-    emails += params[:email].lines if !params[:email].nil?
+    flash[:spam] = {
+      subject: subject,
+      wiki: wiki,
+      emails: emails_txt,
+    }
+
+    if where_to_send_email || all_solvers
+      where = { annual: @annual }
+      where[:where_to_send] = 'email' if where_to_send_email
+      solvers = Sosna::Solver.where( where ).all
+      emails = solvers.map{ |solver| solver.user.email }
+    else
+      emails = []
+    end
+
+    emails += emails_txt.lines if !emails.empty?
     count = 0
     emails.push current_user.email if !tome.nil?
 
+    html = _wiki2html(wiki)
     emails.each do |email|
       next if email.nil?
       next if email.empty?
@@ -613,12 +636,34 @@ class Sosna::SolverController < SosnaController
         add_success "NEposláno #{email}"
       else
         add_success "posláno #{email}"
-        Tep::Mailer.solution_notification(email.strip, url, @annual, @round).deliver_later
+        Tep::Mailer.solution_notification(email.strip, subject, html).deliver_later
       end
       count += 1
     end
     add_success "spam poslan, počet=#{count}"
     redirect_to action: :spam
+  end
+
+  def _wiki2html(wiki)
+    base =  url_for(:root)
+    root = url_for(:root)
+    options  = {
+      base: base,
+      root: root,
+      math: false,
+      merge: false,
+      edit_heading: false,
+      id_from_heading: false,
+      id_translit: false,
+      no_escape: true,
+      allow_html: false,
+      allowed_schemes:  %w(http https),
+      div_around_table: true,
+    }
+    parser = TracWiki.parser(options)
+    html = parser.to_html(wiki)
+    return html
+
   end
 
   ##

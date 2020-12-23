@@ -2,11 +2,15 @@
 <h1>Spam <%= @annual %>. ročník <%= @round %>. série </h1>
 
 
+<% if false %>
 Link: <%= link_to @url, @url %>, <%= link_to "zde", @url %>.
+<% end %>
 
 <%= form_tag sosna_solver_do_spam_url, :class=>'form-horizontal' do %>
   <div>
+  <% spam = flash[:spam] || {} %>
 
+<% if false %>
     <div class="form-group">
         <%= label_tag :solver_confirm_state, "Vzor mailu ", :class =>  'col-sm-3 control-label no-padding-right'%>
         <div class="col-sm-9">
@@ -27,11 +31,29 @@ Link: <%= link_to @url, @url %>, <%= link_to "zde", @url %>.
 
     <div class="form-group">
         <div class="col-sm-offset-3 col-sm-9">
-            <label class="checkbox" for="all_rounds"> <%= check_box_tag 'all_rounds', value=1, checked = false  %>
+            <label class="checkbox" for="all_rounds"> <%= check_box_tag 'all_rounds', value=0, checked = false  %>
                 řešitelé poslali alespoň jednu sérii (ale mohou mít 0 bodů).
             </label>
         </div>
     </div>
+<% end %>
+
+    <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-9">
+            <label class="checkbox" for="all_solvers"> <%= check_box_tag 'all_solvers', value=0, checked = false  %>
+                všichni řešitelé <%= @annual %>. ročníku.
+            </label>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <div class="col-sm-offset-3 col-sm-9">
+            <label class="checkbox" for="where_to_send_email"> <%= check_box_tag 'where_to_send_email', value=1, checked = false  %>
+                ti co mají nastaveno zasílat emailem (<code>where_to_send_email = email</code>).
+            </label>
+        </div>
+    </div>
+
 
     <div class="form-group">
         <div class="col-sm-offset-3 col-sm-9">
@@ -41,10 +63,34 @@ Link: <%= link_to @url, @url %>, <%= link_to "zde", @url %>.
         </div>
     </div>
 
+
     <div class="form-group">
         <%= label_tag :email, "Přidat tyto maily (jeden na řádek)", :class =>  'col-sm-3 control-label no-padding-right'%>
         <div class="col-sm-9" >
-              <%= text_area_tag :email, '', cols: 50 %>
+              <%= text_area_tag :emails, spam[:emails] || '', cols: 50 %>
+        </div>
+    </div>
+    <div class="form-group">
+        <%= label_tag :subject, "Odesilatel", :class =>  'col-sm-3 control-label no-padding-right'%>
+        <div class="col-sm-9" >
+              <code>tep@pikomaf.mff.cuni.cz</code>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <%= label_tag :subject, "Předmět", :class =>  'col-sm-3 control-label no-padding-right'%>
+        <div class="col-sm-9" >
+              <% subject = spam[:subject] || "Pikomat: vzorová řešení" -%>
+              <%= text_field_tag :subject, subject, size: 80 %>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <%= label_tag :wiki, "Text", :class =>  'col-sm-3 control-label no-padding-right'%>
+        <div class="col-sm-9" >
+              <% wiki_default = "Ahoj pikomaťáku,\n\njsou opravená řešení #{@round}. série #{@annual}. ročníku, najdeš je\n[[/archiv/rocnik#{@annual}/letak#{@round.to_i-1}.pdf |  zde]]\n\nOrganizátoři Pikomatu" -%>
+              <% wiki = spam[:wiki] || wiki_default -%>
+              <%= text_area_tag :wiki, wiki, cols: 80, rows: 15 %>
         </div>
     </div>
 
@@ -65,5 +111,7 @@ Link: <%= link_to @url, @url %>, <%= link_to "zde", @url %>.
   </div>
 <% end %>
 
+<% if false %>
 <h2>tep/mailer/solution_notification.html.erb'</h2>
 <div class="well"> <%= render file: 'tep/mailer/solution_notification.html.erb' %></div>
+<% end %>
