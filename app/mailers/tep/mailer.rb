@@ -78,12 +78,12 @@ class Tep::Mailer < Devise::Mailer
 
   #
   # *Params*
-  # user:: user
-  def solution_notification(email , url, annual, round)
+  # email:: user
+  # subject:: user
+  # html:: text
+  def solution_notification(email, subject, html)
     @email = email
-    @round = round
-    @annual = annual
-    @url = url
-    mail(to: email, from: 'tep@pikomat.mff.cuni.cz', subject: "Pikomat: vzorová řešení")
+    @html = html
+    mail(to: email, from: 'tep@pikomat.mff.cuni.cz', subject: subject)
   end
 end
