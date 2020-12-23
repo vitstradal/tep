@@ -36,8 +36,23 @@ class TepnaController < ApplicationController
       rounds: [ { 
         round: @round,
         deadline: @config["deadline#{@round}".to_sym],
-        problems: problems.map{|p| {name: p.title, id: solutions_by_problem[p.id].id }},
+        problems: problems.map{|p|
+          solution = solutions_by_problem[p.id]
+          {
+            name: p.title,
+            id: solution.id,
+            solved:  ! solution.filename.nil?
+          }
+        },
       }]
     }
+  end
+  def debug
+      error = params[:error]
+      user = params[:user] || 'xxx'
+      ts = Time.now.strftime('%Y-%m-%d_%H:%M:%S')
+      dir = 'var/tepna-dbg/'
+      File.open("#{dir}/#{ts}-#{user}.log.err", 'w') { |file| file.write(error) }
+      render json: {status: 'ok'}
   end
 end

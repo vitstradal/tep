@@ -126,7 +126,8 @@ Tep::Application.routes.draw do
   get  '/me/gitlab'                           => "credentials#me_gitlab",       :as => :credentials_me_gitlab
   get  '/me'                                  => "credentials#me",              :as => :credentials_me
   get  '/klepstatus'                          => "klep#status",                 :as => :klep_status
-  get  '/tepna/info'                          => "tepna#info",                  :as => :tepna_status
+  get  '/tepna/info'                          => "tepna#info",                  :as => :tepna_info
+  post '/tepna/debug'                         => "tepna#debug",                 :as => :tepna_debug
 
 
   Giwi.giwis.each_value do |giwi|

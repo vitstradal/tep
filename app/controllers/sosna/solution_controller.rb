@@ -660,7 +660,14 @@ class Sosna::SolutionController < SosnaController
     solution.save
     add_success 'Soubor úspěšně nahrán'
 
-    redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
+    respond_to do |format|
+      format.html do
+        redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
+      end
+      format.json do
+        render json: { status: 'ok' }
+      end
+    end
   end
 
   def _upload_handle_pdf(solution_file, destination_pdf)
