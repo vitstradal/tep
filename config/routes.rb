@@ -24,6 +24,7 @@ Tep::Application.routes.draw do
   get   '/inform/add'                        => 'inform#add',              :as => :inform_add_get
   get   '/inform/tnx'                        => 'inform#tnx',              :as => :inform_tnx
   post   '/inform/del/:id'                        => 'inform#del',              :as => :inform_del
+  post   '/inform/delfrom/:form'                        => 'inform#delform',              :as => :inform_delform
 
   # user:
   get  '/sosna/solutions/user(/:roc(/:se(/:id)))' => 'sosna/solution#user_index',    :as => :sosna_solutions_user

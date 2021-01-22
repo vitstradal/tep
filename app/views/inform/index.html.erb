@@ -4,7 +4,11 @@
 
 [<%= link_to 'tab', inform_index_path(@form, style: 'tab')  %>, 
  <%= link_to 'list',  inform_index_path(@form, style: 'list') %>,
- <%= link_to 'list2',  inform_index_path(@form, style: 'list2') %>]
+ <%= link_to 'list2',  inform_index_path(@form, style: 'list2') -%>
+<% if !@form.nil? and current_user.admin? %>,
+   <%= link_to 'del',  inform_index_path(@form, style: 'del') %>
+<% end %>
+ ]
 
 <% count = 0 %>
 
@@ -85,6 +89,15 @@
        <% end %>
     </table>
   <% end %>
+<% end %>
+<%#########################################%>
+<% if style == 'del' %>
+  <hr/>
+  <%= form_tag inform_delform_url(@form)   do  %>
+    <input type="checkbox" name="sure"> sure
+    <input type="submit" value="delete <%=@form%> infrom">
+  <% end%>
+  <hr/>
 <% end %>
 
 

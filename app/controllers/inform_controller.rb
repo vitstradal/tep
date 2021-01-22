@@ -132,6 +132,27 @@ class InformController < ApplicationController
     redirect_to inform_index_url(form)
   end
 
+  ##
+  #  POST /inform/delform
+  #
+  # *Params* 
+  # from:: Infrom (jeden řádek)
+  #
+  # Redirects to `inform_index_url(form)`
+  def delform
+    form = params['form']
+    sure = params['sure']
+
+    if sure.nil? or form.nil?
+      add_alert "infrom #{form} nesmazán"
+      return redirect_to inform_index_url(@form)
+    end
+
+    Inform.where(form: form).destroy_all
+    add_success "infrom #{form} smazán"
+    redirect_to inform_index_url()
+  end
+
   private
   def _send_bonz_email(data, ordered_data, form)
     # bonzovaci email (vlastnikovi ankety)

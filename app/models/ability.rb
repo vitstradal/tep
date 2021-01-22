@@ -109,6 +109,7 @@ class Ability
 
       can :new_round, Sosna::Problem
       can :del, Inform
+      can :delform, Inform
 
       can :update, Sosna::Solver
       can :update, Sosna::School
