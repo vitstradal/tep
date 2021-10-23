@@ -74,6 +74,16 @@ module ApplicationHelper
      menu_li uri, text, opt, &block
   end
 
+  def active(cond, cls = 'active')
+    return " #{cls}" if cond
+    return ''
+  end
+
+  def checked(cond, checked = 'cheked="checked"')
+    return " #{checked}" if cond
+    return ''
+  end
+
   ##
   # list item, s iconou a potenciálním active, pokud se aktalní url uzná, že "ma souvislost" s odkazovanou url
   # 

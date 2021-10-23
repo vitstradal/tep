@@ -240,6 +240,13 @@ function editor_tool_button_switch($el, editor)
      editor.auto_preview = on;
      editor_try_preview(editor);
      break;
+  case 'mobil':
+     ace.data.set('mobil', on ? 'on' : 'off' );
+     console.log("mobil preview", on);
+
+     $('#textedit').css('display', on ? 'block' : 'none');
+     $('.hide-mobil').css('display', on ? 'none' : 'block');
+     break;
   }
 }
 
@@ -560,8 +567,10 @@ function _init_textarea_with_ace($textarea) {
         // copy back to $textarea on form submit...
         form.submit(function () {
                 var oo = editor.getSession().getValue();
-                //console.log("oo.len:", oo.length, oo.substr(-10));
-                $textarea.val(editor.getSession().getValue());
+                console.log("editor.mobil", editor.mobil);
+                if( ace.data.get('mobil') == 'off' ) {
+                        $textarea.val(editor.getSession().getValue());
+                }
                 //save_cursor(editor, form);
         });
         //.find('a[data-edit]').click(function () { editor_tool_button_click($textarea, editor); });
