@@ -1,38 +1,40 @@
 
 <h1>Seznam škol</h1>
-<table class="table table-condensed table-hover table-bordered datatable">
- <thead>
-   <tr>
-    <th>Id</th>
-    <th>Zkr.</th>
-    <th title="Univerzal Id">UniID</th>
-    <th>Jméno</th>
-    <th title="Papír">P</th>
-    <th>Adresa</th>
-    <th tilte="počet řešitelů tento rok">Řeš</th>
-   </tr>
- </thead>
- <tbody>
-  <% @schools.each do |sch| %>
-    <tr>
-      <td><%= link_to sch.id, :action => :show, :id => sch.id %></a></td>
-      <% cls1 = @shorts[sch.short] > 1 ? 'bg-red' : nil %>
-      <% cls2 = @izos[sch.universal_id] > 1 ? 'bg-red' : nil %>
-      <td <%if cls1%>class="<%=cls1%>"<%end%>><%= sch.short%></td>
-      <td <%if cls2%>class="<%=cls2%>"<%end%>><%= sch.universal_id %> </td>
-      <td><%= sch.name %></td>
-      <td><%= sch.want_paper ? 'Y' : ' ' %></td>
-      <td><%= sch.address %> </td>
-      <td>
-         <% count = @schools_solver_count[sch.id] %>
-         <% if !count.nil? %>
-           <%= link_to count, sosna_solvers_url(roc: @annual, school: sch.id) %>
-         <% end %>
-      </td>
-    </tr>
-  <% end %>
- <tbody>
-</table>
+<div class="table-div">
+  <table class="table table-condensed table-hover table-bordered datatable">
+   <thead>
+     <tr>
+      <th>Id</th>
+      <th>Zkr.</th>
+      <th title="Univerzal Id">UniID</th>
+      <th>Jméno</th>
+      <th title="Papír">P</th>
+      <th>Adresa</th>
+      <th tilte="počet řešitelů tento rok">Řeš</th>
+     </tr>
+   </thead>
+   <tbody>
+    <% @schools.each do |sch| %>
+      <tr>
+        <td><%= link_to sch.id, :action => :show, :id => sch.id %></a></td>
+        <% cls1 = @shorts[sch.short] > 1 ? 'bg-red' : nil %>
+        <% cls2 = @izos[sch.universal_id] > 1 ? 'bg-red' : nil %>
+        <td <%if cls1%>class="<%=cls1%>"<%end%>><%= sch.short%></td>
+        <td <%if cls2%>class="<%=cls2%>"<%end%>><%= sch.universal_id %> </td>
+        <td><%= sch.name %></td>
+        <td><%= sch.want_paper ? 'Y' : ' ' %></td>
+        <td><%= sch.address %> </td>
+        <td>
+           <% count = @schools_solver_count[sch.id] %>
+           <% if !count.nil? %>
+             <%= link_to count, sosna_solvers_url(roc: @annual, school: sch.id) %>
+           <% end %>
+        </td>
+      </tr>
+    <% end %>
+   <tbody>
+  </table>
+</div>
 
 
 <%= link_to 'Nová škola', :sosna_school_new, :class => 'btn btn-success' %>

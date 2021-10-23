@@ -1,23 +1,25 @@
 
 <h1>Úlohy  roč. <%=@annual%>, série <%=@round%> </h1>
-<table class="table table-condensed table-hover table-bordered">
-  <tr>
-   <th>Id</th>
-   <th>Ročník</th>
-   <th>Serie</th>
-   <th>Úloha</th>
-   <th>Název</th>
- </tr>
-<% @problems.each do |p| %>
-  <tr>
-    <td><%= link_to p.id, :controller => :problem, :action => :show, :id => p.id %></a></td>
-    <td><%= p.annual %></td>
-    <td><%= p.round %></td>
-    <td><%= p.problem_no%> </td>
-    <td><%= p.title%> </td>
-  </tr>
-<% end %>
-</table>
+<div class="table-div">
+  <table class="table table-condensed table-hover table-bordered">
+    <tr>
+     <th>Id</th>
+     <th>Ročník</th>
+     <th>Serie</th>
+     <th>Úloha</th>
+     <th>Název</th>
+   </tr>
+  <% @problems.each do |p| %>
+    <tr>
+      <td><%= link_to p.id, :controller => :problem, :action => :show, :id => p.id %></a></td>
+      <td><%= p.annual %></td>
+      <td><%= p.round %></td>
+      <td><%= p.problem_no%> </td>
+      <td><%= p.title%> </td>
+    </tr>
+  <% end %>
+  </table>
+</div>
 
 <%= link_to 'Nová úloha', :sosna_problem %>
 

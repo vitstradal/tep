@@ -15,30 +15,32 @@
 <%#########################################%>
 <% if style.nil? || style == 'tab'  %>
 
-  <table class='table'>
-    <tr>
-      <th>#</th>
-      <th>ua</th>
-      <% @keys.each do |k| %>
-        <th><%= k.titleize %></th>
-      <% end%> 
-    </tr>
-    <% @informs.each do  |inform| %>
-      <% jdata = inform.jdata %>
+  <div class="table-div">
+    <table class='table'>
       <tr>
-        <td title="<%= inform.created_at%>" ><%= count += 1 %></td>
-        <td><span title="<%= inform.user_agent %>">*</span></td>
+        <th>#</th>
+        <th>ua</th>
         <% @keys.each do |k| %>
-          <td><%= jdata[k] || '-' %></td>
+          <th><%= k.titleize %></th>
         <% end%> 
-        <%#<td> %>
-          <%#= form_tag inform_del_url(inform.id)   do  %>
-          <%#  <input type=submit value="del"> %>
-          <%# end%>
-        <%#</td> %>
       </tr>
-    <% end %>
-  </table>
+      <% @informs.each do  |inform| %>
+        <% jdata = inform.jdata %>
+        <tr>
+          <td title="<%= inform.created_at%>" ><%= count += 1 %></td>
+          <td><span title="<%= inform.user_agent %>">*</span></td>
+          <% @keys.each do |k| %>
+            <td><%= jdata[k] || '-' %></td>
+          <% end%> 
+          <%#<td> %>
+            <%#= form_tag inform_del_url(inform.id)   do  %>
+            <%#  <input type=submit value="del"> %>
+            <%# end%>
+          <%#</td> %>
+        </tr>
+      <% end %>
+    </table>
+  </div>
 <% end %>
 
 <%#########################################%>
@@ -76,18 +78,20 @@
   <% @keys.each do |k| %>
     <% next if k == name || k == prijm %>
     <h3><%= k.titleize %></h3>
-      <% count = 0 %>
+    <% count = 0 %>
+    <div class="table-div">
       <table>
         <% @informs.each do  |inform| %>
-         <% jdata = inform.jdata %>
-         <tr>
-          <td><%= count += 1 %></td>
-          <td><%= jdata[name] || 'undef' %></td>
-          <td><%= jdata[prijm] || 'undef' %></td>
-          <td><%= jdata[k] || '.' %></td>
-        </tr>
-       <% end %>
-    </table>
+          <% jdata = inform.jdata %>
+          <tr>
+            <td><%= count += 1 %></td>
+            <td><%= jdata[name] || 'undef' %></td>
+            <td><%= jdata[prijm] || 'undef' %></td>
+            <td><%= jdata[k] || '.' %></td>
+          </tr>
+        <% end %>
+      </table>
+    </div>
   <% end %>
 <% end %>
 <%#########################################%>

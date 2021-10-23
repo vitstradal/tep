@@ -26,48 +26,50 @@
 
       <%= form_for @school, :url => sosna_school_update_path(), :html => {:class=>'form-horizontal'} do |f| %> 
         <%= f.hidden_field :id if @school.id %></br>
-        <table class="table table-condensed table-hover table-bordered">
-          <tbody>
-            <tr>
-             <td><label class="control-label" for="school_name">Název</label></td>
-             <td><%= f.text_field :name %> </td>
-           </tr>
-           <tr>
-            <td><label class="control-label" for="school_nazev">Zkratka</label></td>
-            <td><%= f.text_field :short %> </td>
-           </tr>
-           <tr>
-             <td><label class="control-label" for="school_nazev">Ulice</td>
-             <td><%= f.text_field :street %> </td>
-           </tr>
+        <div class="table-div">
+          <table class="table table-condensed table-hover table-bordered">
+            <tbody>
+              <tr>
+               <td><label class="control-label" for="school_name">Název</label></td>
+               <td><%= f.text_field :name %> </td>
+             </tr>
+             <tr>
+              <td><label class="control-label" for="school_nazev">Zkratka</label></td>
+              <td><%= f.text_field :short %> </td>
+             </tr>
+             <tr>
+               <td><label class="control-label" for="school_nazev">Ulice</td>
+               <td><%= f.text_field :street %> </td>
+             </tr>
 
-           <tr>
-            <td><label class="control-label" for="school_nazev">Číslo</label></td>
-            <td><%= f.text_field :num %> </td>
-           </tr>
+             <tr>
+              <td><label class="control-label" for="school_nazev">Číslo</label></td>
+              <td><%= f.text_field :num %> </td>
+             </tr>
 
-           <tr>
-            <td><label class="control-label" for="school_nazev">PSČ</label></td>
-            <td><%= f.text_field :psc %> </td>
-           </tr>
+             <tr>
+              <td><label class="control-label" for="school_nazev">PSČ</label></td>
+              <td><%= f.text_field :psc %> </td>
+             </tr>
 
-           <tr>
-             <td><label class="control-label" for="school_nazev">Město</label></td>
-             <td><%= f.text_field :city %> </td>
-           </tr>
-        
-           <tr>
-            <td><label class="control-label" for="school_country">Země (cz, sk)</label></td>
-            <td><%= f.text_field :country %> </td>
-           </tr>
+             <tr>
+               <td><label class="control-label" for="school_nazev">Město</label></td>
+               <td><%= f.text_field :city %> </td>
+             </tr>
+          
+             <tr>
+              <td><label class="control-label" for="school_country">Země (cz, sk)</label></td>
+              <td><%= f.text_field :country %> </td>
+             </tr>
 
-           <tr>
-            <td><label class="control-label" for="school_nazev">Univerzalní Id</label></td>
-            <td><%= f.text_field :universal_id %> </td>
-           </tr>
-        
-          </body>
-        </table>
+             <tr>
+              <td><label class="control-label" for="school_nazev">Univerzalní Id</label></td>
+              <td><%= f.text_field :universal_id %> </td>
+             </tr>
+          
+            </body>
+          </table>
+        </div>
 
         <div class="form-group">
           <div class="col-sm-9">

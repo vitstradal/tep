@@ -23,101 +23,103 @@
 <% show_nahrat_admin = true if current_user.admin? %>
 <% max_size = Rails.configuration.sosna_user_solution_max_size %>
 
-<table class="table table-bordered">
-  <tr> 
-   <th>Úloha</td>
-   <th>Řešení</td>
-   <% if show_nahrat  %>
-     <th>Nahrát</td>
-   <% elsif show_nahrat_admin %>
-     <th>Nahrát (admin only)</td>
-   <% end %>
-   <th>Opravené řešení</th>
-   <% if current_user.admin? %>
-     <th>Akce (admin only)</th>
-   <% end %>
- </tr> 
-<% @problems.each do |p| %>
-  <% sol = @solutions_by_solver[@solver.id][p.problem_no]  %>
-  <tr>
-    <td><%= p.title%> </td>
-    <td>
-      <% if sol.filename_orig  %>
-        <i class="fa fa-check green"></i> <%= link_to sol.filename_orig, :action => :download, :id => sol.id %>
-      <% elsif sol.has_paper_mail %>
-        <i class="fa fa-check green"></i> <i>řešení došlo poštou</i>
-      <% else %>
-        <i class="fa fa-ban red"></i> <i>žádné řešení</i>
-      <% end %>
-    </td>
-    <% if show_nahrat || show_nahrat_admin%>
-       <td>  <%= form_for  sol, :html => {:class=> 'form-inline', :multipart => true}, :url => :sosna_solution_upload do |f|  %>
-               <%= f.hidden_field :id %>
-                   <div style="display:inline-block;width:200px;height:16px">
-                     <%= f.file_field :solution_file , :multiple => true, :class => 'ace-file-input', :accept => 'application/pdf,image/jpeg,image/png', 'max-size' => max_size  %>
-                   </div>
-                   <%= f.submit :class => 'btn btn-primary', :value => '<' %>
-          <% end %>
-       </td>
-    <% end %>
-    <td>
-      <% sol_in_this_round_allowed   = @round.to_i <  @config[:round].to_i %>
-      <% sol_in_this_round_allowed ||= @round == @config[:round] && @config[:show_revisions] == 'yes'  %>
-      <% sol_in_this_round_allowed ||= @annual < @config[:annual] %>
-      <% if sol_in_this_round_allowed %> 
-        <% if sol.filename_corr_display %>
-          <%= link_to sol.filename_corr_display, :action => :download_rev, :id => sol.id %>
+<div class="table-div">
+  <table class="table table-bordered">
+    <tr> 
+     <th>Úloha</td>
+     <th>Řešení</td>
+     <% if show_nahrat  %>
+       <th>Nahrát</td>
+     <% elsif show_nahrat_admin %>
+       <th>Nahrát (admin only)</td>
+     <% end %>
+     <th>Opravené řešení</th>
+     <% if current_user.admin? %>
+       <th>Akce (admin only)</th>
+     <% end %>
+   </tr> 
+  <% @problems.each do |p| %>
+    <% sol = @solutions_by_solver[@solver.id][p.problem_no]  %>
+    <tr>
+      <td><%= p.title%> </td>
+      <td>
+        <% if sol.filename_orig  %>
+          <i class="fa fa-check green"></i> <%= link_to sol.filename_orig, :action => :download, :id => sol.id %>
         <% elsif sol.has_paper_mail %>
-          <i class="fa fa-envelope blue"></i> <i>opravené řešení bylo zasláno poštou</i>
+          <i class="fa fa-check green"></i> <i>řešení došlo poštou</i>
         <% else %>
-          <i class="fa fa-ban red"></i> <i>úlohu řešitel neřešil</i>
+          <i class="fa fa-ban red"></i> <i>žádné řešení</i>
         <% end %>
-      <% else %>
-        <% if sol.filename || sol.has_paper_mail %>
-          <i class="fa fa-ban red"></i> <i>řešení není opravené</i>
-        <% end %>
-      <% end %>
       </td>
-      <% if current_user.admin? %>
-        <td>
-          <%= form_tag(sosna_solution_resign_url(:id => sol.id), :class => 'btn-group form-inline') do %>
-                <button type="submit" class="btn btn-xs btn-primary" title="Resing - znova přidat hlavičku"> <i class="fa fa-pencil-square-o"></i></button>
+      <% if show_nahrat || show_nahrat_admin%>
+         <td>  <%= form_for  sol, :html => {:class=> 'form-inline', :multipart => true}, :url => :sosna_solution_upload do |f|  %>
+                 <%= f.hidden_field :id %>
+                     <div style="display:inline-block;width:200px;height:16px">
+                       <%= f.file_field :solution_file , :multiple => true, :class => 'ace-file-input', :accept => 'application/pdf,image/jpeg,image/png', 'max-size' => max_size  %>
+                     </div>
+                     <%= f.submit :class => 'btn btn-primary', :value => '<' %>
+            <% end %>
+         </td>
+      <% end %>
+      <td>
+        <% sol_in_this_round_allowed   = @round.to_i <  @config[:round].to_i %>
+        <% sol_in_this_round_allowed ||= @round == @config[:round] && @config[:show_revisions] == 'yes'  %>
+        <% sol_in_this_round_allowed ||= @annual < @config[:annual] %>
+        <% if sol_in_this_round_allowed %> 
+          <% if sol.filename_corr_display %>
+            <%= link_to sol.filename_corr_display, :action => :download_rev, :id => sol.id %>
+          <% elsif sol.has_paper_mail %>
+            <i class="fa fa-envelope blue"></i> <i>opravené řešení bylo zasláno poštou</i>
+          <% else %>
+            <i class="fa fa-ban red"></i> <i>úlohu řešitel neřešil</i>
           <% end %>
-          <%= form_tag(sosna_solution_nosign_url(:id => sol.id), :class => 'btn-group form-inline') do %>
-                <button type="submit" class="btn btn-xs btn-primary" title="Bez hlavičky - orginal"> <i class="fa fa-reply"></i></button>
+        <% else %>
+          <% if sol.filename || sol.has_paper_mail %>
+            <i class="fa fa-ban red"></i> <i>řešení není opravené</i>
           <% end %>
+        <% end %>
         </td>
+        <% if current_user.admin? %>
+          <td>
+            <%= form_tag(sosna_solution_resign_url(:id => sol.id), :class => 'btn-group form-inline') do %>
+                  <button type="submit" class="btn btn-xs btn-primary" title="Resing - znova přidat hlavičku"> <i class="fa fa-pencil-square-o"></i></button>
+            <% end %>
+            <%= form_tag(sosna_solution_nosign_url(:id => sol.id), :class => 'btn-group form-inline') do %>
+                  <button type="submit" class="btn btn-xs btn-primary" title="Bez hlavičky - orginal"> <i class="fa fa-reply"></i></button>
+            <% end %>
+          </td>
+        <% end %>
+  
+  
+    </tr>
+  <% end %>
+  <% if @show_confirmation_upload %>
+    <tr>
+      <td>Návratka</td>
+      <td>
+        <% if @confirmation_exists %>
+           <i class="fa fa-check green"></i> <%=link_to 'Návratka', sosna_solutions_get_confirm_file_path %> byla nahrána
+        <% else %>
+          <i class="fa fa-exclamation-triangle red"></i> <i>Nahraj návratku</i>
+        <% end %>
+        <sup><%= link_to wiki_main_url('navratka'), title: 'Co je to návratka?' do %> <i class="fa fa-question red"></i> <%end%></sup>
+      </td>
+      <% if show_nahrat || show_nahrat_admin %>
+         <td>  <%= form_tag  sosna_solutions_upload_confirm_file_path, :class=> 'form-inline', :multipart => true  do |f|  %>
+                 <%= hidden_field_tag :roc, @annual %>
+                 <%= hidden_field_tag :se, @round %>
+                     <div style="display:inline-block;width:200px;height:16px">
+                       <%= file_field_tag :confirm_file , :class => 'ace-file-input', :accept => 'application/pdf', 'max-size' => max_size  %>
+                     </div>
+                     <%= submit_tag '<', :class=>'btn btn-primary'%>
+            <% end %>
+         </td>
       <% end %>
-
-
-  </tr>
-<% end %>
-<% if @show_confirmation_upload %>
-  <tr>
-    <td>Návratka</td>
-    <td>
-      <% if @confirmation_exists %>
-         <i class="fa fa-check green"></i> <%=link_to 'Návratka', sosna_solutions_get_confirm_file_path %> byla nahrána
-      <% else %>
-        <i class="fa fa-exclamation-triangle red"></i> <i>Nahraj návratku</i>
-      <% end %>
-      <sup><%= link_to wiki_main_url('navratka'), title: 'Co je to návratka?' do %> <i class="fa fa-question red"></i> <%end%></sup>
-    </td>
-    <% if show_nahrat || show_nahrat_admin %>
-       <td>  <%= form_tag  sosna_solutions_upload_confirm_file_path, :class=> 'form-inline', :multipart => true  do |f|  %>
-               <%= hidden_field_tag :roc, @annual %>
-               <%= hidden_field_tag :se, @round %>
-                   <div style="display:inline-block;width:200px;height:16px">
-                     <%= file_field_tag :confirm_file , :class => 'ace-file-input', :accept => 'application/pdf', 'max-size' => max_size  %>
-                   </div>
-                   <%= submit_tag '<', :class=>'btn btn-primary'%>
-          <% end %>
-       </td>
-    <% end %>
-    <td></td>
-  </tr>
-<% end %>
-</table>
+      <td></td>
+    </tr>
+  <% end %>
+  </table>
+</div>
 
 <% if current_user.admin? %>
 <b>Legenda</b>:

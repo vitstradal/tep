@@ -23,73 +23,75 @@
     </div>
 <% end %>
 
-    <table class="table table-condensed table-hover table-bordered datatable">
-      <thead>
-        <tr>
-         <th>Id</th>
-         <th title="Uživatel">Už.</th>
-         <th>Jméno</th>
-         <th>Příjmení</th>
-         <th>Škola</th>
-         <th>P</th>
-         <th>Ročník</th>
-         <th>RN</th>
-         <th>Kam</th>
-         <th>Jak</th>
-         <th>Adresa</th>
-         <th title="Zeme">Z</th>
-         <th title="Navrátka (none,conf,need)">N</th>
-       </tr>
-       </thead>
-     <tbody>
-    <% @solvers.each do |s| %>
-      <tr <%if s.is_test_solver%> class="warning"<%end%>>
-        <td>
-           <%= link_to s.id, :action => :show, :id => s.id %></a>
-           <%if s.is_test_solver %> <i title="TESTOVACÍ ŘEŠITEL" class="fa fa-crosshairs"></i> <% end %>
-           <%if @solver_names[s.full_name].to_i > 1 %> <i title="Kolizní jméno" class="fa fa-scissors"></i> <% end %>
-        </td>
-        <td>
-           <% if s.user %>
-             <% if !s.user_email_consistent? %><span title="řešitel nemá stejný email jako jeho uživatel (<%="#{s.email} vs #{s.user_email}"%>)">!!!</span><% end %>
-               <% if current_user.admin? %>
-                 <%= link_to s.user.id, user_show_path(s.user.id)%>
-               <% else %>
-                 <%= s.user.id %>
-               <% end %>
-           <% else %>
-             NONE!!!!!!
-           <% end %>
-        </td>
-        <td>
-            <%= s.name %></td>
-        <td><%= s.last_name %></td>
-        <td>
-          <% if s.school %>
-             <% sch = s.school %>
-             <span title="<%= sch.long %>"><%= link_to sch.short||'?', :controller =>  'sosna/school', :action => :show, :id => sch.id %></span>
-          <% else %>
-             -
-          <% end %>
-        </td>
-        <td><%= s.sex %></td>
-        <td><%= s.grade %> </td>
-        <td><%= s.grade_num %> </td>
-        <td><%= s.where_to_send %> </td>
-        <td><%= s.solution_form %> </td>
-        <td><%= s.address %> </td>
-        <td><%= s.country %> </td>
-        <% conf_class = case s.confirm_state
-                        when 'conf'; 'bg-green'
-                        when 'next'; 'bg-yellow'
-                        else 'bg-red'
-                        end
-                        %>
-        <td class="<%=conf_class%>"><%= s.confirm_state %> </td>
-      </tr>
-    <% end %>
-     </tbody>
-    </table>
+    <div class='table-div'>
+      <table class="table table-condensed table-hover table-bordered datatable">
+        <thead>
+          <tr>
+           <th>Id</th>
+           <th title="Uživatel">Už.</th>
+           <th>Jméno</th>
+           <th>Příjmení</th>
+           <th>Škola</th>
+           <th>P</th>
+           <th>Ročník</th>
+           <th>RN</th>
+           <th>Kam</th>
+           <th>Jak</th>
+           <th>Adresa</th>
+           <th title="Zeme">Z</th>
+           <th title="Navrátka (none,conf,need)">N</th>
+         </tr>
+         </thead>
+       <tbody>
+      <% @solvers.each do |s| %>
+        <tr <%if s.is_test_solver%> class="warning"<%end%>>
+          <td>
+             <%= link_to s.id, :action => :show, :id => s.id %></a>
+             <%if s.is_test_solver %> <i title="TESTOVACÍ ŘEŠITEL" class="fa fa-crosshairs"></i> <% end %>
+             <%if @solver_names[s.full_name].to_i > 1 %> <i title="Kolizní jméno" class="fa fa-scissors"></i> <% end %>
+          </td>
+          <td>
+             <% if s.user %>
+               <% if !s.user_email_consistent? %><span title="řešitel nemá stejný email jako jeho uživatel (<%="#{s.email} vs #{s.user_email}"%>)">!!!</span><% end %>
+                 <% if current_user.admin? %>
+                   <%= link_to s.user.id, user_show_path(s.user.id)%>
+                 <% else %>
+                   <%= s.user.id %>
+                 <% end %>
+             <% else %>
+               NONE!!!!!!
+             <% end %>
+          </td>
+          <td>
+              <%= s.name %></td>
+          <td><%= s.last_name %></td>
+          <td>
+            <% if s.school %>
+               <% sch = s.school %>
+               <span title="<%= sch.long %>"><%= link_to sch.short||'?', :controller =>  'sosna/school', :action => :show, :id => sch.id %></span>
+            <% else %>
+               -
+            <% end %>
+          </td>
+          <td><%= s.sex %></td>
+          <td><%= s.grade %> </td>
+          <td><%= s.grade_num %> </td>
+          <td><%= s.where_to_send %> </td>
+          <td><%= s.solution_form %> </td>
+          <td><%= s.address %> </td>
+          <td><%= s.country %> </td>
+          <% conf_class = case s.confirm_state
+                          when 'conf'; 'bg-green'
+                          when 'next'; 'bg-yellow'
+                          else 'bg-red'
+                          end
+                          %>
+          <td class="<%=conf_class%>"><%= s.confirm_state %> </td>
+        </tr>
+      <% end %>
+       </tbody>
+      </table>
+    </div>
 
   <div>
     <i>Legenda</i>:

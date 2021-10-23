@@ -110,120 +110,122 @@
   <% end %>
 
 
-  <table class="table table-condensed table-hover table-bordered datatable">
-    <thead>
-    <tr>
-     <th>Id</th>
-     <th>Řešitel</th>
-     <th>Škola</th>
-    <% @problems.each do |pr| %>
-     <th>u<%=pr.short_name%></th>
-    <% end %>
-    <% @problems.each do |pr| %>
-     <th title="Body za úlohu č. <%=pr.problem_no%>">B<%=pr.short_name%></th>
-    <% end %>
-    <th title="penalizace">Pen<% if @want_edit_penalisation%> / Důvod<%end%></th>
-    <% if !@want_edit && !@want_edit_paper && ! @want_edit_penalisation %>
-      <th title="Body za sérii">Bs</th>
-      <th title="Body celkově">Bc</th>
-      <th title="Celkové pořadí">cp</th>
-      <th title="Pořadí v ročníku">pvr</th>
-      <th title="Ročník">R</th>
-    <% end %>
-   </tr>
-   </thead>
-   <tbody>
-  <% @solvers.each do |solver| %>
-    <% sol_arr = @solutions_by_solver[solver.id]  %>
-    <% solver_has_papper_sol =  sol_arr.any? { |s| !s.nil? && s.has_paper_mail }  %>
-    <% tep_vs_paper_confict = solver_has_papper_sol && solver.solution_form == 'tep' %>
-    <tr <%if solver.is_test_solver%>class="warning"<%end%>>
-      <td <%if tep_vs_paper_confict%>class="bg-red"<%end%>>
-         <%= solver.id  %>
-         <%if solver.is_test_solver %> <i title="TESTOVACÍ ŘEŠITEL" class="fa fa-crosshairs"></i> <% end %>
-         <%if  tep_vs_paper_confict%>
-            <%=link_to sosna_solver_labels_url(:ids=>solver.id) do %>
-               <i title="tep vs. paper conflict" class="fa bg-red fa-envelope-o"></i>
-            <% end # link %>
-         <% end # if tep vs papper %>
-      </td>
-      <td><%= link_to solver.full_name, { controller: :solver, action: :show, id: solver.id }  %></td>
-      <td><% if !solver.school.nil? %> 
-             <% sch = solver.school %>
-             <span title="<%= sch.long %>"><%= link_to sch.short||'?', :controller =>  'sosna/school', :action => :show, :id => sch.id %></span>
-          <% else %>
-              -
-          <% end %>
-      </td>
+  <div class="table-div">
+    <table class="table table-condensed table-hover table-bordered datatable">
+      <thead>
+      <tr>
+       <th>Id</th>
+       <th>Řešitel</th>
+       <th>Škola</th>
       <% @problems.each do |pr| %>
-         <% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  %>
-         <% ready = (!sol.filename.nil? && !sol.filename_corr.nil? || sol.has_paper_mail ) && !sol.score.nil? %>
-         <% weird = (sol.filename.nil? && !sol.has_paper_mail ) && !sol.score.nil? %>
-         <% weird = weird || (!sol.filename.nil? || sol.has_paper_mail ) && sol.score.nil? %>
-         <% weird = weird || ( !sol.filename.nil? && sol.filename_corr.nil?  && !sol.score.nil? ) %>
-         <% cls = weird ? 'bg-red' : (ready ? 'bg-green' : nil) %>
-         <td<%if cls%> class="<%=cls%>"<%end%>>
-           <% if @want_edit_paper %>
-              <input type="checkbox" name="paper[<%= sol.id %>]" size="3" <%if sol.has_paper_mail %> checked="checked" <% end %> />
-           <% else %>
-             <% if sol.filename %>
-               <%= link_to pr.problem_no, {:action => :download, :id => sol.id}, {:title => sol.filename_orig} %>
-               <% if sol.filename_corr %>
-                 <%= link_to 'o', {:action => :download_rev, :id => sol.id}, {:title => sol.filename_corr_display} %>
-               <% end %>
-             <% end %>
-             <% if sol.has_paper_mail %> P <% end %>
-           <% end %>
-         </td>
+       <th>u<%=pr.short_name%></th>
       <% end %>
-      <%  @problems.each do |pr| %>
-         <td>
+      <% @problems.each do |pr| %>
+       <th title="Body za úlohu č. <%=pr.problem_no%>">B<%=pr.short_name%></th>
+      <% end %>
+      <th title="penalizace">Pen<% if @want_edit_penalisation%> / Důvod<%end%></th>
+      <% if !@want_edit && !@want_edit_paper && ! @want_edit_penalisation %>
+        <th title="Body za sérii">Bs</th>
+        <th title="Body celkově">Bc</th>
+        <th title="Celkové pořadí">cp</th>
+        <th title="Pořadí v ročníku">pvr</th>
+        <th title="Ročník">R</th>
+      <% end %>
+     </tr>
+     </thead>
+     <tbody>
+    <% @solvers.each do |solver| %>
+      <% sol_arr = @solutions_by_solver[solver.id]  %>
+      <% solver_has_papper_sol =  sol_arr.any? { |s| !s.nil? && s.has_paper_mail }  %>
+      <% tep_vs_paper_confict = solver_has_papper_sol && solver.solution_form == 'tep' %>
+      <tr <%if solver.is_test_solver%>class="warning"<%end%>>
+        <td <%if tep_vs_paper_confict%>class="bg-red"<%end%>>
+           <%= solver.id  %>
+           <%if solver.is_test_solver %> <i title="TESTOVACÍ ŘEŠITEL" class="fa fa-crosshairs"></i> <% end %>
+           <%if  tep_vs_paper_confict%>
+              <%=link_to sosna_solver_labels_url(:ids=>solver.id) do %>
+                 <i title="tep vs. paper conflict" class="fa bg-red fa-envelope-o"></i>
+              <% end # link %>
+           <% end # if tep vs papper %>
+        </td>
+        <td><%= link_to solver.full_name, { controller: :solver, action: :show, id: solver.id }  %></td>
+        <td><% if !solver.school.nil? %> 
+               <% sch = solver.school %>
+               <span title="<%= sch.long %>"><%= link_to sch.short||'?', :controller =>  'sosna/school', :action => :show, :id => sch.id %></span>
+            <% else %>
+                -
+            <% end %>
+        </td>
+        <% @problems.each do |pr| %>
            <% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  %>
-           <% if !sol.nil? %>
-             <% if @want_edit %>
-                  <input class="input-mini input-minimini" type="text" name="score[<%= sol.id %>]" size="3" value="<%= sol.score || '-'%>"/>
+           <% ready = (!sol.filename.nil? && !sol.filename_corr.nil? || sol.has_paper_mail ) && !sol.score.nil? %>
+           <% weird = (sol.filename.nil? && !sol.has_paper_mail ) && !sol.score.nil? %>
+           <% weird = weird || (!sol.filename.nil? || sol.has_paper_mail ) && sol.score.nil? %>
+           <% weird = weird || ( !sol.filename.nil? && sol.filename_corr.nil?  && !sol.score.nil? ) %>
+           <% cls = weird ? 'bg-red' : (ready ? 'bg-green' : nil) %>
+           <td<%if cls%> class="<%=cls%>"<%end%>>
+             <% if @want_edit_paper %>
+                <input type="checkbox" name="paper[<%= sol.id %>]" size="3" <%if sol.has_paper_mail %> checked="checked" <% end %> />
              <% else %>
-                  <%= sol.score || '-'%>
+               <% if sol.filename %>
+                 <%= link_to pr.problem_no, {:action => :download, :id => sol.id}, {:title => sol.filename_orig} %>
+                 <% if sol.filename_corr %>
+                   <%= link_to 'o', {:action => :download_rev, :id => sol.id}, {:title => sol.filename_corr_display} %>
+                 <% end %>
+               <% end %>
+               <% if sol.has_paper_mail %> P <% end %>
              <% end %>
-           <% else %>
-            -
-           <% end %>
-         </td>
-      <% end %>
-      <td>
-        <% pen = @penalisations_by_solver[solver.id] %>
-        <% pen_sc = pen.score || '-' %>
-        <% pen_tit = pen.title || '' %>
-        <% if @want_edit_penalisation %>
-          <input class="input-mini input-minimini" type="text" name="penalisation_score[<%= pen.id %>]" size="3" value="<%= pen_sc %>"/>
-          <input class="input-medium" type="text" name="penalisation_title[<%= pen.id %>]" value="<%= pen_tit %>"/>
-        <% else %>
-          <span title="<%=pen_tit == '' ? 'žádný důvod' : pen_tit %>"><%= pen_sc  %></span>
+           </td>
         <% end %>
-      </td>
-        <% if !@want_edit  && !@want_edit_paper && ! @want_edit_penalisation %>
-          <% res = @results_by_solver[solver.id] %>
-          <% cls = @want_sous.nil?  ?  nil  : ( res.class_rank <= 5 ? 'bg-green' : 'bg-red' ) %>
-          <% if res %>
-             <td><%= res.round_score %></td>
-             <td<%if cls%> class="<%=cls%>"<%end%>>
-               <%= res.score %></td>
-             <td<%if cls%> class="<%=cls%>"<%end%>>
-               <%= res.rank %><% if res.rank_multi? %> - <%= res.rank_to %><% end %></td>
-             <td<%if cls%> class="<%=cls%>"<%end%>>
-               <%= res.class_rank %><% if res.class_rank_multi? %> - <%= res.class_rank_to %><% end %></td>
+        <%  @problems.each do |pr| %>
+           <td>
+             <% sol  =  sol_arr.nil?  ? nil : sol_arr[pr.problem_no]  %>
+             <% if !sol.nil? %>
+               <% if @want_edit %>
+                    <input class="input-mini input-minimini" type="text" name="score[<%= sol.id %>]" size="3" value="<%= sol.score || '-'%>"/>
+               <% else %>
+                    <%= sol.score || '-'%>
+               <% end %>
+             <% else %>
+              -
+             <% end %>
+           </td>
+        <% end %>
+        <td>
+          <% pen = @penalisations_by_solver[solver.id] %>
+          <% pen_sc = pen.score || '-' %>
+          <% pen_tit = pen.title || '' %>
+          <% if @want_edit_penalisation %>
+            <input class="input-mini input-minimini" type="text" name="penalisation_score[<%= pen.id %>]" size="3" value="<%= pen_sc %>"/>
+            <input class="input-medium" type="text" name="penalisation_title[<%= pen.id %>]" value="<%= pen_tit %>"/>
           <% else %>
-             <td>-</td>
-             <td>-</td>
-             <td>-</td>
-             <td>-</td>
+            <span title="<%=pen_tit == '' ? 'žádný důvod' : pen_tit %>"><%= pen_sc  %></span>
           <% end %>
-          <td><%= solver.grade_num %></td>
-        <% end %>
-    </tr>
-  <% end %>
-   <tbody>
-  </table>
+        </td>
+          <% if !@want_edit  && !@want_edit_paper && ! @want_edit_penalisation %>
+            <% res = @results_by_solver[solver.id] %>
+            <% cls = @want_sous.nil?  ?  nil  : ( res.class_rank <= 5 ? 'bg-green' : 'bg-red' ) %>
+            <% if res %>
+               <td><%= res.round_score %></td>
+               <td<%if cls%> class="<%=cls%>"<%end%>>
+                 <%= res.score %></td>
+               <td<%if cls%> class="<%=cls%>"<%end%>>
+                 <%= res.rank %><% if res.rank_multi? %> - <%= res.rank_to %><% end %></td>
+               <td<%if cls%> class="<%=cls%>"<%end%>>
+                 <%= res.class_rank %><% if res.class_rank_multi? %> - <%= res.class_rank_to %><% end %></td>
+            <% else %>
+               <td>-</td>
+               <td>-</td>
+               <td>-</td>
+               <td>-</td>
+            <% end %>
+            <td><%= solver.grade_num %></td>
+          <% end %>
+      </tr>
+    <% end %>
+     <tbody>
+    </table>
+  </div>
 
   <div>
     <i>Legenda</i>:

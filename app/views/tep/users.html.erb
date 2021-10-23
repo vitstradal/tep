@@ -11,30 +11,32 @@
   </ul>
 
   <div class="tab-content">
-    <div class="tab-pane in active">
-      <table class="table table-hover table-condensed table-bordered">
-      <tr>
-              <th>Id</th>
-              <th>Email</th>
-              <th>Jméno</th>
-              <th>Příjmení</th>
-              <th>Role</th>
-      </tr>
-      <% @users.each do |user|  %>
-      <tr>
-      
-         <td> <%= link_to user.id, user_show_path(user.id) %> </td>
-         <td> <%= user.email %> </td>
-         <td> <%= user.name %> </td>
-         <td> <%= user.last_name %> </td>
-         <td>
-              <%= form_for user, url: user_role_change_path(user.id), :html => {:class => 'form-inline' } do |f| %>
-                  <%= user.roles.to_a.join(',') %>
-              <% end %>
-         </td>
-      </tr>
-      <% end %>
-      </table>
+    <div class="tabtab-pane in active">
+      <div class="table-div">
+        <table class="table table-hover table-condensed table-bordered">
+        <tr>
+                <th>Id</th>
+                <th>Email</th>
+                <th>Jméno</th>
+                <th>Příjmení</th>
+                <th>Role</th>
+        </tr>
+        <% @users.each do |user|  %>
+        <tr>
+        
+           <td> <%= link_to user.id, user_show_path(user.id) %> </td>
+           <td> <%= user.email %> </td>
+           <td> <%= user.name %> </td>
+           <td> <%= user.last_name %> </td>
+           <td>
+                <%= form_for user, url: user_role_change_path(user.id), :html => {:class => 'form-inline' } do |f| %>
+                    <%= user.roles.to_a.join(',') %>
+                <% end %>
+           </td>
+        </tr>
+        <% end %>
+        </table>
+      </div>
     </div>
   </div>
 </div>
