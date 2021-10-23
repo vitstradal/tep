@@ -44,6 +44,9 @@ MathJax.Hub.Register.StartupHook("TeX Jax Ready",function () {
   var TEX = MathJax.InputJax.TeX;
   TEX.Macro("cm"," cm");
   TEX.Macro("km"," km");
+  TEX.Macro("h"," h");
+  TEX.Macro("exclaim", "");
+  TEX.Macro("meterin", "′");
 });
 
 MathJax.Hub.Config({
