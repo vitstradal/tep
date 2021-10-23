@@ -1,5 +1,6 @@
 
 <h1>Spam <%= @annual %>. ročník <%= @round %>. série </h1>
+<% @spam ||= {} %>
 
 
 <% if false %>
@@ -8,7 +9,6 @@ Link: <%= link_to @url, @url %>, <%= link_to "zde", @url %>.
 
 <%= form_tag sosna_solver_do_spam_url, :class=>'form-horizontal' do %>
   <div>
-  <% spam = flash[:spam] || {} %>
 
 <% if false %>
     <div class="form-group">
@@ -67,33 +67,42 @@ Link: <%= link_to @url, @url %>, <%= link_to "zde", @url %>.
     <div class="form-group">
         <%= label_tag :email, "Přidat tyto maily (jeden na řádek)", :class =>  'col-sm-3 control-label no-padding-right'%>
         <div class="col-sm-9" >
-              <%= text_area_tag :emails, spam[:emails] || '', cols: 50 %>
+              <%= text_area_tag :emails, @spam[:emails], cols: 50 %>
         </div>
     </div>
     <div class="form-group">
         <%= label_tag :subject, "Odesilatel", :class =>  'col-sm-3 control-label no-padding-right'%>
         <div class="col-sm-9" >
-              <code>tep@pikomaf.mff.cuni.cz</code>
+              <%  emails = %w( 
+                 tep@pikomat.mff.cuni.cz 
+                 tabor@pikomat.mff.cuni.cz 
+                 soustredeni@pikomat.mff.cuni.cz 
+                 besidka@pikomat.mff.cuni.cz 
+              )%>
+              <%= select_tag :from, options_for_select(emails, @spam[:from]) %></td>
         </div>
     </div>
 
     <div class="form-group">
         <%= label_tag :subject, "Předmět", :class =>  'col-sm-3 control-label no-padding-right'%>
         <div class="col-sm-9" >
-              <% subject = spam[:subject] || "Pikomat: vzorová řešení" -%>
-              <%= text_field_tag :subject, subject, size: 80 %>
+              <%= text_field_tag :subject, @spam[:subject], size: 80 %>
         </div>
     </div>
 
     <div class="form-group">
         <%= label_tag :wiki, "Text", :class =>  'col-sm-3 control-label no-padding-right'%>
         <div class="col-sm-9" >
-              <% wiki_default = "Ahoj pikomaťáku,\n\njsou opravená řešení #{@round}. série #{@annual}. ročníku, najdeš je\n[[/archiv/rocnik#{@annual}/letak#{@round.to_i-1}.pdf |  zde]]\n\nOrganizátoři Pikomatu" -%>
-              <% wiki = spam[:wiki] || wiki_default -%>
-              <%= text_area_tag :wiki, wiki, cols: 80, rows: 15 %>
+              <%= text_area_tag :wiki, @spam[:wiki], cols: 80, rows: 15 %>
         </div>
     </div>
-
+    <div class="form-group">
+        <%= label_tag :wiki, "Patička", :class =>  'col-sm-3 control-label no-padding-right'%>
+        <div class="col-sm-9" >
+              <%= text_area_tag :bottom_wiki, @spam[:bottom_wiki], cols: 80, rows: 5 %>
+        </div>
+    </div>
+  
     <div class="form-group">
         <div class="col-sm-offset-3 col-sm-9">
             <label class="checkbox" for="dryrun"> <%= check_box_tag 'dryrun', value=1, checked = true  %>
@@ -111,7 +120,11 @@ Link: <%= link_to @url, @url %>, <%= link_to "zde", @url %>.
   </div>
 <% end %>
 
-<% if false %>
-<h2>tep/mailer/solution_notification.html.erb'</h2>
-<div class="well"> <%= render file: 'tep/mailer/solution_notification.html.erb' %></div>
-<% end %>
+<h3>Náhled</h3>
+
+<div class="col-sm-10">
+  <div class="well">
+    <%== @spam[:html] %>
+    <% if @spam[:bottom_html] %><%== @spam[:bottom_html] %><% end %>
+  </div>
+</div>

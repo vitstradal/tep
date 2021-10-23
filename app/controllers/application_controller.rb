@@ -53,7 +53,7 @@ class ApplicationController < ActionController::Base
                       error: @error.to_s,
                       timestamp: DateTime.now.strftime("%y-%m-%d %H:%M:%S"),
                       email: current_user.nil? ? nil : current_user.email,
-                      params: params.to_hash,
+                      params: params.to_hash.to_s,
                       host: request.remote_ip,
                       useragent: request.user_agent,
                       referer: request.referer,

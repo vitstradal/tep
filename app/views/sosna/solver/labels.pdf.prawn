@@ -122,7 +122,7 @@ pdf.font 'andulka'
 addrs = []
 @solvers.each do |solver|
     school_name = nil
-    if solver.where_to_send == 'home'
+    if solver.where_to_send == 'home' || @ignore_where_to_send
       street, city, psc, country = [ "#{solver.street} #{solver.num}", "#{solver.city}", "#{solver.psc} ", "#{solver.country}" ]
     else
       school = solver.school

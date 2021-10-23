@@ -81,9 +81,10 @@ class Tep::Mailer < Devise::Mailer
   # email:: user
   # subject:: user
   # html:: text
-  def solution_notification(email, subject, html)
+  def solution_notification(from, email, subject, html, bottom_html = nil)
     @email = email
     @html = html
-    mail(to: email, from: 'tep@pikomat.mff.cuni.cz', subject: subject)
+    @bottom_html = bottom_html
+    mail(to: email, from: from || 'tep@pikomat.mff.cuni.cz', subject: subject)
   end
 end

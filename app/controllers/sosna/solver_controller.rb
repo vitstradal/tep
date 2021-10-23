@@ -111,6 +111,7 @@ class Sosna::SolverController < SosnaController
   # paper_tep_conflict::
   # obalkovani::
   # confirmed_only:: pouze řešitelé s `confirm_state==conf`
+  # ignore_where_to_send:: ignoruj `where_to_send` a posli to `home`
   # skoly_all:: všechny školy
   # skoly:: ty školy které maji `want_paper=true`
   #
@@ -126,6 +127,7 @@ class Sosna::SolverController < SosnaController
     @annual = params[:roc] || @annual
     @ids = (params[:ids]  || '').gsub(/;.*$/,'').split(/[,\n\s]+/).map { |x| x.to_i }
     @skoly_ids = (params[:skoly_ids]  || '').gsub(/;.*$/,'').split(/[,\n\s]+/).map { |x| x.to_i }
+    @ignore_where_to_send = params[:ignore_where_to_send]
     log("ids:" +  @ids.to_s);
     opt_param = params[:opt] || ''
     respond_to do |format|
@@ -587,6 +589,24 @@ class Sosna::SolverController < SosnaController
   def spam
     load_config
     @url = wiki_main_url("archiv/rocnik#{@annual}/zad#{@round}")
+    @spam = flash[:spam] || {}
+    @spam[:subject] ||= "Pikomat: vzorová řešení"
+    @spam[:wiki] ||= <<EOL
+Ahoj pikomaťáku,
+
+jsou opravená řešení #{@round}. série #{@annual}. ročníku, najdeš je
+[[/archiv/rocnik#{@annual}/letak#{@round.to_i-1}.pdf |  zde]]
+
+Organizátoři Pikomatu
+EOL
+
+    @spam[:bottom_wiki] ||= <<EOL
+,,Tuto zprávu dostáváš proto, že jsi se registroval jako řešitel Pikomatu MFF UK,
+který chce dostávat leták e-mailem. Pokud od nás již nechceš zpravy dostávat napiš
+na pikomat@pikomat.mff.cuni.cz,,
+EOL
+    @spam[:html] = _wiki2html(@spam[:wiki])
+    @spam[:bottom_html] = _wiki2html(@spam[:bottom_wiki])
     #@emails = Sosna::Solver.join(:sosna_solutions).where(annual: @annual).where.not(score: nil).map{ |s| s.email }
   end
 
@@ -600,18 +620,14 @@ class Sosna::SolverController < SosnaController
     load_config
     dryrun = params[:dryrun]
     tome = params[:tome]
+    from = params[:from]
     all_rounds = params[:all_rounds]
     wiki = params[:wiki] || '**empty**'
     subject = params[:subject]
     all_solvers = params[:all_solvers]
     emails_txt =  params[:emails] || ''
+    bottom_wiki =  params[:bottom_wiki] || ''
     where_to_send_email = params[:where_to_send_email]
-
-    flash[:spam] = {
-      subject: subject,
-      wiki: wiki,
-      emails: emails_txt,
-    }
 
     if where_to_send_email || all_solvers
       where = { annual: @annual }
@@ -622,11 +638,24 @@ class Sosna::SolverController < SosnaController
       emails = []
     end
 
-    emails += emails_txt.lines if !emails.empty?
+    emails += emails_txt.lines.map { |line| line.strip } if !emails_txt.empty?
     count = 0
     emails.push current_user.email if !tome.nil?
 
+
+    flash[:spam] = {
+      subject: subject,
+      wiki: wiki,
+      bottom_wiki: bottom_wiki,
+      emails: emails_txt,
+      from: from,
+    }
+
     html = _wiki2html(wiki)
+    if ! bottom_wiki.nil?
+      bottom_html = _wiki2html(bottom_wiki)
+    end
+
     emails.each do |email|
       next if email.nil?
       next if email.empty?
@@ -636,7 +665,7 @@ class Sosna::SolverController < SosnaController
         add_success "NEposláno #{email}"
       else
         add_success "posláno #{email}"
-        Tep::Mailer.solution_notification(email.strip, subject, html).deliver_later
+        Tep::Mailer.solution_notification(from, email.strip, subject, html).deliver_later
       end
       count += 1
     end
