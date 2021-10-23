@@ -98,6 +98,7 @@ class GiwiController < ApplicationController
     return _handle_ls if @ls
     return _handle_csrf if fmt == 'csrf'
 
+    log("path=#{@path}")
     @path_full = _try_find_path_full(@path, fmt)
     log("path_full= #{@path_full}");
 
@@ -107,7 +108,7 @@ class GiwiController < ApplicationController
     return _handle_diff(diff_oid, diff_to) if diff_oid
     return _handle_special_edit(@path, fmt) if @edit && %w(svg).include?(fmt)
 
-    # FIXME: 'json' zde byl z nejakeho duvodu, ale byje se to se zasilanim helpu, icon a pod  do editacniho okna
+    # FIXME: 'json' zde byl z nejakeho duvodu, ale bije se to se zasilanim helpu, icon a pod  do editacniho okna
     # jde se vyzaduje help.json
     #return _handle_raw_file("#{@path}.#{fmt}", fmt) if %w(json pdf png jpg jpeg gif svg pik).include? fmt
     return _handle_raw_file("#{@path}.#{fmt}", fmt) if %w(pdf png jpg jpeg gif svg pik).include? fmt
@@ -164,11 +165,13 @@ class GiwiController < ApplicationController
   def _try_find_path_full(path, fmt)
 
     path = "index" if path.nil? || path.empty?
-    path = "#{path}.#{fmt}" if !fmt.nil? && !fmt.empty?
-    return path if @giwi.file? path
-
+    if !fmt.nil? && !fmt.empty?
+      path_fmt = "#{path}.#{fmt}"
+      return path_fmt if @giwi.file? path_fmt
+    end
 
     path_wiki = "#{path}#{@giwi.ext}"
+    log "path_wiki=#{path_wiki}"
 
     return path_wiki if @giwi.file? path_wiki
 
