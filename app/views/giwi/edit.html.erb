@@ -72,25 +72,25 @@
       </div>
     <% end %>
     <div data-toggle="buttons" class="btn-group btn-overlap btn-corner pull-right">
-      <%= ace_mobil =cookies['ace.mobil'.to_sym]=='on' %>
+      <% ace_mobil =cookies['ace.mobil'.to_sym]=='on' %>
       <label class="btn btn-sm btn-white btn-info <%= active(ace_mobil) %>">
         <input id='mobil' type="checkbox" data-edit='mobil' name="mobil" class="ace" <%=checked(ace_mobil)%>/>
-        <i class=" ace-icon fa fa-mobile-phone" title="mobile mode"></i> mobil <%= cookies['ace.mobil'.to_sym] %>
+        <i class=" ace-icon fa fa-mobile-phone" title="mobile mode"></i> mobil
       </label>
 
-      <%= ace_wide =cookies['ace.wide'.to_sym]=='on' %>
+      <% ace_wide =cookies['ace.wide'.to_sym]=='on' %>
       <label class="btn btn-sm btn-white btn-info <%=active(ace_wide)%>">
         <input id='widenowide' type="checkbox" data-edit='wide' name="widenowide" class="ace" <%=checked(ace_wide)%>/>
         <i class=" ace-icon fa fa-arrows-h" title="wide-mode Shift-Ctrl-V"></i> wide
       </label>
 
-      <%= ace_wide =cookies['ace.prev'.to_sym]=='on' %>
+      <% ace_wide =cookies['ace.prev'.to_sym]=='on' %>
       <label class="btn btn-sm btn-white btn-info title="auto preview Ctrl-Alt-Enter" <%=active(ace_wide)%>">
         <input id='prevmode' type="checkbox" data-edit='prev' name="pre" class="ace" <%=checked(ace_wide)%>/>
         <i class=" ace-icon fa fa-eye"></i>autopreview
       </label>
 
-      <%= ace_vi =cookies['ace.vi'.to_sym]=='on' %>
+      <% ace_vi =cookies['ace.vi'.to_sym]=='on' %>
       <label class="btn btn-sm btn-white btn-info <%=active(ace_vi)%>">
         <input id='vinovi' type="checkbox" data-edit='vi' name="vinovi" class="ace" <%=checked(ace_vi)%>/>
         <i class=" ace-icon fa fa-vimeo-square" title="toggle vi-mode Ctrl-M"></i> :vi
