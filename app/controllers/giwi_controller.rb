@@ -66,6 +66,7 @@ class GiwiController < ApplicationController
     @wiki = params[:wiki] || 'main'
     @giwi = Giwi.get_giwi(@wiki)
     @cursor = params[:cursor]
+    @use_ckeditor = params[:ckeditor].nil? ? false : true
     auth_name = @giwi.auth_name
 
     authorize! :show, auth_name
@@ -588,33 +589,39 @@ class GiwiController < ApplicationController
     base = url_for(action: :show, wiki: @wiki)
     parser = _get_parser
     if @text
-      parser.to_html(@text)
+      @editable = false
+      @html = parser.to_html(@text)
       @used_templates = parser.used_templates
-      #pp "used templates", @used_templates
     end
 
     @wide_display = true
-    if @edit == 'me'
-       @edit = true
-       return render :edit, formats:[:html]
+    if @edit == 'me' || ! @text
+      @edit = true
+      return render :edit, formats:[:html]
     end
 
-    die "wrong edit value" if @edit !~  /^\d+$/
+    @part = nil
+    if @edit =~ /^(\d+)-(\d+)$/
+      # want to edit only specified lines
+      pos_beg, pos_end  = $1.to_i - 1, $2.to_i - 1
 
-    # want to edit only one chapter
-    @part = @edit.to_i
-
-    if @text
+    elsif @edit =~ /^(\d+)$/
+      # want to edit only one chapter
+      # po editu redirect na tuto kapitolu
+      @part = $1.to_i
       heading = parser.headings[@part]
-      if heading
-        # edit only selected part (from @sline to @eline)
-        @text = @text.split("\n").values_at(heading[:sline]-1 .. heading[:eline]-1).join("\n") + "\n"
-        @pos = "#{heading[:sline]}-#{heading[:eline]+1}"
-      else
-        # edit all document anyway
-        @part = nil
-      end
+      pos_beg, pos_end = heading[:sline]-1, heading[:eline] -1
+    else
+        die "wrong edit value" if @edit !~  /^\d+$/
     end
+
+    @text = @text.split("\n").values_at(pos_beg .. pos_end).join("\n") + "\n"
+    @pos = "#{pos_beg}-#{pos_end}"
+
+    if @use_ckeditor
+      return render :ckeditor, formats:[:html]
+    end
+
     return render :edit, formats:[:html]
   end
 

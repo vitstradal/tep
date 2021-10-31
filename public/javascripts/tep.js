@@ -20,6 +20,8 @@ jQuery(document).ready(function($) {
           $('.sidebar').removeClass('hide');
         });
 
+        $('#ckeditor').each( function () { ckeditor_init() } );
+
         // anketa zvyrazneni, a dekorace
         $('div.anketa').each(function (ii, div) { _init_anketa_div(div) });
 
@@ -942,4 +944,20 @@ function reload_on_browser_back() {
       window.location.reload();
     }
   });
+}
+
+function ckeditor_init() {
+  ClassicEditor.create( document.querySelector( '#ckeditor' ), {               
+    //pluins: [ 'Tracwiki' ],                                              
+  }).then( (editor) => {
+    console.log("started")
+    editor.model.document.on('change:data', () => {
+      console.log('change')
+      var html = editor.getData()
+      var wiki = html2tracwiki(html)
+      $('#ckeditor-output').text( wiki )
+      $('#textedit').val( wiki )
+    })
+  })                                                                      
+
 }

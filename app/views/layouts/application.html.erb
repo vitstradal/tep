@@ -372,6 +372,10 @@
 <%= javascript_include_tag '/ace-editor/ace.js' %>
 <%= javascript_include_tag '/ace/js/ace-elements.min.js' %>
 <%# javascript_include_tag '/ace/js/ace.min.js' %>
+<% if @use_ckeditor %>
+  <%= javascript_include_tag '/javascripts/ckeditor.js' %>
+  <%= javascript_include_tag '/javascripts/html2tracwiki.js' %>
+<% end %>
 <%= javascript_include_tag '/ace/js/uncompressed/ace.js' %>
 <%= javascript_include_tag '/javascripts/tep.js' %>
 

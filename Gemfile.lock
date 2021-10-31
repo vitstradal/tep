@@ -208,7 +208,7 @@ GEM
     thor (0.20.0)
     thread_safe (0.3.6)
     tilt (2.0.8)
-    trac-wiki (0.3.40)
+    trac-wiki (0.3.41)
     ttfunk (1.1.1)
     tzinfo (1.2.5)
       thread_safe (~> 0.1)
@@ -247,8 +247,8 @@ DEPENDENCIES
   sanitize
   selene
   sqlite3
-  trac-wiki (~> 0.3.40)
+  trac-wiki (~> 0.3.41)
   unicode_utils
 
 BUNDLED WITH
-   1.16.6
+   1.17.3
