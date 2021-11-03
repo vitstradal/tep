@@ -1,0 +1,32 @@
+<script type="text/x-mathjax-config"> MathJax.Hub.Config({ extensions: ["jsMath2jax.js"] });</script>
+<script type="text/javascript" src="<%= ENV["RAILS_RELATIVE_URL_ROOT"] %>/MathJax-2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script>
+
+<div class="alert alert-danger"> Warning: CKEditor is EXPERIMENTAL now. It can damage existing page </div>
+
+<div class="row">
+  <div class="col-xs-7">
+    <textarea id='ckeditor'><%= @html.gsub('<pre>', '<pre><code>').gsub('</pre>', '</code></pre>')  %></textarea>
+  </div>
+  <div class="col-xs-5">
+    <pre id="ckeditor-output"><%= @text %><pre>
+  </div>
+</div>
+
+<%= form_tag({:path =>  @path}, {id: 'edit-form'})  do %>
+  <%= hidden_field_tag 'version', @version %>
+  <%= hidden_field_tag 'edit', '' %>
+  <%= hidden_field_tag 'cursor', @cursor %>
+  <% if @part %>
+    <%= hidden_field_tag 'part', @part %>
+    <%= hidden_field_tag 'pos', @pos %>
+  <% end %>
+  <%#= hidden_field_tag :text, @text, id: 'textedit' %>
+  <%= text_area_tag :text, @text, style:'float:left;width:100%; width-max:100%', class: 'span9 ctrl-enter-submit', id: 'textedit', cols: 200, rows: 30%>
+<% end %>
+
+<% content_for :action_buttons do %>
+  <div class="pull-right">
+    <%= button_tag  'Zpět',   :class=>'btn',            :ico => 'fa-reply', :href => url_for(path: @path)  %>
+    <%= button_tag  'Uložit', :class=>'btn btn-danger', ico: 'fa-floppy-o', :type => 'button', 'data-submit-form'=>'#edit-form'   %>
+  </div>
+<% end %>

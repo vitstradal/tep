@@ -1,8 +1,18 @@
 html {
-  min-height: 100%;
-  position: relative;
+  /*
+   * presunuto do body
+   * protoze ckeditor bral pozici z html
+   * a byl z toho uplne rozhozen
+   */
+  /* min-height: 100%; */
+  /* position: relative; */
 }
 body {
+
+  /* nasledujici dva radky prehozeny z html, protoze to rozhoazovalo ckeditor */
+  min-height: 100%;
+  position: relative;
+
   background-color: #e4e6e9;
   min-height: 100%;
   padding-bottom: 0;

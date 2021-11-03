@@ -695,3 +695,19 @@ body.pb2019 i.fa.fa-search.nav-search-ico  {
 .right {
  text-align: right;
 }
+
+tt {
+  /*
+  background-color: hsla(0,0%,78%,.5);
+  border-radius: 2px;
+  border: 1px solid #E2E2E2;
+  */
+
+
+  padding: .15em;
+  margin: 0 0 10px;
+  color: #333;
+  background-color: #f5f5f5;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}

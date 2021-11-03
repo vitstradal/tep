@@ -59,6 +59,9 @@
      <a class="btn btn-xs btn-white btn-info" data-edit="preview" title="Preview (Alt-Enter)"> <i class=" ace-icon fa fa-eye"></i></a>
     </div>
 
+    <div class="btn-group pull-right">
+        <a class="btn btn-xs btn-white" href="<%= url_for(path: @path, edit: @part, ckeditor: 1 )%>">cke</a>
+    </div>
     <% if ! @used_templates.nil? %>
       <div class="btn-group pull-right">
         <button data-toggle="dropdown" class="btn btn-xs btn-info dropdown-toggle">Templates<span class="ace-icon fa fa-caret-down icon-on-right"></span></button>
@@ -95,9 +98,6 @@
         <input id='vinovi' type="checkbox" data-edit='vi' name="vinovi" class="ace" <%=checked(ace_vi)%>/>
         <i class=" ace-icon fa fa-vimeo-square" title="toggle vi-mode Ctrl-M"></i> :vi
       </label>
-      <button class="btn btn-sm btn-white btn-info">
-        <a href="nekam"> sem2 </a>
-      </button>
     </div>
   </div>
   <div class="row">
