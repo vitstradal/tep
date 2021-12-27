@@ -30,7 +30,7 @@ var html2wiki_handlers = {
                 var indent = "  ".repeat( _count_ulol(node) - 1  )
                 var parTag = node.parentNode.localName
                 if( parTag == 'ol' ) {
-                  return "\n" + indent + '1. ' + s
+                  return "\n" + indent + '' + _count_li(node) + '. ' + s
                 }
                 return "\n" +  indent + '* ' + s
         },
@@ -43,11 +43,21 @@ var html2wiki_handlers = {
         },
 }
 
+function _count_li( node ) {
+        let count = 1
+        while( node.previousElementSibling != null ) {
+                if ( node.localName == 'li' ) {
+                        count++
+                }
+                node = node.previousElementSibling;
+        }
+        return count;
+}
 function _space_af_ulol(s, node) {
         if( _count_ulol(node) > 1 ) {
                 return s
         }
-        return s + "\n"
+        return s + "\n\n"
 }
 
 function _count_ulol(node, tagName) {
@@ -80,17 +90,19 @@ function _tracwiki_walk(node) {
                 return txt
         }
         var ret = []
-        for (var idx in node.childNodes ) {
-                ret.push(_tracwiki_walk(node.childNodes[idx]))
-        }
         var tag = node.localName
+        for (var idx in node.childNodes ) {
+                var child_txt =_tracwiki_walk(node.childNodes[idx])
+                ret.push(child_txt)
+        }
         var content = ret.join('')
         var handler = html2wiki_handlers[tag]
         if( typeof handler == 'function' ) {
                 return handler(content, node)
         }
         else if( typeof handler == 'string' ) {
-                return handler.replace( '%s', content)
+                // BEVARE replace has specaal character $
+                return handler.replace( '%s', function() { return content} )
         }
         return _esc(content);
 }

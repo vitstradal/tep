@@ -5,7 +5,11 @@
 
 <div class="row">
   <div class="col-xs-7">
-    <textarea id='ckeditor'><%= @html.gsub('<pre>', '<pre><code>').gsub('</pre>', '</code></pre>')  %></textarea>
+    <textarea id='ckeditor'><%=
+            @html.gsub('<pre>', '<pre><code>')
+                 .gsub('</pre>', '</code></pre>') 
+                 .gsub('$', '<span>$</span>' )
+    %></textarea>
   </div>
   <div class="col-xs-5">
     <pre id="ckeditor-output"><%= @text %><pre>
@@ -20,9 +24,11 @@
     <%= hidden_field_tag 'part', @part %>
     <%= hidden_field_tag 'pos', @pos %>
   <% end %>
-  <%#= hidden_field_tag :text, @text, id: 'textedit' %>
-  <%= text_area_tag :text, @text, style:'float:left;width:100%; width-max:100%', class: 'span9 ctrl-enter-submit', id: 'textedit', cols: 200, rows: 30%>
+  <%= hidden_field_tag :text, @text, id: 'textedit' %>
+  <%#= text_area_tag :text, @text, style:'float:left;width:100%; width-max:100%', class: 'span9 ctrl-enter-submit', id: 'textedit', cols: 200, rows: 30%>
 <% end %>
+
+<%= text_area_tag :text, @html, style:'float:left;width:100%; width-max:100%', class: 'span9 ctrl-enter-submit', id: 'cke-src', cols: 200, rows: 30%>
 
 <% content_for :action_buttons do %>
   <div class="pull-right">

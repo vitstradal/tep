@@ -60,7 +60,7 @@
     </div>
 
     <div class="btn-group pull-right">
-        <a class="btn btn-xs btn-white" href="<%= url_for(path: @path, edit: @part, ckeditor: 1 )%>">cke</a>
+        <a class="btn btn-xs btn-white" href="<%= url_for(path: @path, edit: @edit, ckeditor: 1 )%>">cke</a>
     </div>
     <% if ! @used_templates.nil? %>
       <div class="btn-group pull-right">

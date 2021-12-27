@@ -947,40 +947,23 @@ function reload_on_browser_back() {
 }
 
 // https://stackoverflow.com/questions/14420300/bootstrap-with-ckeditor-equals-problems/18554395#18554395
-function _ckedtor_modal_hack() {
-  // bootstrap-ckeditor-modal-fix.js
-  // hack to fix ckeditor/bootstrap compatiability bug when ckeditor appears in a bootstrap modal dialog
-  //
-  // Include this AFTER both bootstrap and ckeditor are loaded.
-  
-  $.fn.modal.Constructor.prototype.enforceFocus = function() {
-    modal_this = this
-    $(document).on('focusin.modal', function (e) {
-      if (modal_this.$element[0] !== e.target && !modal_this.$element.has(e.target).length 
-      && !$(e.target.parentNode).hasClass('cke_dialog_ui_input_select') 
-      && !$(e.target.parentNode).hasClass('cke_dialog_ui_input_text')) {
-        //modal_this.$element.focus()
-      }
-    })
-  }
-}
 
 function ckeditor_init() {
   const original_text =  $('#textedit').val()
-  _ckedtor_modal_hack()
   ClassicEditor.create( document.querySelector( '#ckeditor' ), {               
     toolbar: {
       items: [
               'bold', 'italic', 'strikethrough', 'subscript', 'superscript', '|',
-              'blockQuote', 'code', 'codeBlock', '|',
+              'blockQuote', 'code', 'codeBlock', 'highlight:blueMarker', 'highlight:greenMarker', '|',
               'bulletedList',  'numberedList',  'outdent', 'indent', '|',
               'insertTable', 'link',
               'heading',
       ]
     },
-    removePlugins: [ 'Markdown' ],
+    removePlugins: [ 'Markdown', 'TextTransformation' ],
   }).then( (editor) => {
     console.log("started")
+    console.log( "editor",  editor.plugins );
     _update_ckeditor_data( editor, original_text )
     editor.model.document.on('change:data', () => {
       _update_ckeditor_data( editor, original_text )
@@ -994,12 +977,13 @@ function _update_ckeditor_data( editor, original_text )
       var html = editor.getData()
       console.log('html', html)
       var wiki = html2tracwiki(html)
+      console.log("wiki", wiki)
       var diff_els = Diff.diffChars( original_text, wiki ).map( (d) => {
          if( d.removed ) {
            return $('<span>').text( '|' ).attr('title', "removed '" + d.value + "'").addClass('red')
          }
          if( d.added ) {
-           return $('<span>').text(  d.value ).addClass('green')
+           return $('<span>').text(  d.value ).addClass('diff-green')
          }
          return $('<span>').text(  d.value )
       })
@@ -1007,4 +991,5 @@ function _update_ckeditor_data( editor, original_text )
       console.log("diff", diff_els)
       $('#ckeditor-output').empty().append(diff_els)
       $('#textedit').val( wiki )
+      $('#cke-src').val( html )
 }

@@ -711,3 +711,8 @@ tt {
   border: 1px solid #ccc;
   border-radius: 4px;
 }
+
+.diff-green {
+  background-color: #bbddbb;
+  color: black;
+}
