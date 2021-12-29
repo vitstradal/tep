@@ -1,5 +1,8 @@
 <script type="text/x-mathjax-config"> MathJax.Hub.Config({ extensions: ["jsMath2jax.js"] });</script>
 <script type="text/javascript" src="/MathJax-2.7.3/MathJax.js?config=TeX-AMS-MML_HTMLorMML"> </script>
+<% if @editable  %>
+<script>const TEP_EDITABLE = 1;</script>
+<% end %>
 
 <% if @editable || @toc %>
   <div class="pull-right">

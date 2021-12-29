@@ -17,6 +17,15 @@ var html2wiki_handlers = {
         tr: "%s|-\n",
         th: "! %s\n",
         td: "| %s\n",
+        mark: function(s, node) {
+                if( node.className == 'marker-blue' ) {
+                	return "\n$$ " + s + " $$";
+                }
+                if( node.className == 'marker-green' ) {
+                	return '$' + s + '$';
+                }
+                return s;
+        },
         code: function(s, node) {
                 if( node.parentNode.localName == 'pre' ) {
                         return s
@@ -38,11 +47,14 @@ var html2wiki_handlers = {
           return '[' + node.attributes.href.value + '|' + s + ']'
         },
         img: function (s, node) {
-          console.log('img', node)
-          return '[[Image(' + node.attributes.src.value + ')]]'
+          //console.log('img', node)
+          return '[[Image(' + _strip_scheme_and_server(node.attributes.src.value) + ')]]'
         },
 }
 
+function _strip_scheme_and_server(image_url) {
+        return image_url.replace(/^https?:\/\/[^/]*/, '')
+}
 function _count_li( node ) {
         let count = 1
         while( node.previousElementSibling != null ) {
@@ -53,6 +65,7 @@ function _count_li( node ) {
         }
         return count;
 }
+
 function _space_af_ulol(s, node) {
         if( _count_ulol(node) > 1 ) {
                 return s
@@ -82,26 +95,23 @@ function _has_parent(node, tagName) {
 }
 
 function _tracwiki_walk(node) {
-        if ( ! node.childNodes ) {
-                return ''
-        }
-        if ( node.childNodes.length == 0   ) {
-                var txt = node.textContent
-                return txt
+        var tag = node.localName
+        if( tag == undefined ) {
+                return node.textContent
         }
         var ret = []
-        var tag = node.localName
         for (var idx in node.childNodes ) {
                 var child_txt =_tracwiki_walk(node.childNodes[idx])
                 ret.push(child_txt)
         }
         var content = ret.join('')
+        //console.log("walk:", tag, content)
         var handler = html2wiki_handlers[tag]
         if( typeof handler == 'function' ) {
                 return handler(content, node)
         }
         else if( typeof handler == 'string' ) {
-                // BEVARE replace has specaal character $
+                // BEVARE replace has special character $
                 return handler.replace( '%s', function() { return content} )
         }
         return _esc(content);

@@ -30,6 +30,10 @@ jQuery(document).ready(function($) {
                                     $(this).closest('form').submit();
                              });
 
+        if( typeof(TEP_EDITABLE) !== 'undefined'  ) {
+          $('div.table-div').each(function (ii, div) { _init_table_edit(div) } );
+        }
+
         var bgimg = $('body').data('background-image');
         if( bgimg ) {
           console.log('bgimg', bgimg);
@@ -961,10 +965,28 @@ function ckeditor_init() {
       ]
     },
     removePlugins: [ 'Markdown', 'TextTransformation' ],
+    codeBlock: {
+                languages: [
+                // Do not render the CSS class for the plain text code blocks.
+                        { language: 'plaintext', label: 'code', class: '' },
+                ],
+    }
+
+
   }).then( (editor) => {
     console.log("started")
     console.log( "editor",  editor.plugins );
     _update_ckeditor_data( editor, original_text )
+
+    $('.ck-tooltip__text').each(function (i, el) {
+      if( el.innerHTML == 'Green marker' ) {
+        el.innerHTML = '$ - inline math';
+      }
+      if( el.innerHTML == 'Blue marker' ) {
+        el.innerHTML = '$$ - display math';
+      }
+    });
+
     editor.model.document.on('change:data', () => {
       _update_ckeditor_data( editor, original_text )
     })
@@ -975,15 +997,18 @@ function ckeditor_init() {
 function _update_ckeditor_data( editor, original_text )
 {
       var html = editor.getData()
-      console.log('html', html)
+      console.log('html:', html)
       var wiki = html2tracwiki(html)
-      console.log("wiki", wiki)
+      console.log("wiki:", wiki)
       var diff_els = Diff.diffChars( original_text, wiki ).map( (d) => {
          if( d.removed ) {
-           return $('<span>').text( '|' ).attr('title', "removed '" + d.value + "'").addClass('red')
+           const txt = d.value
+           const rm_char =  /\S/.test(txt) ? '|' : '⋅'
+           return $('<span>').text( rm_char ).attr('title', "removed '" + d.value + "'").addClass('red')
          }
          if( d.added ) {
-           return $('<span>').text(  d.value ).addClass('diff-green')
+           const txt = d.value.replaceAll("\n", "¶\n") 
+           return $('<span>').text( txt ).addClass('diff-green')
          }
          return $('<span>').text(  d.value )
       })
@@ -991,5 +1016,20 @@ function _update_ckeditor_data( editor, original_text )
       console.log("diff", diff_els)
       $('#ckeditor-output').empty().append(diff_els)
       $('#textedit').val( wiki )
-      $('#cke-src').val( html )
+}
+
+function _init_table_edit(div) {
+        console.log("Init table");
+        const line = $(div).data('line')
+        const lines = $(div).data('lines')
+        if( ! line  ) {
+                return;
+        }
+        const pos = `${line}-${line+lines+1}`
+        const href = `${window.location.pathname}?edit=${pos}&ckeditor=1`
+        const a =  $('<a/>');
+        a.attr('class', 'edittable');
+        a.text('edit')
+        a.attr('href',  href )
+        $(div).prepend( a );
 }

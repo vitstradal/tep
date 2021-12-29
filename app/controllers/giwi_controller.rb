@@ -358,7 +358,7 @@ class GiwiController < ApplicationController
     TracWiki.parser( {
       base: base,
       root: root,
-      math: false,
+      math: true,
       merge: false,
       macros: false,
       edit_heading: false,

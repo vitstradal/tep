@@ -8,7 +8,8 @@
     <textarea id='ckeditor'><%=
             @html.gsub('<pre>', '<pre><code>')
                  .gsub('</pre>', '</code></pre>') 
-                 .gsub('$', '<span>$</span>' )
+                 .gsub(/<div class="math">(.*?)<\/div>/, '<mark class="marker-blue">\1</mark>' )
+                 .gsub(/<span class="math">(.*?)<\/span>/, '<mark class="marker-green">\1</mark>' )
     %></textarea>
   </div>
   <div class="col-xs-5">
@@ -27,8 +28,6 @@
   <%= hidden_field_tag :text, @text, id: 'textedit' %>
   <%#= text_area_tag :text, @text, style:'float:left;width:100%; width-max:100%', class: 'span9 ctrl-enter-submit', id: 'textedit', cols: 200, rows: 30%>
 <% end %>
-
-<%= text_area_tag :text, @html, style:'float:left;width:100%; width-max:100%', class: 'span9 ctrl-enter-submit', id: 'cke-src', cols: 200, rows: 30%>
 
 <% content_for :action_buttons do %>
   <div class="pull-right">

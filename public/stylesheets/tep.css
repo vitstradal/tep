@@ -93,16 +93,24 @@ input.input-minimini {
 /************************
  *  wiki hacks
  */
-.editheading {
-font-size: 12px;
-margin-left: 3em;
-}
 .toc {
-        margin: 1em;
+    margin: 1em;
+}
+
+.editheading {
+  font-size: 12px;
+  margin-left: 3em;
+}
+
+.edittable {
+  display: block;
+  float:right;
 }
 .editheading:before { content: "["; }
 .editheading:after  { content: "]"; }
 
+.edittable:before { content: "["; }
+.edittable:after  { content: "]"; }
 
 /************************
  *  foto galerie
@@ -715,4 +723,21 @@ tt {
 .diff-green {
   background-color: #bbddbb;
   color: black;
+}
+
+
+mark.marker-blue:before,
+mark.marker-blue:after
+{
+    content: "$$";
+}
+
+mark.marker-green:before,
+mark.marker-green:after
+{
+    content: "$";
+}
+
+.grey  {
+  color: #888;
 }
