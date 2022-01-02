@@ -13,10 +13,18 @@ var html2wiki_handlers = {
         sub: ",,%s,,",
         sup: "^^%s^^",
         s: "~~%s~~",
-        table: "{|\n%s|}\n",
-        tr: "%s|-\n",
-        th: "! %s\n",
-        td: "| %s\n",
+        table: function (s, node, opt) {
+          return opt['old-table'] ?  `${s}\n` :  `{|\n${s}|}\n`
+        },
+        tr: function (s, node, opt) {
+          return opt['old-table'] ?  `${s}||\n` :  `${s}|-\n`
+        },
+        th: function (s, node, opt) {
+          return opt['old-table'] ?  `!! ${s} ` : `! ${s}\n`
+        },
+        td: function (s, node, opt) {
+          return opt['old-table'] ?  `|| ${s} ` : `| ${s}\n`
+        },
         mark: function(s, node) {
                 if( node.className == 'marker-blue' ) {
                 	return "\n$$ " + s + " $$";
@@ -36,7 +44,7 @@ var html2wiki_handlers = {
         ol: function (s, node) { return _space_af_ulol(s, node) },
         li: function (s, node) {
 
-                var indent = "  ".repeat( _count_ulol(node) - 1  )
+                var indent = "    ".repeat( _count_ulol(node) - 1  )
                 var parTag = node.parentNode.localName
                 if( parTag == 'ol' ) {
                   return "\n" + indent + '' + _count_li(node) + '. ' + s
@@ -94,21 +102,27 @@ function _has_parent(node, tagName) {
         return false;
 }
 
-function _tracwiki_walk(node) {
+function _tracwiki_walk(node, opt) {
         var tag = node.localName
         if( tag == undefined ) {
                 return node.textContent
         }
         var ret = []
+        if( tag == 'table' ) {
+          const style = node.getAttribute('style')
+          if( style && style.match(/border-style:dashed/) ) {
+            opt = { 'old-table' : true }
+          }
+        }
         for (var idx in node.childNodes ) {
-                var child_txt =_tracwiki_walk(node.childNodes[idx])
+                var child_txt =_tracwiki_walk(node.childNodes[idx], opt)
                 ret.push(child_txt)
         }
         var content = ret.join('')
         //console.log("walk:", tag, content)
         var handler = html2wiki_handlers[tag]
         if( typeof handler == 'function' ) {
-                return handler(content, node)
+                return handler(content, node, opt)
         }
         else if( typeof handler == 'string' ) {
                 // BEVARE replace has special character $
@@ -121,8 +135,11 @@ function _esc(str) {
         return str.replace( "\xa0", '')
 }
 
-function html2tracwiki( html ) {
+function html2tracwiki( html , opt) {
         var parser =new DOMParser()
+        if( ! opt ) {
+          opt = {}
+        }
         var html_parsed = parser.parseFromString(html, 'text/html')
-        return _tracwiki_walk(html_parsed.children[0])
+        return _tracwiki_walk(html_parsed.children[0], opt)
 }

@@ -4,15 +4,10 @@
 <div class="alert alert-danger"> Warning: CKEditor is EXPERIMENTAL now. It can damage existing page </div>
 
 <div class="row">
-  <div class="col-xs-7">
-    <textarea id='ckeditor'><%=
-            @html.gsub('<pre>', '<pre><code>')
-                 .gsub('</pre>', '</code></pre>') 
-                 .gsub(/<div class="math">(.*?)<\/div>/, '<mark class="marker-blue">\1</mark>' )
-                 .gsub(/<span class="math">(.*?)<\/span>/, '<mark class="marker-green">\1</mark>' )
-    %></textarea>
+  <div class="col-xs-8">
+    <textarea id='ckeditor'><%= ckeditor_html_tweaks(@html) %></textarea>
   </div>
-  <div class="col-xs-5">
+  <div class="col-xs-4">
     <pre id="ckeditor-output"><%= @text %><pre>
   </div>
 </div>
@@ -23,6 +18,8 @@
   <%= hidden_field_tag 'cursor', @cursor %>
   <% if @part %>
     <%= hidden_field_tag 'part', @part %>
+  <% end %>
+  <% if @pos %>
     <%= hidden_field_tag 'pos', @pos %>
   <% end %>
   <%= hidden_field_tag :text, @text, id: 'textedit' %>

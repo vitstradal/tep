@@ -950,8 +950,8 @@ function reload_on_browser_back() {
   });
 }
 
-// https://stackoverflow.com/questions/14420300/bootstrap-with-ckeditor-equals-problems/18554395#18554395
 
+// https://stackoverflow.com/questions/14420300/bootstrap-with-ckeditor-equals-problems/18554395#18554395
 function ckeditor_init() {
   const original_text =  $('#textedit').val()
   ClassicEditor.create( document.querySelector( '#ckeditor' ), {               
@@ -998,7 +998,8 @@ function _update_ckeditor_data( editor, original_text )
 {
       var html = editor.getData()
       console.log('html:', html)
-      var wiki = html2tracwiki(html)
+      //var wiki = html2tracwiki(html, {'old-table': true})
+      var wiki = html2tracwiki(html, {})
       console.log("wiki:", wiki)
       var diff_els = Diff.diffChars( original_text, wiki ).map( (d) => {
          if( d.removed ) {
@@ -1020,12 +1021,12 @@ function _update_ckeditor_data( editor, original_text )
 
 function _init_table_edit(div) {
         console.log("Init table");
-        const line = $(div).data('line')
-        const lines = $(div).data('lines')
-        if( ! line  ) {
+        const from_line = $(div).data('from-line')
+        const to_line = $(div).data('to-line')
+        if( ! from_line || ! to_line ) {
                 return;
         }
-        const pos = `${line}-${line+lines+1}`
+        const pos = `${from_line}-${to_line+1}`
         const href = `${window.location.pathname}?edit=${pos}&ckeditor=1`
         const a =  $('<a/>');
         a.attr('class', 'edittable');

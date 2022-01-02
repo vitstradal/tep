@@ -464,4 +464,23 @@ module ApplicationHelper
       return ret;
   end
 
+  def ckeditor_html_tweaks(html)
+    return html
+            .gsub('<pre>', '<pre><code>') 
+            .gsub('</pre>', '</code></pre>') 
+            .gsub(/<div class="math">(.*?)<\/div>/, '<mark class="marker-blue">\1</mark>' )
+            .gsub(/<span class="math">(.*?)<\/span>/, '<mark class="marker-green">\1</mark>' )
+            .gsub(/(<div class="table-div".*?)<table>/, '\1<table style="border-style:dashed;border-width:2px;">')
+            # <pre> must contain code
+            # math is done by green and blue marker
+            # old-style table has not class table-wikimedia, so  change it to dotted border, so reverse html2tracwiki.js
+            # can recognize you want back old-style not wikimedia
+            # BTW: old style: || cell1 || cel2 ||
+            # wikimedia:
+            # {|
+            # | cell 1
+            # | cell 2
+            # |}
+  end
+
 end
