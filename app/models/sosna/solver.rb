@@ -29,6 +29,7 @@
 #    t.boolean  "is_test_solver", default: false,  null: false
 #    t.text     "country",        default: "cz"
 #    t.text     "confirm_state",  default: "none"
+#    t.text     "how_i_met_pikomat",  default: ""
 class Sosna::Solver < ActiveRecord::Base
   has_many :solutions
   belongs_to :school

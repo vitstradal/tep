@@ -11,15 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 20191211084239) do
-
-  create_table "ar_internal_metadata", primary_key: "key", force: :cascade do |t|
-    t.string   "value"
-    t.datetime "created_at", limit: 6, null: false
-    t.datetime "updated_at", limit: 6, null: false
-  end
-
-  add_index "ar_internal_metadata", ["key"], name: "sqlite_autoindex_ar_internal_metadata_1", unique: true
+ActiveRecord::Schema.define(version: 19) do
 
   create_table "informs", force: :cascade do |t|
     t.string   "form",       limit: 255
@@ -166,9 +158,9 @@ ActiveRecord::Schema.define(version: 20191211084239) do
   create_table "sosna_solvers", force: :cascade do |t|
     t.text     "name"
     t.text     "last_name"
-    t.text     "sex",            default: "male"
+    t.text     "sex",               default: "male"
     t.text     "birth"
-    t.text     "where_to_send",  default: "home"
+    t.text     "where_to_send",     default: "home"
     t.text     "grade"
     t.text     "grade_num"
     t.text     "finish_year"
@@ -183,10 +175,11 @@ ActiveRecord::Schema.define(version: 20191211084239) do
     t.integer  "school_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "solution_form",  default: "tep"
-    t.boolean  "is_test_solver", default: false,  null: false
-    t.text     "country",        default: "cz"
-    t.text     "confirm_state",  default: "none"
+    t.text     "solution_form",     default: "tep"
+    t.boolean  "is_test_solver",    default: false,  null: false
+    t.text     "country",           default: "cz"
+    t.text     "confirm_state",     default: "none"
+    t.string   "how_i_met_pikomat", default: "",     null: false
   end
 
   create_table "users", force: :cascade do |t|

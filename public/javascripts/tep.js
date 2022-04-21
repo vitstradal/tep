@@ -97,11 +97,34 @@ jQuery(document).ready(function($) {
                   $('#school_div').hide(400);
                 }
         });
-
         var sch = $('#school_id');
-        //console.log('schval:', sch.val());
         if( sch.length == 1 && sch.val() != 'jina' ) {
           $('#school_div').hide();
+        }
+
+        $('#sosna_solver_sex_male, #sosna_solver_sex_female').change(function () {
+           $('.sex').toggle( $(this).val() == 'female' )
+        });
+        if( $("#sosna_solver_sex_male").prop("checked") ) {
+           $('.sex').hide()
+        }
+
+        // formular resitel (novy|editace), schovat adresu skoly, kdyz je vybrana ze seznamu
+        $('#how_i_met_pikomat').change(function (){
+                var val = $(this).val()
+                if('jina' == val)  {
+                  $('#sosna_solver_how_i_met_pikomat').val('')
+                  $('#how_i_met_pikomat_div').show(400);
+                }
+                else {
+                  $('#how_i_met_pikomat_div').hide(400);
+                  $('#sosna_solver_how_i_met_pikomat').val(val)
+                }
+        });
+
+        var how_i_met = $('#how_i_met_pikomat');
+        if( how_i_met.length == 1 && how_i_met.val() != 'jina' ) {
+          $('#how_i_met_pikomat_div').hide();
         }
 
         // ctrl-enter submit formu in textarea

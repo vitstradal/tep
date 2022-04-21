@@ -39,6 +39,7 @@
            <th>Jak</th>
            <th>Adresa</th>
            <th title="Zeme">Z</th>
+           <th title="Jak jsem se dozvěděl o Pikomatu">D</th>
            <th title="Navrátka (none,conf,need)">N</th>
          </tr>
          </thead>
@@ -80,6 +81,7 @@
           <td><%= s.solution_form %> </td>
           <td><%= s.address %> </td>
           <td><%= s.country %> </td>
+          <td><%= s.how_i_met_pikomat %> </td>
           <% conf_class = case s.confirm_state
                           when 'conf'; 'bg-green'
                           when 'next'; 'bg-yellow'
