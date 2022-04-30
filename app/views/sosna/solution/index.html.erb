@@ -103,6 +103,9 @@
   <% if @want_edit || @want_edit_paper || @want_edit_penalisation%>
     <%= button_tag  'Zpět', :class => 'btn', :ico => 'fa-reply', :href => url_for(action: :index, roc: @annual, se: @round, ul: @problem_no)  %>
     <%= button_tag  'Uložit', :class=>'btn btn-danger', ico: 'fa-floppy-o'  %>
+    <% if @want_edit %>
+      <i>Hint: lze se pohyhovat pomocí šipek</i>
+    <% end %>
     <div class="tep-fix-tools">
       <%= button_tag  'Zpět', :class => 'btn', :ico => 'fa-reply', :href => url_for(action: :index, roc: @annual, se: @round, ul: @problem_no)  %>
       <%= button_tag  'Uložit', :class=>'btn btn-danger', ico: 'fa-floppy-o'  %>
@@ -110,7 +113,7 @@
   <% end %>
 
 
-  <div class="table-div">
+  <div class="table-div table-edit-arrows">
     <table class="table table-condensed table-hover table-bordered datatable">
       <thead>
       <tr>

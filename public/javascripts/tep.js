@@ -711,6 +711,19 @@ function init_fotky()
           }
         });
 
+        $('.table-edit-arrows input').keydown( function (ev) {
+          if( ev.key == 'ArrowDown' || ev.key == 'ArrowUp' ) {
+            const td = $(this).closest('td')
+            const td_index = td.index()
+            const tr = td.closest('tr')
+            const tr_next = (ev.key == 'ArrowDown') ? tr.next() : tr.prev()
+            const td_next = tr_next.find('td:nth(' + td_index + ')')
+            td_next.find('input').first().focus().select()
+            console.log('aarrow', tr, tr_next, td_index, td.index(), td_next.index());
+            ev.preventDefault();
+          }
+        });
+
         $('.foto a').click(function (ev) {
            ev.preventDefault();
            var foto = $(this).closest('.foto');
