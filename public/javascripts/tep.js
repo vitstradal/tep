@@ -109,23 +109,24 @@ jQuery(document).ready(function($) {
            $('.sex').hide()
         }
 
-        // formular resitel (novy|editace), schovat adresu skoly, kdyz je vybrana ze seznamu
-        $('#how_i_met_pikomat').change(function (){
+        $('#sosna_solver_how_i_met_pikomat').change(function (){
                 var val = $(this).val()
-                if('jina' == val)  {
-                  $('#sosna_solver_how_i_met_pikomat').val('')
-                  $('#how_i_met_pikomat_div').show(400);
+                $('#how_i_met_pikomat_jina').hide()
+                $('#how_i_met_pikomat_kamarad').hide()
+                if( val == 'jina'  )  {
+                  $('#how_i_met_pikomat_detail_div').show(400)
+                  $('#how_i_met_pikomat_jina').show(400)
+                }
+                else if( val == 'kamarad' )  {
+                  $('#how_i_met_pikomat_detail_div').show(400)
+                  $('#how_i_met_pikomat_kamarad').show(400)
                 }
                 else {
-                  $('#how_i_met_pikomat_div').hide(400);
-                  $('#sosna_solver_how_i_met_pikomat').val(val)
+                  $('#how_i_met_pikomat_detail_div').hide(400)
                 }
         });
 
-        var how_i_met = $('#how_i_met_pikomat');
-        if( how_i_met.length == 1 && how_i_met.val() != 'jina' ) {
-          $('#how_i_met_pikomat_div').hide();
-        }
+        $('#sosna_solver_how_i_met_pikomat').change();
 
         // ctrl-enter submit formu in textarea
         $('.ctrl-enter-submit').keydown(function (e) {
@@ -214,6 +215,16 @@ jQuery(document).ready(function($) {
 
 });
 
+
+function _show(el_selector, want_show) {
+        
+        if( want_show ) {
+                $(el_selector).show(400);
+        }
+        else {
+                $(el_selector).hide(400);
+        }
+}
 /* f otogal */
 function set_hash(cat, img_el)
 {

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 19) do
+ActiveRecord::Schema.define(version: 20) do
 
   create_table "informs", force: :cascade do |t|
     t.string   "form",       limit: 255
@@ -158,9 +158,9 @@ ActiveRecord::Schema.define(version: 19) do
   create_table "sosna_solvers", force: :cascade do |t|
     t.text     "name"
     t.text     "last_name"
-    t.text     "sex",               default: "male"
+    t.text     "sex",                      default: "male"
     t.text     "birth"
-    t.text     "where_to_send",     default: "home"
+    t.text     "where_to_send",            default: "home"
     t.text     "grade"
     t.text     "grade_num"
     t.text     "finish_year"
@@ -175,11 +175,12 @@ ActiveRecord::Schema.define(version: 19) do
     t.integer  "school_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "solution_form",     default: "tep"
-    t.boolean  "is_test_solver",    default: false,  null: false
-    t.text     "country",           default: "cz"
-    t.text     "confirm_state",     default: "none"
-    t.string   "how_i_met_pikomat", default: "",     null: false
+    t.text     "solution_form",            default: "tep"
+    t.boolean  "is_test_solver",           default: false,  null: false
+    t.text     "country",                  default: "cz"
+    t.text     "confirm_state",            default: "none"
+    t.string   "how_i_met_pikomat",        default: "",     null: false
+    t.string   "how_i_met_pikomat_detail", default: "",     null: false
   end
 
   create_table "users", force: :cascade do |t|

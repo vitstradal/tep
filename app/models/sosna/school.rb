@@ -24,6 +24,13 @@ class Sosna::School < ActiveRecord::Base
   end
 
   ##
+  # *Returns* zkracene jmeno na 20 znaku
+#  def name_short
+#
+#    namep[0..19]
+#  end
+
+  ##
   # *Returns* dlouha adresa adresa zkombinovana z ostatních položek "#{city}, #{name}, #{street} #{num}, #{psc} "
   def long
      "#{city}, #{name}, #{street} #{num}, #{psc} "

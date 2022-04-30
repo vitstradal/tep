@@ -84,6 +84,8 @@
       </div>
     </noscript>
 
+    <hr>
+
     <div class="form-group">
       <%= f.label :solver_school, "Škola", :class =>  'col-sm-3 control-label no-padding-right'%>
       <div class="col-sm-9 <%= form_error_class @solver, :school %>">
@@ -133,46 +135,6 @@
       <% end # if !@school.nil? %>
     </div>
 
-    <hr>
-
-    <div class="form-group">
-      <%= f.label :solver_how_i_met_pikomat, :class =>  'col-sm-3 control-label no-padding-right' do %>
-        O Pikomatu jsem se dozvěděl<span class='sex'>a</span>
-      <% end %>
-      <div class="col-sm-9 <%= form_error_class @solver, :how_i %>">
-        <% how_i_met_ops = [['vyber', :vyber],
-                            ['od kamárádů', :kamarad],
-                            ['ve škole', :skola],
-                            ['na táboře', :tabor],
-                            ['na dni otevřených dveří', :dod],
-                            ['z internetu', :internet],
-                            ['už si nevzpomínám', :nevim],
-                            ['od jinud', :jina]
-                           ]
-
-           how_i_met_selected = if how_i_met_ops.map { |item| item[1].to_s }.include?  @solver.how_i_met_pikomat
-                                  @solver.how_i_met_pikomat
-                                elsif @solver.how_i_met_pikomat.empty?
-                                 'vyber'
-                                else
-                                 'jina'
-                                end
-        %>
-        <%= select_tag :how_i_met_pikomat,
-        options_for_select( how_i_met_ops, how_i_met_selected )
-        %>
-      </div>
-    </div>
-    <div id='how_i_met_pikomat_div' >
-      <div class="form-group">
-        <%= label_tag :origin_else, "napiš odkud", :class =>  'col-sm-3 control-label no-padding-right'%>
-        <div class="col-sm-9">
-          <%= f.text_field :how_i_met_pikomat %>
-        </div>
-      </div>
-    </div>
-
-    <hr>
 
     <% if ! is_bonus %>
       <div class="form-group">
@@ -234,6 +196,48 @@
           <%= f.radio_button :sex, :female %> řešitelka
         </label>
        </div>
+    </div>
+
+    <hr>
+
+    <div class="form-group">
+      <%= f.label :solver_how_i_met_pikomat, :class =>  'col-sm-3 control-label no-padding-right' do %>
+        O Pikomatu jsem se dozvěděl<span class='sex'>a</span>
+      <% end %>
+      <div class="col-sm-9 <%= form_error_class @solver, :how_i %>">
+        <% how_i_met_ops = [['vyber si:', :vyber],
+                            ['od kamaráda', :kamarad],
+                            ['ve škole', :skola],
+                            ['na táboře', :tabor],
+                            ['na dni otevřených dveří', :dod],
+                            ['z internetu', :internet],
+                            ['už si nevzpomínám', :nevim],
+                            ['od jinud', :jina]
+                           ]
+
+           how_i_met_selected = if how_i_met_ops.map { |item| item[1].to_s }.include?  @solver.how_i_met_pikomat
+                                  @solver.how_i_met_pikomat
+                                elsif @solver.how_i_met_pikomat.empty?
+                                 'vyber'
+                                else
+                                 'jina'
+                                end
+        %>
+        <%= f.select :how_i_met_pikomat,
+            options_for_select( how_i_met_ops, how_i_met_selected )
+        %>
+      </div>
+    </div>
+    <div id='how_i_met_pikomat_detail_div' >
+      <div class="form-group">
+        <%= f.label :how_i_met_pikomat_detail, :class => 'col-sm-3 control-label no-padding-right' do%>
+        <span id='how_i_met_pikomat_jina'>napiš odkud</span>
+        <span id='how_i_met_pikomat_kamarad'>od jakého, možná dostane dárek</span>
+        <% end %>
+        <div class="col-sm-9">
+          <%= f.text_field :how_i_met_pikomat_detail %>
+        </div>
+      </div>
     </div>
 
     <hr>
