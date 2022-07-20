@@ -1,11 +1,13 @@
 <div class="tabbable">
   <ul id="myTab" class="nav nav-tabs">
-     <li class="active"> <%= link_to 'Sosna', '#sosna', 'data-toggle' => 'tab' %></li>
-     <li               > <%= link_to 'Aesop', '#aesop', 'data-toggle' => 'tab' %></li>
+     <li <%=class_active_if(@tab=='sosna')%>> <%= link_to 'Sosna', '#sosna', 'data-toggle' => 'tab' %></li>
+     <li <%=class_active_if(@tab=='aesop')%>> <%= link_to 'Aesop', '#aesop', 'data-toggle' => 'tab' %></li>
+     <li <%=class_active_if(@tab=='banner')%>> <%= link_to 'Banner', '#banner', 'data-toggle' => 'tab' %></li>
   </ul>
   <div class="tab-content">
-    <div class="tab-pane in active" id='sosna'>
+    <div class="tab-pane in <%=active(@tab=='sosna')%>" id='sosna'>
       <%= form_for :config, :url => {:action => :update}, :html =>  {:class => 'form-horizontal'}  do |f| %>
+        <%= hidden_field_tag  :tab, 'sosna'%>
         <div class="table-div">
           <table class="table table-condensed table-hover table-bordered">
             <tbody>
@@ -24,6 +26,7 @@
                 <td><%= text_field :config, :round,  value: @config[:round] %></td>
                 <td></td>
               </tr>
+              <tr>
                 <th>Zobrazit opravené řešení aktuální série</th>
                 <td><%= select_tag 'config[show_revisions]', options_for_select(["yes","no"], @config[:show_revisions]) %></td>
                 <td>řešení předchozích sérií budou zobrazeny bez ohledu na tuto hodnotu</td>
@@ -89,8 +92,9 @@
         <% end %>
       <% end %>
     </div>
-    <div class="tab-pane in" id='aesop'>
+    <div class="tab-pane in <%=active(@tab=='aesop')%>" id='aesop'>
       <%= form_for :config, :url => {:action => :update}, :html =>  {:class => 'form-horizontal'}  do |f| %>
+        <%= hidden_field_tag  :tab, 'aesop'%>
         <div class="table-div">
           <table class="table table-condensed table-hover table-bordered">
             <tbody>
@@ -106,6 +110,47 @@
               </tr>
             <tbody>
           </table>
+        </div>
+      
+        <% if current_user.admin? %>
+          <div class="control-group">
+            <div class="controls"><%= f.submit :class=>'btn btn-primary', :value=>'Uložit' %></div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+    <div class="tab-pane in <%=active(@tab=='banner')%>" id='banner'>
+      <%= form_for :config, :url => {:action => :update}, :html =>  {:class => 'form-horizontal'}  do |f| %>
+        <%= hidden_field_tag  :tab, 'banner'%>
+        <div class="table-div">
+          <table class="table table-condensed table-hover table-bordered">
+            <tbody>
+              <tr>
+                <th>Banner</th>
+                <td><%= text_area :config, :banner, value: @config[:banner], cols: 50 %></td>
+                <td>zobrazí se každému, je možné použít <%=link_to 'wiky syntax', '/piki/jakna/wiki' %> </td>
+              </tr>
+              <tr>
+              <tr>
+                <th>Zobrazit banner všem</th>
+                <td><%= select_tag 'config[show_banner]', options_for_select(["yes","no"], @config[:show_banner]) %></td>
+                <td>zapne vypne zobrazení banneru</td>
+                <td></td>
+              </tr>
+              <tr>
+                <th>Zobrazit jen uživatelům</th>
+                <td><%= select_tag 'config[show_banner_to_user]', options_for_select(["yes","no"], @config[:show_banner_to_user]) %></td>
+                <td>zapne vypne zobrazení banneru jen přihlášeným</td>
+                <td></td>
+              </tr>
+          </table>
+        </div>
+        <h3>Náhled</h3>
+        <div class="alert alert-danger">
+            <button type="button" class="close" data-dismiss="alert">
+              <i class="ace-icon fa fa-times"></i>
+            </button>
+           <%== wiki2html( @config[:banner] ) %>
         </div>
       
         <% if current_user.admin? %>

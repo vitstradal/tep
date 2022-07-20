@@ -290,7 +290,24 @@
             <div class="alert alert-success"> <%=msg %> </div>
           <% end %>
         <% end %>
-
+<%################################################################################## %>
+<%# bannery %>
+<%################################################################################## %>
+        <% show_banner = false %>
+        <% show_banner ||= true if @config[:show_banner] == 'yes'  %>
+        <% show_banner ||= user_signed_in?  if @config[:show_banner_to_user] == 'yes'   %>
+        <% if show_banner %>
+          <% if cookies['hide_banner'.to_sym] != '1' %>
+            <div class="alert alert-danger">
+              <button type="button" class="banner close" data-dismiss="alert">
+                <i class="ace-icon fa fa-times"></i>
+              </button>
+                <%== wiki2html( @config[:banner] ) %>
+            </div>
+          <% else %>
+            .
+          <% end %>
+        <% end %>
 <%################################################################################## %>
 <%# obsah stranky %>
 <%################################################################################## %>

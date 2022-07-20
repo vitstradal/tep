@@ -47,6 +47,9 @@ MathJax.Hub.Register.StartupHook("TeX Jax Ready",function () {
   TEX.Macro("h"," h");
   TEX.Macro("exclaim", "");
   TEX.Macro("meterin", "′");
+  TEX.Macro("N", "N");
+  TEX.Macro("meterm", "m");
+  TEX.Macro("meterid", "''");
 });
 
 MathJax.Hub.Config({

@@ -711,6 +711,10 @@ function init_fotky()
           }
         });
 
+        $('button.banner.close').click( function (ev) {
+           console.log("banner close click")
+           document.cookie = 'hide_banner=1'
+        })
         $('.table-edit-arrows input').keydown( function (ev) {
           if( ev.key == 'ArrowDown' || ev.key == 'ArrowUp' ) {
             const td = $(this).closest('td')

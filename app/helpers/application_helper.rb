@@ -483,4 +483,28 @@ module ApplicationHelper
             # |}
   end
 
+  # jednoduchy prevod na wiki
+  # pro nahledy pod
+  def wiki2html(wiki)
+    base =  url_for(:root)
+    root = url_for(:root)
+    options  = {
+      base: base,
+      root: root,
+      math: false,
+      merge: false,
+      edit_heading: false,
+      id_from_heading: false,
+      id_translit: false,
+      no_escape: true,
+      allow_html: false,
+      allowed_schemes:  %w(http https),
+      div_around_table: true,
+    }
+    parser = TracWiki.parser(options)
+    html = parser.to_html(wiki)
+    return html
+
+  end
+
 end

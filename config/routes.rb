@@ -93,7 +93,7 @@ Tep::Application.routes.draw do
   post  '/sosna/school/update'               => 'sosna/school#update',          :as => :sosna_school_updateP
   post '/sosna/school/:id/delete'            => 'sosna/school#delete',          :as => :sosna_school_delete
 
-  get  '/sosna/config'                       => 'sosna/config#index',           :as => :sosna_configs
+  get  '/sosna/config(/:tab)'                => 'sosna/config#index',           :as => :sosna_configs
   post '/sosna/config/update'                => 'sosna/config#update',          :as => :sosna_config_update
 
   # tep

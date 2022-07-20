@@ -605,8 +605,8 @@ EOL
 který chce dostávat leták e-mailem. Pokud od nás již nechceš zpravy dostávat napiš
 na pikomat@pikomat.mff.cuni.cz,,
 EOL
-    @spam[:html] = _wiki2html(@spam[:wiki])
-    @spam[:bottom_html] = _wiki2html(@spam[:bottom_wiki])
+    @spam[:html] = wiki2html(@spam[:wiki])
+    @spam[:bottom_html] = wiki2html(@spam[:bottom_wiki])
     #@emails = Sosna::Solver.join(:sosna_solutions).where(annual: @annual).where.not(score: nil).map{ |s| s.email }
   end
 
@@ -651,9 +651,9 @@ EOL
       from: from,
     }
 
-    html = _wiki2html(wiki)
+    html = wiki2html(wiki)
     if ! bottom_wiki.nil?
-      bottom_html = _wiki2html(bottom_wiki)
+      bottom_html = wiki2html(bottom_wiki)
     end
 
     emails.each do |email|
@@ -673,27 +673,6 @@ EOL
     redirect_to action: :spam
   end
 
-  def _wiki2html(wiki)
-    base =  url_for(:root)
-    root = url_for(:root)
-    options  = {
-      base: base,
-      root: root,
-      math: false,
-      merge: false,
-      edit_heading: false,
-      id_from_heading: false,
-      id_translit: false,
-      no_escape: true,
-      allow_html: false,
-      allowed_schemes:  %w(http https),
-      div_around_table: true,
-    }
-    parser = TracWiki.parser(options)
-    html = parser.to_html(wiki)
-    return html
-
-  end
 
   ##
   #  GET  /sosna/solver/aesop

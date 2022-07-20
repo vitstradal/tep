@@ -4,10 +4,11 @@
 class Sosna::ConfigController < SosnaController
 
   ##
-  #  GET /sosna/config
+  #  GET /sosna/config[/tab]
   #
   # viz helper `load_config` {rdoc}[rdoc-ref:ApplicationHelper.load_config]
   def index
+    @tab = params[:tab] || 'sosna'
     load_config
   end
 
@@ -17,6 +18,7 @@ class Sosna::ConfigController < SosnaController
   # config[]:: všechny zadané parametry budou uloženy do tabulky `sosna_configs`
   def update
     config = params[:config]
+    @tab = params[:tab]
     config.each_pair do |k,v|
 
         if k =~ /^deadline\d+$/
@@ -32,7 +34,7 @@ class Sosna::ConfigController < SosnaController
         end
                 
     end
-    redirect_to :sosna_configs
+    redirect_to sosna_configs_url(@tab)
   end
 
 end
