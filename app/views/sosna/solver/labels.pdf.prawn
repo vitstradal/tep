@@ -194,7 +194,7 @@ else
     x += o[:w] + o[:dx]
     x,y = o[:l], y - o[:h] - o[:dy] if x + o[:w] > pw
     if y - o[:h] - o[:dy] < 0
-     if index < solvers.size - 1  # not for last
+     if index < @solvers.size - 1  # not for last
         pdf.start_new_page
         x = o[:l]
         y =  ph - o[:t]

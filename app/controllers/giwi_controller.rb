@@ -66,6 +66,7 @@ class GiwiController < ApplicationController
     @wiki = params[:wiki] || 'main'
     @giwi = Giwi.get_giwi(@wiki)
     @cursor = params[:cursor]
+    @version = params[:version]
     @use_ckeditor = params[:ckeditor].nil? ? false : true
     auth_name = @giwi.auth_name
 
@@ -145,6 +146,7 @@ class GiwiController < ApplicationController
     @redirect_to       = page[:redirect_to]
     @background_image  = page[:background_image]
     @nocache           = page[:nocache]
+    @special_page      = page[:special_page]
 
     return _handle_redirect(@redirect_to) if @redirect_to
 
@@ -727,6 +729,7 @@ class GiwiController < ApplicationController
       wide_display:     env.at('wide_display', false),
       foto_gallery:     env.at('foto_gallery', false),
       background_image: env.at('background_image', nil),
+      special_page:     env.at('special_page', nil),
       redirect_to:      env.at('redirect_to', false),
       nocache:          env.at('nocache', false),
     }

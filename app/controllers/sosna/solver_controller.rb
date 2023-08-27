@@ -601,8 +601,8 @@ Organizátoři Pikomatu
 EOL
 
     @spam[:bottom_wiki] ||= <<EOL
-,,Tuto zprávu dostáváš proto, že jsi se registroval jako řešitel Pikomatu MFF UK,
-který chce dostávat leták e-mailem. Pokud od nás již nechceš zpravy dostávat napiš
+,,Tuto zprávu dostáváš proto, že ses registroval jako řešitel Pikomatu MFF UK,
+který chce dostávat leták e-mailem. Pokud od nás již nechceš zpravy dostávat, napiš
 na pikomat@pikomat.mff.cuni.cz,,
 EOL
     @spam[:html] = wiki2html(@spam[:wiki])

@@ -25,6 +25,7 @@
     <%= link_to  url_for(path: file_name) , {title:  'view'} do %> <span class="fa fa-file-o"></span>  <% end %>
     <%= link_to  url_for(path: file_name, edit: 'me') , {:title =>  'edit'} do %> <%=icon :fa_edit%>  <% end %>
     <%= link_to  url_for(path: file_name, diff: commit_oid, diff_to:'HEAD') , {:title =>  'všechny zmeny od tud'} do %> <%=icon :fa_angle_double_up%> <% end %>
+    <%= link_to  url_for(path: file_name, version: commit_oid ) , {:title =>  'prohlédni tuto verzi'} do %> <%=icon :fa_file_text%><% end %>
     <%= link_to url_for(path: file_name, diff: commit_oid) , {:title =>  'diff'} do %>
       <span class="fa fa-columns"></span> <%= title %>
     <% end %>

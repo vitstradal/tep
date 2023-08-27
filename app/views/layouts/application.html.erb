@@ -24,12 +24,16 @@
   <%# stylesheet_link_tag '/ace/css/ace-part2.css' %>
   <%= stylesheet_link_tag '/stylesheets/andulka/stylesheet.css' %>
   <%= stylesheet_link_tag '/stylesheets/tep.css' %>
+  <% if @special_page %>
+    <%= stylesheet_link_tag '/stylesheets/special.css' %>
+  <% end %>
+
   <%= stylesheet_link_tag '/stylesheets/print.css', media:'print'%>
 
 
 </head>
 <%#  <body class="no-skin"> %>
-<body class="<%= cookies['ace.skin'.to_sym] || 'no-skin fail'%>"<%if @background_image%> data-background-image="<%=@background_image%>"<%end%>>
+<body class="<%= cookies['ace.skin'.to_sym] || 'no-skin fail'%>"<%if @background_image%> data-background-image="<%=@background_image%>"<%end%><%if @special_page%> data-special-page="<%=@special_page%>"<%end%>>
 
 <% if ENV['RAILS_ENV'] != 'production'  %>
 <img src="<%= asset_path 'images/devel-version.png'%>" style='pointer-events:none;z-index:99;position:fixed;bottom:0;right:0;border:0;'>
@@ -396,6 +400,8 @@
 <% end %>
 <%= javascript_include_tag '/ace/js/uncompressed/ace.js' %>
 <%= javascript_include_tag '/javascripts/tep.js' %>
-
+<% if @special_page %>
+  <%= javascript_include_tag "/javascripts/special.js"  %>
+<% end %>
 </body>
 </html>

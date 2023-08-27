@@ -37,20 +37,7 @@ jQuery(document).ready(function($) {
         var bgimg = $('body').data('background-image');
         if( bgimg ) {
           console.log('bgimg', bgimg);
-          if( bgimg == 'pb2019' || bgimg == 'ps22srp') {
-            $('body').addClass('pb2019');
-            if( bgimg == 'ps22srp') {
-              $('body').addClass('ps22srp');
-            }
-            $('#sidebar-collapse').click();
-            $('a.navbar-brand img').attr('src', '/setkani/pikobrani2019/pb2019-logo.png');
-            $('#nav-search-input').attr('placeholder', 'už nehledej ... ');
-            $('link[type="image/x-icon"]').attr('href', '/setkani/pikobrani2019/pikomat.png');
-            $('span.input-icon i.ace-icon').removeClass('nav-search-icon');
-          }
-          else {
-            $('body').css('background-image', "url(" + bgimg + ")");
-          }
+          $('body').css('background-image', "url(" + bgimg + ")");
         }
         // data tables
 	jQuery.extend( jQuery.fn.dataTableExt.oSort, {
@@ -938,7 +925,10 @@ function set_klep_status(msg_count) {
 }
 
 function animate_title(count) {
-  var want_run = count > 0 ? true : false;
+  //var want_run = count > 0 ? true : false;
+
+  // disable blinking
+  var want_run = false;
 
   var $title = $('title');
   var timer = $title.data('timer');
