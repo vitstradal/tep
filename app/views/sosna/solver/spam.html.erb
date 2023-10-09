@@ -73,11 +73,12 @@ Link: <%= link_to @url, @url %>, <%= link_to "zde", @url %>.
     <div class="form-group">
         <%= label_tag :subject, "Odesilatel", :class =>  'col-sm-3 control-label no-padding-right'%>
         <div class="col-sm-9" >
-              <%  emails = %w( 
-                 tep@pikomat.mff.cuni.cz 
-                 tabor@pikomat.mff.cuni.cz 
-                 soustredeni@pikomat.mff.cuni.cz 
-                 besidka@pikomat.mff.cuni.cz 
+              <%  emails = %w(
+                 tep@pikomat.mff.cuni.cz
+                 tabor@pikomat.mff.cuni.cz
+                 soustredeni@pikomat.mff.cuni.cz
+                 besidka@pikomat.mff.cuni.cz
+                 pikomat@pikomat.mff.cuni.cz
               )%>
               <%= select_tag :from, options_for_select(emails, @spam[:from]) %></td>
         </div>
@@ -102,7 +103,7 @@ Link: <%= link_to @url, @url %>, <%= link_to "zde", @url %>.
               <%= text_area_tag :bottom_wiki, @spam[:bottom_wiki], cols: 80, rows: 5 %>
         </div>
     </div>
-  
+
     <div class="form-group">
         <div class="col-sm-offset-3 col-sm-9">
             <label class="checkbox" for="dryrun"> <%= check_box_tag 'dryrun', value=1, checked = true  %>
