@@ -275,15 +275,7 @@ class Sosna::SolverController < SosnaController
     agree = ! params[:souhlasim].nil?
     solver.errors.add(:souhlasim, 'Je nutno souhlasit s podmínkami') if ! agree
     solver.errors.add(:email, 'je již registrován u jiného řešitele') if Sosna::Solver.where(email: solver.email, annual: @annual).exists? && !solver.email.empty?
-
-    if solver.psc !~ /^\d{3} \d{2}$/ # pokud neni ve tvaru ^DDD DD$
-      solver.psc=solver.psc.gsub(/[^\d]/, '')	# kazdou necislici nahradi ''-smaze
-      if ! (solver.psc.length == 5)
-        solver.errors.add(:psc, 'neobsahuje 5 číslic')  #hodi chybu pokud neobsahuje prave 5 cislic
-      else
-        solver.psc=solver.psc[0,3]+" "+solver.psc[-2,2] # prevede do tvaru ^DDD DD$
-      end
-    end
+    _handle_solver_psc( solver )
 
     solver.errors.add(:email, 'neexistující adresa') if !solver.email.empty? && !email_valid_mx_record?(solver.email)
     solver.errors.add(:birth, 'jsi příliš stár') if solver.errors[:birth].blank? && !solver.birth.empty? && (Date.parse(solver.birth) + 17.years) < Date.today
@@ -294,6 +286,8 @@ class Sosna::SolverController < SosnaController
       solver.errors.add(:birth, 'nemůže být prázdné') if solver.birth.blank?
     end
 
+
+  def _handle_school( school, solver )
     case school_id
      when 'none'
        solver.errors.add(:skola, 'Vyber školu ze seznamu nebo zadej novou')
@@ -356,6 +350,17 @@ class Sosna::SolverController < SosnaController
     school.save if school.id.nil?
     solver.save
     redirect_to :action => :create_tnx, :send_first =>  send_first
+  end
+
+  def _handle_solver_psc( solver )
+    if solver.psc !~ /^\d{3} \d{2}$/ # pokud neni ve tvaru ^DDD DD$
+      solver.psc=solver.psc.gsub(/[^\d]/, '')	# kazdou necislici nahradi ''-smaze
+      if ! (solver.psc.length == 5)
+        solver.errors.add(:psc, 'neobsahuje 5 číslic')  #hodi chybu pokud neobsahuje prave 5 cislic
+      else
+        solver.psc=solver.psc[0,3]+" "+solver.psc[-2,2] # prevede do tvaru ^DDD DD$
+      end
+    end
   end
 
   ##
