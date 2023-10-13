@@ -1,6 +1,7 @@
 # encoding: utf-8
 require 'ffi-locale'
 require 'trac-wiki'
+require 'pp'
 
 class Sosna::SolverController < SosnaController
 
@@ -257,18 +258,8 @@ class Sosna::SolverController < SosnaController
     params.require(:sosna_solver).permit!
     is_admin =  !current_user.nil? && current_user.admin?
 
-    school_id =  params[:school].delete :id
-
     send_first =  _edit_want_send_first()
-    #@sosna_solver=params[:sosna_solver]
-    #psc=@sosna_solver[:psc]
-    #prvni=psc[0,3]
-    #druhe=psc[-2,2]
-    #pscnove=prvni+" "+druhe
-    #@sosna_solver[:psc]=pscnove
-    #params[:sosna_solver]=@sosna_solver
     solver = Sosna::Solver.new(params[:sosna_solver])
-
     is_bonus = solver.confirm_state == 'bonus'
 
     solver.valid?
@@ -286,39 +277,24 @@ class Sosna::SolverController < SosnaController
       solver.errors.add(:birth, 'nemůže být prázdné') if solver.birth.blank?
     end
 
+    school = _handle_school(solver, is_bonus)
 
-  def _handle_school( school, solver )
-    case school_id
-     when 'none'
-       solver.errors.add(:skola, 'Vyber školu ze seznamu nebo zadej novou')
-     when 'jina'
-      params.require(:sosna_school).permit!
-      school = Sosna::School.new(params[:sosna_school])
-     else
-      school = Sosna::School.find(school_id)
-    end
-
-    if ! school.nil?
-      if school.psc !~ /^\d{3} \d{2}$/ # pokud neni ve tvaru ^DDD DD$
-        school.psc=school.psc.gsub(/[^\d]/, '')	# kazdou necislici nahradi ''-smaze
-        if ! (school.psc.length == 5)
-          school.errors.add(:psc, 'neobsahuje 5 číslic')  #hodi chybu pokud neobsahuje prave 5 cislic
-        else
-          school.psc=school.psc[0,3]+" "+school.psc[-2,2] # prevede do tvaru ^DDD DD$
-        end
-      end
-    end
-
-    if school.nil? || school.invalid? || solver.errors.count > 0
-        add_alert "Pozor: ve formuláři jsou chyby"
-        school.id = -1 if school_id == 'jina'
+    if is_bonus
+      if solver.errors.count > 0
+        add_alert "Pozor: ve formuláři jsou chyby (bonus)" + solver.errors.to_json.to_s
         flash[:solver] = solver
-        flash[:school] = school
         flash[:agree] = agree
-        return redirect_to :action => :new_bonus if is_bonus
-        return redirect_to :action => :new
-    end
+        return redirect_to :action => :new_bonus
+      end
+    elsif school.nil? || school.invalid? || solver.errors.count > 0
 
+      add_alert "Pozor: ve formuláři jsou chyby"
+      school.id = -1 if school.nil?
+      flash[:solver] = solver
+      flash[:school] = school
+      flash[:agree] = agree
+      return redirect_to :action => :new
+    end
 
     solver.school = school
     solver.annual = @annual
@@ -347,9 +323,39 @@ class Sosna::SolverController < SosnaController
     end
 
     # some test
-    school.save if school.id.nil?
+    school.save if school && school.id.nil?
     solver.save
     redirect_to :action => :create_tnx, :send_first =>  send_first
+  end
+
+  def _handle_school( solver, is_bonus )
+
+    return nil if is_bonus
+
+    school_id = params[:school] ? params[:school].delete(:id) : 'none'
+
+    case school_id
+     when 'none'
+       solver.errors.add(:skola, 'Vyber školu ze seznamu nebo zadej novou')
+       school = nil
+     when 'jina'
+       params.require(:sosna_school).permit!
+       school = Sosna::School.new(params[:sosna_school])
+     else
+       school = Sosna::School.find(school_id)
+    end
+
+    if ! school.nil?
+      if school.psc !~ /^\d{3} \d{2}$/ # pokud neni ve tvaru ^DDD DD$
+        school.psc=school.psc.gsub(/[^\d]/, '')	# kazdou necislici nahradi ''-smaze
+        if ! (school.psc.length == 5)
+          school.errors.add(:psc, 'neobsahuje 5 číslic')  #hodi chybu pokud neobsahuje prave 5 cislic
+        else
+          school.psc=school.psc[0,3]+" "+school.psc[-2,2] # prevede do tvaru ^DDD DD$
+        end
+      end
+    end
+    return school
   end
 
   def _handle_solver_psc( solver )

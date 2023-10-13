@@ -967,7 +967,7 @@ function show_title(count, want_star) {
     title_text = $title.text();
     $title.data('title', title_text);
   }
-  if( count == 0 ) {
+  if( count == undefined || count == 0 ) {
     $title.text(title_text);
     $('#ikona').attr('href', '/images/ikonka32.ico');
   }

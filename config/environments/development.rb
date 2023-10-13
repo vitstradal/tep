@@ -34,7 +34,7 @@ Tep::Application.configure do
   config.action_dispatch.best_standards_support = :builtin
 
   #config.action_mailer.default_url_options = { :host => 'localhost:3000' }
-  config.action_mailer.default_url_options = { :host => 'pikomat.ms.mff.cuni.cz/provedouci/rails/tep-dev' }
+  config.action_mailer.default_url_options = { :host => 'pikomat.ms.mff.cuni.cz' }
 
   config.eager_load = false
 

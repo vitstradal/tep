@@ -10,7 +10,8 @@ Tep::Application.routes.draw do
   # anon:
   get  '/sosna/solver/new'                   => 'sosna/solver#new',                     :as => :sosna_solver_new
   get  '/prihlaska'                          => 'sosna/solver#new',                     :as => :sosna_solver_new_short
-  get  '/bonus/new'                          => 'sosna/solver#new_bonus',               :as => :sosna_solver_new_bonus
+#  get  '/bonus/new'                          => 'sosna/solver#new_bonus',               :as => :sosna_solver_new_bonus
+  get  '/pikomaso'                           => 'sosna/solver#new_bonus',               :as => :sosna_solver_new_bonus
   get  '/sosna/solver/confirm'               => 'sosna/solver#user_solver_confirm',     :as => :sosna_solver_user_solver_confirm
   post '/sosna/solver/create'                => 'sosna/solver#create',                  :as => :sosna_solver_anon_create
   get  '/sosna/solver/tnx'                   => 'sosna/solver#create_tnx',              :as => :sosna_solver_create_tnx
