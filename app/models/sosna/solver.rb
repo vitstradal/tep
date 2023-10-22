@@ -39,7 +39,7 @@ class Sosna::Solver < ActiveRecord::Base
   validates :num, :psc, :city, presence: true, :if  => :send_home?
   validates :birth,  format: {with: /\A\Z|\A\d+\.\d+\.\d{4}\Z/, message: :date}
   validates :grade_num,  format: {with: /\A\d*\Z/, message: :number}
-  validates :email, format: {with: /\A\Z|\A[-_a-z\d\.]+@[a-z\d\.\-]+\Z/i , message: :email}
+  validates :email, format: {with: /\A\Z|\A[-_a-z\d\.\+]+@[a-z\d\.\-]+\Z/i , message: :email}
   #validates_associated :school
 
   ##
