@@ -52,7 +52,10 @@ jQuery(document).ready(function($) {
 		//console.log("desc:", a, b, a.localeCompare(b));
 		return b.localeCompare(a, 'cs') < 0 ? -1 : 1;
 	    },
-            "numstr-pre": function ( a ) { return parseInt(a); },
+            "numstr-pre": function ( a ) {
+	        a = a.replace(/<[^>]*>/,'');
+                return parseInt(a);
+            },
             "numstr-asc":  function ( a, b ) { return a - b; },
             "numstr-desc": function ( a, b ) { return b - a; },
 	} );
@@ -68,8 +71,8 @@ jQuery(document).ready(function($) {
 		//"bSort": false,
 		"aaSorting": [],
 	        "aoColumnDefs": [
-					{ "sType": "numeric", "aTargets": [ 0,  ] },
-					{ "sType": "locale", "aTargets": [ 1 ] },
+					{ "sType": "numstr", "aTargets": [ 0,  ] },
+					{ "sType": "locale", "aTargets": [ 1, 2, 3, 4 ] },
 			        ],
         });
 
