@@ -289,7 +289,7 @@ class Sosna::SolverController < SosnaController
     elsif school.nil? || school.invalid? || solver.errors.count > 0
 
       add_alert "Pozor: ve formuláři jsou chyby"
-      school.id = -1 if school.nil?
+      #school.id = -1 if ! school.nil?
       flash[:solver] = solver
       flash[:school] = school
       flash[:agree] = agree
