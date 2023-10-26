@@ -502,7 +502,7 @@ module ApplicationHelper
       div_around_table: true,
     }
     parser = TracWiki.parser(options)
-    html = parser.to_html(wiki)
+    html = parser.to_html(wiki||'')
     return html
 
   end
