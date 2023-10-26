@@ -12,6 +12,10 @@
 <% else %>
    série <%= @round %>
 <% end %>
+<% if @level == Sosna::Solver::JUNIOR_LEVEL %>
+   , Junior
+<% end %>
+
 <% if ! @solver_is_current_user %>,
    <%= @solver.full_name %> (roč.<%= @solver.annual%>)
 <% end%>
@@ -43,7 +47,9 @@
     <tr>
       <td><%= p.title%> </td>
       <td>
-        <% if sol.filename_orig  %>
+        <% if p.junior_level? and not @solver.junior? %>
+          <i class="fa fa-ban red"></i> <i>úloha pouze pro mladší řešitele</i>
+        <% elsif sol.filename_orig  %>
           <i class="fa fa-check green"></i> <%= link_to sol.filename_orig, :action => :download, :id => sol.id %>
         <% elsif sol.has_paper_mail %>
           <i class="fa fa-check green"></i> <i>řešení došlo poštou</i>
@@ -52,20 +58,31 @@
         <% end %>
       </td>
       <% if show_nahrat || show_nahrat_admin%>
-         <td>  <%= form_for  sol, :html => {:class=> 'form-inline', :multipart => true}, :url => :sosna_solution_upload do |f|  %>
-                 <%= f.hidden_field :id %>
-                     <div style="display:inline-block;width:200px;height:16px">
-                       <%= f.file_field :solution_file , :multiple => true, :class => 'ace-file-input', :accept => 'application/pdf,image/jpeg,image/png', 'max-size' => max_size  %>
-                     </div>
-                     <%= f.submit :class => 'btn btn-primary', :value => '<' %>
-            <% end %>
+         <td>
+             <% if p.junior_level? and not @solver.junior? %>
+                -
+             <% else %>
+                 <%= form_for  sol, :html => {:class=> 'form-inline', :multipart => true}, :url => :sosna_solution_upload do |f|  %>
+                     <%= f.hidden_field :id %>
+                         <div style="display:inline-block;width:200px;height:16px">
+                           <%= f.file_field :solution_file ,
+                                   :multiple => true,
+                                   :class => 'ace-file-input',
+                                   :accept => 'application/pdf,image/jpeg,image/png',
+                                   'max-size' => max_size  %>
+                         </div>
+                         <%= f.submit :class => 'btn btn-primary', :value => '<' %>
+                <% end %>
+             <% end %>
          </td>
       <% end %>
       <td>
         <% sol_in_this_round_allowed   = @round.to_i <  @config[:round].to_i %>
         <% sol_in_this_round_allowed ||= @round == @config[:round] && @config[:show_revisions] == 'yes'  %>
         <% sol_in_this_round_allowed ||= @annual < @config[:annual] %>
-        <% if sol_in_this_round_allowed %> 
+        <% if p.junior_level? and not @solver.junior? %>
+           -
+        <% elsif sol_in_this_round_allowed %> 
           <% if sol.filename_corr_display %>
             <%= link_to sol.filename_corr_display, :action => :download_rev, :id => sol.id %>
           <% elsif sol.has_paper_mail %>

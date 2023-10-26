@@ -20,6 +20,9 @@ dev-migrate:
 	rake db:migrate RAILS_ENV=development
 loc-migrate:
 	rake db:migrate RAILS_ENV=local
+
+loc-migrate-down:
+	rake db:rollback RAILS_ENV=local STEP=1
 void-migrate:
 	rake db:migrate RAILS_ENV=void
 

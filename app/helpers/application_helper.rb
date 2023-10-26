@@ -10,7 +10,7 @@ module ApplicationHelper
   #
   # *params*ta
   # text:: text linku
-  # url:: kam to bude odkazovat (stejný argument jak má `link_to`) 
+  # url:: kam to bude odkazovat (stejný argument jak má `link_to`)
   # opt:: stejné jako `link_to` a navíc:
   #       ico:: class z font-awesome jaká icona se má použít (třeba `fa-user`).
   # block:: materiál textu linku
@@ -86,12 +86,12 @@ module ApplicationHelper
 
   ##
   # list item, s iconou a potenciálním active, pokud se aktalní url uzná, že "ma souvislost" s odkazovanou url
-  # 
+  #
   # *Params*
   # uri:: link kam menu odkazuje
   # text, block:: text
   # opt:: opsny
-  #       cls:: string nebo pole stringu, class který se použije v \<li class=""> 
+  #       cls:: string nebo pole stringu, class který se použije v \<li class="">
   #       ico:: font awesome class (např. `fa-user`)
   #       lii:: true pokud jde o druhou úroveň (použite z `menu_lii()`
   def menu_li(uri, text = nil, opt = {} , &block)
@@ -156,7 +156,7 @@ module ApplicationHelper
           if !solver.nil? && solver.confirm_state == 'bonus'
             return url_for(:sosna_solutions_user_bonus)
           end
-        end 
+        end
         return url_for(:sosna_solutions_user)
       end
     end
@@ -262,7 +262,7 @@ module ApplicationHelper
   #           problemsN:: počet příkladu v Nté sérii
   #           year:: kalendářní rok
   #           confirmation_round:: serie v které se zobrazí žádost o konfirmaci údajů
-  #           confirmation_file_upload:: 
+  #           confirmation_file_upload::
   #           deadline100:: Serie 100 je bonusová
   #           show100::
   #           problems100::
@@ -389,7 +389,7 @@ module ApplicationHelper
   # *Params*
   # key:: požadovaná konfigurační hodnota
   #
-  # *Returns* hodnotu 
+  # *Returns* hodnotu
   def config_value(key)
     #return @config[key] if @config
     c = Sosna::Config.where(key:key).first
@@ -401,7 +401,7 @@ module ApplicationHelper
   # najdi řešitele pro daného uživatele (pokud existuje)
   #
   # *Params*
-  # user_id:: id uživatele 
+  # user_id:: id uživatele
   # annual:: ročník (default: `nil`)
   #
   # *Returns* Sosna::Solver / nil
@@ -414,7 +414,7 @@ module ApplicationHelper
   # najdi řešitele pro daného uživatele (pokud existuje)
   #
   # *Params*
-  # user_id:: id uživatele 
+  # user_id:: id uživatele
   # annual:: ročník (default: `nil`)
   #
   # *Returns* Sosna::Solver / nil
@@ -428,6 +428,18 @@ module ApplicationHelper
   end
 
   ##
+  def breadcrumb_level_links(action = :index)
+     annual_max = @config[:annual].to_i
+     annual_min = 29 # tep started
+     { name: Sosna::Solver::LEVEL_MAP[@level] || @level || "Unk",
+       url: {roc:@annual, se: 1, level: @level},
+       sub: Sosna::Solver::LEVELS.map { |level|
+          {name: Sosna::Solver::LEVEL_MAP[level] || @level, url: {action: action, roc: @annual, level: level}}
+       },
+     }
+  end
+
+  ##
   # diff_line  line
   # line  =  { content: "zaTOHLEnemuzu\n", [ previx: 2, postifx = 2] }
   # =>  za<b>TOHLE</b>nemuzu
@@ -435,7 +447,7 @@ module ApplicationHelper
     content = line[:content]
     prefix  = line[:prefix]
     postfix = line[:postfix]
-    return content if prefix.nil? || postfix.nil? || ( prefix == 0 && postfix == 0 ) 
+    return content if prefix.nil? || postfix.nil? || ( prefix == 0 && postfix == 0 )
     ret = ''.html_safe
     ret += content[0, prefix] if prefix > 0
     if prefix + postfix < content.size
@@ -466,8 +478,8 @@ module ApplicationHelper
 
   def ckeditor_html_tweaks(html)
     return html
-            .gsub('<pre>', '<pre><code>') 
-            .gsub('</pre>', '</code></pre>') 
+            .gsub('<pre>', '<pre><code>')
+            .gsub('</pre>', '</code></pre>')
             .gsub(/<div class="math">(.*?)<\/div>/, '<mark class="marker-blue">\1</mark>' )
             .gsub(/<span class="math">(.*?)<\/span>/, '<mark class="marker-green">\1</mark>' )
             .gsub(/(<div class="table-div".*?)<table>/, '\1<table style="border-style:dashed;border-width:2px;">')

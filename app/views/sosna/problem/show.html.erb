@@ -16,6 +16,17 @@
     </div>
 
     <div class="control-group">
+      <label class="control-label" for="problem[level]">Level</label>
+      <div class="controls"> <%= f.select :level,
+             options_for_select(
+                Sosna::Solver::LEVEL_MAP.keys.map{ |key| [ Sosna::Solver::LEVEL_MAP[key], key ] },
+                @problem.level
+             ),
+             :class => 'input-small'
+             %>
+    </div>
+
+    <div class="control-group">
       <label class="control-label" for="problem[round]">Série</label>
       <div class="controls"> <%= f.text_field :round %> </div>
     </div>

@@ -108,7 +108,7 @@ ActiveRecord::Schema.define(version: 21) do
     t.integer "annual"
     t.integer "round"
     t.integer "problem_no"
-    t.integer "max_grade",  default: 9, null: false
+    t.string  "level",      default: "pi", null: false
   end
 
   create_table "sosna_results", force: :cascade do |t|

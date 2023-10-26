@@ -55,11 +55,13 @@ class Sosna::ProblemController < SosnaController
      annual = params[:annual]
      round = params[:round]
      count = params[:count].to_i
+     level = params[:level]
      (1..count).each do |problem_no|
         Sosna::Problem.create({ :annual => annual,
                               :round => round,
                               :problem_no => problem_no,
                               :title => "Úloha č. #{problem_no}",
+                              :level => level
                               })
      end
      redirect_to :action => :index

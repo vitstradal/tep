@@ -17,7 +17,10 @@
 
 <hr>
 
-<%= link_to 'Nahraj řešení manuálně', sosna_solutions_user_url(@annual, @round, @solver.id), :class => 'btn btn-primary' %>
+<%= link_to 'Nahraj řešení manuálně', sosna_solutions_user_url(@annual, Sosna::Solver::NORMAL_LEVEL, @round, @solver.id), :class => 'btn btn-primary' %>
+<% if @solver.junior? %>
+  <%= link_to 'Nahraj řešení JUNIOR manuálně', sosna_solutions_user_url(@annual, Sosna::Solver::JUNIOR_LEVEL, @round, @solver.id), :class => 'btn btn-primary' %>
+<% end %>
 
 <hr>
 <% if @solver.annual != @annual %>

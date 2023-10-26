@@ -8,6 +8,7 @@
      <th>Serie</th>
      <th>Úloha</th>
      <th>Název</th>
+     <th>Level</th>
    </tr>
   <% @problems.each do |p| %>
     <tr>
@@ -16,6 +17,7 @@
       <td><%= p.round %></td>
       <td><%= p.problem_no%> </td>
       <td><%= p.title%> </td>
+      <td><%= p.level%> </td>
     </tr>
   <% end %>
   </table>
@@ -24,8 +26,16 @@
 <%= link_to 'Nová úloha', :sosna_problem %>
 
 <%= form_tag sosna_problem_new_round_path do %>
+
+<%= select_tag :level, 
+             options_for_select(
+                Sosna::Solver::LEVEL_MAP.keys.map{ |key| [ Sosna::Solver::LEVEL_MAP[key], key ] },
+                Sosna::Solver::NORMAL_LEVEL
+             ),
+             :class => 'input-small'
+             %>
 Ročník: <%= text_field_tag :annual , @annual %>
 Série: <%= text_field_tag :round , @round.to_i + 1 %>
-Počet úloh: <%= text_field_tag :count , 6 %>
+Úloh: <%= text_field_tag :count , 6 %>
 <%= submit_tag 'Vytvoř sérii úloh' %>
 <% end %>

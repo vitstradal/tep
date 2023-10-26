@@ -31,9 +31,19 @@
 #    t.text     "confirm_state",  default: "none"
 #    t.text     "how_i_met_pikomat",  default: ""
 class Sosna::Solver < ActiveRecord::Base
+
   has_many :solutions
   belongs_to :school
   belongs_to :user
+
+  JUNIOR_LEVEL = 'jr'
+  NORMAL_LEVEL = 'pi'
+  LEVELS = [ NORMAL_LEVEL, JUNIOR_LEVEL ]
+  LEVEL_MAP = {
+     JUNIOR_LEVEL => 'Pikomat junior',
+     NORMAL_LEVEL => 'Pikomat',
+  }
+
 
   validates :name, :last_name,  presence: true
   validates :num, :psc, :city, presence: true, :if  => :send_home?
@@ -73,4 +83,13 @@ class Sosna::Solver < ActiveRecord::Base
   def address
      "#{street} #{num}, #{psc} #{city}"
   end
+
+  ##
+  # *Returns* je resitel opraven odevdavat ulohy pro mlade, tj 6 ročník anebo
+  # mladší
+  def junior?
+     grade_num.to_i <= 6
+  end
+
+
 end

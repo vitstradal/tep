@@ -28,7 +28,7 @@ Tep::Application.routes.draw do
   post   '/inform/delfrom/:form'                        => 'inform#delform',              :as => :inform_delform
 
   # user:
-  get  '/sosna/solutions/user(/:roc(/:se(/:id)))' => 'sosna/solution#user_index',    :as => :sosna_solutions_user
+  get  '/sosna/solutions/user(/:roc(/:level(/:se(/:id))))' => 'sosna/solution#user_index',    :as => :sosna_solutions_user
   get  '/sosna/solutions/bonus'                   => 'sosna/solution#user_bonus',    :as => :sosna_solutions_user_bonus
   patch '/sosna/solution/upload'                  => 'sosna/solution#upload',        :as => :sosna_solution_upload
   post '/sosna/solution/upload_rev'               => 'sosna/solution#upload_rev',   :as => :sosna_solution_upload_rev
@@ -57,7 +57,7 @@ Tep::Application.routes.draw do
   get  '/sosna/solutions/:roc/:se/edit'      => 'sosna/solution#edit',          :as => :sosna_solutions_edit2
   get  '/sosna/solutions/:roc/:se/:ul/edit'  => 'sosna/solution#edit',          :as => :sosna_solutions_edit
 
-  get  '/sosna/solutions(/:roc(/:se(/:ul)))'       => 'sosna/solution#index',        :as => :sosna_solutions_org
+  get  '/sosna/solutions(/:roc(/:level(/:se(/:ul))))' => 'sosna/solution#index',     :as => :sosna_solutions_org
 
   post '/sosna/solutions/update_scores'      => 'sosna/solution#update_scores', :as => :sosna_solutions_update_scores
   post '/sosna/solutions/update_papers'      => 'sosna/solution#update_papers', :as => :sosna_solutions_update_papers

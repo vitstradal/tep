@@ -14,10 +14,11 @@ class Sosna::SolutionController < SosnaController
   UPLOAD_DIR = "var/uploads/"
 
   ##
-  #  GET  /sosna/solutions(/:roc(/:se(/:ul)))
+  #  GET  /sosna/solutions(/:roc(/:level(/:se(/:ul))))
   #
   # *Params*
   # roc:: ročník, pokud není vezme se aktuální
+  # level:: pi -- pikomat, pj -- pikomat junior see Sosna::Solver::LEVELS
   # se:: série, pokud není vezme se aktuální
   # ul:: úloha
   # sous:: pokud se má filtrovat na sous
@@ -107,7 +108,7 @@ class Sosna::SolutionController < SosnaController
   #
   # *Template* app/views/sosna/solution/vysl_pik.erb
   def vysl_pik
-    roc, se, ul = _params_roc_se_ul
+    roc, level, se, ul = _params_roc_se_ul
     if ! _results_updated?(roc, se)
       add_alert 'Výsledky nejsou aktuální, použij "Generuj výsledky"'
       return redirect_to sosna_solutions_org_path(roc, se);
@@ -144,7 +145,7 @@ class Sosna::SolutionController < SosnaController
   #
   # *Template* app/views/sosna/solution/vysl_wiki.erb
   def vysl_wiki
-    roc, se, ul = _params_roc_se_ul
+    roc, level, se, ul = _params_roc_se_ul
     if ! _results_updated?(roc, se)
       add_alert 'Výsledky nejsou aktuální, použij "Vygeneruj výsledky"'
       return redirect_to sosna_solutions_org_path(roc, se)
@@ -500,6 +501,8 @@ class Sosna::SolutionController < SosnaController
   def user_index
 
     @annual = params[:roc] || @config[:annual]
+
+    @level = params[:level] || Sosna::Solver::JUNIOR_LEVEL
     #@annual = @config[:annual]
     solver_id = params[:id]
     @round  = params[:se] || 1
@@ -511,8 +514,6 @@ class Sosna::SolutionController < SosnaController
                    _max_round_non_bonus(@annual)
                end
     end
-
-    @breadcrumb = [[breadcrumb_annual_links(:user_index)], _rounds_roc_links(@annual, @round, :user_index) ]
 
     @is_current = (@annual == @config[:annual] && @round ==  @config[:round])
 
@@ -527,6 +528,17 @@ class Sosna::SolutionController < SosnaController
       @solver = current_solver
       @solver_is_current_user = true
     end
+
+    @hide_level = false
+    if @solver_is_current_user and ! @solver.nil? and ! @solver.junior?
+      @level = Sosna::Solver::NORMAL_LEVEL
+      @hide_level = true
+    end
+
+    @breadcrumb = []
+    @breadcrumb.push [breadcrumb_annual_links(:user_index)]
+    @breadcrumb.push [breadcrumb_level_links(:user_index)] unless @hide_level
+    @breadcrumb.push _rounds_roc_links(@annual, @level, @round, :user_index)
 
     if ! @solver && current_user.org?
       add_alert "Pozor: zatím nejsi letošním řešitelem, a navíc jsi org!"
@@ -547,7 +559,7 @@ class Sosna::SolutionController < SosnaController
       @confirmation_exists = File.exists? _confirm_file_path @solver
     end
 
-    @problems  = Sosna::Problem.where(:annual=> @annual, :round=> @round)
+    @problems = Sosna::Problem.where(annual: @annual, round:  @round, level:  @level )
     @solutions_by_solver = _solutions_by_solver [@solver], @problems
 
     if @solver.confirm_state == 'next' && !current_user.admin?
@@ -605,6 +617,12 @@ class Sosna::SolutionController < SosnaController
       return redirect_to sosna_solutions_user_url(roc, se, solver.id)
     end
     problem, solver  = solution.problem, solution.solver
+
+    if problem.junior_level? and !solver.junior?
+      add_alert "Úloha pouze pro mladší"
+      return redirect_to sosna_solutions_user_url(roc, se, solver.id)
+    end
+
     se = problem.round
     roc = problem.annual
 
@@ -781,7 +799,7 @@ class Sosna::SolutionController < SosnaController
   #
   # *Redirect* index
   def update_results
-    roc, se, ul = _params_roc_se_ul
+    roc, level, se, ul = _params_roc_se_ul
 
     # resitele
     solvers = get_sorted_solvers(annual: roc).to_a
@@ -992,26 +1010,27 @@ class Sosna::SolutionController < SosnaController
     @want_edit = false
     @want_edit_paper = false
     @want_edit_penalisation = false
-    path = [ breadcrumb_annual_links(:index) ]
-
+    path = [ breadcrumb_annual_links(:index),
+             breadcrumb_level_links(:index),
+    ]
     dir = nil
     @action_more = false
     if @problem_no
       # in level problem
-      path.push(_round_link(@annual, @round))
-      path.push(_problem_link(@annual, @round, @problem_no))
-      path[-1][:sub] = _problems_roc_se(@annual, @round)
+      path.push(_round_link(@annual, @level, @round))
+      path.push(_problem_link(@annual, @level, @round, @problem_no))
+      path[-1][:sub] = _problems_roc_se(@annual, @round, @round)
     elsif @round
       # in level round
-      path.push(_round_link(@annual, @round))
-      path[-1][:sub] = _rounds_roc_links(@annual)
+      path.push(_round_link(@annual, @level, @round))
+      path[-1][:sub] = _rounds_roc_links(@annual, @level)
       @action_buttons = []
 
-      dir = _problems_roc_se(@annual, @round)
+      dir = _problems_roc_se(@annual, @level, @round)
     else
       # in level annual
       @annuals = _annuals
-      dir = _rounds_roc_links(@annual)
+      dir = _rounds_roc_links(@annual, @level)
     end
     @breadcrumb = dir.nil? ? [path] : [ path, dir ]
   end
@@ -1095,7 +1114,9 @@ class Sosna::SolutionController < SosnaController
 
   def _params_roc_se_ul
     roc, se, ul = params[:roc],  params[:se], params[:ul]
+    level = params[:level]
     load_config
+    level = 'pi' if level.nil?
 
     if roc.nil? && se.nil?
         roc  = @annual
@@ -1106,9 +1127,10 @@ class Sosna::SolutionController < SosnaController
     @annual = roc
     @round = se
     @problem_no = ul
+    @level = level
     log("roc:#{roc} se:#{se} ul:#{ul}\n")
 
-    return roc, se, ul
+    return roc, level, se, ul
   end
 
   def _sort_solvers_by_grade
@@ -1173,11 +1195,11 @@ class Sosna::SolutionController < SosnaController
   end
 
   def _problems_from_roc_se_ul()
-    roc, se, ul = _params_roc_se_ul
+    roc, level, se, ul = _params_roc_se_ul
     if ul
-      return Sosna::Problem.where(:annual => roc, :round => se, :problem_no => ul)
+      return Sosna::Problem.where(annual: roc, level: level, round: se, problem_no: ul)
     else
-      return Sosna::Problem.where(:annual => roc, :round => se).order(:problem_no)
+      return Sosna::Problem.where(annual: roc, level: level, round: se).order(:problem_no)
     end
   end
 
@@ -1187,18 +1209,18 @@ class Sosna::SolutionController < SosnaController
 
 
   # r: links to problems
-  def _problems_roc_se(roc, se, action = :index)
-      return Sosna::Problem.where({:annual => roc, :round => se})
+  def _problems_roc_se(roc, level, se, action = :index)
+      return Sosna::Problem.where({annual: roc, round: se, level: level })
                          .load
                          .map do |ul|
-                              _problem_link(@annual, @round, ul.problem_no, action)
+                              _problem_link(@annual, @level, @round, ul.problem_no, action)
                          end
 
   end
 
   # r: list of "links" to
   # r: [ { name: "", url:""}, ... ]
-  def _rounds_roc_links(roc, se = nil, action = :index)
+  def _rounds_roc_links(roc, level= Sosna::Solver::NORMAL_LEVEL, se = nil, action = :index)
     rounds = []
     serie_is_bonus = is_bonus_round(se)
     Sosna::Problem.select('round')
@@ -1210,7 +1232,7 @@ class Sosna::SolutionController < SosnaController
                           round_str = pr.round.to_s
                           is_bonus = is_bonus_round(round_str)
                           next if @hide_non_bonus_in_breadcrumb && !is_bonus
-                          rounds.push _round_link(roc, pr.round, round_str == se, action)
+                          rounds.push _round_link(roc, level, pr.round, round_str == se, action)
                        end
     rounds
   end
@@ -1230,16 +1252,16 @@ class Sosna::SolutionController < SosnaController
     return rounds
   end
 
-  def _problem_link(annual, round, problem_no, action = :index)
-      {name: "Úloha #{problem_no}", url: {action: action, roc: annual, se: round, ul: problem_no}}
+  def _problem_link(annual, level, round, problem_no, action = :index)
+      {name: "Úloha #{problem_no}", url: {action: action, roc: annual, level: level, se: round, ul: problem_no}}
   end
 
 
-  def _round_link(annual, round, active= false, action = :index)
+  def _round_link(annual, level, round, active= false, action = :index)
      if is_bonus_round(round)
-       {name: "Bonusová série", active: active, url: {action: action, roc: annual, se: round}}
+       {name: "Bonusová série", active: active, url: {action: action, roc: annual, level: level, se: round}}
      else
-       {name: "Série #{round}", active: active, url: {action: action, roc: annual, se: round}}
+       {name: "Série #{round}", active: active, url: {action: action, roc: annual, level: level, se: round}}
      end
   end
 

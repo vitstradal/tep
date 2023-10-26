@@ -1,5 +1,5 @@
 class AddProblemsMaxGrade < ActiveRecord::Migration
   def change
-    add_column :sosna_problems, :max_grade, :integer, null: false, default: 9
+    add_column :sosna_problems, :level, :string, null: false, default: 'pi'
   end
 end
