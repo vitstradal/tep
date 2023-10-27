@@ -2,27 +2,27 @@
   <div class="btn-toolbox ">
     <% if ! ( @want_edit || @want_edit_paper || @want_edit_penalisation  ) %>
       <div class="btn-group ">
-        <%= button_tag "řešení v .zip", :class=> 'btn btn-primary', ico: 'fa-file-o', href: sosna_solution_down_all_url(roc:@annual, se: @round, ul:@problem_no)  %>
-        <%= button_tag "opravy v .zip", :class=> 'btn btn-primary', ico: 'fa-file', href: sosna_solution_down_all_url(roc:@annual,  se:@round, ul:@problem_no, rev: :yes)  %>
+        <%= button_tag "řešení v .zip", :class=> 'btn btn-primary', ico: 'fa-file-o', href: sosna_solution_down_all_url(roc:@annual, level: @level, se: @round, ul:@problem_no)  %>
+        <%= button_tag "opravy v .zip", :class=> 'btn btn-primary', ico: 'fa-file', href: sosna_solution_down_all_url(roc:@annual,  level: @level, se:@round, ul:@problem_no, rev: :yes)  %>
         <%= button_tag "řešitelé .csv", :class=> 'btn btn-primary', ico: 'fa-table', href: sosna_solutions_lidi_url(format: 'csv') %>
         <%= button_tag "body.pik", :class=> 'btn btn-primary', ico: 'fa-th', href: sosna_solutions_lidi_url(format: 'pik') %>
         <%= button_tag "navratky.zip", :class=> 'btn btn-primary', ico: 'fa-check', href: sosna_solutions_get_confirm_files_url %>
         <%= button_tag "body za serie v rocniku ", :class=> 'btn btn-primary', ico: 'fa-check', href: sosna_solutions_rocnik_url %>
       </div>
       <div class="btn-group">
-        <% vysl_file = "vysl#{@annual}_#{@round}" %>
+        <% vysl_file = "vysl#{@annual}#{@level_ext}_#{@round}" %>
         <%= button_tag "#{vysl_file}.wiki", :class =>'btn btn-primary',
                                             :ico   =>  'fa-filter',
-                                            :href  =>  sosna_solutions_vysl_wiki_url(roc:@annual, se:@round) %>
+                                            :href  => sosna_solutions_vysl_wiki_url(roc:@annual, level: @level, se:@round) %>
         <%= button_tag "#{vysl_file}.pik", :class  => 'btn btn-primary',
                                            :ico    => 'fa-filter',
-                                           :href   =>  sosna_solutions_vysl_pik_url(roc:@annual, se:@round) %>
+                                           :href   =>  sosna_solutions_vysl_pik_url(roc:@annual, level: @level, se:@round) %>
       </div>
       <div class="btn-group">
         <%= button_tag "Filtruj soustredeni", :class=> 'btn btn-primary', ico: 'fa-filter', href: sosna_solutions_org_url(roc:@annual, se:@round, sous: 1) %>
       </div>
       <div class="btn-group">
-        <%= form_tag({:action => :update_results, :roc => @annual, :se => @round, :ul => @problem_no}, :class => 'btn-group form-inline') do %>
+        <%= form_tag({:action => :update_results, roc: @annual, level: @level, se: @round, ul: @problem_no}, :class => 'btn-group form-inline') do %>
                 <button type="submit" class="btn btn-primary"> <i class="fa fa-flash"></i> Vygenerovat výsledky</button>
         <% end %>
       </div>
@@ -37,6 +37,7 @@
           <div class="clearfix" >
             <div class="grid2">
                 <%= hidden_field_tag :roc, @annual %>
+                <%= hidden_field_tag :level, @level %>
                 <%= hidden_field_tag :se,  @round %>
                 <%= hidden_field_tag :ul,  @problem_no %>
                   <div class="input-xlarge" >
@@ -92,11 +93,11 @@
 
 
   <% if @want_edit %>
-    <%= form_tag action: :update_scores, :roc => @annual, :se => @round, :ul => @problem_no %> 
+    <%= form_tag action: :update_scores, roc: @annual, level: @level, se: @round, ul: @problem_no %> 
   <% elsif @want_edit_paper %>
-    <%= form_tag action: :update_papers, :roc => @annual, :se => @round, :ul => @problem_no %> 
+    <%= form_tag action: :update_papers, roc: @annual, level: @level, se: @round, ul: @problem_no %> 
   <% elsif @want_edit_penalisation %>
-    <%= form_tag action: :update_penalisations, :roc => @annual, :se => @round, :ul => @problem_no %> 
+    <%= form_tag action: :update_penalisations, roc: @annual, level: @level, se: @round, ul: @problem_no %> 
   <% end %>
 
   <% if @want_edit || @want_edit_paper || @want_edit_penalisation%>

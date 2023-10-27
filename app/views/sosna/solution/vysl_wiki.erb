@@ -1,4 +1,4 @@
-= Výsledková listina po <%=@round%>. sérii <%=@annual%>. ročníku Pikomatu MFF UK=
+= Výsledková listina po <%=@round%>. sérii <%=@annual%>. ročníku Pikomatu<%= @level_text %> MFF UK=
 <% head_problems = @problems.map{|p| "= #{p.short_name} ="}.join("||")
 %>
 

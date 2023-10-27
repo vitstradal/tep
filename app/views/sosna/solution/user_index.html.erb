@@ -125,6 +125,7 @@
          <td>  <%= form_tag  sosna_solutions_upload_confirm_file_path, :class=> 'form-inline', :multipart => true  do |f|  %>
                  <%= hidden_field_tag :roc, @annual %>
                  <%= hidden_field_tag :se, @round %>
+                 <%= hidden_field_tag :level, @level %>
                      <div style="display:inline-block;width:200px;height:16px">
                        <%= file_field_tag :confirm_file , :class => 'ace-file-input', :accept => 'application/pdf', 'max-size' => max_size  %>
                      </div>

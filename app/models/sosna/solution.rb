@@ -43,6 +43,8 @@ class Sosna::Solution < ActiveRecord::Base
      roc = problem.annual
      se = problem.round
      ul = problem.problem_no
+     level = problem.level
+     level_ext = Sosna::Solver::level_extension(level)
      rel_id = solver_id
      last, name = "LAST", "NAME"
      last = translit  solver.last_name if solver
@@ -50,7 +52,6 @@ class Sosna::Solution < ActiveRecord::Base
      typ = is_ori ? 'ori' : 'rev'
      #Rails.logger.fatal "name:" + solver.name
      #Rails.logger.fatal "nametr:" + name
-     'reseni-roc%02i-se%02i-ul%i-rel%03i-%s-%s-%s.pdf'  % [ roc, se, ul, rel_id, typ, last, name ]
+     'reseni-roc%02i%s-se%02i-ul%i-rel%03i-%s-%s-%s.pdf'  % [ roc, level_ext, se, ul, rel_id, typ, last, name ]
   end
-
 end

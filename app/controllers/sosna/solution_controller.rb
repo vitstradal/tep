@@ -101,32 +101,37 @@ class Sosna::SolutionController < SosnaController
   # export seznamu lidí `.pik`.
   #
   # *Params*
-  # roc, se, ul:: ročník, série, úloha, pokud není vezme se aktuální
+  # roc, level, se, ul:: ročník, série, úloha, pokud není vezme se aktuální
   #
   # *Provide*
   # @solvers, @problems, @solutions_by_solver, @penalisations_by_solver, @results_by_solver:: jako `index`
   #
   # *Template* app/views/sosna/solution/vysl_pik.erb
   def vysl_pik
-    roc, level, se, ul = _params_roc_se_ul
-    if ! _results_updated?(roc, se)
+    roc, level, se, ul = _params_roc_level_se_ul
+    level_ext = Sosna::Solver::level_extension(level)
+    if ! _results_updated?(roc, level, se)
       add_alert 'Výsledky nejsou aktuální, použij "Generuj výsledky"'
-      return redirect_to sosna_solutions_org_path(roc, se);
+      return redirect_to sosna_solutions_org_path(roc, level, se);
     end
     _prepare_solvers_problems_solutions(want_test: false, want_bonus: false)
     _sort_solvers_by_rank
-    headers['Content-Disposition'] = "attachment; filename=vysl#{roc}_#{se}.pik"
+    headers['Content-Disposition'] = "attachment; filename=vysl#{roc}#{level_ext}_#{se}.pik"
     headers['Content-Type'] = "text/plain; charset=UTF-8";
     render layout: nil
   end
 
-  def _results_updated?(annual, round)
+
+  def _results_updated?(annual, level, round)
     solvers = get_sorted_solvers(annual: annual).to_a
     res_min = Sosna::Result.where(annual:annual, round: round, solver_id: solvers.map{ |s| s.id } ).minimum(:updated_at)
     sol_max = Sosna::Solution.joins(:problem).where('sosna_problems.annual' => annual, 'sosna_problems.round' =>  round).maximum(:updated_at)
     pen_max = Sosna::Penalisation.where(annual:annual, round: round).maximum(:updated_at)
     rrr = Sosna::Result.where(annual: annual, round: round, updated_at: res_min).first
     log("res_min=#{res_min} sol_max=#{sol_max} pen_max=#{pen_max} annual=#{annual} round=#{round} rrr=#{rrr.inspect}")
+    return false if sol_max.nil?
+    return false if res_min.nil?
+    #return false if pen_max.nil?
     return false if res_min < sol_max
     return false if res_min < pen_max
     return true
@@ -145,14 +150,15 @@ class Sosna::SolutionController < SosnaController
   #
   # *Template* app/views/sosna/solution/vysl_wiki.erb
   def vysl_wiki
-    roc, level, se, ul = _params_roc_se_ul
-    if ! _results_updated?(roc, se)
+    roc, level, se, ul = _params_roc_level_se_ul
+    level_ext = Sosna::Solver::level_extension(level)
+    if ! _results_updated?(roc, level, se)
       add_alert 'Výsledky nejsou aktuální, použij "Vygeneruj výsledky"'
-      return redirect_to sosna_solutions_org_path(roc, se)
+      return redirect_to sosna_solutions_org_path(roc, level, se)
     end
     _prepare_solvers_problems_solutions(want_test: false, want_bonus: false)
     _sort_solvers_by_rank
-    headers['Content-Disposition'] = "inline; filename=vysl#{roc}_#{se}.wiki"
+    headers['Content-Disposition'] = "inline; filename=vysl#{roc}#{level_ext}_#{se}.wiki"
     headers['Content-Type'] = "text/plain; charset=UTF-8";
     render layout: nil
   end
@@ -194,6 +200,7 @@ class Sosna::SolutionController < SosnaController
   # *Redirect* edit
   def update_papers
     roc, se, ul = params[:roc], params[:se], params[:ul]
+    level = params[:levels]
     paper = params[:paper] || {}
 
     Sosna::Solution.includes(:problem).where(:sosna_problems => {:annual => roc, :round => se}).each do |sol|
@@ -203,14 +210,14 @@ class Sosna::SolutionController < SosnaController
         sol.save
       end
     end
-    redirect_to action: :edit, roc: roc, se: se, ul: ul, paper: 'yes'
+    redirect_to action: :edit, roc: roc, level: level, se: se, ul: ul, paper: 'yes'
   end
 
   ##
   #  POST /sosna/solutions/update_penalisations
   #
   # *Params*
-  # roc, se, ul:: jako všude
+  # roc, level, se, ul:: jako všude
   # penalisation_score[]:: hash penalisation.id => score  / nil
   # penalisation_title[]:: hash penalisation.id => title (kometář) / nil
   #
@@ -218,6 +225,7 @@ class Sosna::SolutionController < SosnaController
   #
   def update_penalisations
     roc, se, ul = params[:roc], params[:se], params[:ul]
+    level = params[:level]
     scores = params[:penalisation_score] || {}
     titles = params[:penalisation_title] || {}
     Sosna::Penalisation.find(scores.keys).each do |pen|
@@ -229,10 +237,11 @@ class Sosna::SolutionController < SosnaController
       if pen.score != sc || pen.title != tit
         pen.score = sc
         pen.title = tit
+        pen.level = level
         pen.save
       end
     end
-    redirect_to action: :edit, roc: roc, se: se, ul: ul, penalisation: 'yes'
+    redirect_to action: :edit, roc: roc, level: level, se: se, ul: ul, penalisation: 'yes'
   end
 
   ##
@@ -246,6 +255,7 @@ class Sosna::SolutionController < SosnaController
   # *Redirect* edit
   def update_scores
     roc, se, ul = params[:roc], params[:se], params[:ul]
+    level = params[:level]
     scores = params[:score] || {}
     solutions = Sosna::Solution.find(scores.keys)
 
@@ -261,7 +271,7 @@ class Sosna::SolutionController < SosnaController
       end
     end
 
-    redirect_to action: :edit, roc: roc, se: se, ul: ul
+    redirect_to action: :edit, level: level, roc: roc, se: se, ul: ul
   end
 
   ##
@@ -286,14 +296,13 @@ class Sosna::SolutionController < SosnaController
     send_file zip_file_name, :filename => 'navratky.zip', :type => "application/zip"
   end
 
-
   ##
   #  POST  /sosna/solutions/upload_confirm
   #
   # Upload souboru s návratkou.
   #
   # *Params*
-  # roc, se, ul:: jako všude
+  # roc, local, se, ul:: jako všude
   # confirm_file::
   #
   # *Redirect* user_index
@@ -303,6 +312,7 @@ class Sosna::SolutionController < SosnaController
 
     roc = params[:roc]
     se =  params[:se]
+    level =  params[:level]
     solver = Sosna::Solver.where(annual: @annual, user_id: current_user.id).first
 
     if solver.nil?
@@ -316,7 +326,7 @@ class Sosna::SolutionController < SosnaController
       File.open(_confirm_file_path(solver), 'wb') {  |f| f.write confirm_file.read }
       add_success 'Návratka nahrána'
     end
-    redirect_to sosna_solutions_user_url(roc, se, solver.id)
+    redirect_to sosna_solutions_user_url(roc, level, se, solver.id)
   end
 
 
@@ -340,7 +350,7 @@ class Sosna::SolutionController < SosnaController
   #
   # *Params*
   # id:: id Sosna::Solution
-  def download_rev
+  def download_rev # XXXX  level
     solution = Sosna::Solution.find id = params[:id]
     if ! solution
       add_alert 'Chyba: soubor neexistuje'
@@ -406,7 +416,7 @@ class Sosna::SolutionController < SosnaController
   # @solutions_by_solver::  hash solver.id => { problem.problem_no => solution }
   def downall
     want_rev = ! params[:rev].nil?
-    problems = _problems_from_roc_se_ul
+    problems = _problems_from_roc_level_se_ul
     solutions = _solutions_from_problems problems
 
     zip_file = Tempfile.new(['solution', '.zip'], UPLOAD_DIR)
@@ -447,6 +457,7 @@ class Sosna::SolutionController < SosnaController
   def upload_rev
     rfile = params[:file_rev]
     roc = params[:roc]
+    level = params[:level]
     se =  params[:se]
     ul =  params[:ul]
 
@@ -459,7 +470,7 @@ class Sosna::SolutionController < SosnaController
       cfile_name = rfile.original_filename
 
       if cfile_name =~ /\.pdf$/
-         path =  _upload_rev_one(roc, se, ul,  cfile_name)
+         path =  _upload_rev_one(roc, level, se, ul,  cfile_name)
          if path
            File.open(UPLOAD_DIR + path, 'wb') {  |f| f.write(rfile.read) }
          end
@@ -469,7 +480,7 @@ class Sosna::SolutionController < SosnaController
          zip_file.close
          Zip::File.open(zip_file.path) do |zipfile|
            zipfile.each do |entry|
-             path =  _upload_rev_one(roc, se, ul,  entry.name)
+             path =  _upload_rev_one(roc, level, se, ul,  entry.name)
              if path
                entry.extract(UPLOAD_DIR + path)  { true }
              end
@@ -479,7 +490,7 @@ class Sosna::SolutionController < SosnaController
         _add_msg(cfile_name, nil)
       end
     end
-    redirect_to :action =>  :index, :roc => roc, :se => se, :ul => ul
+    redirect_to :action =>  :index, roc: roc, level: level, se: se, ul: ul
   end
 
   ##
@@ -503,6 +514,11 @@ class Sosna::SolutionController < SosnaController
     @annual = params[:roc] || @config[:annual]
 
     @level = params[:level] || Sosna::Solver::JUNIOR_LEVEL
+    if ! Sosna::Solver::LEVEL_MAP.keys.include? @level
+      add_alert "Nevalidní level #{level} using #{Sosna::Solver::NORMAL_LEVEL}"
+      @level = Sosna::Solver::NORMAL_LEVEL
+    end
+
     #@annual = @config[:annual]
     solver_id = params[:id]
     @round  = params[:se] || 1
@@ -606,25 +622,26 @@ class Sosna::SolutionController < SosnaController
     solution = Sosna::Solution.find(solution_id) or raise RuntimeError, "bad solution id: #{solution_id}"
     if ! solution
       add_alert "Chyba: solution #{solution_id} neexistuje"
-      return redirect_to :action =>  :user_index
+      return redirect_to action: :user_index, level: @level
     end
 
     is_owner = solution.owner?(current_user)
     authorize! :upload_org, Sosna::Solution if ! is_owner
 
+    se = problem.round
+    roc = problem.annual
+    level = problem.level
+
     if !solution
       add_alert "Špatné číslo řešení"
-      return redirect_to sosna_solutions_user_url(roc, se, solver.id)
+      return redirect_to sosna_solutions_user_url(roc, level, se, solver.id)
     end
     problem, solver  = solution.problem, solution.solver
 
     if problem.junior_level? and !solver.junior?
       add_alert "Úloha pouze pro mladší"
-      return redirect_to sosna_solutions_user_url(roc, se, solver.id)
+      return redirect_to sosna_solutions_user_url(roc, level, se, solver.id)
     end
-
-    se = problem.round
-    roc = problem.annual
 
     solver_id_or_nil = is_owner ? nil : solver.id
 
@@ -637,7 +654,7 @@ class Sosna::SolutionController < SosnaController
         pp solution.problem.annual
         pp deadline_time(@config, solution.problem.round)
         add_alert "Řešení není možné odevdat (pozdní termín)"
-        return redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
+        return redirect_to sosna_solutions_user_url(roc, level, se, solver_id_or_nil)
       end
     end
 
@@ -646,8 +663,8 @@ class Sosna::SolutionController < SosnaController
       solution.filename_orig = nil
       solution.save
       add_success "Soubor smazán"
-      return redirect_to sosna_solutions_user_url(roc, se) if is_owner
-      return redirect_to sosna_solutions_user_url(roc, se, solver.id)
+      return redirect_to sosna_solutions_user_url(roc, level, se) if is_owner
+      return redirect_to sosna_solutions_user_url(roc, level, se, solver.id)
     end
 
     filename = solution.get_filename_ori
@@ -657,15 +674,15 @@ class Sosna::SolutionController < SosnaController
 
     if solution_files.size == 0
       add_success "Soubor nenalezen"
-      return redirect_to sosna_solutions_user_url(roc, se, solver.id)
+      return redirect_to sosna_solutions_user_url(roc, level, se, solver.id)
     end
 
     filename_orig = solution_files[0].original_filename.sub(/\.(png|jpeg|jpg)$/i, '.pdf')
 
     if solution_files.size == 1 && solution_files[0].original_filename =~ /\.pdf$/i
-      _upload_handle_pdf(solution_files[0], destination_pdf) or return redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
+      _upload_handle_pdf(solution_files[0], destination_pdf) or return redirect_to sosna_solutions_user_url(roc, level, se, solver_id_or_nil)
     else
-      _upload_handle_images(solution_files, destination_pdf) or return redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
+      _upload_handle_images(solution_files, destination_pdf) or return redirect_to sosna_solutions_user_url(roc, level, se, solver_id_or_nil)
     end
 
     # save file
@@ -680,7 +697,7 @@ class Sosna::SolutionController < SosnaController
 
     respond_to do |format|
       format.html do
-        redirect_to sosna_solutions_user_url(roc, se, solver_id_or_nil)
+        redirect_to sosna_solutions_user_url(roc, level, se, solver_id_or_nil)
       end
       format.json do
         render json: { status: 'ok' }
@@ -745,7 +762,7 @@ class Sosna::SolutionController < SosnaController
     solution = Sosna::Solution.find(solution_id) or raise RuntimeError, "bad solution id: #{solution_id}"
     if ! solution
       add_alert "Chyba: solution #{solution_id} neexistuje"
-      return redirect_to sosna_solutions_user_url(roc, se)
+      return redirect_to sosna_solutions_user_url(roc, level, se)
     end
 
     _sign_pdf(solution, UPLOAD_DIR + solution.get_filename_ori, false)
@@ -753,7 +770,8 @@ class Sosna::SolutionController < SosnaController
     problem = solution.problem
     se = problem.round
     roc = problem.annual
-    redirect_to sosna_solutions_user_url(roc, se, solution.solver.id)
+    level = problem.level
+    redirect_to sosna_solutions_user_url(roc, level, se, solution.solver.id)
   end
 
   ##
@@ -770,7 +788,7 @@ class Sosna::SolutionController < SosnaController
     solution = Sosna::Solution.find(solution_id) or raise RuntimeError, "bad solution id: #{solution_id}"
     if ! solution
       add_alert "Chyba: solution #{solution_id} neexistuje"
-      return redirect_to sosna_solutions_user_url(roc, se)
+      return redirect_to sosna_solutions_user_url(roc, level, se)
     end
 
     dest = UPLOAD_DIR + solution.get_filename_ori
@@ -780,7 +798,8 @@ class Sosna::SolutionController < SosnaController
     problem = solution.problem
     se = problem.round
     roc = problem.annual
-    redirect_to sosna_solutions_user_url(roc, se, solution.solver.id)
+    level = problem.level
+    redirect_to sosna_solutions_user_url(roc, level, se, solution.solver.id)
   end
 
 
@@ -799,7 +818,7 @@ class Sosna::SolutionController < SosnaController
   #
   # *Redirect* index
   def update_results
-    roc, level, se, ul = _params_roc_se_ul
+    roc, level, se, ul = _params_roc_level_se_ul
 
     # resitele
     solvers = get_sorted_solvers(annual: roc).to_a
@@ -811,10 +830,10 @@ class Sosna::SolutionController < SosnaController
     results_last = _get_results_by_solver(solvers, roc, se.to_i - 1, false)
 
     # priklady v teto serii
-    problems = Sosna::Problem.where(:annual => roc, :round => se).where(Sosna::Problem.arel_table[:problem_no].lt(Sosna::Problem::BONUS_PROBLEM_NUM))
+    problems = Sosna::Problem.where(annual: roc, level: level, round: se).where(Sosna::Problem.arel_table[:problem_no].lt(Sosna::Problem::BONUS_PROBLEM_NUM))
 
     # penalizace za tuto serii
-    pens = Sosna::Penalisation.where(:annual => roc, :round => se)
+    pens = Sosna::Penalisation.where(annual: roc, level: level, round: se)
 
     # poblemy podle id
     problems_by_id = {}
@@ -904,7 +923,7 @@ class Sosna::SolutionController < SosnaController
 
     # presmerovat na zobrazeni tabukly
     add_success "výsledky pro rocnik #{roc} serie #{se} byly přegenrovány"
-    redirect_to :action =>  :index , :roc => roc, :se => se
+    redirect_to action: :index , roc: roc, level: level, :se => se
   end
 
   private
@@ -955,6 +974,7 @@ class Sosna::SolutionController < SosnaController
   def _penalisations_by_solver(solvers)
     penalisations = Sosna::Penalisation.where(:solver_id => solvers.map{ |s| s.id },
                                               :annual => @annual,
+                                              :level => @level,
                                               :round => @round).load
     penalisations_by_solver = {}
     penalisations.each { |p| penalisations_by_solver[p.solver_id] = p }
@@ -964,6 +984,7 @@ class Sosna::SolutionController < SosnaController
             penalisations_by_solver[solver.id] = Sosna::Penalisation.create({
                                                                         :solver_id => solver.id,
                                                                         :annual => @annual,
+                                                                        :level => @level,
                                                                         :round => @round, })
           rescue Exception => e
             log(" penalisations_by_solver :Solution.create -> #{e.to_s}")
@@ -1044,17 +1065,17 @@ class Sosna::SolutionController < SosnaController
     #print "msg: #{fname}: #{msg}\n"
   end
 
-  def _upload_rev_one(roc, se, ul,  fname)
+  def _upload_rev_one(roc, level, se, ul,  fname) # XXX
 
     fname.force_encoding('UTF-8')
-    if fname !~ /^(?:.*\/)?reseni-roc(\d+)-se(\d+)-ul(\d+)-rel(\d+)-(ori|rev)-.*.pdf$/
+    if fname !~ /^(?:.*\/)?reseni-roc(\d+)([a-z\d].*)-se(\d+)-ul(\d+)-rel(\d+)-(ori|rev)-.*.pdf$/
       _add_msg(fname, "jmeno souboru neni ve spravnem formatu, ocekavany format: DIR/reseni-rocNN-seN-ulN-relN-(ori|rev)-.*.pdf")
       return nil
     end
-    oroc, ose, oul, relid = $1.to_i, $2.to_i, $3.to_i, $4.to_i
+    oroc, olevel, ose, oul, relid = $1.to_i, Sosna::Solver::level_from_short($2), $3.to_i, $4.to_i, $5.to_i
 
-    if oroc.to_s != roc || ose.to_s != se || oul.to_s != ul
-       _add_msg(fname, "reseni neni ke spravnemu rocniku, serii, uloze")
+    if oroc.to_s != roc || ose.to_s != se || oul.to_s != ul || olevel == level
+       _add_msg(fname, "reseni neni ke spravnemu rocniku, levelu, serii, uloze")
       return nil
     end
 
@@ -1064,7 +1085,7 @@ class Sosna::SolutionController < SosnaController
        return nil
     end
 
-    problem = Sosna::Problem.where(:annual => roc, :round => se, :problem_no => ul).take
+    problem = Sosna::Problem.where(annual: roc, level: level, se: se, problem_no: ul).take
     solution = Sosna::Solution.where( :problem_id => problem.id, :solver_id => solver.id).take
 
     #filename_corr = _solution_filename(problem, solver, true)
@@ -1112,11 +1133,11 @@ class Sosna::SolutionController < SosnaController
       end
   end
 
-  def _params_roc_se_ul
-    roc, se, ul = params[:roc],  params[:se], params[:ul]
-    level = params[:level]
+  def _params_roc_level_se_ul
+    roc, se, ul = params[:roc], params[:se], params[:ul]
+    level = params[:level] || Sosna::Solver::NORMAL_LEVEL
+
     load_config
-    level = 'pi' if level.nil?
 
     if roc.nil? && se.nil?
         roc  = @annual
@@ -1128,7 +1149,12 @@ class Sosna::SolutionController < SosnaController
     @round = se
     @problem_no = ul
     @level = level
-    log("roc:#{roc} se:#{se} ul:#{ul}\n")
+
+    @level_ext = Sosna::Solver::level_extension(@level)
+    @level_text = Sosna::Solver::level_text(@level)
+    @level_long = Sosna::Solver::level_long(@level)
+
+    log("roc:#{roc} level:#{level} se:#{se} ul:#{ul}\n")
 
     return roc, level, se, ul
   end
@@ -1176,11 +1202,11 @@ class Sosna::SolutionController < SosnaController
   end
 
   def _prepare_solvers_problems_solutions(want_test: true, want_bonus: true)
-    _params_roc_se_ul
+    _params_roc_level_se_ul
     where = { annual: @annual}
     where.merge!({is_test_solver: false }) if ! want_test
     @solvers = get_sorted_solvers(where)
-    @problems = _problems_from_roc_se_ul
+    @problems = _problems_from_roc_level_se_ul
     @problems = @problems.select {|pr| !pr.bonus?} if ! want_bonus
     @solutions_by_solver = _solutions_by_solver @solvers, @problems
     @penalisations_by_solver = _penalisations_by_solver @solvers
@@ -1191,11 +1217,9 @@ class Sosna::SolutionController < SosnaController
     end
   end
 
-  def _prepare_solvers_by_ranks
-  end
 
-  def _problems_from_roc_se_ul()
-    roc, level, se, ul = _params_roc_se_ul
+  def _problems_from_roc_level_se_ul()
+    roc, level, se, ul = _params_roc_level_se_ul
     if ul
       return Sosna::Problem.where(annual: roc, level: level, round: se, problem_no: ul)
     else
@@ -1275,6 +1299,7 @@ class Sosna::SolutionController < SosnaController
                        end
     return annual
   end
+
   def _max_round_non_bonus(annual)
      max = Sosna::Problem
                        .where({annual: annual})
@@ -1286,6 +1311,4 @@ class Sosna::SolutionController < SosnaController
   def _confirm_file_path(solver)
          UPLOAD_DIR + "confirm-file-#{solver.id}.pdf"
   end
-
-
 end

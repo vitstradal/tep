@@ -6,7 +6,8 @@
      # cislo ulohy (aka problem_no), ale pro bonusove ulohy pouze 'B'
      ulohy_head += "#{pr.short_name.to_s};" 
    end
-%>%       nr;       nrr;flg;  id;                pr;             jm;   roc; rroc;skola;<%=ulohy_head%> pen;sumser;sumall;bdz
+%>% <%= @level_long %>
+%       nr;       nrr;flg;  id;                pr;             jm;   roc; rroc;skola;<%=ulohy_head%> pen;sumser;sumall;bdz
 <%
    rank_all_last  = ''
    rank_cls_last  = ''

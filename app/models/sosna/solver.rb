@@ -43,6 +43,10 @@ class Sosna::Solver < ActiveRecord::Base
      JUNIOR_LEVEL => 'Pikomat junior',
      NORMAL_LEVEL => 'Pikomat',
   }
+  LEVEL_TEXT = {
+     JUNIOR_LEVEL => ' Junior',
+     NORMAL_LEVEL => '',
+  }
 
 
   validates :name, :last_name,  presence: true
@@ -51,6 +55,25 @@ class Sosna::Solver < ActiveRecord::Base
   validates :grade_num,  format: {with: /\A\d*\Z/, message: :number}
   validates :email, format: {with: /\A\Z|\A[-_a-z\d\.\+]+@[a-z\d\.\-]+\Z/i , message: :email}
   #validates_associated :school
+
+  def self.level_from_short(level)
+    return Sosna::Solver::NORMAL_LEVEL if level.nil? || level.empty?
+    return Sosna::Solver::LEVEL_MAP[level] || Sosna::Solver::NORMAL_LEVEL
+  end
+
+  def self.level_extension(level)
+    level_ext = ''
+    level_ext = "#{level}" unless @level == Sosna::Solver::NORMAL_LEVEL
+    return level_ext
+  end
+
+  def self.level_text(level)
+    return Sosna::Solver::LEVEL_TEXT[level] || ''
+  end
+
+  def self.level_long(level)
+    return Sosna::Solver::LEVEL_MAP[level] || ''
+  end
 
   ##
   # *Returns* true, falseb
