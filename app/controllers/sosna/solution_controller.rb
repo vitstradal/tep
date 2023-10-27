@@ -350,7 +350,7 @@ class Sosna::SolutionController < SosnaController
   #
   # *Params*
   # id:: id Sosna::Solution
-  def download_rev # XXXX  level
+  def download_rev
     solution = Sosna::Solution.find id = params[:id]
     if ! solution
       add_alert 'Chyba: soubor neexistuje'
@@ -643,15 +643,15 @@ class Sosna::SolutionController < SosnaController
     is_owner = solution.owner?(current_user)
     authorize! :upload_org, Sosna::Solution if ! is_owner
 
-    se = problem.round
-    roc = problem.annual
-    level = problem.level
-
     if !solution
       add_alert "Špatné číslo řešení"
       return redirect_to sosna_solutions_user_url(roc, level, se, solver.id)
     end
-    problem, solver  = solution.problem, solution.solver
+
+    problem, solver = solution.problem, solution.solver
+    se = problem.round
+    roc = problem.annual
+    level = problem.level
 
     if problem.junior_level? and !solver.junior?
       add_alert "Úloha pouze pro mladší"
@@ -1080,7 +1080,7 @@ class Sosna::SolutionController < SosnaController
     #print "msg: #{fname}: #{msg}\n"
   end
 
-  def _upload_rev_one(roc, level, se, ul,  fname) # XXX
+  def _upload_rev_one(roc, level, se, ul,  fname)
 
     fname.force_encoding('UTF-8')
     if fname !~ /^(?:.*\/)?reseni-roc(\d+)([a-z\d].*)-se(\d+)-ul(\d+)-rel(\d+)-(ori|rev)-.*.pdf$/
@@ -1089,7 +1089,8 @@ class Sosna::SolutionController < SosnaController
     end
     oroc, olevel, ose, oul, relid = $1.to_i, Sosna::Solver::level_from_short($2), $3.to_i, $4.to_i, $5.to_i
 
-    if oroc.to_s != roc || ose.to_s != se || oul.to_s != ul || olevel == level
+    if oroc.to_s != roc || ose.to_s != se || oul.to_s != ul || olevel != level
+       log( "oroc=#{oroc} roc=#{roc} ose=#{ose} se=#{se} olevel=#{olevel} level=#{level} oul=#{oul} ul=#{ul}")
        _add_msg(fname, "reseni neni ke spravnemu rocniku, levelu, serii, uloze")
       return nil
     end
@@ -1100,7 +1101,7 @@ class Sosna::SolutionController < SosnaController
        return nil
     end
 
-    problem = Sosna::Problem.where(annual: roc, level: level, se: se, problem_no: ul).take
+    problem = Sosna::Problem.where(annual: roc, level: level, round: se, problem_no: ul).take
     solution = Sosna::Solution.where( :problem_id => problem.id, :solver_id => solver.id).take
 
     #filename_corr = _solution_filename(problem, solver, true)
@@ -1112,7 +1113,6 @@ class Sosna::SolutionController < SosnaController
     print "solution id: #{solution.id}, #{solution.filename_corr}\n"
     _add_msg(fname, "ok", true)
     return filename_rev
-
   end
 
   def _filename_rev_display(orig)

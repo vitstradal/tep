@@ -179,7 +179,7 @@
           <ul class="submenu">
             <%= menu_lii :sosna_solutions_user,   'Moje řešení' %>
             <% cur_sol = current_solver %>
-            <% if ! cur_sol.nil? || cur_sol.junior? %>
+            <% if ! cur_sol.nil? && cur_sol.junior? %>
               <%= menu_lii :sosna_solutions_user_junior,   'Moje řešení junior' %>
             <% end %>
             <% if is_bonus_active %>
