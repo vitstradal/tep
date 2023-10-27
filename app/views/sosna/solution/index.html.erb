@@ -86,7 +86,7 @@
 <%#### tabulka řešení -%>
 
 <%#= heading_tools "Řešení úloh, ročník #{@annual}, série #{@round} #{if @problem_no; "úloha #{@problem_no}"; end}" do %>
-<%= heading_with_tools "Řešení úloh, ročník #{@annual}, série #{@round}" do %>
+<%= heading_with_tools "Řešení úloh, ročník #{@annual}#{@level_text},  série #{@round}" do %>
   <%= content_for :heading_tools %>
 <% end %>
 

@@ -48,6 +48,7 @@ class Ability
 
     if user.user?
       can :user_index, Sosna::Solution
+      can :user_index_junior, Sosna::Solution
       can :user_bonus, Sosna::Solution
       can :upload, Sosna::Solution
       can :upload_confirm_file, Sosna::Solution

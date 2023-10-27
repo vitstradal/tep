@@ -28,7 +28,8 @@ Tep::Application.routes.draw do
   post   '/inform/delfrom/:form'                        => 'inform#delform',              :as => :inform_delform
 
   # user:
-  get  '/sosna/solutions/user(/:roc(/:level(/:se(/:id))))' => 'sosna/solution#user_index',    :as => :sosna_solutions_user
+  get  '/sosna/solutions/user/jr'                 => 'sosna/solution#user_index_junior', :as => :sosna_solutions_user_junior
+  get  '/sosna/solutions/user(/:roc(/:level(/:se(/:id))))' => 'sosna/solution#user_index', :as => :sosna_solutions_user
   get  '/sosna/solutions/bonus'                   => 'sosna/solution#user_bonus',    :as => :sosna_solutions_user_bonus
   patch '/sosna/solution/upload'                  => 'sosna/solution#upload',        :as => :sosna_solution_upload
   post '/sosna/solution/upload_rev'               => 'sosna/solution#upload_rev',   :as => :sosna_solution_upload_rev

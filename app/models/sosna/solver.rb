@@ -57,22 +57,27 @@ class Sosna::Solver < ActiveRecord::Base
   #validates_associated :school
 
   def self.level_from_short(level)
-    return Sosna::Solver::NORMAL_LEVEL if level.nil? || level.empty?
-    return Sosna::Solver::LEVEL_MAP[level] || Sosna::Solver::NORMAL_LEVEL
+    return NORMAL_LEVEL if level.nil? || level.empty?
+    return level if LEVEL_MAP[level]
+    return NORMAL_LEVEL
   end
 
   def self.level_extension(level)
     level_ext = ''
-    level_ext = "#{level}" unless @level == Sosna::Solver::NORMAL_LEVEL
+    level_ext = "#{level}" unless @level == NORMAL_LEVEL
     return level_ext
   end
 
   def self.level_text(level)
-    return Sosna::Solver::LEVEL_TEXT[level] || ''
+    return LEVEL_TEXT[level] || ''
   end
 
   def self.level_long(level)
-    return Sosna::Solver::LEVEL_MAP[level] || ''
+    return LEVEL_MAP[level] || ''
+  end
+
+  def self.level_valid?(level)
+    return Sosna::Solver::LEVEL_MAP.keys.include? level
   end
 
   ##

@@ -6,14 +6,11 @@
 <% end %>
 
 
-<h1>Úlohy <%= @annual %>. ročníku,
+<h1>Úlohy <%= @annual %>. ročníku<%= @level_text%>,
 <% if  is_bonus_round(@round) %>
    bonusová série
 <% else %>
    série <%= @round %>
-<% end %>
-<% if @level == Sosna::Solver::JUNIOR_LEVEL %>
-   , Junior
 <% end %>
 
 <% if ! @solver_is_current_user %>,

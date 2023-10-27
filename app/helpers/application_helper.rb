@@ -126,7 +126,6 @@ module ApplicationHelper
     end
 
     if _my_current_page?(url)
-      #print "set active#{url}\n"
       li_cls.push('active')
       @_active = true
     end
@@ -342,6 +341,13 @@ module ApplicationHelper
       solvers.sort! { |a,b| strcollf(a.last_name, b.last_name) || strcollf(a.name, b.name) || 0 }
   end
 
+  def current_solver()
+    Sosna::Solver.where(
+      :user_id => current_user.id,
+      :annual => @annual
+    ).order(annual: :desc).first
+  end
+
   def heading_with_tools(title, &block)
     body = capture(&block)
     content_tag(:div, :class => "widget-box transparent collapsed") do
@@ -462,18 +468,26 @@ module ApplicationHelper
   private
 
   def _my_current_page?(uri)
-      cur_ori = cur_uri = request.fullpath
-      his_uri = url_for(uri)
+    cur_ori = cur_uri = request.fullpath
+    his_uri = url_for(uri)
 
-      return true if cur_uri == his_uri
-      return false if his_uri.size < 1
 
-      his_uri = his_uri.sub( /s$/, '')
-      his_uri += '/'
-      cur_uri += '/'
-      ret = cur_uri[0,his_uri.size] == his_uri
-      #print "cur: #{cur_uri} cur_ori #{cur_ori}, his: #{his_uri}, ret: #{ret}\n"
-      return ret;
+    log("his_uri=#{his_uri} cur_uri=#{cur_uri} ")
+
+    return true if cur_uri == his_uri
+    return false if his_uri.size < 1
+
+    if cur_uri =~ /\/user\/(\d+\/)?jr/
+      return his_uri =~ /\/user\/jr$/
+    end
+
+
+    his_uri = his_uri.sub( /s$/, '')
+    his_uri += '/'
+    cur_uri += '/'
+    ret = cur_uri[0,his_uri.size] == his_uri
+    #print "cur: #{cur_uri} cur_ori #{cur_ori}, his: #{his_uri}, ret: #{ret}\n"
+    return ret;
   end
 
   def ckeditor_html_tweaks(html)

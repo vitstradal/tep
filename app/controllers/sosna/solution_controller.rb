@@ -494,6 +494,19 @@ class Sosna::SolutionController < SosnaController
   end
 
   ##
+  #  GET  /sosna/solutions/user/jr
+  #
+  # *Params*
+  #
+  # *Provides*
+  # jako user_index(level=jr)
+  def user_index_junior
+    @level = Sosna::Solver::JUNIOR_LEVEL
+    user_index
+    render :user_index
+  end
+
+  ##
   #  GET  /sosna/solutions/user(/:roc(/:se(/:id)))
   #
   # *Params*
@@ -512,12 +525,14 @@ class Sosna::SolutionController < SosnaController
   def user_index
 
     @annual = params[:roc] || @config[:annual]
+    @level = @level || params[:level] || Sosna::Solver::NORMAL_LEVEL
 
-    @level = params[:level] || Sosna::Solver::JUNIOR_LEVEL
-    if ! Sosna::Solver::LEVEL_MAP.keys.include? @level
+    if ! Sosna::Solver::level_valid? @level
       add_alert "Nevalidní level #{level} using #{Sosna::Solver::NORMAL_LEVEL}"
       @level = Sosna::Solver::NORMAL_LEVEL
     end
+
+    @level_text = Sosna::Solver::level_text(@level)
 
     #@annual = @config[:annual]
     solver_id = params[:id]

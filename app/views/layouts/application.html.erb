@@ -172,13 +172,16 @@
         <ul class="submenu">
           <%= menu_lii :new_user_session,        'Přihlásit' %>
           <%= menu_lii :sosna_solver_new,        'Nový řešitel' %>
-          <%#= menu_lii wiki_main_path('/tabor/prihlaska'),  'Přihláška na tábor'  %>
         </ul>
       <% end %>
       <% if user_signed_in?  %>
         <%= menu_li '#', 'Uživatel', ico: 'fa-user' do %>
           <ul class="submenu">
             <%= menu_lii :sosna_solutions_user,   'Moje řešení' %>
+            <% cur_sol = current_solver %>
+            <% if ! cur_sol.nil? || cur_sol.junior? %>
+              <%= menu_lii :sosna_solutions_user_junior,   'Moje řešení junior' %>
+            <% end %>
             <% if is_bonus_active %>
               <%= menu_lii :sosna_solutions_user_bonus,   'Řešení bonusových příkladů' %>
             <% end %>
