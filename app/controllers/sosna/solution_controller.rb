@@ -58,7 +58,7 @@ class Sosna::SolutionController < SosnaController
     _prepare_solvers_problems_solutions(want_test: true)
     results = Sosna::Result.where( :annual => @annual).load
     @results_by_solver_round = {}
-    results.each do |result| 
+    results.each do |result|
       @results_by_solver_round[result.solver_id] ||= {}
       @results_by_solver_round[result.solver_id][result.round] = result
     end
@@ -835,8 +835,10 @@ class Sosna::SolutionController < SosnaController
   def update_results
     roc, level, se, ul = _params_roc_level_se_ul
 
+    max_grade = Sosna::Solution::max_grade_for_level(level)
+
     # resitele
-    solvers = get_sorted_solvers(annual: roc).to_a
+    solvers = get_sorted_solvers(annual: roc, grade_num: ( 1 .. max_grade) ).to_a
 
     # vysledky (budou zmeneny)
     results_by_solver = _get_results_by_solver(solvers, roc, se)
@@ -860,9 +862,9 @@ class Sosna::SolutionController < SosnaController
 
     # pocty bodu za dane ulohy
     scores = {}
-    Sosna::Solution.where(:problem_id => problems.map{|p|p.id}).each do  |sol|
-      scores[sol.solver_id] ||= {}
-      scores[sol.solver_id][problems_by_id[sol.problem_id].problem_no] = sol.score || 0
+    Sosna::Solution.where(:problem_id => problems.map{|p|p.id}).each do  |solution|
+      scores[solution.solver_id] ||= {}
+      scores[solution.solver_id][problems_by_id[solution.problem_id].problem_no] = solution.score || 0
     end
 
     # spocitej body kazdemu resitely
@@ -891,7 +893,7 @@ class Sosna::SolutionController < SosnaController
     # poradi v rocniku (klic je round_num, tedy cislo rocniku)
     grade_rank = {}
 
-    while  i < solvers.size do
+    while i < solvers.size do
       cur_score = results_by_solver[solvers[i].id].score
       first_i = i
 
@@ -1218,7 +1220,8 @@ class Sosna::SolutionController < SosnaController
 
   def _prepare_solvers_problems_solutions(want_test: true, want_bonus: true)
     _params_roc_level_se_ul
-    where = { annual: @annual}
+    max_grade = Sosna::Solver::max_grade_for_level(@level)
+    where = { annual: @annual, grade_num: (1..max_grade)}
     where.merge!({is_test_solver: false }) if ! want_test
     @solvers = get_sorted_solvers(where)
     @problems = _problems_from_roc_level_se_ul

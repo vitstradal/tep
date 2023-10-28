@@ -23,7 +23,7 @@ class Sosna::Result < ActiveRecord::Base
   # je v celkovém pořadí na dané pozici sám, nebo sdílí místo s někým jiným? 
   #
   # *Returns* `false` je sám, `true` sdílí
- 
+
   def rank_multi?
     return false if rank.nil? || rank_to.nil?
     return rank < rank_to

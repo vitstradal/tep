@@ -37,6 +37,7 @@ class Sosna::Solver < ActiveRecord::Base
   belongs_to :user
 
   JUNIOR_LEVEL = 'jr'
+  MAX_GRADE = 9
   NORMAL_LEVEL = 'pi'
   LEVELS = [ NORMAL_LEVEL, JUNIOR_LEVEL ]
   LEVEL_MAP = {
@@ -46,6 +47,10 @@ class Sosna::Solver < ActiveRecord::Base
   LEVEL_TEXT = {
      JUNIOR_LEVEL => ' Junior',
      NORMAL_LEVEL => '',
+  }
+  LEVEL_MAX_GRADE = {
+     JUNIOR_LEVEL => 6,
+     NORMAL_LEVEL => 9,
   }
 
 
@@ -77,7 +82,11 @@ class Sosna::Solver < ActiveRecord::Base
   end
 
   def self.level_valid?(level)
-    return Sosna::Solver::LEVEL_MAP.keys.include? level
+    return LEVEL_MAP.keys.include? level
+  end
+
+  def self.max_grade_for_level(level)
+    return LEVEL_MAX_GRADE[level] || MAX_GRADE
   end
 
   ##
