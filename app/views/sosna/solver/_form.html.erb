@@ -41,7 +41,7 @@
     </div>
 
     <div class="form-group">
-      <%= f.label :solver_email, "Email", :class =>  'col-sm-3 control-label no-padding-right'%>
+      <%= f.label :solver_email, "E-mail", :class =>  'col-sm-3 control-label no-padding-right'%>
       <div class="col-sm-9 <%= form_error_class @solver, :email %>">
         <%= f.text_field :email %>
         <%= form_error @solver, :email %>
@@ -58,7 +58,7 @@
     </div>
 
     <div class="form-group">
-      <%= f.label :solver_street, "PSČ a Město", :class =>  'col-sm-3 control-label no-padding-right'%>
+      <%= f.label :solver_street, "PSČ a město", :class =>  'col-sm-3 control-label no-padding-right'%>
       <div class="col-sm-9 <%= form_error_class @solver, :psc, :city %>">
         <%= f.text_field :psc, :class=>'input-mini'%>
         <%= f.text_field :city %>
@@ -183,7 +183,7 @@
     <% end %>
 
     <div class="form-group">
-      <%= f.label :solver_finish_year, "Datum narozeni", :class =>  'col-sm-3 control-label no-padding-right'%>
+      <%= f.label :solver_finish_year, "Datum narození", :class =>  'col-sm-3 control-label no-padding-right'%>
       <div class="col-sm-9 <%= form_error_class @solver, :birth %>">
         <%= f.text_field :birth %>
         <%= form_error @solver, :birth %>

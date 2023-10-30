@@ -835,7 +835,7 @@ class Sosna::SolutionController < SosnaController
   def update_results
     roc, level, se, ul = _params_roc_level_se_ul
 
-    max_grade = Sosna::Solution::max_grade_for_level(level)
+    max_grade = Sosna::Solver::max_grade_for_level(level)
 
     # resitele
     solvers = get_sorted_solvers(annual: roc, grade_num: ( 1 .. max_grade) ).to_a
@@ -1085,7 +1085,7 @@ class Sosna::SolutionController < SosnaController
   def _upload_rev_one(roc, level, se, ul,  fname)
 
     fname.force_encoding('UTF-8')
-    if fname !~ /^(?:.*\/)?reseni-roc(\d+)([a-z\d].*)-se(\d+)-ul(\d+)-rel(\d+)-(ori|rev)-.*.pdf$/
+    if fname !~ /^(?:.*\/)?reseni-roc(\d+)([a-z\d]*)-se(\d+)-ul(\d+)-rel(\d+)-(ori|rev)-.*.pdf$/
       _add_msg(fname, "jmeno souboru neni ve spravnem formatu, ocekavany format: DIR/reseni-rocNN-seN-ulN-relN-(ori|rev)-.*.pdf")
       return nil
     end

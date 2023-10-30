@@ -60,11 +60,11 @@ Tep::Application.routes.draw do
 
   get  '/sosna/solutions(/:roc(/:level(/:se(/:ul))))' => 'sosna/solution#index',     :as => :sosna_solutions_org
 
+  post '/sosna/solution/update_results'      => 'sosna/solution#update_results',:as => :sosna_solution_update_results
   post '/sosna/solutions/update_scores'      => 'sosna/solution#update_scores', :as => :sosna_solutions_update_scores
   post '/sosna/solutions/update_papers'      => 'sosna/solution#update_papers', :as => :sosna_solutions_update_papers
-  post '/sosna/solutions/update_penalisations'=>'sosna/solution#update_penalisations', :as => :sosna_solutions_update_penalisations
-  post '/sosna/solution/update'              => 'sosna/solution#update',        :as => :sosna_solution_update
-  post '/sosna/solution/update_results'      => 'sosna/solution#update_results',:as => :sosna_solution_update_results
+  post '/sosna/solutions/update_penalisations' => 'sosna/solution#update_penalisations', :as => :sosna_solutions_update_penalisations
+  #post '/sosna/solution/update'              => 'sosna/solution#update',        :as => :sosna_solution_update
   get  '/sosna/solution/downall'             => 'sosna/solution#downall',       :as => :sosna_solution_down_all
 
   post  '/sosna/solution/:id/resing'         => 'sosna/solution#resign',      :as => :sosna_solution_resign
