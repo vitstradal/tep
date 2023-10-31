@@ -1057,14 +1057,14 @@ class Sosna::SolutionController < SosnaController
       # in level problem
       path.push(_round_link(@annual, @level, @round))
       path.push(_problem_link(@annual, @level, @round, @problem_no))
-      path[-1][:sub] = _problems_roc_se(@annual, @round, @round)
+      path[-1][:sub] = _problems_roc_level_se(@annual, @level, @round)
     elsif @round
       # in level round
       path.push(_round_link(@annual, @level, @round))
       path[-1][:sub] = _rounds_roc_links(@annual, @level)
       @action_buttons = []
 
-      dir = _problems_roc_se(@annual, @level, @round)
+      dir = _problems_roc_level_se(@annual, @level, @round)
     else
       # in level annual
       @annuals = _annuals
@@ -1251,7 +1251,7 @@ class Sosna::SolutionController < SosnaController
 
 
   # r: links to problems
-  def _problems_roc_se(roc, level, se, action = :index)
+  def _problems_roc_level_se(roc, level, se, action = :index)
       return Sosna::Problem.where({annual: roc, round: se, level: level })
                          .load
                          .map do |ul|
