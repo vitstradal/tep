@@ -1,0 +1,106 @@
+body.pb2019 {
+  background-image: url(/setkani/pikobrani2019/pb2019-3.jpg);
+  /* background-image: url(/setkani/pikobrani2019/pb2019-4.jpg); */
+  /* background-image: url(/setkani/pikobrani2019/pb2019-3.jpg); */
+  background-size: 100%;
+}
+
+body.ps22srp {
+  background-image: url(/setkani/22srp.png);
+  background-size: 100%;
+}
+
+body.pb2019 .navbar {
+  background: #b94343;
+}
+
+body.pb2019 .sidebar {
+  display: none;
+}
+
+body.pb2019 li,
+body.pb2019 a {
+  color: #b94343;
+}
+
+body.pb2019 .ace-settings-item {
+  display: none;
+}
+
+body.pb2019 a.btn.btn-primary {
+  background-color: #b94343 !important;
+}
+
+body.pb2019 i.fa {
+  color: #b94343 ;
+}
+
+body.pb2019 i.fa.fa-search.nav-search-ico  {
+  color: #b94343 ;
+}
+ 
+/* body { width: 100%; height: 100vh; background: linear-gradient(#1A3742, #9EA183); } */
+.pb22-bubbles { width: 100%; height: 100%; overflow: hidden; }
+.pb22-bubble {
+   width: 6px; height: 6px; border-radius: 50%; border: 1px solid #fff; border: 1px solid rgba(255, 255, 255, 0.5);
+     background: #fff; background: rgba(255, 255, 255, 0.25); will-change: transform; transition: 2s;
+ }
+.bubbleHover { transform: scale(2); background: red; }
+.minDistance { background: darkorange; }
+.maxDistance { background: yellow; }
+.bubble-container { position: absolute; bottom: 0; animation: bubbleRise 10s infinite ease-in; will-change: transform; }
+@keyframes bubbleRise {
+  0% { opacity: 0; bottom: 0; }
+  15% { bottom: 0; opacity: 0.1; margin-left: 0; }
+  25% { opacity: 0.5; }
+  50% { opacity: 1; margin-left: 50px; }
+  100% { bottom: 100%; opacity: 0; }
+}
+       
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ /*
+body.pb2023 .sidebar {
+  display: none;
+}
+
+
+body.pb2023 .ace-settings-item {
+  display: none;
+}
+*/
+
+body.pb2023 a.btn.btn-primary {
+  background-color: #000 !important;
+}
+
+body.pb2023 li,
+body.pb2023 a,
+body.pb2023 i.fa,
+body.pb2023 i.fa.fa-search.nav-search-ico  {
+  color: #000 ;
+}
+
+body.pb2023 .navbar {
+  background: #000;
+}
+body.pb2023 {
+  background-image: url(/images/pb2023.jpg);
+}
+
+body.pb2023 .main-container.container:before ,
+body.pb2023 .page-content{
+  background-color: rgba(255, 255, 255, 0.46);
+}
+
