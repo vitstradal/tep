@@ -10,6 +10,11 @@
   <% meth   = :post %>
 <% end %>
 
+<% if is_bonus %>
+  <%= link_to  new_user_session_path, {:class => 'btn btn-success'} do %><span class="fa fa-user"></span>  Již mám Pikomatí účet<%end%>
+  <hr />
+<% end %>
+
 <%= form_for @solver, :url => { :action => action }, :method => meth, :html => {:class=>'form-horizontal'} do |f| %>
   <div class="<%= form_error_class @solver, :name, :last_name%>">
     <% if is_confirm %>
@@ -300,9 +305,6 @@
             <%= f.submit :class=>'btn btn-primary', :value=>'Uložit' %>
           <% else %>
             <%= f.submit :class=>'btn btn-primary', :value=>'Přihlásit se do Pikomatu' %>
-            <% if is_bonus %>
-               <%= button_tag  'Již mám Pikomatí účet', :class => 'btn btn-success', :ico => 'fa-user', :href => new_user_session_path  %>
-            <% end %>
           <% end %>
         <% end %>
       </div>
