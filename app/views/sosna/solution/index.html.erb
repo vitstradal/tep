@@ -54,9 +54,9 @@
         <% end # form %>
       <% else # problem_no %>
         <div class="btn-group">
-          <%= button_tag "Editovat body", :class=> 'btn btn-danger', ico: 'fa-th', href: sosna_solutions_edit2_url(@annual, @round)  %>
-          <%= button_tag "Editovat papíry", :class=> 'btn btn-danger', ico: 'fa-file-text', href: sosna_solutions_edit2_url(@annual, @round, paper: 'yes')  %>
-          <%= button_tag "Editovat penalizaci", :class=> 'btn btn-danger', ico: 'fa-thumbs-down', href: sosna_solutions_edit2_url(@annual, @round, penalisation: 'yes' )  %>
+          <%= button_tag "Editovat body", :class=> 'btn btn-danger', ico: 'fa-th', href: sosna_solutions_edit2_url(@annual, @level, @round)  %>
+          <%= button_tag "Editovat papíry", :class=> 'btn btn-danger', ico: 'fa-file-text', href: sosna_solutions_edit2_url(@annual, @level, @round, paper: 'yes')  %>
+          <%= button_tag "Editovat penalizaci", :class=> 'btn btn-danger', ico: 'fa-thumbs-down', href: sosna_solutions_edit2_url(@annual, @level, @round, penalisation: 'yes' )  %>
         </div>
         <p>Pro nahrání opraveného řešení vyber úlohu:
 

@@ -237,6 +237,7 @@ class Sosna::SolverController < SosnaController
   # *Provides*
   # @bonus:: true
   def new_bonus
+    return redirect_to sosna_solutions_user_bonus_path if ! current_solver.nil?
     @bonus = true
     new
     render :new
@@ -281,7 +282,7 @@ class Sosna::SolverController < SosnaController
 
     if is_bonus
       if solver.errors.count > 0
-        add_alert "Pozor: ve formuláři jsou chyby (bonus)" + solver.errors.to_json.to_s
+        add_alert "Pozor: ve formuláři jsou chyby" 
         flash[:solver] = solver
         flash[:agree] = agree
         return redirect_to :action => :new_bonus
@@ -313,7 +314,7 @@ class Sosna::SolverController < SosnaController
         user =  User.new(email: solver.email.downcase, name: solver.name, last_name: solver.last_name, confirmation_sent_at: Time.now,  roles: [:user])
 
         user.confirm
-        user.send_first_login_instructions  if send_first
+        user.send_first_login_instructions(is_bonus) if send_first
         solver.user_id = user.id
         user.save
       end
@@ -325,7 +326,7 @@ class Sosna::SolverController < SosnaController
     # some test
     school.save if school && school.id.nil?
     solver.save
-    redirect_to :action => :create_tnx, :send_first =>  send_first
+    redirect_to :action => :create_tnx, :send_first => send_first
   end
 
   def _handle_school( solver, is_bonus )

@@ -9,8 +9,9 @@ class Tep::Mailer < Devise::Mailer
   # record:: 
   # token:: token
   # opts:: 
-  def first_login_instructions(record, token, opts={})
+  def first_login_instructions(record, token, is_bonus, opts={})
     @token = token
+    @is_bonus = is_bonus
     devise_mail(record, :first_login_instructions)
   end
 

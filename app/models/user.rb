@@ -92,9 +92,8 @@ class User < ActiveRecord::Base
 
   ##
   # zašle instrukce pro první přihlášení
-  def send_first_login_instructions
+  def send_first_login_instructions(is_bonus = false)
      token_raw = set_reset_password_token
-     send_devise_notification(:first_login_instructions, token_raw)
-
+     send_devise_notification(:first_login_instructions, token_raw, is_bonus)
   end
 end

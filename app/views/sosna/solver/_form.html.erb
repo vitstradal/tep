@@ -221,6 +221,8 @@
 
            how_i_met_selected = if how_i_met_ops.map { |item| item[1].to_s }.include?  @solver.how_i_met_pikomat
                                   @solver.how_i_met_pikomat
+                                elsif is_bonus
+                                 'soutez'
                                 elsif @solver.how_i_met_pikomat.empty?
                                  'vyber'
                                 else
@@ -298,6 +300,9 @@
             <%= f.submit :class=>'btn btn-primary', :value=>'Uložit' %>
           <% else %>
             <%= f.submit :class=>'btn btn-primary', :value=>'Přihlásit se do Pikomatu' %>
+            <% if is_bonus %>
+               <%= button_tag  'Již mám Pikomatí účet', :class => 'btn btn-success', :ico => 'fa-user', :href => new_user_session_path  %>
+            <% end %>
           <% end %>
         <% end %>
       </div>

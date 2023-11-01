@@ -10,7 +10,9 @@
   <p>Tento e-mail ti přišel, protože tě někdo (pravděpodoboně ty) přihlásil do soutěže Pikomat.</p>
   <p>Pro dokončení registrace použij následující odkaz:</p>
 
-  <p><%= link_to 'Dokončit registraci', user_finish_registration_url(:token => @token || 'fake') %></p>
+  <p><%= link_to 'Dokončit registraci', user_finish_registration_url(:token => @token || 'fake')
+      %><% if @is_bonus %>, pak nám už budeš moct poslat řešení úlohy z letáčku<% end %>.
+  </p>
 
   <p>Pokud jsi již registrovaný, tento mail je ti poslán z důvodu nutnosti
      aktualizace údajů a potvrzení souhlasu o zpracování osobních udajů na další

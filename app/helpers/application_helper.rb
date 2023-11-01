@@ -342,6 +342,8 @@ module ApplicationHelper
   end
 
   def current_solver()
+    load_config
+    return nil if current_user.nil?
     Sosna::Solver.where(
       :user_id => current_user.id,
       :annual => @annual
@@ -470,9 +472,6 @@ module ApplicationHelper
   def _my_current_page?(uri)
     cur_ori = cur_uri = request.fullpath
     his_uri = url_for(uri)
-
-
-    log("his_uri=#{his_uri} cur_uri=#{cur_uri} ")
 
     return true if cur_uri == his_uri
     return false if his_uri.size < 1
