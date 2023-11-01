@@ -61,7 +61,7 @@
         <p>Pro nahrání opraveného řešení vyber úlohu:
 
           <% @problems.each do |pr| %>
-            <%= link_to "ul#{pr.problem_no}", { action: :index, roc: @annual, se: @round, ul: pr.problem_no , anchor: 'upload' } %>,
+            <%= link_to "ul#{pr.problem_no}", { action: :index, roc: @annual, level: @level, se: @round, ul: pr.problem_no , anchor: 'upload' } %>,
          <% end %></p>
       <% end # problem_no %>
     <% end # want this%>
