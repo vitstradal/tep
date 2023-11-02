@@ -88,3 +88,6 @@ aesop:
 	rails  r  -e production script/aesop.rb
 ctags:
 	ctags -R app config lib
+
+gen-secret-key-base:
+	script/gen_secret_key_base.rb

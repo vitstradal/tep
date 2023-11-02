@@ -25,3 +25,4 @@ tags
 /var/uploads/*.ext
 /var/uploads/*.bad
 /public/doc
+/config/initializers/secret_key_base.rb
