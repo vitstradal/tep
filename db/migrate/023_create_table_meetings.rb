@@ -15,7 +15,7 @@ class CreateTableEvents < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index(:participants, :event)
-    add_index(:participants, :user)
+    add_index(:event_participants, :event)
+    add_index(:event_participants, :user)
   end
 end
