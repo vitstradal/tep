@@ -46,6 +46,9 @@ class Ability
     #can :auth, Jabber
     #can :prebind, Jabber
 
+    # event
+    can :index, Event
+
     if user.user?
       can :user_index, Sosna::Solution
       can :user_index_junior, Sosna::Solution
@@ -59,6 +62,8 @@ class Ability
       can :user_solver_confirm, Sosna::Solver
       can :update_confirm, Sosna::Solver
       can :info, :tepna
+
+      can :show, Event
     end
 
     if user.org?
@@ -123,6 +128,9 @@ class Ability
 
       can :get_confirm_files, Sosna::Solution
 
+      can :new, Event
+      can :update, Event
+
     end
 
     if user.admin?
@@ -158,6 +166,8 @@ class Ability
       #can :new,  Jabber
       #can :update, Jabber
       #can :delete, Jabber
+
+      can :delete, Event
     end
 
     # Wikis

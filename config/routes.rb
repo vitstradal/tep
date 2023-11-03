@@ -48,6 +48,9 @@ Tep::Application.routes.draw do
   get  '/sosna/solution/:id/down_rev'       => 'sosna/solution#download_rev', :as => :sosna_solution_download_rev
   #get  '/sosna/solution/:id/down(/:ori)'     => 'sosna/solution#download',      :as => :sosna_solution_download
   #get  '/sosna/solution/:id/down_rev(/:ori)'=> 'sosna/solution#download_rev', :as => :sosna_solution_download_rev
+ 
+  post '/events/:id/delete'            => 'events#delete',          :as => :event_delete
+  resources :events
 
   # org:
   get  '/sosna/solutions/lidi(/:roc(/:level(/:se(/:ul))))' => 'sosna/solution#lidi',           :as => :sosna_solutions_lidi

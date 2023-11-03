@@ -11,14 +11,37 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 22) do
+ActiveRecord::Schema.define(version: 23) do
 
-  create_table "informs", force: :cascade do |t|
-    t.string   "form",       limit: 255
-    t.string   "data",       limit: 255
+  create_table "event_participants", force: :cascade do |t|
+    t.integer  "event_id"
+    t.integer  "user_id"
+    t.string   "status"
+    t.string   "note"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.text     "user_agent",             default: "unknown"
+  end
+
+  add_index "event_participants", [nil], name: "index_event_participants_on_event"
+  add_index "event_participants", [nil], name: "index_event_participants_on_user"
+
+  create_table "events", force: :cascade do |t|
+    t.date     "event_start"
+    t.date     "event_end"
+    t.string   "title"
+    t.text     "body"
+    t.string   "event_info_url"
+    t.string   "visible",        default: "org"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "informs", force: :cascade do |t|
+    t.string   "form"
+    t.string   "data"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+    t.text     "user_agent", default: "unknown"
   end
 
   add_index "informs", ["form"], name: "index_informs_on_form"
@@ -75,7 +98,7 @@ ActiveRecord::Schema.define(version: 22) do
   add_index "oauth_applications", ["uid"], name: "index_oauth_applications_on_uid", unique: true
 
   create_table "sessions", force: :cascade do |t|
-    t.string   "session_id", limit: 255, null: false
+    t.string   "session_id", null: false
     t.text     "data"
     t.datetime "created_at"
     t.datetime "updated_at"
@@ -85,8 +108,8 @@ ActiveRecord::Schema.define(version: 22) do
   add_index "sessions", ["updated_at"], name: "index_sessions_on_updated_at"
 
   create_table "sosna_configs", force: :cascade do |t|
-    t.string "key",   limit: 255
-    t.string "value", limit: 255
+    t.string "key"
+    t.string "value"
   end
 
   add_index "sosna_configs", ["key"], name: "index_sosna_configs_on_key", unique: true
@@ -105,11 +128,11 @@ ActiveRecord::Schema.define(version: 22) do
   add_index "sosna_penalisations", ["solver_id", "annual", "level", "round"], name: "index_sosna_penalisations_on_solver_id_annual_level_round", unique: true
 
   create_table "sosna_problems", force: :cascade do |t|
-    t.string  "title",      limit: 255
+    t.string  "title"
     t.integer "annual"
     t.integer "round"
     t.integer "problem_no"
-    t.string  "level",                  default: "pi", null: false
+    t.string  "level",      default: "pi", null: false
   end
 
   create_table "sosna_results", force: :cascade do |t|
@@ -143,16 +166,16 @@ ActiveRecord::Schema.define(version: 22) do
   end
 
   create_table "sosna_solutions", force: :cascade do |t|
-    t.string   "filename",              limit: 255
-    t.string   "filename_orig",         limit: 255
-    t.string   "filename_corr",         limit: 255
-    t.string   "filename_corr_display", limit: 255
+    t.string   "filename"
+    t.string   "filename_orig"
+    t.string   "filename_corr"
+    t.string   "filename_corr_display"
     t.integer  "score"
     t.integer  "problem_id"
     t.integer  "solver_id"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "has_paper_mail",                    default: false, null: false
+    t.boolean  "has_paper_mail",        default: false, null: false
   end
 
   add_index "sosna_solutions", ["solver_id", "problem_id"], name: "index_sosna_solutions_on_solver_id_and_problem_id", unique: true
@@ -186,28 +209,28 @@ ActiveRecord::Schema.define(version: 22) do
   end
 
   create_table "users", force: :cascade do |t|
-    t.string   "email",                  limit: 255, default: "", null: false
-    t.string   "encrypted_password",     limit: 255, default: "", null: false
-    t.string   "reset_password_token",   limit: 255
+    t.string   "email",                  default: "", null: false
+    t.string   "encrypted_password",     default: "", null: false
+    t.string   "reset_password_token"
     t.datetime "reset_password_sent_at"
     t.datetime "remember_created_at"
-    t.integer  "sign_in_count",                      default: 0
+    t.integer  "sign_in_count",          default: 0
     t.datetime "current_sign_in_at"
     t.datetime "last_sign_in_at"
-    t.string   "current_sign_in_ip",     limit: 255
-    t.string   "last_sign_in_ip",        limit: 255
-    t.string   "confirmation_token",     limit: 255
+    t.string   "current_sign_in_ip"
+    t.string   "last_sign_in_ip"
+    t.string   "confirmation_token"
     t.datetime "confirmed_at"
     t.datetime "confirmation_sent_at"
-    t.string   "unconfirmed_email",      limit: 255
-    t.integer  "failed_attempts",                    default: 0
-    t.string   "unlock_token",           limit: 255
+    t.string   "unconfirmed_email"
+    t.integer  "failed_attempts",        default: 0
+    t.string   "unlock_token"
     t.datetime "locked_at"
     t.integer  "roles_mask"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "name",                   limit: 255
-    t.string   "last_name",              limit: 255
+    t.string   "name"
+    t.string   "last_name"
   end
 
   add_index "users", ["email"], name: "index_users_on_email", unique: true
