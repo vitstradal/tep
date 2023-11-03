@@ -1,0 +1,50 @@
+<%= form_for :event, url: events_path do |f| %>
+ 
+  <% if @event.errors.any? %>
+    <div id="error_explanation">
+      <h2>
+        <%= pluralize(@event.errors.count, "error") %> vyskytly se následující chyby:
+      </h2>
+      <ul>
+        <% @event.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+ 
+  <p>
+  <%= f.label :title, "Název akce:" %><br>
+    <%= f.text_field :title %>
+  </p>
+ 
+  <p>
+    <%= f.label :body, "Popis akce:" %><br>
+    <%= f.text_area :body %>
+  </p>
+
+  <p>
+    <%= f.label :event_start, "Začátek akce:" %><br>
+    <%= f.date_field :event_start %>
+  </p>
+
+  <p>
+    <%= f.label :event_end, "Konec akce:" %><br>
+    <%= f.date_field :event_end %>
+  </p>
+
+  <p>
+    <%= f.label :event_info_url, "Odkaz na další informace:" %>
+    <%= f.text_field :event_info_url %>
+  </p>
+
+  <p>
+    <%= f.label :visible, "Kdo se o akci vůbec dozví:" %>
+    <%= f.select :visible, ["everyone", "user", "org"] %>
+  </p>
+ 
+  <p>
+    <%= f.submit "Uložit akci", :class => 'btn btn-primary' %>
+  </p>
+ 
+<% end %>

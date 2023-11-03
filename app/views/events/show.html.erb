@@ -1,0 +1,20 @@
+<h1><%= @event.title %>           
+<% if current_user && current_user.morg? %>
+  <%= link_to "edituj akci", edit_event_path(@event), :class=>'btn btn-primary' %>
+<% end %>
+</h1>
+
+<p><%= @event.body %><p>
+
+<% if @event.event_info_url != "" %>
+  <p>Více info najdeš <a href="<%= @event.event_info_url %>">tady</a>.</p>
+<% end %>
+
+<%= link_to "Ukaž výběr všech akcí!", events_path %>
+
+<h2>Přihlášení účastníci</h2>
+<% if current_user %>
+  <%= render @event.event_participants %>
+<% else %>
+  Pro zobrazení účastníků je potřeba se přihlásit.
+<% end %>

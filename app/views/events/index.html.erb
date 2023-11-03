@@ -1,0 +1,34 @@
+<h1>Přihlašování na pikomatí akce</h1>
+
+Abys ses mohl přihlásit na nějakou akci, musíš mít buďto řešitelský profil s vyplněným telefonním číslem a rodným číslem, anebo založený speciální účet na akce.<br>
+
+<% if can? :new, Event %>
+  <%= link_to "Vytvořit novou akci", new_event_path, :class => 'btn btn-primary' %>
+<% end %>
+
+<h2>Budoucí akce</h2>
+
+<div class="table-div">
+  <% @future_events.each do |event| %>
+    <% if Event::event_visible?(event.visible, current_user)%>
+      <b><%= event.title %> (<%= event.date_str() %>):</b> 
+        <% if event.event_info_url != "" %>
+          <a href="<%= event.event_info_url %>">info</a>, <%= link_to "přihlašování", event %>
+      <% else %>
+        <%= link_to "info a přihlašování", event %>
+      <% end %>
+      <br>
+    <% end %>
+  <% end %>
+</div>
+
+<h2>Již proběhlé akce</h2>
+
+<div class="table-div">
+  <% @past_events.each do |event| %>
+    <% if Event::event_visible?(event.visible, current_user) %>
+      <b><%= event.title %> (<%= event.date_str() %>):</b> <a href="<%= event.event_info_url %>">info</a>, <%= link_to "přihlašování", event %><br>
+    <% end %>
+  <% end %>
+</div>
+
