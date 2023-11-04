@@ -1,0 +1,32 @@
+<h2>Přihláška</h2>
+
+<%= form_for :event_participant, :url => { :action => :enroll } do |f| %>
+
+    <% if @event.errors.any? %>
+    <div id="error_explanation">
+      <h2>
+        <%= pluralize(@event.errors.count, "error") %> vyskytly se následující chyby:
+      </h2>
+      <ul>
+        <% @event.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <%= f.hidden_field :event_id, value: @event.id %>
+
+  <%= f.hidden_field :user_id, value: current_user.id %>
+
+  <b>
+  <%= f.select :status, [["půjdu", "yes"], ["možná", "maybe"], ["nezúčastním se", "no"]] %>
+  </b>
+  <p>
+    <%= f.label :note, "Poznámky:" %><br>
+    <%= f.text_field :note %>
+  </p>
+  <p>
+    <%= f.submit "Uložit přihlášku", :class => 'btn btn-primary' %>
+  </p>
+<% end %>
