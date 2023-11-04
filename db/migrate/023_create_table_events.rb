@@ -5,6 +5,7 @@ class CreateTableEvents < ActiveRecord::Migration
       t.date :event_end
       t.string :title
       t.text :body
+      t.string :category, :default => "ot"
       t.string :event_info_url, :default => ""
       t.string :visible, :default => "org"
       t.timestamps

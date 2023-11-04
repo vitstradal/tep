@@ -20,8 +20,17 @@ class EventsController < ApplicationController
   # @past_evens::        všechny akce, které už se konaly (seřazené)
   #
   def index
-    @future_events = Event.where(["event_end >= ?", Time.current]).order(event_start: :desc)
-    @past_events = Event.where(["event_end < ?", Time.current]).order(event_start: :desc)
+    @event_category = params[:event_category]
+    if @event_category.nil?
+      @event_category = "ev"
+    end
+    if @event_category == "ev"
+      @future_events = Event.where(["event_end >= ?", Time.current]).order(event_start: :desc)
+      @past_events = Event.where(["event_end < ?", Time.current]).order(event_start: :desc)
+    else
+      @future_events = Event.where(["event_end >= ? AND category == ?", Time.current, @event_category]).order(event_start: :desc)
+      @past_events = Event.where(["event_end < ? AND category == ?", Time.current, @event_category]).order(event_start: :desc)
+    end
   end
 
   ##
@@ -100,6 +109,10 @@ class EventsController < ApplicationController
     @event.destroy
 
     redirect_to events_path
+  end
+
+  def filter
+    redirect_to event_category_path(params[:event_category])
   end
 
   private

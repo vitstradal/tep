@@ -11,6 +11,9 @@ class Event < ActiveRecord::Base
 
   VISIBLE_STATUSES = ['everyone', 'user', 'org']
 
+  CATEGORIES = [['Víkendovka', 'wk'], ['Pikostředa', 'we'], ['Jiné', 'ot']]
+  CATEGORY_SEARCH = CATEGORIES.clone.unshift(['Všechny', 'ev'])
+
     # helper method for deciding whether the target event should be visible for the current user
   def self.event_visible?(visibility_status, current_user)
     if(visibility_status == 'everyone' || current_user && (current_user.org? || (current_user.user? && visibility_status=='user')))

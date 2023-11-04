@@ -20,7 +20,12 @@
       </ul>
     </div>
   <% end %>
- 
+
+  <p>
+    <%= f.label :category, "Typ akce:" %>
+    <%= f.select :category, Event::CATEGORIES %>
+  </p>
+
   <p>
   <%= f.label :title, "Název akce:" %><br>
     <%= f.text_field :title %>

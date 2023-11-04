@@ -6,6 +6,14 @@ Abys ses mohl přihlásit na nějakou akci, musíš mít buďto řešitelský pr
   <%= link_to "Vytvořit novou akci", new_event_path, :class => 'btn btn-primary' %>
 <% end %>
 
+<p>
+<%= form_tag filter_events_path, :method => "post" do %>
+    <%= label_tag :event_category, "Typ akce:" %>
+    <%= select_tag :event_category, options_for_select(Event::CATEGORY_SEARCH, @event_category) %>
+    <%= submit_tag "Hledej!", :class => 'btn btn-primary' %>
+  <% end %>
+</p>
+
 <h2>Budoucí akce</h2>
 
 <div class="table-div">
