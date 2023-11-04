@@ -1,6 +1,13 @@
-<h1><%= @event.title %>           
-<% if current_user && current_user.morg? %>
-  <%= link_to "edituj akci", edit_event_path(@event), :class=>'btn btn-primary' %>
+<h1><%= @event.title %>
+<% if (can? :edit, Event) && !@edit_participants %>
+  <%= button_tag "Edituj akci", :href => edit_event_path(@event), :class=>'btn btn-danger', :ico => 'fa-floppy-o' %>
+<% end %>
+<% if can? :edit_participants, Event %>
+  <% if @edit_participants %>
+    <%= button_tag "Zpět", :href => event_path(@event), :class=>'btn', :ico =>'fa-reply' %>
+  <% else %>
+    <%= button_tag "Edituj účastníky", :href => edit_participants_event_path(@event), :class=>'btn btn-danger', :ico => 'fa-floppy-o' %>
+  <% end %>
 <% end %>
 </h1>
 
@@ -11,6 +18,10 @@
 <% end %>
 
 <%= link_to "Ukaž výběr všech akcí!", events_path %>
+
+<% unless current_user.nil? || @edit_participants %>
+  <%= render :partial => "form2" %>
+<% end %>
 
 <h2>Přihlášení účastníci</h2>
 <% if current_user %>

@@ -13,8 +13,8 @@ class CreateTableEvents < ActiveRecord::Migration
     create_table :event_participants do |t|
       t.belongs_to :event
       t.belongs_to :user
-      t.string :status
-      t.string :note
+      t.string :status, :default => "yes"
+      t.string :note, :default => ""
       t.timestamps
     end
 

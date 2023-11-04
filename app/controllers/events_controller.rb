@@ -6,6 +6,8 @@
 # 'user'
 # 'org'
 
+require 'pp'
+
 class EventsController < ApplicationController
 
   ##
@@ -29,9 +31,34 @@ class EventsController < ApplicationController
   #
   # *Provides*
   # @event
+  # @event_participant
   #
   def show
     @event = Event.find(params[:id])
+    unless current_user.nil?
+      @event_participant = EventParticipant.find_by("event_id=? AND user_id=?", params[:id], current_user.id)
+      unless @event_participant
+        @event_participant = EventParticipant.new
+      end
+    end
+  end
+
+  def enroll
+    @event_participant = EventParticipant.find_by("event_id=? AND user_id=?", params[:id], current_user.id)
+    if @event_participant
+      if @event_participant.update(enroll_params)
+        redirect_to @event_participant.event
+      else
+        render :show, status: :unprocessable_entity
+      end
+    else
+      @event_participant = EventParticipant.new(enroll_params)    
+      if @event_participant.save
+        redirect_to Event.find(params[:id])
+      else
+        render :show, status: :unprocessable_entity
+      end
+    end
   end
 
   def new
@@ -50,6 +77,12 @@ class EventsController < ApplicationController
 
   def edit
     @event = Event.find(params[:id])
+  end
+
+  def edit_participants
+    @event = Event.find(params[:id])
+    @edit_participants = true
+    render :show
   end
 
   def update
@@ -72,5 +105,9 @@ class EventsController < ApplicationController
   private
     def event_params
       params.require(:event).permit!
+    end
+
+    def enroll_params
+      params.require(:event_participant).permit!
     end
 end

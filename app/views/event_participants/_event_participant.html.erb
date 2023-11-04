@@ -1,1 +1,30 @@
-<p><%= event_participant.get_user().full_name() %></p>
+<p>
+<b><%= event_participant.get_user().full_name() %> 
+  <% if @edit_participants %>
+    :&emsp;&emsp;&emsp;&emsp; poznámka:
+      <%= form_for :event_participant, :url => update_participant_event_path(event_participant.event_id, event_participant.user_id) do |f| %>
+      <% f.hidden_field :user_id %>
+      <% f.hidden_field :event_id %>
+
+      <%= f.select :status, [["půjdu", "yes"], ["možná", "maybe"], ["nezúčastním se", "no"]], :selected => event_participant.status %>
+      <%= f.text_field :note, :value => event_participant.note %>
+    
+      <%= f.submit "Uložit", :class => 'btn btn-primary' %>
+    <% end %>
+    <% if can? :delete, EventParticipant %>
+      <%= form_tag delete_participant_event_path(event_participant.event_id, event_participant.user_id) do %>
+        <%= submit_tag  'Smazat', :class=>'btn btn-danger' %>
+      <% end %>
+    <% end %>
+
+</b>
+  <% else %>
+    - 
+    <%= event_participant.show_status %>
+    </b>
+    <% if event_participant.note != "" %>
+      (<%= event_participant.note %>)
+    <% end %>
+  <% end %>
+</p>
+

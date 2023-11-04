@@ -168,6 +168,9 @@ class Ability
       #can :delete, Jabber
 
       can :delete, Event
+      can :edit_participants, Event
+      can :update, EventParticipant
+      can :delete, EventParticipant
     end
 
     # Wikis

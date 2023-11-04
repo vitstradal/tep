@@ -1,6 +1,9 @@
-<h1>Editovat akci</h1>
+<h1>Editovat akci <%= button_tag "Zpět", :href => event_path(@event), :class=>'btn', :ico =>'fa-reply' %>
+</h1>
 
-<%= render :partial => "form", :locals => { :is_edit => true } %>
+<% unless current_user.nil? %>
+  <%= render :partial => "form", :locals => { :is_edit => true } %>
+<% end %>
 
 <hr>
 <hr>
@@ -11,9 +14,11 @@
 <hr>
 
 
-<% if true %>
+<% if can? :edit, Event %>
   <%= form_tag event_delete_path(id:@event.id) do %>
     <%= submit_tag  'Smazat akci (nebude žádné "jsi si jistý?")', :class=>'btn btn-danger' %>
   <% end %>
+<% else %>
+    <%= submit_tag  'Smazat akci může pouze admin', :class=>'btn btn-disabled' %></div>
 <% end %>
 

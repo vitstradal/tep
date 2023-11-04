@@ -1,4 +1,12 @@
-<%= form_for :event, url: events_path do |f| %>
+<% if is_edit %>
+  <% url_dest = event_path %>
+  <% method = :patch %>
+<% else %>
+  <% url_dest = events_path %>
+  <% method = :post %>
+<% end %>
+
+<%= form_for :event, :url => url_dest, :method => method do |f| %>
  
   <% if @event.errors.any? %>
     <div id="error_explanation">
