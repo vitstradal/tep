@@ -1,5 +1,11 @@
 <p>
-<b><%= event_participant.get_user().full_name() %> 
+<b>
+  <% if can? :show, Sosna::Solver %>
+    <%= link_to event_participant.get_user().full_name(), sosna_solver_path(event_participant.user_id) %>
+  <% else %>
+    <%= event_participant.get_user().full_name() %> 
+  <% end %>
+
   <% if @edit_participants %>
     :&emsp;&emsp;&emsp;&emsp; poznámka:
       <%= form_for :event_participant, :url => update_participant_event_path(event_participant.event_id, event_participant.user_id) do |f| %>

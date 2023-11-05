@@ -1,6 +1,8 @@
 ##
 # Třída reprezentující tabulku přihlášených a popř. nějaké krátké info ohledně akce.
 #
+#
+require 'pp'
 
 class Event < ActiveRecord::Base
   has_many :event_participants, dependent: :destroy
@@ -27,7 +29,55 @@ class Event < ActiveRecord::Base
     if event_start == event_end
       event_start.strftime('%m/%d/%Y')
     else
-      event_start.strftime('%m/%d/%Y') + event_end.strftime('%m/%d/%Y')
+      event_start.strftime('%m/%d/%Y') + " - " + event_end.strftime('%m/%d/%Y')
     end
+  end
+
+  def self.generate_sql(event_category, enroll_status)
+    query_start = "SELECT e.* FROM events e "
+
+    case enroll_status
+    when "ev"
+      query_start += "WHERE "
+    when "nvt"
+      query_start += "LEFT JOIN event_participants p ON p.event_id = e.id WHERE "
+    else
+      query_start += "INNER JOIN event_participants p ON p.event_id = e.id WHERE "
+    end
+
+    if event_category != "ev"
+      query_start += "e.category = ? AND "
+    end
+
+    case enroll_status
+    when "ev"
+      query_end = ""
+    when "nvt"
+      query_end = "AND p.id IS NULL "
+    else
+      query_end = "AND p.status = ? AND p.id IS NOT NULL "
+    end
+
+    query_end += "ORDER BY e.event_start DESC"
+
+    future_query = query_start + "e.event_end >= ? " + query_end
+    past_query = query_start + "e.event_end < ? " + query_end
+
+    args_common = []
+
+    if event_category != "ev"
+      args_common.append(event_category)
+    end
+
+    args_common.append(Time.current)
+
+    if not ["ev", "nvt"].member?(enroll_status)
+      args_common.append(enroll_status)
+    end
+
+    args_future = [future_query] + args_common
+    args_past = [past_query] + args_common
+
+    return [args_future, args_past]
   end
 end

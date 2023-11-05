@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 27) do
+ActiveRecord::Schema.define(version: 23) do
 
   create_table "event_participants", force: :cascade do |t|
     t.integer  "event_id"

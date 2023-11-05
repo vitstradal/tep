@@ -18,30 +18,26 @@ class EventsController < ApplicationController
   # *Provides*
   # @future_events::     všechny akce, které se budou konat (seřazené)
   # @past_evens::        všechny akce, které už se konaly (seřazené)
+  # @event_category::    o jaký typ akce se jedná? (Event::CATEGORIES)
+  # @enroll_status::     jakým způsobem jsem na tu akci přihlášený? (yes, no, maybe) + (ev, nvt)
   #
   def index
     @event_category = params[:event_category]
     if @event_category.nil?
       @event_category = "ev"
     end
-    if @event_category == "ev"
-      @future_events = Event.where(["event_end >= ?", Time.current]).order(event_start: :desc)
-      @past_events = Event.where(["event_end < ?", Time.current]).order(event_start: :desc)
-    else
-      @future_events = Event.where(["event_end >= ? AND category == ?", Time.current, @event_category]).order(event_start: :desc)
-      @past_events = Event.where(["event_end < ? AND category == ?", Time.current, @event_category]).order(event_start: :desc)
+
+    @enroll_status = params[:enroll_status]
+    if @enroll_status.nil?
+      @enroll_status = "ev"
     end
+
+    args_future, args_past = Event::generate_sql(@event_category, @enroll_status)
+
+    @future_events = Event.find_by_sql(args_future)
+    @past_events = Event.find_by_sql(args_past)
   end
 
-  ##
-  # GET /event/:id/show
-  #
-  # Úvodní stránka k přihlašování na akce obecně
-  #
-  # *Provides*
-  # @event
-  # @event_participant
-  #
   def show
     @event = Event.find(params[:id])
     unless current_user.nil?
@@ -50,6 +46,8 @@ class EventsController < ApplicationController
         @event_participant = EventParticipant.new
       end
     end
+
+    @already_happened = @event.event_end < Date.current
   end
 
   def enroll
@@ -112,7 +110,7 @@ class EventsController < ApplicationController
   end
 
   def filter
-    redirect_to event_category_path(params[:event_category])
+    redirect_to filter_events_path(params[:event_category], params[:enroll_status])
   end
 
   private

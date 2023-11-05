@@ -50,8 +50,8 @@ Tep::Application.routes.draw do
   #get  '/sosna/solution/:id/down_rev(/:ori)'=> 'sosna/solution#download_rev', :as => :sosna_solution_download_rev
  
   resources :events
-  post 'events/filter'                                  => 'events#filter',             :as => :filter_events
-  get '/events/filter/:event_category'                  => 'events#index',              :as => :event_category
+  post 'events/filter'                                  => 'events#filter',             :as => :filter_events_helper
+  get '/events/filter/:event_category/:enroll_status'   => 'events#index',              :as => :filter_events
   post '/events/:id/delete'                             => 'events#delete',             :as => :event_delete
   post '/events/:id/enroll'                             => 'events#enroll',             :as => :event_enroll
   get '/events/:id/edit_participants'                   => 'events#edit_participants',  :as => :edit_participants_event

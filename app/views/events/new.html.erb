@@ -1,3 +1,5 @@
-<h1>Nová akce</h1>
+<h1>Nová akce
+<%= button_tag "Zpět", :href => events_path, :class=>'btn', :ico =>'fa-reply' %>
+</h1>
 
-<%= render :partial => "form", :locals => { :is_edit => false } %>
+<%= render :partial => "form_edit", :locals => { :is_edit => false } %>
