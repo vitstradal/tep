@@ -3,11 +3,11 @@
     <%= label_tag :event_category, "Typ akce:" %>
     <%= select_tag :event_category, options_for_select(Event::CATEGORY_SEARCH, @event_category) %>
 
-    <% unless current_user.nil? %>
+   <% unless current_user.nil? %>
       <%= label_tag :enroll_status, "Pouze pokud:" %>
-      <%= select_tag :enroll_status, options_for_select([["Kdykoliv", "ev"], ["Jedu", "yes"], ["Nejedu", "no"], ["Nevím", "maybe"], ["Jsem nehlasoval", "nvt"]], @enroll_status) %>
+      <%= select_tag :enroll_status, options_for_select([["Kdykoliv", "ev"], ["Jedu", "yes"], ["Nejedu", "no"], ["Nevím", "maybe"], ["Jsem nehlasoval", "nvt"]], @enroll_status)%>
     <% else %>
-      <% hidden_field_tag :enroll_status, "ev" %>
+      <%= hidden_field_tag :enroll_status, "ev" %>
     <% end %>
 
     <%= submit_tag "Hledej!", :class => 'btn btn-primary' %>

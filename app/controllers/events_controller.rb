@@ -32,7 +32,7 @@ class EventsController < ApplicationController
       @enroll_status = "ev"
     end
 
-    args_future, args_past = Event::generate_sql(@event_category, @enroll_status)
+    args_future, args_past = Event::generate_sql(current_user, @event_category, @enroll_status)
 
     @future_events = Event.find_by_sql(args_future)
     @past_events = Event.find_by_sql(args_past)

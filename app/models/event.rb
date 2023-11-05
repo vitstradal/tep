@@ -33,16 +33,18 @@ class Event < ActiveRecord::Base
     end
   end
 
-  def self.generate_sql(event_category, enroll_status)
+  def self.generate_sql(current_user, event_category, enroll_status)
     query_start = "SELECT e.* FROM events e "
+
+    common_enroll = "JOIN event_participants p ON (p.user_id = ? AND p.event_id = e.id"
 
     case enroll_status
     when "ev"
       query_start += "WHERE "
     when "nvt"
-      query_start += "LEFT JOIN event_participants p ON p.event_id = e.id WHERE "
+      query_start += "LEFT " + common_enroll + ") WHERE "
     else
-      query_start += "INNER JOIN event_participants p ON p.event_id = e.id WHERE "
+      query_start += "INNER " + common_enroll + " AND p.status = ?) WHERE "
     end
 
     if event_category != "ev"
@@ -55,7 +57,7 @@ class Event < ActiveRecord::Base
     when "nvt"
       query_end = "AND p.id IS NULL "
     else
-      query_end = "AND p.status = ? AND p.id IS NOT NULL "
+      query_end = "AND p.id IS NOT NULL "
     end
 
     query_end += "ORDER BY e.event_start DESC"
@@ -65,15 +67,19 @@ class Event < ActiveRecord::Base
 
     args_common = []
 
+    if enroll_status != "ev"
+      args_common.append(current_user.id)
+    end
+
+    if not ["ev", "nvt"].member?(enroll_status)
+      args_common.append(enroll_status)
+    end
+
     if event_category != "ev"
       args_common.append(event_category)
     end
 
     args_common.append(Time.current)
-
-    if not ["ev", "nvt"].member?(enroll_status)
-      args_common.append(enroll_status)
-    end
 
     args_future = [future_query] + args_common
     args_past = [past_query] + args_common
