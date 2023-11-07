@@ -150,11 +150,12 @@
       <%= menu_li '/onas', 'Zadání', ico: 'fa-edit' do %>
         <ul class="submenu">
           <%= menu_lii wiki_main_path('archiv/aktualni'),      'Aktuální série' %>
+          <%= menu_lii wiki_main_path('archiv/aktualni-junior'),      'Aktuální série junior' %>
           <%= menu_lii wiki_main_path('archiv/vysledkovka'),   'Výsledková listina' %>
           <%= menu_lii wiki_main_path('archiv'),            'Archiv příkladů' %>
 
            <% if is_bonus_active %>
-            <%= menu_lii wiki_main_path('bonus'),        'Prázdninová série' %>
+            <%= menu_lii wiki_main_path('archiv/bonus'),        'Bonusová série' %>
           <% end %>
           <%= menu_lii wiki_main_path('pravidla'),           'Pravidla'  %>
           <%#= menu_lii wiki_main_path('onas/faq'),                'Otázky a odpovědi'   %>

@@ -146,9 +146,10 @@ ActiveRecord::Schema.define(version: 23) do
     t.integer  "class_rank_to"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "level",         default: "pi", null: false
   end
 
-  add_index "sosna_results", ["solver_id", "annual", "round"], name: "index_sosna_results_on_solver_id_and_annual_and_round", unique: true
+  add_index "sosna_results", ["solver_id", "annual", "level", "round"], name: "index_sosna_results_on_solver_id_annual_level_round", unique: true
 
   create_table "sosna_schools", force: :cascade do |t|
     t.text    "name"
