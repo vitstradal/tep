@@ -13,13 +13,33 @@ class CreateTableEvents < ActiveRecord::Migration
       
     create_table :event_participants do |t|
       t.belongs_to :event
-      t.belongs_to :user
+      t.belongs_to :scout
       t.string :status, :default => "yes"
       t.string :note, :default => ""
       t.timestamps
     end
 
     add_index(:event_participants, :event)
-    add_index(:event_participants, :user)
+    add_index(:event_participants, :scout)
+
+    create_table :scouts do |t|
+      t.belongs_to :user
+      t.string :name
+      t.string :last_name
+      t.string :nickname
+      t.datetime :birth
+      t.integer :grade
+      t.string :address
+      t.string :email
+      t.string :parent_email
+      t.integer :phone
+      t.integer :parent_phone
+      t.text :eating_habits
+      t.text :health_problems
+      t.text :birth_number
+      t.string :health_insurance
+      t.boolean :activated
+      t.timestamps
+    end
   end
 end

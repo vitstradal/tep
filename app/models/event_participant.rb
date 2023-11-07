@@ -1,5 +1,6 @@
 class EventParticipant < ActiveRecord::Base
   belongs_to :event
+  belongs_to :scout
 
   def get_user
     User.find(user_id)

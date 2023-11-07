@@ -15,7 +15,7 @@
 
 
 <% if can? :edit, Event %>
-  <%= form_tag event_delete_path(id:@event.id) do %>
+  <%= form_tag event_delete_path(id: @event.id) do %>
     <%= submit_tag  'Smazat akci (nebude žádné "jsi si jistý?")', :class=>'btn btn-danger' %>
   <% end %>
 <% else %>

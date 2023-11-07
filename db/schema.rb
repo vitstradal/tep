@@ -11,27 +11,30 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 23) do
+ActiveRecord::Schema.define(version: 24) do
 
   create_table "event_participants", force: :cascade do |t|
     t.integer  "event_id"
-    t.integer  "user_id"
+    t.integer  "scout_id"
     t.string   "status",     default: "yes"
     t.string   "note",       default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
+  add_index "event_participants", [nil], name: "index_event_participants_on_event"
+  add_index "event_participants", [nil], name: "index_event_participants_on_scout"
+
   create_table "events", force: :cascade do |t|
     t.date     "event_start"
     t.date     "event_end"
     t.string   "title"
     t.text     "body"
+    t.string   "category",       default: "ot"
     t.string   "event_info_url", default: ""
     t.string   "visible",        default: "org"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "category",       default: "ot"
   end
 
   create_table "informs", force: :cascade do |t|
@@ -94,6 +97,27 @@ ActiveRecord::Schema.define(version: 23) do
   end
 
   add_index "oauth_applications", ["uid"], name: "index_oauth_applications_on_uid", unique: true
+
+  create_table "scouts", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "name"
+    t.string   "last_name"
+    t.string   "nickname"
+    t.datetime "birth"
+    t.integer  "grade"
+    t.string   "address"
+    t.string   "email"
+    t.string   "parent_email"
+    t.integer  "phone"
+    t.integer  "parent_phone"
+    t.text     "eating_habits"
+    t.text     "health_problems"
+    t.text     "birth_number"
+    t.string   "health_insurance"
+    t.boolean  "activated"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
 
   create_table "sessions", force: :cascade do |t|
     t.string   "session_id", null: false

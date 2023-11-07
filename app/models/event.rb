@@ -33,7 +33,7 @@ class Event < ActiveRecord::Base
     end
   end
 
-  def self.generate_sql(current_user, event_category, enroll_status)
+  def self.generate_sql(scout, event_category, enroll_status)
     query_start = "SELECT e.* FROM events e "
 
     common_enroll = "JOIN event_participants p ON (p.user_id = ? AND p.event_id = e.id"
@@ -68,7 +68,7 @@ class Event < ActiveRecord::Base
     args_common = []
 
     if enroll_status != "ev"
-      args_common.append(current_user.id)
+      args_common.append(scout.id)
     end
 
     if not ["ev", "nvt"].member?(enroll_status)

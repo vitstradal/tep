@@ -32,7 +32,7 @@ class EventsController < ApplicationController
       @enroll_status = "ev"
     end
 
-    args_future, args_past = Event::generate_sql(current_user, @event_category, @enroll_status)
+    args_future, args_past = Event::generate_sql(Scout::get_scout(current_user), @event_category, @enroll_status)
 
     @future_events = Event.find_by_sql(args_future)
     @past_events = Event.find_by_sql(args_past)
@@ -40,8 +40,8 @@ class EventsController < ApplicationController
 
   def show
     @event = Event.find(params[:id])
-    unless current_user.nil?
-      @event_participant = EventParticipant.find_by("event_id=? AND user_id=?", params[:id], current_user.id)
+    if Scout::scouts?(current_user)
+      @event_participant = EventParticipant.find_by("event_id=? AND scout_id=?", params[:id], Scout::scout_id(current_user))
       unless @event_participant
         @event_participant = EventParticipant.new
       end
@@ -51,7 +51,7 @@ class EventsController < ApplicationController
   end
 
   def enroll
-    @event_participant = EventParticipant.find_by("event_id=? AND user_id=?", params[:id], current_user.id)
+    @event_participant = EventParticipant.find_by("event_id=? AND scout_id=?", params[:id], Scout::scout_id(current_user))
     if @event_participant
       if @event_participant.update(enroll_params)
         redirect_to @event_participant.event

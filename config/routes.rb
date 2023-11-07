@@ -55,8 +55,8 @@ Tep::Application.routes.draw do
   post '/events/:id/delete'                             => 'events#delete',             :as => :event_delete
   post '/events/:id/enroll'                             => 'events#enroll',             :as => :event_enroll
   get '/events/:id/edit_participants'                   => 'events#edit_participants',  :as => :edit_participants_event
-  post 'events/:event_id/participants/:user_id/update'  => 'event_participants#update', :as => :update_participant_event
-  post '/events/:event_id/participants/:user_id/delete' => 'event_participants#delete', :as => :delete_participant_event
+  post 'events/:event_id/participants/:scout_id/update'  => 'event_participants#update', :as => :update_participant_event
+  post '/events/:event_id/participants/:scout_id/delete' => 'event_participants#delete', :as => :delete_participant_event
 
   # org:
   get  '/sosna/solutions/lidi(/:roc(/:level(/:se(/:ul))))' => 'sosna/solution#lidi',           :as => :sosna_solutions_lidi

@@ -17,7 +17,7 @@
 #        ])
 
 require 'pp'
-if false
+if true
   User.delete_all
 
   users = User.create([
@@ -29,29 +29,3 @@ if false
   users.each { |u| u.confirm }
 
 end
-
-if false
-  Event.delete_all
-
-  events = Event.create([
-    { :event_start => Time.current.tomorrow, :event_end => Time.current.tomorrow, :title => "Prvni pikostreda", :body => "Tato pikostreda bude fakt super!", :event_info_url => "https://pikomat.mff.cuni.cz/setkani/vikendovky/vanocka2023", :visible => "everyone" },
-    { :event_start => Time.current.yesterday.yesterday, :event_end => Time.current.yesterday, :title => "První víkendovka", :body => "Tato víkendovka bude fakt super!", :event_info_url => "https://pikomat.mff.cuni.cz/setkani/vikendovky/vyprava_do_skal2023/index", :visible => "org" },
-  ])
-end
-
-if false
-  EventParticipant.delete_all
-
-  event_participants = EventParticipant.create([
-    { :event_id => 5, :user_id => 16, :status => "yes"
-    },
-    { :event_id => 5, :user_id => 17, :status => "maybye"
-    },
-    { :event_id => 5, :user_id => 18, :status => "no"
-    },
-  ])
-end
-
-pp User.all
-
-pp Event.all
