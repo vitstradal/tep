@@ -5,7 +5,7 @@
 
    <% unless current_user.nil? %>
       <%= label_tag :enroll_status, "Pouze pokud:" %>
-      <%= select_tag :enroll_status, options_for_select([["Kdykoliv", "ev"], ["Jedu", "yes"], ["Nejedu", "no"], ["Nevím", "maybe"], ["Jsem nehlasoval", "nvt"]], @enroll_status)%>
+      <%= select_tag :enroll_status, options_for_select([["Kdykoliv", "ev"], ["Jedu", "yes"], ["Nejedu", "no"], ["Nevím", "maybe"], ["Jsem nehlasoval", "nvt"]], @enroll_status) %>
     <% else %>
       <%= hidden_field_tag :enroll_status, "ev" %>
     <% end %>
