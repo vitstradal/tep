@@ -540,7 +540,7 @@ class Sosna::SolutionController < SosnaController
 
     #@annual = @config[:annual]
     solver_id = params[:id]
-    @round  = params[:se] || 1
+    @round = params[:se]
     if @round.nil?
       @round = if @config[:round].to_i < Sosna::Problem::BONUS_ROUND_NUM
                    # not bonus
