@@ -36,7 +36,7 @@ class Event < ActiveRecord::Base
   def self.generate_sql(scout, event_category, enroll_status)
     query_start = "SELECT e.* FROM events e "
 
-    common_enroll = "JOIN event_participants p ON (p.user_id = ? AND p.event_id = e.id"
+    common_enroll = "JOIN event_participants p ON (p.scout_id = ? AND p.event_id = e.id"
 
     case enroll_status
     when "ev"

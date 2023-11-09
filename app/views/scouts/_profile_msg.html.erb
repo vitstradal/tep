@@ -1,0 +1,8 @@
+<% if Scout::scouts?(current_user) %>
+Svůj účet nalezneš
+<%= link_to "zde", :action => :show %>.
+<% else %>
+  Vlastní účet si můžeš založit
+  <%= link_to "zde", :action => :new %>.
+<% end %><br>
+Pokud si myslíš, že by příslušný odkaz doopravdy měl fungovat, případně ti nefunguje ani odkaz výše, neváhej nám napsat! :-)

@@ -1,0 +1,68 @@
+<h1>Účastnický účet
+<% if (can? :edit_other, Scout) || Scout::scout_id(current_user) == @scout.id.to_i %>
+  <%= button_tag "Edituj účet", :href => edit_scout_path(@scout), :class=>'btn btn-primary', :ico => 'fa-edit' %>
+<% end %>
+</h1>
+
+<% if current_user.org? %>
+<p>
+<%= "ID: " + @scout.id.to_s %>
+</p>
+<% end %>
+
+<p>
+<%= "Jméno: " + @scout.name %>
+</p>
+
+<p>
+<%= "Příjmení: " + @scout.last_name %>
+</p>
+
+<p>
+<%= "Přezdívka: " + @scout.nickname %>
+</p>
+
+<p>
+<%= "Datum narození: " + @scout.birth_str() %>
+</p>
+
+<p>
+<%= "Ročník: " + @scout.grade.to_s %>
+</p>
+
+<p>
+<%= "Adresa: " + @scout.address %>
+</p>
+
+<p>
+<%= "Email: " + @scout.email %>
+</p>
+
+<p>
+<%= "Email na zákonného zástupce: " + @scout.parent_email %>
+</p>
+
+<p>
+<%= "Telefonní číslo: " + @scout.phone %>
+</p>
+
+<p>
+<%= "Telefonní číslo na zákonného zástupce: " + @scout.parent_phone %>
+</p>
+
+<p>
+<%= "Stravovací návyky: " + @scout.eating_habits %>
+</p>
+
+<p>
+<%= "Zdravotní problémy: " + @scout.health_problems %>
+</p>
+
+<p>
+<%= "Rodné číslo: " + @scout.birth_number %>
+</p>
+
+<p>
+<%= "Zdravotní pojišťovna: " + @scout.health_insurance %>
+</p>
+

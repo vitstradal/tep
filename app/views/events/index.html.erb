@@ -1,6 +1,9 @@
 <h1>Přihlašování na pikomatí akce</h1>
 
-Abys ses mohl přihlásit na nějakou akci, musíš mít buďto řešitelský profil s vyplněným telefonním číslem a rodným číslem, anebo založený speciální účet na akce.<br>
+<% unless Scout::scouts?(current_user) %>
+  Abys ses mohl přihlásit na nějakou akci, musíš mít založený účastnický účet, a navíc ještě musíš být přihlášený/á. Účastnický účet si můžeš založit 
+  <%= link_to "zde", new_scout_path %>.
+<% end %>
 
 <% if can? :new, Event %>
   <%= button_tag "Vytvořit novou akci", :href => new_event_path, :class => 'btn btn-primary', :ico => "fa-edit" %>

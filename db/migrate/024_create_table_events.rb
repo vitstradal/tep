@@ -26,19 +26,19 @@ class CreateTableEvents < ActiveRecord::Migration
       t.belongs_to :user
       t.string :name
       t.string :last_name
-      t.string :nickname
+      t.string :nickname, :default => ""
       t.datetime :birth
       t.integer :grade
       t.string :address
       t.string :email
       t.string :parent_email
-      t.integer :phone
-      t.integer :parent_phone
-      t.text :eating_habits
-      t.text :health_problems
+      t.string :phone
+      t.string :parent_phone
+      t.text :eating_habits, :default => ""
+      t.text :health_problems, :default => ""
       t.text :birth_number
       t.string :health_insurance
-      t.boolean :activated
+      t.boolean :activated, :default => true
       t.timestamps
     end
   end

@@ -64,6 +64,7 @@ class Ability
       can :info, :tepna
 
       can :show, Event
+      can :crud, Scout
     end
 
     if user.org?
@@ -108,6 +109,8 @@ class Ability
 
       can :status, :klep
 
+      can :show_other, Scout
+
     end
 
     # master-org, or more-org, 
@@ -128,8 +131,16 @@ class Ability
 
       can :get_confirm_files, Sosna::Solution
 
+      can :create, Event
       can :new, Event
+      can :create, Event
+      can :edit, Event
       can :update, Event
+
+      can :new_other, Scout
+      can :create_other, Scout
+      can :edit_other, Scout
+      can :update_other, Scout
 
     end
 
@@ -171,6 +182,8 @@ class Ability
       can :edit_participants, Event
       can :update, EventParticipant
       can :delete, EventParticipant
+
+      can :delete_other, Scout
     end
 
     # Wikis

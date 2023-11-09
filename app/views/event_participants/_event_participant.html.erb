@@ -1,7 +1,7 @@
 <p>
 <b>
-  <% if can? :show, Scout %>
-    <%= link_to event_participant.scout.full_name(), sosna_solver_path(event_participant.user_id) %>
+  <% if can? :show_other, Scout %>
+    <%= link_to event_participant.scout.full_name(), scout_path(event_participant.scout_id) %>
   <% else %>
     <%= event_participant.scout.full_name() %> 
   <% end %>

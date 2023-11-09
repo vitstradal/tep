@@ -1,0 +1,7 @@
+<h1>Přístup zamítnut</h1>
+K zobrazení této akce bohužel nemáš oprávnění. Abys mohl vidět informace o této akci, musíš být
+<% if @event.visible == "user" %>
+  přihlášený.
+<% else %>
+  org.
+<% end %>

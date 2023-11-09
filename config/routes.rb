@@ -48,13 +48,18 @@ Tep::Application.routes.draw do
   get  '/sosna/solution/:id/down_rev'       => 'sosna/solution#download_rev', :as => :sosna_solution_download_rev
   #get  '/sosna/solution/:id/down(/:ori)'     => 'sosna/solution#download',      :as => :sosna_solution_download
   #get  '/sosna/solution/:id/down_rev(/:ori)'=> 'sosna/solution#download_rev', :as => :sosna_solution_download_rev
- 
+
+  # scouts and events:
+  resources :scouts
+  post '/scouts/:id/confirm_delete'                      => 'scouts#confirm_delete',     :as => :confirm_delete_scout
+  post '/scouts/:id/delete'                              => 'scouts#delete',             :as => :delete_scout
+
   resources :events
-  post 'events/filter'                                  => 'events#filter',             :as => :filter_events_helper
-  get '/events/filter/:event_category/:enroll_status'   => 'events#index',              :as => :filter_events
-  post '/events/:id/delete'                             => 'events#delete',             :as => :event_delete
-  post '/events/:id/enroll'                             => 'events#enroll',             :as => :event_enroll
-  get '/events/:id/edit_participants'                   => 'events#edit_participants',  :as => :edit_participants_event
+  post 'events/filter'                                   => 'events#filter',             :as => :filter_events_helper
+  get '/events/filter/:event_category/:enroll_status'    => 'events#index',              :as => :filter_events
+  post '/events/:id/delete'                              => 'events#delete',             :as => :event_delete
+  post '/events/:id/enroll'                              => 'events#enroll',             :as => :event_enroll
+  get '/events/:id/edit_participants'                    => 'events#edit_participants',  :as => :edit_participants_event
   post 'events/:event_id/participants/:scout_id/update'  => 'event_participants#update', :as => :update_participant_event
   post '/events/:event_id/participants/:scout_id/delete' => 'event_participants#delete', :as => :delete_participant_event
 

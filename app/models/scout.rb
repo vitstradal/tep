@@ -1,5 +1,6 @@
 class Scout < ActiveRecord::Base
-  belongs_to :user
+  belongs_to :user, inverse_of: :scout
+  has_many :event_participants
 
   def self.scouts?(user)
     return !user.nil? && !user.scout.nil?
@@ -10,6 +11,14 @@ class Scout < ActiveRecord::Base
       return nil
     else
       return user.scout.id
+    end
+  end
+
+  def is_me(user)
+    if user.nil?
+      return false
+    else
+      return Scout::scout_id(user).to_i == "#{id}".to_i
     end
   end
 
@@ -33,6 +42,10 @@ class Scout < ActiveRecord::Base
     else
       email.split('@',2)[0]
     end
+  end
+
+  def birth_str
+    birth.strftime('%m/%d/%Y')
   end
 
 end

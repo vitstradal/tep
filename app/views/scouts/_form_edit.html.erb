@@ -1,0 +1,104 @@
+<% if is_edit %>
+  <% url = scout_path(@scout) %>
+  <% method = :patch %>
+<% else %>
+  <% url = scouts_path %>
+  <% method = :post %>
+<% end %>
+
+<%= form_for :scout, :url => url, :method => method do |f| %>
+
+  <% if @scout.errors.any? %>
+    <div id="error_explanation">
+      <h2>
+        <%= pluralize(@scout.errors.count, "error") %> vyskytly se následující chyby:
+      </h2>
+      <ul>
+        <% @scout.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <p>
+  <%= f.hidden_field :user_id, :value => @user_id %>
+  </p>
+
+  <p>
+    <%= f.label :name, "Jméno:" %>
+    <%= f.text_field :name %>
+  </p>    
+
+  <p>
+    <%= f.label :last_name, "Příjmení:" %>
+    <%= f.text_field :last_name %>
+  </p>
+
+  <p>
+    <%= f.label :nickname, "Přezdívka (pod jakým jménem tě uvidí ostatní):" %>
+    <%= f.text_field :nickname %>
+  </p>
+
+  <p>
+    <%= f.label :birth, "Datum narození:" %>
+    <%= f.date_field :birth %>
+  </p>
+
+  <p>
+    <%= f.label :grade, "Ročník (pokud např. za tři dny nastoupíš do tercie, napiš 7., protože jsi stále v sekundě a ta odpovídá sedmému ročníku):" %>
+    <%= f.text_field :grade %>
+  </p>
+
+  <p>
+    <%= f.label :address, "Adresa:" %>
+    <%= f.text_field :address %>
+  </p>
+
+  <p>
+    <%= f.label :email, "Email:" %>
+    <%= f.text_field :email %>
+  </p>
+
+  <p>
+    <%= f.label :parent_email, "Email na zákonného zástupce:" %>
+    <%= f.text_field :parent_email %>
+  </p>
+
+  <p>
+    <%= f.label :phone, "Telefonní číslo na tebe:" %>
+    <%= f.text_field :phone %>
+  </p>
+
+  <p>
+    <%= f.label :parent_phone, "Telefonní číslo na zákonného zástupce:" %>
+    <%= f.text_field :parent_phone %>
+  </p>
+
+  <p>
+    <%= f.label :eating_habits, "Stravovací návyky (např. vegetarián, bez lepku, ...)" %>
+    <%= f.text_area :eating_habits %>
+  </p>
+
+  <p>
+    <%= f.label :health_problems, "Zdravotní problémy (alergie, ...)" %>
+    <%= f.text_area :health_problems %>
+  </p>
+
+  <p>
+    <%= f.label :birth_number, "Rodné číslo:" %>
+    <%= f.text_field :birth_number %>
+  </p>
+
+  <p>
+    <%= f.label :health_insurance, "Zdravotní pojišťovna:" %>
+    <%= f.text_field :health_insurance %>
+  </p>
+
+  <%= f.hidden_field :activated, :value => true %>
+  
+  <p>
+  <%= f.submit "Uložit", :class => 'btn btn-primary' %>
+  </p>
+
+<% end %>

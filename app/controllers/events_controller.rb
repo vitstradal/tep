@@ -39,7 +39,19 @@ class EventsController < ApplicationController
   end
 
   def show
+    max_id = ActiveRecord::Base.connection.execute("SELECT MAX(id) FROM events")
+    if params[:id].to_i > max_id[0][0].to_i
+      render :not_found
+      return
+    end
+
     @event = Event.find(params[:id])
+
+    unless Event.event_visible?(@event.visible, current_user)
+      render :not_allowed_to_show
+      return
+    end
+
     if Scout::scouts?(current_user)
       @event_participant = EventParticipant.find_by("event_id=? AND scout_id=?", params[:id], Scout::scout_id(current_user))
       unless @event_participant

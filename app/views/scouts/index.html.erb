@@ -1,0 +1,22 @@
+<h1>Účastnické účty</h1>
+
+<p>
+Účastnické účty slouží k tomu, aby ses mohl přihlásit na Pikomatí akce. Pokud už účastnický účet máš a rád by ses na nějakou akci přihlásil, stačí jít na
+<%= link_to "stránku akcí", events_path %>, příslušnou akci najít, a kliknout na tlačítko "Přihlásit".
+</p>
+
+<p>
+<% if current_user.nil? %>
+  Na vytvoření účastnického účtu se ale musíš nejprve 
+  <%= link_to "Přihlásit", "users/sign_in" %>
+<% elsif not Scout::scouts?(current_user) %>
+  Účastnický účet si můžeš vytvořit <%= link_to "zde", action: "new" %>.
+<% else %>
+  Seznam všech akcí nalezneš <%= link_to "zde", events_path %>.
+<% end %>
+</p>
+
+<% if can? :show_other, Scout %>
+  <h2>Přehled účastnických účtů</h2>
+  <%= render @scouts %>
+<% end %>

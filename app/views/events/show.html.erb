@@ -19,10 +19,13 @@
 
 <%= link_to "Ukaž výběr všech akcí!", events_path %>
 
-<% if current_user.nil? %>
-  Pro přihlášení na akci se musíš přihlásit do svého uživatelského účtu.
-<% elsif ! @edit_participants and ! @already_happened %>
+<% if Scout::scouts?(current_user) %>
   <%= render :partial => "form_enroll" %>
+<% elsif ! @edit_participants and ! @already_happened %>
+  <p>
+    Abys ses mohl přihlásit na nějakou akci, musíš mít založený účastnický účet, a navíc ještě musíš být přihlášený/á. Účastnický účet si můžeš založit
+    <%= link_to "zde", new_scout_path %>.
+  </p>
 <% end %>
 
 <h2>Přihlášení účastníci</h2>
