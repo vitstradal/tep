@@ -6,99 +6,149 @@
   <% method = :post %>
 <% end %>
 
-<%= form_for :scout, :url => url, :method => method do |f| %>
+<%= form_for :scout, :url => url, :method => method, :html => {:class=>'form-horizontal'} do |f| %>
+  <div class="<%= form_error_class @scout, :name, :last_name%>">
 
-  <% if @scout.errors.any? %>
-    <div id="error_explanation">
-      <h2>
-        <%= pluralize(@scout.errors.count, "error") %> vyskytly se následující chyby:
-      </h2>
-      <ul>
-        <% @scout.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
+  <%= f.hidden_field :user_id %>
+
+  <div class="form-group">
+    <%= f.label :name, "Jméno", :class => 'col-sm-3 control-label no-padding-right' %>
+    <div class="col-sm-9 <%= form_error_class @scout, :name %>">
+      <%= f.text_field :name %>
+      <%= form_error @scout, :name %>
+    </div>
+  </div>    
+
+  <div class="form-group">
+    <%= f.label :last_name, "Příjmení", :class => 'col-sm-3 control-label no-padding-right' %>
+    <div class="col-sm-9 <%= form_error_class @scout, :last_name %>">
+      <%= f.text_field :last_name %>
+      <%= form_error @scout, :last_name %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :nickname, "Přezdívka (pod jakým jménem tě uvidí ostatní)", :class => 'col-sm-3 control-label no-padding-right' %>
+    <div class="col-sm-9 <%= form_error_class @scout, :nickname %>">
+      <%= f.text_field :nickname %>
+      <%= form_error @scout, :nickname %>
+    </div>
+
+  </div>
+
+  <div class="form-group">
+    <%= f.label :birth, "Datum narození", :class => 'col-sm-3 control-label no-padding-right' %>
+    <div class="col-sm-9 <%= form_error_class @scout, :birth %>">
+      <%= f.date_field :birth %>
+      <%= form_error @scout, :birth %>
+    </div>
+
+  </div>
+
+  <div class="form-group">
+    <%= f.label :grade, "Ročník (pokud např. za tři dny nastoupíš do tercie, napiš 7., protože jsi stále v sekundě a ta odpovídá sedmému ročníku)", :class => 'col-sm-3 control-label no-padding-right' %>
+    <div class="col-sm-9 <%= form_error_class @scout, :grade %>">
+      <%= f.text_field :grade %>
+      <%= form_error @scout, :grade %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :address, "Adresa", :class => 'col-sm-3 control-label no-padding-right' %>
+    <div class="col-sm-9 <%= form_error_class @scout, :address %>">
+      <%= f.text_field :address %>
+      <%= form_error @scout, :address %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :email, "Email", :class => 'col-sm-3 control-label no-padding-right' %>
+    <div class="col-sm-9 <%= form_error_class @scout, :email %>">
+      <%= f.text_field :email %>
+      <%= form_error @scout, :email %>
+    </div>
+
+  </div>
+
+  <div class="form-group">
+    <%= f.label :parent_email, "Email na zákonného zástupce", :class => 'col-sm-3 control-label no-padding-right' %>
+    <div class="col-sm-9 <%= form_error_class @scout, :parent_email %>">
+      <%= f.text_field :parent_email %>
+      <%= form_error @scout, :parent_email %>
+    </div>
+
+  </div>
+
+  <div class="form-group">
+    <%= f.label :phone, "Telefonní číslo na tebe", :class => 'col-sm-3 control-label no-padding-right' %>
+    <div class="col-sm-9 <%= form_error_class @scout, :phone %>">
+      <%= f.text_field :phone %>
+      <%= form_error @scout, :phone %>
+    </div>
+
+  </div>
+
+  <div class="form-group">
+    <%= f.label :parent_phone, "Telefonní číslo na zákonného zástupce", :class => 'col-sm-3 control-label no-padding-right' %>
+    <div class="col-sm-9 <%= form_error_class @scout, :parent_phone %>">
+      <%= f.text_field :parent_phone %>
+      <%= form_error @scout, :parent_phone %>
+    </div>
+
+  </div>
+
+  <div class="form-group">
+    <%= f.label :eating_habits, "Stravovací návyky (např. vegetarián, bez lepku, ...)", :class => 'col-sm-3 control-label no-padding-right' %>
+    <div class="col-sm-9 <%= form_error_class @scout, :eating_habits %>">
+      <%= f.text_area :eating_habits %>
+      <%= form_error @scout, :eating_habits %>
+    </div>
+
+  </div>
+
+  <div class="form-group">
+    <%= f.label :health_problems, "Zdravotní problémy (alergie, ...)", :class => 'col-sm-3 control-label no-padding-right' %>
+    <div class="col-sm-9 <%= form_error_class @scout, :health_problems %>">
+      <%= f.text_area :health_problems %>
+      <%= form_error @scout, :health_problems %>
+    </div>
+
+  </div>
+
+  <div class="form-group">
+    <%= f.label :birth_number, "Rodné číslo", :class => 'col-sm-3 control-label no-padding-right' %>
+    <div class="col-sm-9 <%= form_error_class @scout, :birth_number %>">
+      <%= f.text_field :birth_number %>
+      <%= form_error @scout, :birth_number %>
+    </div>
+
+  </div>
+
+  <div class="form-group">
+    <%= f.label :health_insurance, "Zdravotní pojišťovna", :class => 'col-sm-3 control-label no-padding-right' %>
+    <div class="col-sm-9 <%= form_error_class @scout, :health_insurance %>">
+      <%= f.text_field :health_insurance %>
+      <%= form_error @scout, :health_insurance %>
+    </div>
+  </div>
+
+  <%= f.hidden_field :activated, :value => true %>
+
+  <% if !is_edit %>
+    <div class="form-group">
+      <div class="col-sm-offset-3 col-sm-9 <%= form_error_class @scout, :souhlasim %>">
+      <label class="checkbox" for="souhlasim"> <%= check_box_tag 'souhlasim', '1', @agree %>
+           Souhlasím se <a href="/gdpr">zpracováním osobních údajů</a>
+           <%= form_error @scout, :souhlasim %>
+       </label>
+      </div>
     </div>
   <% end %>
 
-  <p>
-  <%= f.hidden_field :user_id, :value => @user_id %>
-  </p>
-
-  <p>
-    <%= f.label :name, "Jméno:" %>
-    <%= f.text_field :name %>
-  </p>    
-
-  <p>
-    <%= f.label :last_name, "Příjmení:" %>
-    <%= f.text_field :last_name %>
-  </p>
-
-  <p>
-    <%= f.label :nickname, "Přezdívka (pod jakým jménem tě uvidí ostatní):" %>
-    <%= f.text_field :nickname %>
-  </p>
-
-  <p>
-    <%= f.label :birth, "Datum narození:" %>
-    <%= f.date_field :birth %>
-  </p>
-
-  <p>
-    <%= f.label :grade, "Ročník (pokud např. za tři dny nastoupíš do tercie, napiš 7., protože jsi stále v sekundě a ta odpovídá sedmému ročníku):" %>
-    <%= f.text_field :grade %>
-  </p>
-
-  <p>
-    <%= f.label :address, "Adresa:" %>
-    <%= f.text_field :address %>
-  </p>
-
-  <p>
-    <%= f.label :email, "Email:" %>
-    <%= f.text_field :email %>
-  </p>
-
-  <p>
-    <%= f.label :parent_email, "Email na zákonného zástupce:" %>
-    <%= f.text_field :parent_email %>
-  </p>
-
-  <p>
-    <%= f.label :phone, "Telefonní číslo na tebe:" %>
-    <%= f.text_field :phone %>
-  </p>
-
-  <p>
-    <%= f.label :parent_phone, "Telefonní číslo na zákonného zástupce:" %>
-    <%= f.text_field :parent_phone %>
-  </p>
-
-  <p>
-    <%= f.label :eating_habits, "Stravovací návyky (např. vegetarián, bez lepku, ...)" %>
-    <%= f.text_area :eating_habits %>
-  </p>
-
-  <p>
-    <%= f.label :health_problems, "Zdravotní problémy (alergie, ...)" %>
-    <%= f.text_area :health_problems %>
-  </p>
-
-  <p>
-    <%= f.label :birth_number, "Rodné číslo:" %>
-    <%= f.text_field :birth_number %>
-  </p>
-
-  <p>
-    <%= f.label :health_insurance, "Zdravotní pojišťovna:" %>
-    <%= f.text_field :health_insurance %>
-  </p>
-
-  <%= f.hidden_field :activated, :value => true %>
-  
-  <p>
-  <%= f.submit "Uložit", :class => 'btn btn-primary' %>
-  </p>
-
+  <div class="form-group">
+    <div class="col-sm-offset-3 col-sm-9">
+      <%= f.submit :class=>'btn btn-primary', :value=>'Uložit' %>
+    </div>
+  </div>
+</div>
 <% end %>

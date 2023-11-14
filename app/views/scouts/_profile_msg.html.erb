@@ -1,6 +1,6 @@
 <% if Scout::scouts?(current_user) %>
 Svůj účet nalezneš
-<%= link_to "zde", :action => :show %>.
+<%= link_to "zde", scout_path(current_user.scout) %>.
 <% else %>
   Vlastní účet si můžeš založit
   <%= link_to "zde", :action => :new %>.

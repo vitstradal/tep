@@ -43,7 +43,7 @@ class EventsController < ApplicationController
     if params[:id].to_i > max_id[0][0].to_i
       render :not_found
       return
-    end
+    end #TODO: What if it was deleted
 
     @event = Event.find(params[:id])
 
@@ -123,6 +123,17 @@ class EventsController < ApplicationController
 
   def filter
     redirect_to filter_events_path(params[:event_category], params[:enroll_status])
+  end
+
+  def display_scouts
+    if !(can? :show_other, Scout)
+      render 'not_allowed_to_show_others'
+      return
+    end
+
+    @event = Event.find(params[:event_id])
+    @event_participants = EventParticipant.find_by_sql(["SELECT * FROM event_participants WHERE event_id = ?", params[:event_id]])
+    @filter_hashes = params[:filter_hashes].nil? ? Scout::ATTR_BOOL_TABLE : params[:filter_hashes]
   end
 
   private

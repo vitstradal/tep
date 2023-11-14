@@ -1,0 +1,54 @@
+<% if is_edit %>
+  <% url_dest = event_category_path %>
+  <% method = :patch %>
+<% else %>
+  <% url_dest = event_categories_path %>
+  <% method = :post %>
+<% end %>
+
+<%= form_for :event_category, :url => url_dest, :method => method do |f| %>
+  <% if @event_category.errors.any? %>
+    <div id="error_explanation">
+      <h2>
+        <%= pluralize(@event_category.errors.count, "error") %> vyskytly se následující chyby:
+      </h2>
+      <ul>
+        <% @event_category.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <p>
+    <%= f.label :code, "Kód:" %>
+    <%= f.text_field :code %>
+  </p>
+
+  <p>
+    <%= f.label :idx, "Řadící index:" %>
+    <%= f.text_field :idx %>
+  </p>
+
+  <p>
+    <%= f.label :name, "Jméno:" %>
+    <%= f.text_field :name %>
+  </p>
+
+  <p>
+    <%= f.label :multi_day, "Počet dní:" %>
+    <%= f.select :multi_day, [["Jednodenní", false], ["Vícedenní", true]] %>
+  </p>
+
+  <p>
+    <%= f.label :description, "Popis:" %>
+    <%= f.text_field :description %>
+  </p>
+
+  <p>
+    <%= f.submit "Uložit typ akce", :class => 'btn btn-primary'%>
+  </p>
+
+<% end %>
+
+

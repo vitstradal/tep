@@ -1,12 +1,21 @@
-<h1>Přihlašování na pikomatí akce</h1>
+<h1>Zobrazování akcí</h1>
+
+<p>
+Řešíš Pikomat a chtěl bys poznat ostatní řešitele? Máš pocit, že se ve třídě nemáš s kým bavit, a rád bys někam zapadl? Přijď na některé z našich setkání! Pravidelně pořádáme jednodenní i vícedenní akce, kterých se účastní jak naši nejlepší řešitelé, tak i ti, kteří s řešením zrovna začínají. Pikomat, to je kolektiv stmelený dohromady společnými prožitky a společenství plné přátelské atmosféry.
+</p>
 
 <% unless Scout::scouts?(current_user) %>
+  <p>
   Abys ses mohl přihlásit na nějakou akci, musíš mít založený účastnický účet, a navíc ještě musíš být přihlášený/á. Účastnický účet si můžeš založit 
   <%= link_to "zde", new_scout_path %>.
+  </p>
 <% end %>
 
 <% if can? :new, Event %>
   <%= button_tag "Vytvořit novou akci", :href => new_event_path, :class => 'btn btn-primary', :ico => "fa-edit" %>
+<% end %>
+<% if can? :read, EventCategory %>
+  <%= button_tag "Typy akcí", :href => event_categories_path, :class => 'btn btn-primary', :ico => "fa-edit" %>
 <% end %>
 
 <%= render :partial => "form_filter" %>
@@ -18,9 +27,12 @@
     <% if Event::event_visible?(event.visible, current_user)%>
       <b><%= event.title %> (<%= event.date_str() %>):</b> 
         <% if event.event_info_url != "" %>
-          <a href="<%= event.event_info_url %>">info</a>, <%= link_to "přihlašování", event %>
+          <a href="<%= event.event_info_url %>">info</a> <%= link_to "přihlašování", event %>
       <% else %>
         <%= link_to "info a přihlašování", event %>
+      <% end %>
+      <% if event.event_photos_url != "" %>
+        <a href="<%= event.event_photos_url %>">fotky</a>
       <% end %>
       <br>
     <% end %>

@@ -1,0 +1,29 @@
+<h1>Typ akce "<%= @event_category.name %>"
+<%= button_tag "Zpět", :href => event_categories_path, :class=>'btn', :ico =>'fa-reply' %>
+<% if can? :update, EventCategory %>
+  <%= button_tag "Edituj tento typ akce", :href => edit_event_category_path(@event_category), :class=>'btn btn-danger', :ico => 'fa-edit' %>
+<% end %>
+</h1>
+
+<p>
+  Kód: <%= @event_category.code %>
+</p>
+
+<p>
+  Jméno: <%= @event_category.name %>
+</p>
+
+<p>
+Tento typ akce 
+<% if @event_category.multi_day %>
+je
+<% else %>
+není
+<% end %>
+ vícedenní.
+</p>
+
+<p>
+  <%= @event_category.description %>
+</p>
+

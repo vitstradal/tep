@@ -1,0 +1,32 @@
+<h1>Typy akcí</h1>
+
+<% if can? :new, Event %>
+  <p>
+  <%= button_tag "Vytvořit nový typ akce akce", :href => new_event_category_path, :class => 'btn btn-primary', :ico => "fa-edit" %>
+  </p>
+<% end %>
+
+<table>
+  <tr>
+    <th>Jméno</th>
+    <th>Kód</th>
+    <th>Řadící index?</th>
+    <th>Je víceddenní?</th>
+    <th>Dodatečné informace</th>
+  </tr>
+<% EventCategory.find_each do |c| %>
+  <tr>
+    <th>
+      <% if can? :update, EventCategory %>
+        <%= link_to c.name, edit_event_category_path(c) %>
+      <% else %>
+        <%= c.name %>
+      <% end %>
+    </th>
+    <th><%= c.code %></th>
+    <th><%= c.idx %></th>
+    <th><%= c.multi_day %></th>
+    <th><%= c.description %></th>
+  </tr>
+<% end %>
+</table>

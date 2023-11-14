@@ -110,7 +110,7 @@ class Ability
       can :status, :klep
 
       can :show_other, Scout
-
+      can :read, EventCategory
     end
 
     # master-org, or more-org, 
@@ -184,6 +184,7 @@ class Ability
       can :delete, EventParticipant
 
       can :delete_other, Scout
+      can :manage, EventCategory
     end
 
     # Wikis

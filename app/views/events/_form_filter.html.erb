@@ -1,7 +1,7 @@
 <p>
 <%= form_tag filter_events_helper_path, :method => "post" do %>
     <%= label_tag :event_category, "Typ akce:" %>
-    <%= select_tag :event_category, options_for_select(Event::CATEGORY_SEARCH, @event_category) %>
+    <%= select_tag :event_category, options_for_select(Event::category_filter_all(), @event_category) %>
 
    <% if Scout::scouts?(current_user) %>
       <%= label_tag :enroll_status, "Pouze pokud:" %>

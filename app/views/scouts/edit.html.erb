@@ -2,18 +2,20 @@
 <%= button_tag "Zrušit", :href => scout_path(@scout), :class=>'btn', :ico =>'fa-reply' %>
 </h1>
 
-<% if (can? :edit_other, Scout) || (@scout.is_me(current_user)) %>
+<% if (can? :edit_other, Scout) || (@scout.is_me?(current_user)) %>
   <%= render :partial => "form_edit", :locals => { :is_edit => true } %>
 <% else %>
   Na editování účastnických účtů ostatních bohužel nemáš práva.
 <% end %>
 
-<% if can? :delete_other, Scout || current_user.id == scout.user_id %>
-  <%= form_tag confirm_delete_scout_path(id: @scout.id) do %>
-    <%= submit_tag  'Smazat účet', :class=>'btn btn-danger' %>
-  <% end %>
-<% elsif (can? :edit_other, Scout) %>
-  <p>
-  <%= submit_tag  'Smazat účastnický účet může pouze admin nebo vlastník účtu', :class=>'btn btn-disabled' %>
-  </p>
+<div class="form-group">
+  <div class="col-sm-offset-3 col-sm-9">
+    <% if (can? :delete_other, Scout) || (@scout.is_me?(current_user)) %>
+      <%= form_tag confirm_delete_scout_path(id: @scout.id) do %>
+        <%= submit_tag  'Smazat účet', :class=>'btn btn-danger' %>
+      <% end %>
+    <% elsif (can? :edit_other, Scout) %>
+      <%= submit_tag  'Smazat účastnický účet může pouze admin nebo vlastník účtu', :class=>'btn btn-disabled' %>
+    </div>
+  </div>
 <% end %>

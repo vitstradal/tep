@@ -51,17 +51,27 @@ Tep::Application.routes.draw do
 
   # scouts and events:
   resources :scouts
-  post '/scouts/:id/confirm_delete'                      => 'scouts#confirm_delete',     :as => :confirm_delete_scout
-  post '/scouts/:id/delete'                              => 'scouts#delete',             :as => :delete_scout
+  post  '/scouts/:id/confirm_delete'                     => 'scouts#confirm_delete',     :as => :confirm_delete_scout
+  post  '/scouts/:id/delete'                             => 'scouts#delete',             :as => :delete_scout
+
+  get   '/event_categories'                              => 'event_categories#index',    :as => :event_categories
+  get   '/event_categories/new'                          => 'event_categories#new',      :as => :new_event_category
+  post  '/event_categories'                              => 'event_categories#create'
+  get   '/event_categories/:code'                        => 'event_categories#show',     :as => :event_category
+  get   '/event_categories/:code/edit'                   => 'event_categories#edit',     :as => :edit_event_category
+  patch '/event_categories/:code'                        => 'event_categories#update'
+  post  '/event_categories/:code/delete'                 => 'event_categories#delete',   :as => :delete_event_category
 
   resources :events
-  post 'events/filter'                                   => 'events#filter',             :as => :filter_events_helper
+  post '/events/filter'                                  => 'events#filter',             :as => :filter_events_helper
   get '/events/filter/:event_category/:enroll_status'    => 'events#index',              :as => :filter_events
   post '/events/:id/delete'                              => 'events#delete',             :as => :event_delete
   post '/events/:id/enroll'                              => 'events#enroll',             :as => :event_enroll
   get '/events/:id/edit_participants'                    => 'events#edit_participants',  :as => :edit_participants_event
   post 'events/:event_id/participants/:scout_id/update'  => 'event_participants#update', :as => :update_participant_event
   post '/events/:event_id/participants/:scout_id/delete' => 'event_participants#delete', :as => :delete_participant_event
+  get '/events/:event_id/display_scouts'                 => 'events#display_scouts',     :as => :event_display_scouts
+  post '/events/:event_id/display_scouts'                => 'events#display_scouts',     :as => :event_display_scout
 
   # org:
   get  '/sosna/solutions/lidi(/:roc(/:level(/:se(/:ul))))' => 'sosna/solution#lidi',           :as => :sosna_solutions_lidi

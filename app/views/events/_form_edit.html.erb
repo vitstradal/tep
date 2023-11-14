@@ -22,8 +22,8 @@
   <% end %>
 
   <p>
-    <%= f.label :category, "Typ akce:" %>
-    <%= f.select :category, Event::CATEGORIES %>
+    <%= f.label :event_category, "Typ akce:" %>
+    <%= f.select :event_category, Event::category_filter() %>
   </p>
 
   <p>
@@ -49,6 +49,11 @@
   <p>
     <%= f.label :event_info_url, "Odkaz na další informace:" %>
     <%= f.text_field :event_info_url %>
+  </p>
+
+  <p>
+    <%= f.label :event_photos_url, "Odkaz na fotky:" %>
+    <%= f.text_field :event_photos_url %>
   </p>
 
   <p>

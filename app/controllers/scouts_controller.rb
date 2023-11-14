@@ -15,7 +15,7 @@ class ScoutsController < ApplicationController
       return
     end
 
-    if !(can? :show_other, Scout) || !(Scout::scout_id(current_user) == params[:id].to_i)
+    if !(can? :show_other, Scout) && !(Scout::scout_id(current_user) == params[:id].to_i)
       render :not_allowed_to_show_others
       return
     end
@@ -30,23 +30,27 @@ class ScoutsController < ApplicationController
       return
     end
 
-    @scout = Scout.new
-    @user_id = current_user.id
+    @scout = Scout.new(:user_id => current_user.id, :name => current_user.name, :last_name => current_user.last_name, :email => current_user.email)
   end
 
   def create
     @scout = Scout.new(scout_params)
     @user_id = current_user.id
 
-    if @scout.save(scout_params)
+    agree = ! params[:souhlasim].nil?
+    @scout.errors.add(:souhlasim, 'Je nutno souhlasit s podmínkami') if ! agree
+
+    if @scout.errors.count == 0 && @scout.save(scout_params)
       redirect_to @scout
     else
+      add_alert "Pozor: ve formuláři jsou chyby"
       render :new, status: :unprocessable_entity
     end
   end
 
   def edit
     @scout = Scout.find(params[:id])
+    @user_id = @scout.user_id
   end
 
   def update
@@ -69,7 +73,7 @@ class ScoutsController < ApplicationController
     @scout.destroy
     
     if deleting_myself
-      redirect_to user_show(params[:id])
+      redirect_to user_path(params[:id])
     else
       redirect_to scouts_path
     end

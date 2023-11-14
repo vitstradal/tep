@@ -29,6 +29,11 @@
 <% end %>
 
 <h2>Přihlášení účastníci</h2>
+<% if can? :show_other, Scout %>
+  <p>
+    <%= button_tag "Zobraz hromadné informace", :href => event_display_scouts_path(@event), :class => 'btn btn-primary' %>
+  </p>
+<% end %>
 <% if current_user %>
   <%= render @event.event_participants %>
 <% else %>

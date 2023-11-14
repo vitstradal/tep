@@ -6,6 +6,7 @@ require 'pp'
 
 class Event < ActiveRecord::Base
   has_many :event_participants, dependent: :destroy
+  belongs_to :event_type
 
   validates :title, presence: true
   validates :event_start, presence: true
@@ -13,8 +14,20 @@ class Event < ActiveRecord::Base
 
   VISIBLE_STATUSES = ['everyone', 'user', 'org']
 
-  CATEGORIES = [['Víkendovka', 'wk'], ['Pikostředa', 'we'], ['Jiné', 'ot']]
-  CATEGORY_SEARCH = CATEGORIES.clone.unshift(['Všechny', 'ev'])
+  #CATEGORIES = [['Víkendovka', 'wk'], ['Pikostředa', 'we'], ['Jiné', 'ot']]
+  #CATEGORY_SEARCH = CATEGORIES.clone.unshift(['Všechny', 'ev'])
+  def self.category_filter()
+    sql = "SELECT name, code FROM event_categories ORDER BY idx"
+    event_categories = ActiveRecord::Base.connection.execute(sql)
+    result = event_categories.map { |category| [category["name"], category["code"]] }
+    return result
+  end
+
+  def self.category_filter_all()
+    categories = Event::category_filter()
+    categories.append(['Všechny', 'ev'])
+    return categories
+  end
 
     # helper method for deciding whether the target event should be visible for the current user
   def self.event_visible?(visibility_status, current_user)
@@ -48,7 +61,7 @@ class Event < ActiveRecord::Base
     end
 
     if event_category != "ev"
-      query_start += "e.category = ? AND "
+      query_start += "e.event_category = ? AND "
     end
 
     case enroll_status

@@ -1,12 +1,23 @@
 class CreateTableEvents < ActiveRecord::Migration
   def change
+    create_table :event_categories, id: false, primary_key: [:code] do |t|
+      t.string :code, limit: 2
+      t.index :code, unique: true
+      t.string :name
+      t.integer :idx, :default => 0
+      t.boolean :multi_day, :default => true
+      t.text :description, :default => ""
+      t.timestamps
+    end
+
     create_table :events do |t|
       t.date :event_start
       t.date :event_end
       t.string :title
       t.text :body
-      t.string :category, :default => "ot"
+      t.string :event_category, :default => "ot"
       t.string :event_info_url, :default => ""
+      t.string :event_photos_url, :default => ""
       t.string :visible, :default => "org"
       t.timestamps
     end

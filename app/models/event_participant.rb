@@ -2,6 +2,9 @@ class EventParticipant < ActiveRecord::Base
   belongs_to :event
   belongs_to :scout
 
+  validates_associated :event
+  validates_associated :scout
+
   def get_user
     User.find(user_id)
   end
