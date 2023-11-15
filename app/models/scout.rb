@@ -1,6 +1,6 @@
 class Scout < ActiveRecord::Base
   belongs_to :user, inverse_of: :scout
-  has_many :event_participants
+  has_many :event_participants, dependent: :destroy
 
   validates :name, presence: true
   validates :last_name, presence: true
@@ -26,6 +26,14 @@ class Scout < ActiveRecord::Base
       return nil
     else
       return user.scout.id
+    end
+  end
+
+  def self.get_scout_path(user)
+    if Scout::scouts?(user)
+      return '/scouts/' + Scout::scout_id(user).to_s
+    else
+      return '/scouts'
     end
   end
 

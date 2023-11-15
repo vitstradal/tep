@@ -19,6 +19,11 @@ class ScoutsController < ApplicationController
       render :not_allowed_to_show_others
       return
     end
+
+    args_my_events, _ = Event::generate_sql(Scout.find(params[:id]), "ev", "yes")
+    args_not_my_events, _ = Event::generate_sql(Scout.find(params[:id]), "ev", "nvt")
+    @my_events = Event.find_by_sql(args_my_events)
+    @not_my_events = Event.find_by_sql(args_not_my_events)
   end
 
   def new
@@ -26,7 +31,7 @@ class ScoutsController < ApplicationController
       render :log_in_to_new
       return
     elsif Scout::scouts?(current_user)
-      render :show
+      redirect_to Scout::get_scout_path(current_user)
       return
     end
 

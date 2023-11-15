@@ -92,7 +92,7 @@ class Event < ActiveRecord::Base
       args_common.append(event_category)
     end
 
-    args_common.append(Time.current)
+    args_common.append(Time.current.yesterday())
 
     args_future = [future_query] + args_common
     args_past = [past_query] + args_common

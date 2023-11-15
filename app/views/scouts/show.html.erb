@@ -66,3 +66,10 @@
 <%= "Zdravotní pojišťovna: " + @scout.health_insurance %>
 </p>
 
+<h2>Moje akce</h2>
+
+<%= render :partial => "events/events_brief", locals: { events: @my_events } %>
+
+<h2>Kam bych se ještě mohl/a přihlásit</h2>
+
+<%= render :partial => "events/events_brief", locals: { events: @not_my_events } %>

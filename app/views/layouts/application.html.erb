@@ -167,6 +167,7 @@
           <%= menu_lii wiki_main_path('soustredeni'),  'Soustředění' %>
           <%= menu_lii wiki_main_path('setkani'),      'Setkání'  %>
           <%= menu_lii wiki_main_path('fotky'),        'Fotky'  %>
+          <%= menu_lii events_path,                    'Akce' %>            
         </ul>
       <% end %>
       <%= menu_li '/onas', 'Přihláška', ico: 'fa-book' do %>
@@ -188,6 +189,7 @@
             <% end %>
             <%= menu_lii :edit_user_registration, 'Změna hesla' %>
             <%= menu_lii wiki_main_path('faq'),   'Nápověda'   %>
+            <%= menu_lii Scout::get_scout_path(current_user), 'Účastnický účet' %>
           </ul>
         <% end %>
       <% else %>

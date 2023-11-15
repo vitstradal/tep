@@ -22,30 +22,9 @@
 
 <h2>Budoucí akce</h2>
 
-<div class="table-div">
-  <% @future_events.each do |event| %>
-    <% if Event::event_visible?(event.visible, current_user)%>
-      <b><%= event.title %> (<%= event.date_str() %>):</b> 
-        <% if event.event_info_url != "" %>
-          <a href="<%= event.event_info_url %>">info</a> <%= link_to "přihlašování", event %>
-      <% else %>
-        <%= link_to "info a přihlašování", event %>
-      <% end %>
-      <% if event.event_photos_url != "" %>
-        <a href="<%= event.event_photos_url %>">fotky</a>
-      <% end %>
-      <br>
-    <% end %>
-  <% end %>
-</div>
+<%= render :partial => "events_brief", locals: { events: @future_events } %>
 
 <h2>Již proběhlé akce</h2>
 
-<div class="table-div">
-  <% @past_events.each do |event| %>
-    <% if Event::event_visible?(event.visible, current_user) %>
-      <b><%= event.title %> (<%= event.date_str() %>):</b> <a href="<%= event.event_info_url %>">info</a>, <%= link_to "přihlašování", event %><br>
-    <% end %>
-  <% end %>
-</div>
+<%= render :partial => "events_brief", locals: { events: @past_events } %>
 

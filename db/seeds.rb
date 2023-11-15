@@ -21,9 +21,9 @@ if true
   User.delete_all
 
   users = User.create([
-             {:email => "adm@pikomat.mff.cuni.cz", :roles => [:admin, :morg, :org, :user],  :password => "adm je pes", :name => "Tonda", :last_name => "Hejný"},
+             {:email => "adm@pikomat.mff.cuni.cz", :roles => [:admin, :morg, :org, :user],  :password => "adm je pes", :name => "Antonín", :last_name => "Hejný"},
              {:email => "usr@pikomat.mff.cuni.cz", :roles => [:user],                :password => "usr je pes", :name => "David", :last_name => "Hájek"},
-             {:email => "org@pikomat.mff.cuni.cz", :roles => [:org, :user],          :password => "org je pes", :name => "Terka", :last_name => "Kubínová"},
+             {:email => "org@pikomat.mff.cuni.cz", :roles => [:org, :user],          :password => "org je pes", :name => "Tereza", :last_name => "Kubínová"},
         ])
 
   users.each { |u| u.confirm }

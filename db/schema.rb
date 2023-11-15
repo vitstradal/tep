@@ -11,16 +11,16 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 26) do
+ActiveRecord::Schema.define(version: 24) do
 
   create_table "event_categories", id: false, force: :cascade do |t|
     t.string   "code",        limit: 2
     t.string   "name"
+    t.integer  "idx",                   default: 0
     t.boolean  "multi_day",             default: true
     t.text     "description",           default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "idx",                   default: 0
   end
 
   add_index "event_categories", ["code"], name: "index_event_categories_on_code", unique: true
@@ -44,10 +44,10 @@ ActiveRecord::Schema.define(version: 26) do
     t.text     "body"
     t.string   "event_category",   default: "ot"
     t.string   "event_info_url",   default: ""
+    t.string   "event_photos_url", default: ""
     t.string   "visible",          default: "org"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "event_photos_url", default: ""
   end
 
   create_table "informs", force: :cascade do |t|
