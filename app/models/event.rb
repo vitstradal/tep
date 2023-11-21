@@ -4,6 +4,14 @@
 #
 require 'pp'
 
+class StartBeforeEndValidator < ActiveModel::Validator
+  def validate(record)
+    if(record.event_start > record.event_end)
+      record.errors[:event_end] << "Akce může končit až po svém začátku!"
+    end
+  end
+end
+
 class Event < ActiveRecord::Base
   has_many :event_participants, dependent: :destroy
   belongs_to :event_type
@@ -11,27 +19,29 @@ class Event < ActiveRecord::Base
   validates :title, presence: true
   validates :event_start, presence: true
   validates :event_end, presence: true
+  validates_with StartBeforeEndValidator
+  validates :max_participants, presence: true, numericality: { only_integer: true, message: "musí být číslo" }
+
 
   VISIBLE_STATUSES = ['everyone', 'user', 'org']
 
-  #CATEGORIES = [['Víkendovka', 'wk'], ['Pikostředa', 'we'], ['Jiné', 'ot']]
-  #CATEGORY_SEARCH = CATEGORIES.clone.unshift(['Všechny', 'ev'])
-  def self.category_filter()
-    sql = "SELECT name, code FROM event_categories ORDER BY idx"
+  def self.category_filter(current_user)
+    sql = "SELECT name, code, visible FROM event_categories ORDER BY idx"
     event_categories = ActiveRecord::Base.connection.execute(sql)
+    event_categories = event_categories.select {|item| EventCategory::category_visible?(item["visible"], current_user) }
     result = event_categories.map { |category| [category["name"], category["code"]] }
     return result
   end
 
-  def self.category_filter_all()
-    categories = Event::category_filter()
+  def self.category_filter_all(current_user)
+    categories = Event::category_filter(current_user)
     categories.append(['Všechny', 'ev'])
     return categories
   end
 
     # helper method for deciding whether the target event should be visible for the current user
   def self.event_visible?(visibility_status, current_user)
-    if(visibility_status == 'everyone' || current_user && (current_user.org? || (current_user.user? && visibility_status=='user')))
+    if(visibility_status == 'ev' || current_user && (current_user.org? || (current_user.user? && visibility_status=='user')))
       true
     else
       false
@@ -44,6 +54,50 @@ class Event < ActiveRecord::Base
     else
       event_start.strftime('%m/%d/%Y') + " - " + event_end.strftime('%m/%d/%Y')
     end
+  end
+
+  def can_participate?(scout)
+    if scout.org?
+      return true
+    end
+
+    participant = EventParticipant::get_participant(scout, self)
+    if ! participant.nil? && participant.chosen == "participant"
+      return true
+    end
+    
+    if num_signed("yes", false, true, true) >= max_participants
+      return false
+    end
+
+    return true
+  end
+
+  def can_substitute?(scout)
+   participant = EventParticipant::get_participant(scout, self)
+
+   if ! participant.nil? && participant.chosen == "substitute"
+     return true
+   end
+
+    return true
+  end
+
+  def num_signed(status, orgs_only, children_only, participants_only=false)
+    participants = EventParticipant.where(event_id: id).where(status: status)
+    if orgs_only
+      participants = participants.select { |p| p.org? }
+    end
+
+    if children_only
+      participants = participants.select { |p| !(p.org?) }
+    end
+
+    if participants_only
+      participants = participants.select { |p| p.chosen == "participant" }
+    end
+
+    participants.length()
   end
 
   def self.generate_sql(scout, event_category, enroll_status)

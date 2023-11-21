@@ -1,0 +1,88 @@
+<p><%= link_to @event_participant.scout.scout_name, scout_url(@event_participant.scout) %>
+<% if @is_new %>
+  Se přihlásil na 
+<% else %>
+  Změnil svoji přihlášku na 
+<% end %>
+akci 
+<%= link_to @event.title, event_url(@event) %>.
+</p>
+
+Aktuální stav přihlášky:
+
+<p>
+  <% if @event_participant.male?() %>
+    Účastník
+  <% else %>
+    Účastnice
+  <% end %>
+
+  <% if @event_participant.status == 'yes' %>
+    na akci <b>jede</b>.
+  <% elsif @event_participant.status == 'maybe' %>
+    <b>neví</b>, jestli chce na akci jet.
+  <% elsif @event_participant.status == 'no' %>
+    na akci <b>nejede</b>.
+  <% else %>
+    <b>stav nedefinován, kontaktuj Tondu!!!</b>
+  <% end %>
+</p>
+
+<p>
+  Poznámka: <%= @event_participant.note %>
+<p>
+
+<% if @event.spec_place %>
+  <p>
+    <% if @event_participant.male?() %>
+      Účastník
+    <% else %>
+      Účastnice
+    <% end %>  
+    nastupuje v <b><%= @event_participant.place %></b>
+  <p>
+<% end %>
+
+<% if @event.spec_scout %>
+  <p>
+    <% if @event_participant.scout_info == "" %>
+      K 
+      <% if @event_participant.male?() %>
+        účastníkovi
+      <% else %>
+        účastnici
+      <% end %>
+      neměl rodič žádné zvláštní připomínky.
+    <% else %>
+      Připomínky rodiče k 
+      <% if @event_participant.male?() %>
+        účastníkovi
+      <% else %>
+        účastnici
+      <% end %>
+      : <%= @event_participant.scout_info %>
+    <% end %>
+  </p>
+<% end %>
+
+<% if @event.spec_mass %>
+  <p>
+    <% if @event_participant.male?() %>
+      Účastník
+    <% else %>
+      Účastnice
+    <% end %>
+    na mši
+    <% if @event_participant.mass == 'yes' %>
+      <b>chce</b>.
+    <% else %>
+      <b>nechce</b>.
+    <% end %>
+  </p>
+<% end %>
+
+Aktuální počet přihlášených účastníků je <b><%= @num_p_voted %></b>, z toho <b><%= @num_p_yes %></b> na akci pojede, <b><%= @num_p_no %></b> na akci nepojede a <b><%= @num_p_maybe %></b> zatím neví.
+
+Vedle toho se přihlásilo <b><%= @num_o_voted %></b> orgů, z toho <b><%= @num_o_yes %></b> na akci pojede, <b><%= @num_o_no %></b> na akci nepojede a <b><%= @num_o_maybe %></b> zatím neví.
+
+Tvůj Tep

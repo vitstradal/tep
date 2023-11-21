@@ -97,4 +97,8 @@ class User < ActiveRecord::Base
      token_raw = set_reset_password_token
      send_devise_notification(:first_login_instructions, token_raw, is_bonus)
   end
+
+  def org?
+    return roles.include?(:org)
+  end
 end

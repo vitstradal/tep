@@ -1,0 +1,112 @@
+Dobrý den,
+<p>
+<% if @event_participant.male?() %>
+  Váš syn
+<% else %>
+  Vaše dcera
+<% end %>
+<%= link_to @event_participant.scout.scout_name, scout_url(@event_participant.scout) %>
+<% if @is_new %>
+  <% if @event_participant.male?() %>
+  se přihlásil na
+  <% else %>
+  se přihlásila na
+  <% end %>
+<% else %>
+  <% if @event_participant.male?() %>
+  změnil svoji přihlášku na
+  <% else %>
+  změnila svoji přihlášku na
+  <% end %>
+<% end %>
+akci 
+<%= link_to @event.title, event_url(@event) %>.
+</p>
+
+Aktuální stav přihlášky:
+
+<p>
+  <% if @event_participant.male?() %>
+  Váš syn
+  <% else %>
+  Vaše dcera
+  <% end %>
+
+  <% if @event_participant.status == 'yes' %>
+    na akci <b>jede</b>.
+  <% elsif @event_participant.status == 'maybe' %>
+    <b>neví</b>, jestli chce na akci jet.
+  <% elsif @event_participant.status == 'no' %>
+    na akci <b>nejede</b>.
+  <% else %>
+    <b>stav nedefinován, prosím dejte nám o této chybě vědět.</b>
+  <% end %>
+</p>
+
+<p>
+  Poznámka: <%= @event_participant.note %>
+<p>
+
+<% if @event.spec_place %>
+  <p>
+    Účastník nastupuje v <b><%= @event_participant.place %></b>
+  <p>
+<% end %>
+
+<% if @event.spec_scout %>
+  <p>
+    <% if @event_participant.scout_info == "" %>
+      K 
+      <% if @event_participant.male?() %>
+        účastníkovi
+      <% else %>
+        účastnici
+      <% end %>
+      (aktuální zdravotní problémy, ...) nemáte žádné připomínky.
+    <% else %>
+      Vaše připomínky k 
+      <% if @event_participant.male?() %>
+        účastníkovi
+      <% else %>
+        účastnici
+      <% end %>
+      : <%= @event_participant.scout_info %>
+    <% end %>
+  </p>
+<% end %>
+
+<% if @event.spec_mass %>
+  <p>
+    <% if @event_participant.male?() %>
+      Účastník
+    <% else %>
+      Účastnice
+    <% end %>
+    na mši
+    <% if @event_participant.mass == 'yes' %>
+      <b>chce</b>.
+    <% else %>
+      <b>nechce</b>.
+    <% end %>
+  </p>
+<% end %>
+
+<p>
+Tento email byl vygenerován automaticky, prosím neodpovídejte na něj. Pokud chcete změnit email, na který budou informace ohledně účasti
+<% if @event_participant.male?() %>
+  Vašeho syna
+<% else %>
+  Vaší dcery
+<% end %>
+na akcích, změňte si je, prosím, na našich stránkách v nastavení <%= link_to scout_url(@event_participant), "účastnického profilu" %>.
+</p>
+
+<p>
+Doufáme, že se
+<% if @event_participant.male?() %>
+  Vašemu synovi
+<% else %>
+  Vaší dceři
+<% end %>
+naše akce líbí.
+</p>

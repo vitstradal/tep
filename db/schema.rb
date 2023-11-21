@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 24) do
+ActiveRecord::Schema.define(version: 33) do
 
   create_table "event_categories", id: false, force: :cascade do |t|
     t.string   "code",        limit: 2
@@ -21,6 +21,7 @@ ActiveRecord::Schema.define(version: 24) do
     t.text     "description",           default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "visible",               default: "ev"
   end
 
   add_index "event_categories", ["code"], name: "index_event_categories_on_code", unique: true
@@ -32,22 +33,31 @@ ActiveRecord::Schema.define(version: 24) do
     t.string   "note",       default: ""
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "place",      default: ""
+    t.string   "scout_info", default: ""
+    t.boolean  "mass",       default: false
+    t.string   "chosen",     default: ""
   end
-
-  add_index "event_participants", [nil], name: "index_event_participants_on_event"
-  add_index "event_participants", [nil], name: "index_event_participants_on_scout"
 
   create_table "events", force: :cascade do |t|
     t.date     "event_start"
     t.date     "event_end"
     t.string   "title"
     t.text     "body"
-    t.string   "event_category",   default: "ot"
-    t.string   "event_info_url",   default: ""
-    t.string   "event_photos_url", default: ""
-    t.string   "visible",          default: "org"
+    t.string   "event_category",         default: "ot"
+    t.string   "event_info_url",         default: ""
+    t.string   "event_photos_url",       default: ""
+    t.string   "visible",                default: "org"
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.boolean  "spec_place",             default: false
+    t.boolean  "spec_scout",             default: false
+    t.boolean  "spec_mass",              default: false
+    t.string   "bonz_org",               default: ""
+    t.boolean  "bonz_parent",            default: false
+    t.string   "spec_place_detail",      default: ""
+    t.boolean  "limit_num_participants", default: false
+    t.integer  "max_participants",       default: 0
   end
 
   create_table "informs", force: :cascade do |t|
@@ -130,6 +140,7 @@ ActiveRecord::Schema.define(version: 24) do
     t.boolean  "activated",        default: true
     t.datetime "created_at"
     t.datetime "updated_at"
+    t.string   "sex",              default: "male"
   end
 
   create_table "sessions", force: :cascade do |t|

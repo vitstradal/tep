@@ -7,6 +7,7 @@ class CreateTableEvents < ActiveRecord::Migration
       t.integer :idx, :default => 0
       t.boolean :multi_day, :default => true
       t.text :description, :default => ""
+      t.string :visible, :default => "ev"
       t.timestamps
     end
 
@@ -18,7 +19,15 @@ class CreateTableEvents < ActiveRecord::Migration
       t.string :event_category, :default => "ot"
       t.string :event_info_url, :default => ""
       t.string :event_photos_url, :default => ""
-      t.string :visible, :default => "org"
+      t.string :visible, :default => "ev"
+      t.bool :spec_place, :default => false
+      t.string :spec_place_detail, :default => ""
+      t.bool :spec_scout, :default => false
+      t.bool :spec_mass, :default => false
+      t.string :bonz_org, :default => ""
+      t.bool :bonz_parent, :default => false
+      t.bool :limit_num_participants, :default => false
+      t.integer :max_participants, :default => 0
       t.timestamps
     end
       
@@ -27,6 +36,10 @@ class CreateTableEvents < ActiveRecord::Migration
       t.belongs_to :scout
       t.string :status, :default => "yes"
       t.string :note, :default => ""
+      t.string :place, :default => ""
+      t.string :scout_info, :default => ""
+      t.boolean :mass, :default => false
+      t.string :chosen, :default => "none"
       t.timestamps
     end
 
@@ -38,6 +51,7 @@ class CreateTableEvents < ActiveRecord::Migration
       t.string :name
       t.string :last_name
       t.string :nickname, :default => ""
+      t.string :sex, :default => "male"
       t.datetime :birth
       t.integer :grade
       t.string :address

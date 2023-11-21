@@ -84,6 +84,14 @@ class ScoutsController < ApplicationController
     end
   end
 
+  def new_user
+    user =  User.new(roles: [:user])
+  end
+
+  def create_user
+
+  end
+
   private
     def scout_params
       params.require(:scout).permit! #TODO

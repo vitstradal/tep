@@ -59,19 +59,23 @@ class EventsController < ApplicationController
       end
     end
 
+    @num_p_yes = @event.num_signed("yes", false, true)
+
     @already_happened = @event.event_end < Date.current
   end
 
   def enroll
     @event_participant = EventParticipant.find_by("event_id=? AND scout_id=?", params[:id], Scout::scout_id(current_user))
     if @event_participant
-      if @event_participant.update(enroll_params)
+      @event_participant.update_chosen()
+      if @event_participant.update(participant_params)
         redirect_to @event_participant.event
       else
         render :show, status: :unprocessable_entity
       end
     else
-      @event_participant = EventParticipant.new(enroll_params)    
+      @event_participant = EventParticipant.new(participant_params)    
+      @event_participant.update_chosen()
       if @event_participant.save
         redirect_to Event.find(params[:id])
       else
@@ -81,10 +85,20 @@ class EventsController < ApplicationController
   end
 
   def new
+    if not can? :create, Event
+      render 'permission_denied', :locals => { :desired => "vytvářet nové" }
+      return
+    end
+
     @event = Event.new
   end
 
   def create
+    if not can? :create, Event
+      render 'permission_denied', :locals => { :desired => "vytvářet nové " }
+      return
+    end
+
     @event = Event.new(event_params)
 
     if @event.save
@@ -95,16 +109,31 @@ class EventsController < ApplicationController
   end
 
   def edit
+    if not can? :create, Event
+      render 'permission_denied', :locals => { :desired => "editovat existující " }
+      return
+    end
+
     @event = Event.find(params[:id])
   end
 
   def edit_participants
+    if not can? :create, Event
+      render 'permission_denied', :locals => { :desired => "editovat ostatní účastníky na " }
+      return
+    end
+
     @event = Event.find(params[:id])
     @edit_participants = true
     render :show
   end
 
   def update
+    if not can? :create, Event
+      render 'permission_denied', :locals => { :desired => "editovat existující " }
+      return
+    end
+
     @event = Event.find(params[:id])
 
     if @event.update(event_params)
@@ -115,6 +144,11 @@ class EventsController < ApplicationController
   end
 
   def delete 
+    if not can? :create, Event
+      render 'permission_denied', :locals => { :desired => "mazat existující " }
+      return
+    end
+
     @event = Event.find(params[:id])
     @event.destroy
 
@@ -141,7 +175,8 @@ class EventsController < ApplicationController
       params.require(:event).permit!
     end
 
-    def enroll_params
-      params.require(:event_participant).permit!
+    def participant_params
+      params.require(:event_participant).permit(:status, :note, :place, :mass, :scout_info)
     end
+
 end

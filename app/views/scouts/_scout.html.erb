@@ -1,7 +1,7 @@
 <p>
 <% if can? :edit_other, Scout %>
-  <%= link_to scout.name + scout.last_name, scout_path(scout) %>
+  <%= link_to scout.scout_name(), scout_path(scout) %>
 <% else %>
-  <b> <%= scout.name + scout.last_name %> </b>
+  <b> <%= scout.scout_name() %> </b>
 <% end %>
 </p>

@@ -21,4 +21,22 @@ class EventParticipant < ActiveRecord::Base
       "Stav nedefinován"
     end
   end
+
+  def male?
+    scout.male?
+  end
+
+  def org?
+    scout.org?
+  end
+
+  def self.get_participant(scout, event)
+    EventParticipant.find_by(scout_id: scout.id, event_id: event.id)
+  end
+
+  def update_chosen
+    if status != "yes"
+      chosen = "none"
+    end
+  end
 end

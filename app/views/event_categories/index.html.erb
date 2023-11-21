@@ -12,6 +12,7 @@
     <th>Kód</th>
     <th>Řadící index?</th>
     <th>Je víceddenní?</th>
+    <th>Viditelnost</th>
     <th>Dodatečné informace</th>
   </tr>
 <% EventCategory.find_each do |c| %>
@@ -25,7 +26,8 @@
     </th>
     <th><%= c.code %></th>
     <th><%= c.idx %></th>
-    <th><%= c.multi_day %></th>
+    <th><%= c.multi_day_txt() %></th>
+    <th><%= c.visible_txt() %></th>
     <th><%= c.description %></th>
   </tr>
 <% end %>

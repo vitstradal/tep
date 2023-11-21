@@ -14,7 +14,7 @@
   <div class="form-group">
     <%= f.label :name, "Jméno", :class => 'col-sm-3 control-label no-padding-right' %>
     <div class="col-sm-9 <%= form_error_class @scout, :name %>">
-      <%= f.text_field :name %>
+      <%= f.text_field :name, disabled: !current_user.org? %>
       <%= form_error @scout, :name %>
     </div>
   </div>    
@@ -22,7 +22,7 @@
   <div class="form-group">
     <%= f.label :last_name, "Příjmení", :class => 'col-sm-3 control-label no-padding-right' %>
     <div class="col-sm-9 <%= form_error_class @scout, :last_name %>">
-      <%= f.text_field :last_name %>
+      <%= f.text_field :last_name, disabled: !current_user.org? %>
       <%= form_error @scout, :last_name %>
     </div>
   </div>
@@ -33,13 +33,20 @@
       <%= f.text_field :nickname %>
       <%= form_error @scout, :nickname %>
     </div>
+  </div>
 
+  <div class="form-group">
+    <%= f.label :sex, "Pohlaví", :class => 'col-sm-3 control-label no-padding-right' %>
+    <div class="col-sm-9 <%= form_error_class @scout, :sex %>">
+      <%= f.select :sex, [["Muž", "male"], ["Žena", "female"]], :selected => "male" %>
+      <%= form_error @scout, :sex %>
+    </div>
   </div>
 
   <div class="form-group">
     <%= f.label :birth, "Datum narození", :class => 'col-sm-3 control-label no-padding-right' %>
     <div class="col-sm-9 <%= form_error_class @scout, :birth %>">
-      <%= f.date_field :birth %>
+      <%= f.date_field :birth, disabled: !current_user.org? %>
       <%= form_error @scout, :birth %>
     </div>
 

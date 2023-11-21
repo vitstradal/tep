@@ -13,19 +13,31 @@
 
 <p><%= @event.body %><p>
 
+<% if @event.limit_num_participants %>
+  Na tuto akci může jet maximálně <b><%= @event.max_participants %></b> účastníků. Aktuálně je <%= @num_p_yes %> přihlášených.
+<% end %>
+
 <% if @event.event_info_url != "" %>
   <p>Více info najdeš <a href="<%= @event.event_info_url %>">tady</a>.</p>
 <% end %>
 
 <%= link_to "Ukaž výběr všech akcí!", events_path %>
 
-<% if Scout::scouts?(current_user) %>
-  <%= render :partial => "form_enroll" %>
-<% elsif ! @edit_participants and ! @already_happened %>
-  <p>
-    Abys ses mohl přihlásit na nějakou akci, musíš mít založený účastnický účet, a navíc ještě musíš být přihlášený/á. Účastnický účet si můžeš založit
-    <%= link_to "zde", new_scout_path %>.
-  </p>
+<% if !@already_happened %>
+  <% if !@edit_participants and Scout::scouts?(current_user) %>
+    <% if @event.can_participate?(current_user.scout) %>
+      <%= render :partial => "form_enroll", :locals => { :chosen => "participant" } %>
+    <% elsif @event.can_substitute?(current_user.scout) %>
+      <%= render :partial => "form_enroll", :locals => { :chosen => "substitute" } %>
+    <% else %>
+      Bohužel jsi nebyl vybrán ani mezi účastníky, ani mezi náhradníky. Tedy se na tuto akci nemůžeš přihlásit. Pokud si myslíš, že se jedná o chybu, neváhej nám napsat :-).
+    <% end %>
+  <% elsif !@edit_participants %>
+    <p>
+      Abys ses mohl přihlásit na nějakou akci, musíš mít založený účastnický účet, a navíc ještě musíš být přihlášený/á. Účastnický účet si můžeš založit
+      <%= link_to "zde", new_scout_path %>.
+    </p>
+  <% end %>
 <% end %>
 
 <h2>Přihlášení účastníci</h2>

@@ -6,48 +6,62 @@
   <% method = :post %>
 <% end %>
 
-<%= form_for :event_category, :url => url_dest, :method => method do |f| %>
-  <% if @event_category.errors.any? %>
-    <div id="error_explanation">
-      <h2>
-        <%= pluralize(@event_category.errors.count, "error") %> vyskytly se následující chyby:
-      </h2>
-      <ul>
-        <% @event_category.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
+<%= form_for :event_category, :url => url_dest, :method => method, :html => {:class=>'form-horizontal'} do |f| %>
+  <div class="<%= form_error_class @event_category, :name%>">
+  
+  <div class="form-group">
+    <%= f.label :code, "Kód", :class => 'col-sm-2 control-label no-padding-right'%>
+    <div class="col-sm-10 <%= form_error_class @event_category, :code %>">
+      <%= f.text_field :code %>
+      <%= form_error @event_category, :code %>
     </div>
-  <% end %>
+  </div>
 
-  <p>
-    <%= f.label :code, "Kód:" %>
-    <%= f.text_field :code %>
-  </p>
+  <div class="form-group">
+    <%= f.label :idx, "Řadící index", :class => 'col-sm-2 control-label no-padding-right'%>
+    <div class="col-sm-10 <%= form_error_class @event_category, :idx %>">
+      <%= f.text_field :idx %>
+      <%= form_error @event_category, :idx %>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <%= f.label :name, "Jméno", :class => 'col-sm-2 control-label no-padding-right'%>
+    <div class="col-sm-10 <%= form_error_class @event_category, :name %>">
+      <%= f.text_field :name %>
+      <%= form_error @event_category, :name %>
+    </div>
+  </div>
 
-  <p>
-    <%= f.label :idx, "Řadící index:" %>
-    <%= f.text_field :idx %>
-  </p>
+  <div class="form-group">
+    <%= f.label :multi_day, "Počet dní", :class => 'col-sm-2 control-label no-padding-right'%>
+    <div class="col-sm-10 <%= form_error_class @event_category, :multi_day %>">
+      <%= f.select :multi_day, [["Jednodenní", false], ["Vícedenní", true]] %>
+      <%= form_error @event_category, :multi_day %>
+    </div>
+  </div>
 
-  <p>
-    <%= f.label :name, "Jméno:" %>
-    <%= f.text_field :name %>
-  </p>
+  <div class="form-group">
+    <%= f.label :description, "Popis:", :class => 'col-sm-2 control-label no-padding-right'%>
+    <div class="col-sm-10 <%= form_error_class @event_category, :description %>">
+      <%= f.text_field :description %>
+      <%= form_error @event_category, :description %>
+    </div>
+  </div>
 
-  <p>
-    <%= f.label :multi_day, "Počet dní:" %>
-    <%= f.select :multi_day, [["Jednodenní", false], ["Vícedenní", true]] %>
-  </p>
+  <div class="form-group">
+    <%= f.label :visible, "Kdo se o typu akce vůbec dozví", :class => 'col-sm-2 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @event_category, :visible %>">
+      <%= f.select :visible, [["každý", "ev"], ["user", "user"], ["org", "org"]] %>
+      <%= form_error @event_category, :visible %>
+    </div>
+  </div>
 
-  <p>
-    <%= f.label :description, "Popis:" %>
-    <%= f.text_field :description %>
-  </p>
-
-  <p>
-    <%= f.submit "Uložit typ akce", :class => 'btn btn-primary'%>
-  </p>
+  <div class="form-group">
+    <div class="col-sm-offset-2 col-sm-9">
+      <%= f.submit :class=>'btn btn-primary', :value=>'Uložit typ akce' %>
+    </div>
+  </div>
 
 <% end %>
 

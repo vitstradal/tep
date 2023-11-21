@@ -14,11 +14,16 @@ class Scout < ActiveRecord::Base
   validates :parent_phone, presence: true
   validates :birth_number, presence: true
   validates :health_insurance, presence: true
+  validates :sex, presence: true
 
   validates_associated :user
 
   def self.scouts?(user)
     return !user.nil? && !user.scout.nil?
+  end
+
+  def org?()
+    return user.org?
   end
 
   def self.scout_id(user)
@@ -53,8 +58,8 @@ class Scout < ActiveRecord::Base
     end
   end
 
-  def full_name
-    if !nickname.nil?
+  def scout_name
+    if not nickname == ""
       "#{nickname}"
     elsif !name.nil?  && !last_name.nil?
       "#{name} #{last_name}"
@@ -71,6 +76,14 @@ class Scout < ActiveRecord::Base
     birth.strftime('%m/%d/%Y')
   end
 
+  def male?
+    sex == "male"
+  end
+
+  def sex_str()
+    male? ? "Muž" : "Žena"
+  end
+
   ATTR_TABLE =
     {
       id: "Id",
@@ -78,6 +91,7 @@ class Scout < ActiveRecord::Base
       name: "Jméno",
       last_name: "Příjmení",
       nickname: "Přezdívka",
+      sex: "Pohlav:í",
       birth: "Datum narození",
       grade: "Ročník",
       address: "Adresa",
@@ -89,7 +103,7 @@ class Scout < ActiveRecord::Base
       health_problems: "Zdravotní problémy",
       birth_number: "Rodné číslo",
       health_insurance: "Zdravotní pojišťovna",
-      activated: "Účet aktivován"
+      activated: "Účet aktivováni"
     }
 
   ATTR_BOOL_TABLE = {}

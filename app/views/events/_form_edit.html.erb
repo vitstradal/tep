@@ -6,63 +6,141 @@
   <% method = :post %>
 <% end %>
 
-<%= form_for :event, :url => url_dest, :method => method do |f| %>
- 
-  <% if @event.errors.any? %>
-    <div id="error_explanation">
-      <h2>
-        <%= pluralize(@event.errors.count, "error") %> vyskytly se následující chyby:
-      </h2>
-      <ul>
-        <% @event.errors.full_messages.each do |msg| %>
-          <li><%= msg %></li>
-        <% end %>
-      </ul>
+<%= form_for :event, :url => url_dest, :method => method, :html => {:class=>'form-horizontal'} do |f| %>
+  <div class="<%= form_error_class @event, :name%>">
+  <div class="form-group">
+    <%= f.label :event_category, "Typ akce", :class => 'col-sm-2 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @event, :event_category %>">
+      <%= f.select :event_category, Event::category_filter(current_user) %>
+      <%= form_error @event, :event_category %>
     </div>
-  <% end %>
+  </div>
 
-  <p>
-    <%= f.label :event_category, "Typ akce:" %>
-    <%= f.select :event_category, Event::category_filter() %>
-  </p>
+  <div class="form-group">
+    <%= f.label :title, "Název akce", :class => 'col-sm-2 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @event, :title %>">
+      <%= f.text_field :title %>
+      <%= form_error @event, :title %>
+    </div>
+  </div>
+  
+  <div class="form-group">
+    <%= f.label :body, "Popis akce", :class => 'col-sm-2 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @event, :body %>">
+      <%= f.text_area :body %>
+      <%= form_error @event, :body %>
+    </div>
+  </div>
 
-  <p>
-  <%= f.label :title, "Název akce:" %><br>
-    <%= f.text_field :title %>
-  </p>
+  <div class="form-group">
+    <%= f.label :event_start, "Začátek akce", :class => 'col-sm-2 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @event, :event_start %>">
+      <%= f.date_field :event_start %>
+      <%= form_error @event, :event_start %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :event_end, "Konec akce", :class => 'col-sm-2 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @event, :event_end %>">
+      <%= f.date_field :event_end %>
+      <%= form_error @event, :event_end %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :limit_num_participants, "Chceš nějak limitovat počet účastníků?", :class => 'col-sm-4 control-label no-padding-right'%>
+    <div class="col-sm-8 <%= form_error_class @event, :limit_num_participants %>">
+      <%= f.check_box(:limit_num_participants) %>
+      <%= form_error @event, :limit_num_participants %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :max_participants, "Limit na počet účastníků", :class => 'col-sm-2 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @event, :max_participants %>">
+      <%= f.text_field :max_participants %>
+      <%= form_error @event, :max_participants %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :spec_place, "Účastníci specifikují místo nástupu", :class => 'col-sm-4 control-label no-padding-right'%>
+    <div class="col-sm-8 <%= form_error_class @event, :spec_place %>">
+      <%= f.check_box(:spec_place) %>
+      <%= form_error @event, :spec_place %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :spec_place_detail, "Místa nástupu (jednotlivá místa odděl čárkami)", :class => 'col-sm-2 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @event, :spec_place_detail %>">
+      <%= f.text_field :spec_place_detail %>
+      <%= form_error @event, :spec_place_detail %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :spec_scout, "Rodiče mají možnost sdělení k účastníkovi", :class => 'col-sm-4 control-label no-padding-right'%>
+    <div class="col-sm-8 <%= form_error_class @event, :spec_scout %>">
+      <%= f.check_box(:spec_scout) %>
+      <%= form_error @event, :spec_scout %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :spec_mass, "Účastníci specifikují zájem o mši", :class => 'col-sm-4 control-label no-padding-right'%>
+    <div class="col-sm-8 <%= form_error_class @event, :spec_mass %>">
+      <%= f.check_box(:spec_mass) %>
+      <%= form_error @event, :spec_mass %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :bonz_parent, "Po přihlášení přijde rodičům mail", :class => 'col-sm-4 control-label no-padding-right'%>
+    <div class="col-sm-8 <%= form_error_class @event, :bonz_parent %>">
+      <%= f.check_box(:bonz_parent) %>
+      <%= form_error @event, :bonz_parent %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :bonz_org, "Bonz mail", :class => 'col-sm-2 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @event, :bonz_org %>">
+      <%= f.text_field :bonz_org %>
+      <%= form_error @event, :bonz_org %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :event_info_url, "Odkaz na další informace", :class => 'col-sm-2 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @event, :event_info_url %>">
+      <%= f.text_field :event_info_url %>
+      <%= form_error @event, :event_info_url %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :event_photos_url, "Odkaz na fotky", :class => 'col-sm-2 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @event, :event_photos_url %>">
+      <%= f.text_field :event_photos_url %>
+      <%= form_error @event, :event_photos_url %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :visible, "Kdo se o akci vůbec dozví", :class => 'col-sm-2 control-label no-padding-right'%>
+    <div class="col-sm-9 <%= form_error_class @event, :visible %>">
+      <%= f.select :visible, [["každý", "ev"], ["user", "user"], ["org", "org"]] %>
+      <%= form_error @event, :visible %>
+    </div>
+  </div>
  
-  <p>
-    <%= f.label :body, "Popis akce:" %><br>
-    <%= f.text_area :body %>
-  </p>
+  <div class="form-group">
+    <div class="col-sm-offset-3 col-sm-9">
+      <%= f.submit :class=>'btn btn-primary', :value=>'Uložit akci' %>
+    </div>
+  </div>
 
-  <p>
-    <%= f.label :event_start, "Začátek akce:" %><br>
-    <%= f.date_field :event_start %>
-  </p>
-
-  <p>
-    <%= f.label :event_end, "Konec akce:" %><br>
-    <%= f.date_field :event_end %>
-  </p>
-
-  <p>
-    <%= f.label :event_info_url, "Odkaz na další informace:" %>
-    <%= f.text_field :event_info_url %>
-  </p>
-
-  <p>
-    <%= f.label :event_photos_url, "Odkaz na fotky:" %>
-    <%= f.text_field :event_photos_url %>
-  </p>
-
-  <p>
-    <%= f.label :visible, "Kdo se o akci vůbec dozví:" %>
-    <%= f.select :visible, ["everyone", "user", "org"] %>
-  </p>
- 
-  <p>
-  <%= f.submit "Uložit akci", :class => 'btn btn-primary'%>
-  </p>
- 
+  </div>
 <% end %>
