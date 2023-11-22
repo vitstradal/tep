@@ -35,7 +35,7 @@ class EventParticipant < ActiveRecord::Base
   end
 
   def update_chosen
-    if status != "yes"
+    if status != "yes" and status != "maybe"
       chosen = "none"
     end
   end

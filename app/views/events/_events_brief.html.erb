@@ -1,6 +1,6 @@
 <div class="table-div">
   <% events.each do |event| %>
-    <% if Event::event_visible?(event.visible, current_user)%>
+    <% if event.event_visible?(current_user)%>
       <b><%= event.title %> (<%= event.date_str() %>):</b>
         <% if event.event_info_url != "" %>
           <a href="<%= event.event_info_url %>">info</a> <%= link_to "přihlašování", event %>

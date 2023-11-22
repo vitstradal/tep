@@ -1,0 +1,7 @@
+<div class="form-group">
+  <%= f.label name, text, :class => 'col-sm-2 control-label no-padding-right'%>
+  <div class="col-sm-10 <%= form_error_class obj, name %>">
+    <%= f.text_area name %>
+   <%= form_error obj, name %>
+  </div>
+</div>

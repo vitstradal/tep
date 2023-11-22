@@ -70,10 +70,19 @@
 <%= "Zdravotní pojišťovna: " + @scout.health_insurance %>
 </p>
 
-<h2>Moje akce</h2>
+<h3>Moje akce</h3>
 
 <%= render :partial => "events/events_brief", locals: { events: @my_events } %>
 
-<h2>Kam bych se ještě mohl/a přihlásit</h2>
+<h3>Kam bych se ještě mohl/a přihlásit</h3>
 
 <%= render :partial => "events/events_brief", locals: { events: @not_my_events } %>
+
+<h3>Kam ještě nevím, jestli chci jet</h3>
+
+<%= render :partial => "events/events_brief", locals: { events: @maybe_events } %>
+
+<h3>Kam vím, že nepojedu</h3>
+
+<%= render :partial => "events/events_brief", locals: { events: @no_events } %>
+

@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 33) do
+ActiveRecord::Schema.define(version: 36) do
 
   create_table "event_categories", id: false, force: :cascade do |t|
     t.string   "code",        limit: 2
@@ -26,6 +26,15 @@ ActiveRecord::Schema.define(version: 33) do
 
   add_index "event_categories", ["code"], name: "index_event_categories_on_code", unique: true
 
+  create_table "event_invitations", force: :cascade do |t|
+    t.integer "event_id"
+    t.integer "scout_id"
+    t.string  "chosen",   default: "participant"
+  end
+
+  add_index "event_invitations", [nil], name: "index_event_invitations_on_event"
+  add_index "event_invitations", [nil], name: "index_event_invitations_on_scout"
+
   create_table "event_participants", force: :cascade do |t|
     t.integer  "event_id"
     t.integer  "scout_id"
@@ -39,25 +48,35 @@ ActiveRecord::Schema.define(version: 33) do
     t.string   "chosen",     default: ""
   end
 
+  add_index "event_participants", [nil], name: "index_event_participants_on_event"
+  add_index "event_participants", [nil], name: "index_event_participants_on_scout"
+
   create_table "events", force: :cascade do |t|
     t.date     "event_start"
     t.date     "event_end"
     t.string   "title"
     t.text     "body"
-    t.string   "event_category",         default: "ot"
-    t.string   "event_info_url",         default: ""
-    t.string   "event_photos_url",       default: ""
-    t.string   "visible",                default: "org"
+    t.string   "event_category",                    default: "ot"
+    t.string   "event_info_url",                    default: ""
+    t.string   "event_photos_url",                  default: ""
+    t.string   "visible",                           default: "org"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.boolean  "spec_place",             default: false
-    t.boolean  "spec_scout",             default: false
-    t.boolean  "spec_mass",              default: false
-    t.string   "bonz_org",               default: ""
-    t.boolean  "bonz_parent",            default: false
-    t.string   "spec_place_detail",      default: ""
-    t.boolean  "limit_num_participants", default: false
-    t.integer  "max_participants",       default: 0
+    t.boolean  "spec_place",                        default: false
+    t.boolean  "spec_scout",                        default: false
+    t.boolean  "spec_mass",                         default: false
+    t.string   "bonz_org",                          default: ""
+    t.boolean  "bonz_parent",                       default: false
+    t.string   "spec_place_detail",                 default: ""
+    t.boolean  "limit_num_participants",            default: false
+    t.integer  "max_participants",                  default: 0
+    t.boolean  "enable_only_specific_participants", default: false
+    t.boolean  "enable_only_specific_substitutes",  default: false
+    t.boolean  "enable_only_specific_organisers",   default: false
+    t.boolean  "uninvited_participant_doesnt_see",  default: false
+    t.boolean  "uninvited_organiser_doesnt_see",    default: false
+    t.boolean  "uninvited_participants_dont_see",   default: false
+    t.boolean  "uninvited_organisers_dont_see",     default: false
   end
 
   create_table "informs", force: :cascade do |t|

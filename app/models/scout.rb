@@ -1,6 +1,7 @@
 class Scout < ActiveRecord::Base
   belongs_to :user, inverse_of: :scout
   has_many :event_participants, dependent: :destroy
+  has_many :event_invitations, dependent: :destroy
 
   validates :name, presence: true
   validates :last_name, presence: true
@@ -124,4 +125,23 @@ class Scout < ActiveRecord::Base
     return response
   end
 
+  def self.find_by_invitation(event, chosen, role)
+    query1 = "SELECT s.* FROM scouts s WHERE "
+    query2 = "EXISTS (SELECT si.* FROM event_invitations si WHERE si.scout_id = s.id AND si.event_id = ? AND (si.chosen = ?"
+    case chosen
+    when "participant"
+      scouts = Scout.find_by_sql([query1 + query2 + "))", event.id, "participant"])
+    when "substitute"
+      scouts = Scout.find_by_sql([query1 + query2 + "))", event.id, "substitute"])
+    when "ev"
+      scouts = Scout.find_each
+    else
+      scouts = Scout.find_by_sql([query1 + "NOT " + query2 + " OR si.chosen = ?))", event.id, "participant", "substitute"])
+    end
+    if role == "p"
+      return scouts.select{|s| ! s.org? }
+    else
+      return scouts.select{|s| s.org? }
+    end
+  end
 end

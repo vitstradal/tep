@@ -68,10 +68,14 @@ Tep::Application.routes.draw do
   post '/events/:id/delete'                              => 'events#delete',             :as => :event_delete
   post '/events/:id/enroll'                              => 'events#enroll',             :as => :event_enroll
   get '/events/:id/edit_participants'                    => 'events#edit_participants',  :as => :edit_participants_event
+  get '/events/:id/edit_invitations'                     => 'events#edit_invitations',  :as => :edit_invitations_event
+  get '/events/:id/edit_invitations/:chosen/:role'       => 'events#edit_invitations',  :as => :filter_invitations_event
   post 'events/:event_id/participants/:scout_id/update'  => 'event_participants#update', :as => :update_participant_event
   post '/events/:event_id/participants/:scout_id/delete' => 'event_participants#delete', :as => :delete_participant_event
   get '/events/:event_id/display_scouts'                 => 'events#display_scouts',     :as => :event_display_scouts
   post '/events/:event_id/display_scouts'                => 'events#display_scouts',     :as => :event_display_scout
+
+  post '/event_invitations/:event_id/:scout_id/save'     => 'event_invitations#save',    :as => :save_event_invitation
 
   # org:
   get  '/sosna/solutions/lidi(/:roc(/:level(/:se(/:ul))))' => 'sosna/solution#lidi',           :as => :sosna_solutions_lidi

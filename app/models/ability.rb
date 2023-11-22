@@ -111,6 +111,8 @@ class Ability
 
       can :show_other, Scout
       can :read, EventCategory
+      can :read, EventParticipant
+      can :read, EventInvitation
     end
 
     # master-org, or more-org, 
@@ -142,6 +144,8 @@ class Ability
       can :edit_other, Scout
       can :update_other, Scout
 
+      can :manage, EventParticipant
+      can :manage, EventInvitation
     end
 
     if user.admin?

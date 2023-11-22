@@ -39,18 +39,7 @@ class EventsController < ApplicationController
   end
 
   def show
-    max_id = ActiveRecord::Base.connection.execute("SELECT MAX(id) FROM events")
-    if params[:id].to_i > max_id[0][0].to_i
-      render :not_found
-      return
-    end #TODO: What if it was deleted
-
-    @event = Event.find(params[:id])
-
-    unless Event.event_visible?(@event.visible, current_user)
-      render :not_allowed_to_show
-      return
-    end
+    return unless _find_event(params[:id])
 
     if Scout::scouts?(current_user)
       @event_participant = EventParticipant.find_by("event_id=? AND scout_id=?", params[:id], Scout::scout_id(current_user))
@@ -114,18 +103,42 @@ class EventsController < ApplicationController
       return
     end
 
-    @event = Event.find(params[:id])
+    return unless _find_event(params[:id])
   end
 
   def edit_participants
-    if not can? :create, Event
+    return unless _find_event(params[:id])
+
+    if not can? :update, EventParticipant
       render 'permission_denied', :locals => { :desired => "editovat ostatní účastníky na " }
       return
     end
 
-    @event = Event.find(params[:id])
     @edit_participants = true
     render :show
+  end
+
+  def edit_invitations
+    return unless _find_event(params[:id])
+
+    @chosen = params[:chosen].nil? ? "ev" : params[:chosen]
+    @role = (params[:role].nil? or params[:role] == 'p' or ! current_user.admin?) ? "p" : "o"
+
+    @scouts = Scout::find_by_invitation(@event, @chosen, @role)
+
+    if (can? :read, EventInvitation) and !(can? :create, EventInvitation)
+      @editing = false
+      render :edit_invitations
+      return
+    end
+
+    if !(can? :create, EventInvitation)
+      render 'permission_denied', :locals => { :desired => "zobrazovat ani editovat pozvánky na " }
+      return
+    end
+
+    @editing = true
+    render :edit_invitations
   end
 
   def update
@@ -134,7 +147,7 @@ class EventsController < ApplicationController
       return
     end
 
-    @event = Event.find(params[:id])
+    return unless _find_event(params[:id])
 
     if @event.update(event_params)
       redirect_to @event
@@ -149,7 +162,7 @@ class EventsController < ApplicationController
       return
     end
 
-    @event = Event.find(params[:id])
+    return unless _find_event(params[:id])
     @event.destroy
 
     redirect_to events_path
@@ -165,7 +178,8 @@ class EventsController < ApplicationController
       return
     end
 
-    @event = Event.find(params[:event_id])
+    return unless _find_event(params[:id])
+
     @event_participants = EventParticipant.find_by_sql(["SELECT * FROM event_participants WHERE event_id = ?", params[:event_id]])
     @filter_hashes = params[:filter_hashes].nil? ? Scout::ATTR_BOOL_TABLE : params[:filter_hashes]
   end
@@ -179,4 +193,18 @@ class EventsController < ApplicationController
       params.require(:event_participant).permit(:status, :note, :place, :mass, :scout_info)
     end
 
+    def _find_event(id)
+      @event = Event.find_by(id: id)
+      if @event.nil?
+        render :not_found
+        return false
+      end
+
+      if Scout::scouts?(current_user) and @event.event_visible?(current_user)
+        return true
+      else
+        render :not_allowed_to_show
+        return false
+      end
+    end
 end

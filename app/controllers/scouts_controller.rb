@@ -21,8 +21,13 @@ class ScoutsController < ApplicationController
     end
 
     args_my_events, _ = Event::generate_sql(Scout.find(params[:id]), "ev", "yes")
+    args_maybe_events, _ = Event::generate_sql(Scout.find(params[:id]), "ev", "maybe")
+    args_no_events, _ = Event::generate_sql(Scout.find(params[:id]), "ev", "no")
+
     args_not_my_events, _ = Event::generate_sql(Scout.find(params[:id]), "ev", "nvt")
     @my_events = Event.find_by_sql(args_my_events)
+    @maybe_events = Event.find_by_sql(args_maybe_events)
+    @no_events = Event.find_by_sql(args_no_events)
     @not_my_events = Event.find_by_sql(args_not_my_events)
   end
 

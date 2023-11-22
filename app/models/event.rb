@@ -14,6 +14,7 @@ end
 
 class Event < ActiveRecord::Base
   has_many :event_participants, dependent: :destroy
+  has_many :event_invitations, dependent: :destroy
   belongs_to :event_type
 
   validates :title, presence: true
@@ -40,8 +41,10 @@ class Event < ActiveRecord::Base
   end
 
     # helper method for deciding whether the target event should be visible for the current user
-  def self.event_visible?(visibility_status, current_user)
-    if(visibility_status == 'ev' || current_user && (current_user.org? || (current_user.user? && visibility_status=='user')))
+  def event_visible?(user)
+    pp EventInvitation::chosen_ps?(self, Scout::get_scout(user))
+    pp (EventInvitation::chosen_ps?(self, Scout::get_scout(user)) || (! user.org? && !uninvited_participants_dont_see) || (user.org? && !uninvited_organisers_dont_see))
+    if user.admin? || ((visible == 'ev' || (!user.nil? && (user.org? || visible=='user'))) && (EventInvitation::chosen_ps?(self, Scout::get_scout(user)) || (! user.org? && !uninvited_participants_dont_see) || (user.org? && !uninvited_organisers_dont_see)))
       true
     else
       false
@@ -70,7 +73,11 @@ class Event < ActiveRecord::Base
       return false
     end
 
-    return true
+    if !enable_only_specific_participants || EventInvitation::chosen_p?(self, scout)
+      return true
+    end
+
+    return false
   end
 
   def can_substitute?(scout)
@@ -79,8 +86,12 @@ class Event < ActiveRecord::Base
    if ! participant.nil? && participant.chosen == "substitute"
      return true
    end
+    
+   if !enable_only_specific_substitutes || EventInvitation::chosen_ps?(self, scout)
+     return true
+   end
 
-    return true
+   return false
   end
 
   def num_signed(status, orgs_only, children_only, participants_only=false)

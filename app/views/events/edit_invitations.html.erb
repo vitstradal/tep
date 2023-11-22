@@ -1,0 +1,49 @@
+<h1>Editace pozvaných na akci <%= @event.title %>
+<%= button_tag "Zpět", :href => event_path(@event), :class=>'btn', :ico =>'fa-reply' %>
+</h1>
+<div class="tabbable">
+  <ul id="myTab" class="nav nav-tabs">
+     <li <%= class_active_if "ev" == @chosen %>> <%= link_to 'Všichni', filter_invitations_event_path(chosen: "ev", role: @role) %></li>
+     <% EventInvitation::CHOSEN_OPTIONS.each do |opt| %>
+       <li <%= class_active_if opt == @chosen %> ><%= link_to EventInvitation::CHOSEN_OPTIONS_TXT[opt], filter_invitations_event_path(chosen: opt, role: @role) %></li>
+     <% end %>
+     <% if current_user.admin? %>
+       <li <%= class_active_if "p" == @role %>> <%= link_to 'Účastníci', filter_invitations_event_path(chosen: @chosen, role: "p") %></li>
+       <li <%= class_active_if "o" == @role %>> <%= link_to 'Orgové', filter_invitations_event_path(chosen: @chosen, role: "o") %></li>
+
+     <% end %>
+
+  </ul>
+
+   <div class="tab-content">
+    <div class="tabtab-pane in active">
+      <div class="table-div">
+        <table class="table table-hover table-condensed table-bordered">
+        <tr>
+          <th>Id</th>
+          <th>Email</th>
+          <th>Jméno</th>
+          <th>Příjmení</th>
+          <th>Přezdívka</th>
+          <th>Status</th>
+          <th style="text-align: center" colspan="3">Akční tlačítka</th>
+        </tr>
+        <% @scouts.each do |scout|  %>
+        <tr>
+
+           <td> <%= link_to scout.id, scout_path(scout.id) %> </td>
+           <td> <%= scout.email %> </td>
+           <td> <%= scout.name %> </td>
+           <td> <%= scout.last_name %> </td>
+           <td> <%= scout.nickname %> </td>
+           <td> <%= EventInvitation::chosen_txt(@event, scout) %> </td>
+           <td style="border-right-style: hidden; text-align: center"> <%= render :partial => "form_invite", locals: { event: @event, scout: scout, chosen: "participant", text: "Pozvat", filter_chosen: @chosen, filter_role: @role } %> </td>
+           <td style="border-right-style: hidden; text-align: center"> <%= render :partial => "form_invite", locals: { event: @event, scout: scout, chosen: "substitute", text: "Náhradník", filter_chosen: @chosen, filter_role: @role } %> </td>
+           <td style="text-align: center"> <%= render :partial => "form_invite", locals: { event: @event, scout: scout, chosen: "none", text: "Zavrhnout", filter_chosen: @chosen, filter_role: @role } %> </td>
+        </tr>
+        <% end %>
+        </table>
+      </div>
+    </div>
+   </div>  
+</div>
