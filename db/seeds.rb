@@ -24,8 +24,8 @@ if true
              {:email => "adm@pikomat.mff.cuni.cz", :roles => [:admin, :morg, :org, :user],  :password => "adm je pes", :name => "Antonín", :last_name => "Hejný"},
              {:email => "usr@pikomat.mff.cuni.cz", :roles => [:user],                :password => "usr je pes", :name => "David", :last_name => "Hájek"},
              {:email => "org@pikomat.mff.cuni.cz", :roles => [:org, :user],          :password => "org je pes", :name => "Tereza", :last_name => "Kubínová"},
+             {:email => "morg@pikomat.mff.cuni.cz", :roles => [:morg, :org, :user],          :password => "morg je pes", :name => "František", :last_name => "Steinhauser"},
+             {:email => "antonin.hejny@gmail.com", :roles => [:user],          :password => "usr je pes", :name => "Martin", :last_name => "Švanda"},
         ])
-
   users.each { |u| u.confirm }
-
 end

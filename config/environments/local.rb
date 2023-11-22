@@ -21,6 +21,8 @@ Tep::Application.configure do
   config.assets.debug = true
 
   # Don't care if the mailer can't send
+
+  config.action_mailer.perform_deliveries = false
   config.action_mailer.raise_delivery_errors = false
 
   # Print deprecation notices to the Rails logger
@@ -34,5 +36,7 @@ Tep::Application.configure do
 
   config.eager_load = false
 
+
+  config.action_mailer.delivery_method = :sendmail
 end
 

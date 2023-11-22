@@ -6,8 +6,47 @@ require 'pp'
 
 class StartBeforeEndValidator < ActiveModel::Validator
   def validate(record)
+    failed = false
+    if(record.event_start.nil?)
+      record.errors[:event_start] << "Akce musí mít jasně definovaný začátek!"
+      failed= true
+    end
+
+    if(record.event_end.nil?)
+      record.errors[:event_end] << "Akce musí mít jasně definovaný konec!"
+      failed = true
+    end
+
+    if failed
+      return
+    end
+
     if(record.event_start > record.event_end)
       record.errors[:event_end] << "Akce může končit až po svém začátku!"
+    end
+  end
+end
+
+class LimitMaybyeValidator < ActiveModel::Validator
+  def validate(record)
+    if record.limit_maybe && record.maybe_deadline.nil?
+      record.errors[:maybe_deadline] << "Pokud chceš účastníky limitovat v tom, do kdy si mají upravit status přihlášky na ano/ne, tak ale nastav jasný termín"
+    end
+  end
+end
+
+class LimitNumParticipantsValidator < ActiveModel::Validator
+  def validate(record)
+    if record.limit_num_participants && (record.max_participants.nil? || !(record.max_participants.is_a? Integer))
+      record.errors[:max_participants] << "Pokud chceš limitovat maximální počet účastníků, tak ale nastav jasnou horní hranici"
+    end
+  end
+end
+
+class PlaceValidator < ActiveModel::Validator
+  def validate(record)
+    if record.spec_place && (record.spec_place_detail.nil? || !(record.spec_place_detail.is_a? String) || record.spec_place_detail.empty?)
+      record.errors[:spec_place_detail] << "Pokud chceš, aby účastníci specifikovali místo nástupu, pak jim ale musíš dát z něčeho na výběr"
     end
   end
 end
@@ -18,11 +57,9 @@ class Event < ActiveRecord::Base
   belongs_to :event_type
 
   validates :title, presence: true
-  validates :event_start, presence: true
-  validates :event_end, presence: true
   validates_with StartBeforeEndValidator
-  validates :max_participants, presence: true, numericality: { only_integer: true, message: "musí být číslo" }
-
+  validates_with LimitNumParticipantsValidator
+  validates_with PlaceValidator
 
   VISIBLE_STATUSES = ['everyone', 'user', 'org']
 
@@ -42,8 +79,6 @@ class Event < ActiveRecord::Base
 
     # helper method for deciding whether the target event should be visible for the current user
   def event_visible?(user)
-    pp EventInvitation::chosen_ps?(self, Scout::get_scout(user))
-    pp (EventInvitation::chosen_ps?(self, Scout::get_scout(user)) || (! user.org? && !uninvited_participants_dont_see) || (user.org? && !uninvited_organisers_dont_see))
     if user.admin? || ((visible == 'ev' || (!user.nil? && (user.org? || visible=='user'))) && (EventInvitation::chosen_ps?(self, Scout::get_scout(user)) || (! user.org? && !uninvited_participants_dont_see) || (user.org? && !uninvited_organisers_dont_see)))
       true
     else
@@ -133,9 +168,9 @@ class Event < ActiveRecord::Base
     when "ev"
       query_end = ""
     when "nvt"
-      query_end = "AND p.id IS NULL "
+      query_end = "AND p.event_id IS NULL "
     else
-      query_end = "AND p.id IS NOT NULL "
+      query_end = "AND p.event_id IS NOT NULL "
     end
 
     query_end += "ORDER BY e.event_start DESC"

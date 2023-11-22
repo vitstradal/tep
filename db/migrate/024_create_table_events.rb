@@ -54,6 +54,8 @@ class CreateTableEvents < ActiveRecord::Migration
       t.boolean :enable_only_specific_organisers, :default => false
       t.boolean :uninvited_participants_dont_see, :default => false
       t.boolean :uninvited_organisers_dont_see, :default => false
+      t.boolean :limit_maybe
+      t.date :maybe_deadline
       t.timestamps
     end
       

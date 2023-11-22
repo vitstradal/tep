@@ -27,11 +27,19 @@
 
   <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, name: :enable_only_specific_substitutes, text: "Pozvat pouze některé náhradníky" } %>
 
-  <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, name: :enable_only_specific_organisers, text: "Pozvat pouze některé orgy" } %>
+  <% if current_user.admin? %>
+    <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, name: :enable_only_specific_organisers, text: "Pozvat pouze některé orgy" } %>
+  <% else %>
+    <%= f.hidden_field :enable_only_specific_organisers %>
+  <% end %>
 
   <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, name: :uninvited_participants_dont_see, text: "Nepozvaní účastníci o akci neví" } %>  
 
-  <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, name: :uninvited_organisers_dont_see, text: "Nepozvaní organizátoři o akci neví" } %>
+  <% if current_user.admin? %>
+    <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, name: :uninvited_organisers_dont_see, text: "Nepozvaní organizátoři o akci neví" } %>
+  <% else %>
+    <%= f.hidden_field :uninvited_organisers_dont_see %>
+  <% end %>
 
   <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, name: :spec_place, text: "Účastníci specifikují místo nástupu" } %>
 

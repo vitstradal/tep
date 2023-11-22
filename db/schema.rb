@@ -11,7 +11,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema.define(version: 36) do
+ActiveRecord::Schema.define(version: 24) do
 
   create_table "event_categories", id: false, force: :cascade do |t|
     t.string   "code",        limit: 2
@@ -19,14 +19,14 @@ ActiveRecord::Schema.define(version: 36) do
     t.integer  "idx",                   default: 0
     t.boolean  "multi_day",             default: true
     t.text     "description",           default: ""
+    t.string   "visible",               default: "ev"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "visible",               default: "ev"
   end
 
   add_index "event_categories", ["code"], name: "index_event_categories_on_code", unique: true
 
-  create_table "event_invitations", force: :cascade do |t|
+  create_table "event_invitations", id: false, force: :cascade do |t|
     t.integer "event_id"
     t.integer "scout_id"
     t.string  "chosen",   default: "participant"
@@ -35,17 +35,17 @@ ActiveRecord::Schema.define(version: 36) do
   add_index "event_invitations", [nil], name: "index_event_invitations_on_event"
   add_index "event_invitations", [nil], name: "index_event_invitations_on_scout"
 
-  create_table "event_participants", force: :cascade do |t|
+  create_table "event_participants", id: false, force: :cascade do |t|
     t.integer  "event_id"
     t.integer  "scout_id"
     t.string   "status",     default: "yes"
     t.string   "note",       default: ""
-    t.datetime "created_at"
-    t.datetime "updated_at"
     t.string   "place",      default: ""
     t.string   "scout_info", default: ""
     t.boolean  "mass",       default: false
-    t.string   "chosen",     default: ""
+    t.string   "chosen",     default: "none"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "event_participants", [nil], name: "index_event_participants_on_event"
@@ -59,24 +59,24 @@ ActiveRecord::Schema.define(version: 36) do
     t.string   "event_category",                    default: "ot"
     t.string   "event_info_url",                    default: ""
     t.string   "event_photos_url",                  default: ""
-    t.string   "visible",                           default: "org"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.string   "visible",                           default: "ev"
     t.boolean  "spec_place",                        default: false
+    t.string   "spec_place_detail",                 default: ""
     t.boolean  "spec_scout",                        default: false
     t.boolean  "spec_mass",                         default: false
     t.string   "bonz_org",                          default: ""
     t.boolean  "bonz_parent",                       default: false
-    t.string   "spec_place_detail",                 default: ""
     t.boolean  "limit_num_participants",            default: false
     t.integer  "max_participants",                  default: 0
     t.boolean  "enable_only_specific_participants", default: false
     t.boolean  "enable_only_specific_substitutes",  default: false
     t.boolean  "enable_only_specific_organisers",   default: false
-    t.boolean  "uninvited_participant_doesnt_see",  default: false
-    t.boolean  "uninvited_organiser_doesnt_see",    default: false
     t.boolean  "uninvited_participants_dont_see",   default: false
     t.boolean  "uninvited_organisers_dont_see",     default: false
+    t.boolean  "limit_maybe"
+    t.date     "maybe_deadline"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   create_table "informs", force: :cascade do |t|
@@ -145,6 +145,7 @@ ActiveRecord::Schema.define(version: 36) do
     t.string   "name"
     t.string   "last_name"
     t.string   "nickname",         default: ""
+    t.string   "sex",              default: "male"
     t.datetime "birth"
     t.integer  "grade"
     t.string   "address"
@@ -159,7 +160,6 @@ ActiveRecord::Schema.define(version: 36) do
     t.boolean  "activated",        default: true
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.string   "sex",              default: "male"
   end
 
   create_table "sessions", force: :cascade do |t|
