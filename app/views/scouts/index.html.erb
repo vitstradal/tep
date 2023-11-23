@@ -1,3 +1,58 @@
+<% if can? :new_year, Scout %>
+  <%= link_to "Nový ročník", new_year_scouts_path, class: "btn btn-danger" %>
+<% end %>
+
+<% if can? :new_year, Scout %>
+  <%= link_to "Předchozí ročník", previous_year_scouts_path, class: "btn btn-danger" %>
+<% end %>
+
+
+<% if can? :show_other, Scout %>
+<h1>Přehled účastnických účtů</h1>
+  <div class="tabbable">
+  <ul id="myTab" class="nav nav-tabs">
+     <li <%= class_active_if "ev" == @grade %>> <%= link_to 'Všichni', filter_scout_path(grade: "ev", role: @role) %></li>
+     <% Scout::GRADES.each do |grade| %>
+       <li <%= class_active_if grade == @grade %> ><%= link_to Scout::GRADES_TXT[grade], filter_scout_path(grade: grade, role: @role) %></li>
+     <% end %>
+     
+     <li <%= class_active_if "p" == @role %>> <%= link_to 'Účastníci', filter_scout_path(grade: @grade, role: "p") %></li>
+     <li <%= class_active_if "o" == @role %>> <%= link_to 'Orgové', filter_scout_path(grade: @grade, role: "o") %></li>
+
+
+  </ul>
+
+   <div class="tab-content">
+    <div class="tabtab-pane in active">
+      <div class="table-div">
+        <table class="table table-hover table-condensed table-bordered">
+        <tr>
+          <th>Id</th>
+          <th>User Id</th>
+          <th>Jméno</th>
+          <th>Příjmení</th>
+          <th>Přezdívka</th>
+          <th>Org</th>
+        </tr>
+        <% @scouts.each do |scout|  %>
+        <tr>
+
+           <td> <%= link_to scout.id, scout_path(scout.id) %> </td>
+           <td> <%= link_to scout.user.id, user_show_path(scout.user.id) %> </td>
+           <td> <%= scout.name %> </td>
+           <td> <%= scout.last_name %> </td>
+           <td> <%= scout.nickname %> </td>
+           <td> <%= scout.org? %> </td>
+        </tr>
+        <% end %>
+        </table>
+      </div>
+    </div>
+   </div>
+</div>
+
+<% else %>
+
 <h1>Účastnické účty</h1>
 
 <p>
@@ -6,17 +61,12 @@
 
 <p>
 <% if current_user.nil? %>
-  Na vytvoření účastnického účtu se ale musíš nejprve 
+  Na vytvoření účastnického účtu se ale musíš nejprve
   <%= link_to "Přihlásit", "users/sign_in" %>
-<% elsif not Scout::scouts?(current_user) %>
-
+<% elsif ! Scout::scouts?(current_user) %>
 <%= button_tag "Vytvoř si vlastní účet!", :href => new_scout_path, :class => 'btn btn-primary' %>.
 <% else %>
   Ty již účastnický účet máš. Proto neváhej, a na nějakou akci se přihlaš :-). Seznam všech akcí nalezneš <%= link_to "zde", events_path %>.
 <% end %>
 </p>
-
-<% if can? :show_other, Scout %>
-  <h2>Přehled účastnických účtů</h2>
-  <%= render @scouts %>
 <% end %>

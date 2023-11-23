@@ -2,6 +2,9 @@
 <% if (can? :edit_other, Scout) || Scout::scout_id(current_user) == @scout.id.to_i %>
   <%= button_tag "Edituj účet", :href => edit_scout_path(@scout), :class=>'btn btn-primary', :ico => 'fa-edit' %>
 <% end %>
+<% if can? :show_other, Scout %>
+  <%= button_tag "Zpět", :href => scouts_path, :class=>'btn', :ico =>'fa-reply' %>
+<% end %>
 </h1>
 
 <% if current_user.org? %>

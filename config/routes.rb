@@ -50,6 +50,9 @@ Tep::Application.routes.draw do
   #get  '/sosna/solution/:id/down_rev(/:ori)'=> 'sosna/solution#download_rev', :as => :sosna_solution_download_rev
 
   # scouts and events:
+  get   '/scouts/new_year'                               => 'scouts#new_year',           :as => :new_year_scouts
+  get   '/scouts/previous_year'                          => 'scouts#previous_year',      :as => :previous_year_scouts
+  get   '/scouts/filter/:grade/:role'                    => 'scouts#index',              :as => :filter_scout
   resources :scouts
   post  '/scouts/:id/confirm_delete'                     => 'scouts#confirm_delete',     :as => :confirm_delete_scout
   post  '/scouts/:id/delete'                             => 'scouts#delete',             :as => :delete_scout
@@ -62,16 +65,22 @@ Tep::Application.routes.draw do
   patch '/event_categories/:code'                        => 'event_categories#update'
   post  '/event_categories/:code/delete'                 => 'event_categories#delete',   :as => :delete_event_category
 
-  resources :events
+  get '/events'                                          => 'events#index',              :as => :events
+  get '/events/new'                                      => 'events#new',                 :as => :new_event
+  post '/events/create'                                  => 'events#create',              :as => :create_event
   post '/events/filter'                                  => 'events#filter',             :as => :filter_events_helper
   get '/events/filter/:event_category/:enroll_status'    => 'events#index',              :as => :filter_events
-  post '/events/:id/delete'                              => 'events#delete',             :as => :event_delete
-  post '/events/:id/enroll'                              => 'events#enroll',             :as => :event_enroll
-  get '/events/:id/edit_participants'                    => 'events#edit_participants',  :as => :edit_participants_event
-  get '/events/:id/edit_invitations'                     => 'events#edit_invitations',  :as => :edit_invitations_event
-  get '/events/:id/edit_invitations/:chosen/:role'       => 'events#edit_invitations',  :as => :filter_invitations_event
-  post 'events/:event_id/participants/:scout_id/update'  => 'event_participants#update', :as => :update_participant_event
-  post '/events/:event_id/participants/:scout_id/delete' => 'event_participants#delete', :as => :delete_participant_event
+  get '/events/:event_id'                                => 'events#show',               :as => :event
+  patch '/events/:event_id'                              => 'events#update',             :as => :update_event
+  get '/events/:event_id/edit'                           => 'events#edit',               :as => :edit_event
+  post '/events/:event_id/delete'                        => 'events#delete',             :as => :event_delete
+  post '/events/:event_id/enroll'                        => 'events#enroll',             :as => :event_enroll
+  get '/events/:event_id/edit_participants'              => 'events#edit_participants',  :as => :edit_event_participants
+  get '/events/:event_id/edit_invitations'               => 'events#edit_invitations',   :as => :edit_event_invitations
+  get '/events/:event_id/edit_invitations/:chosen/:role' => 'events#edit_invitations',   :as => :filter_event_invitations
+  post 'events/:event_id/participants/:scout_id/update'  => 'event_participants#update', :as => :update_event_participant
+  post '/events/:event_id/participants/:scout_id/delete' => 'event_participants#delete', :as => :delete_event_participant
+  post '/events/:event_id/participants/:scout_it/choose' => 'event_participants#choose',  :as => :choose_participant
   get '/events/:event_id/display_scouts'                 => 'events#display_scouts',     :as => :event_display_scouts
   post '/events/:event_id/display_scouts'                => 'events#display_scouts',     :as => :event_display_scout
 

@@ -39,10 +39,10 @@ class EventsController < ApplicationController
   end
 
   def show
-    return unless _find_event(params[:id])
+    return unless _find_event(params[:event_id])
 
     if Scout::scouts?(current_user)
-      @event_participant = EventParticipant.find_by("event_id=? AND scout_id=?", params[:id], Scout::scout_id(current_user))
+      @event_participant = EventParticipant.find_by("event_id=? AND scout_id=?", params[:event_id], Scout::scout_id(current_user))
       unless @event_participant
         @event_participant = EventParticipant.new
       end
@@ -54,10 +54,18 @@ class EventsController < ApplicationController
   end
 
   def enroll
-    @event_participant = EventParticipant.find_by("event_id=? AND scout_id=?", params[:id], Scout::scout_id(current_user))
+    @event_participant = EventParticipant.find_by([params[:event_id], Scout::scout_id(current_user)])
     if @event_participant
+
+      participant_copy = @event_participant.dup
       @event_participant.update_chosen()
+
       if @event_participant.update(participant_params)
+        if EventParticipant::mail_change?(participant_copy, @event_participant)
+          _send_bonz_org(@event_participant.event.bonz_org, @event_participant, false)
+          _send_bonz_parent(@event_participant.scout.parent_email, @event_participant, false)
+        end
+
         redirect_to @event_participant.event
       else
         render :show, status: :unprocessable_entity
@@ -66,7 +74,10 @@ class EventsController < ApplicationController
       @event_participant = EventParticipant.new(participant_params)    
       @event_participant.update_chosen()
       if @event_participant.save
-        redirect_to Event.find(params[:id])
+        _send_bonz_org(@event_participant.event.bonz_org, @event_participant, true)
+        _send_bonz_parent(@event_participant.scout.parent_email, @event_participant, true)
+
+        redirect_to Event.find(params[:event_id])
       else
         render :show, status: :unprocessable_entity
       end
@@ -103,11 +114,11 @@ class EventsController < ApplicationController
       return
     end
 
-    return unless _find_event(params[:id])
+    return unless _find_event(params[:event_id])
   end
 
   def edit_participants
-    return unless _find_event(params[:id])
+    return unless _find_event(params[:event_id])
 
     if not can? :update, EventParticipant
       render 'permission_denied', :locals => { :desired => "editovat ostatní účastníky na " }
@@ -119,7 +130,7 @@ class EventsController < ApplicationController
   end
 
   def edit_invitations
-    return unless _find_event(params[:id])
+    return unless _find_event(params[:event_id])
 
     @chosen = params[:chosen].nil? ? "ev" : params[:chosen]
     @role = (params[:role].nil? or params[:role] == 'p' or ! current_user.admin?) ? "p" : "o"
@@ -147,7 +158,7 @@ class EventsController < ApplicationController
       return
     end
 
-    return unless _find_event(params[:id])
+    return unless _find_event(params[:event_id])
 
     if @event.update(event_params)
       redirect_to @event
@@ -162,7 +173,7 @@ class EventsController < ApplicationController
       return
     end
 
-    return unless _find_event(params[:id])
+    return unless _find_event(params[:event_id])
     @event.destroy
 
     redirect_to events_path
@@ -178,7 +189,7 @@ class EventsController < ApplicationController
       return
     end
 
-    return unless _find_event(params[:id])
+    return unless _find_event(params[:event_id])
 
     @event_participants = EventParticipant.find_by_sql(["SELECT * FROM event_participants WHERE event_id = ?", params[:event_id]])
     @filter_hashes = params[:filter_hashes].nil? ? Scout::ATTR_BOOL_TABLE : params[:filter_hashes]
@@ -190,11 +201,11 @@ class EventsController < ApplicationController
     end
 
     def participant_params
-      params.require(:event_participant).permit(:status, :note, :place, :mass, :scout_info)
+      params.require(:event_participant).permit(:event_id, :scout_id, :status, :note, :place, :mass, :scout_info)
     end
 
-    def _find_event(id)
-      @event = Event.find_by(id: id)
+    def _find_event(event_id)
+      @event = Event.find_by(id: event_id)
       if @event.nil?
         render :not_found
         return false
@@ -207,4 +218,28 @@ class EventsController < ApplicationController
         return false
       end
     end
+
+  def _send_bonz_org(bonz_email, event_participant, is_new)
+    # mail h-orgovi akce
+    if !bonz_email.nil? and bonz_email != ""
+      new_txt = is_new ? "Přihlášení" : "Změna přihlášky"
+      if event_participant.org?
+        person_txt = event_participant.male? ? "Orga" : "Orgyně"
+      else
+        person_txt = event_participant.male? ? "Účastníka" : "Účastnice"
+      end
+
+      Tep::Mailer.event_bonz_org(bonz_email, 'PIKOMAT: ' + new_txt + person_txt + "na akci", event_participant, is_new).deliver_later
+    end
+  end
+
+  def _send_bonz_parent(bonz_email, event_participant, is_new)
+    # mail rodici ucastnika
+    if !bonz_email.nil? and bonz_email != ""
+      new_txt = is_new ? "Přihlášení" : "Změna přihlášky"
+      gender_txt = event_participant.male? ? "Vašeho syna" : "Vaší dcery"
+      Tep::Mailer.event_bonz_parent(bonz_email, 'PIKOMAT: ' + new_txt + gender_txt + "na akci", event_participant, is_new).deliver_later
+    end
+  end
+
 end

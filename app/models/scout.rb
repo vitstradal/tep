@@ -16,8 +16,12 @@ class Scout < ActiveRecord::Base
   validates :birth_number, presence: true
   validates :health_insurance, presence: true
   validates :sex, presence: true
+  validates :activated, presence: true
 
   validates_associated :user
+
+  GRADES = ["4", "5", "6", "7", "8", "9", "10"]
+  GRADES_TXT = { "4" => "čtvrtá", "5" => "pátá", "6" => "prima", "7" => "sekunda", "8" => "tercie", "9" => "kvarta", "10" => "kvinta"}
 
   def self.scouts?(user)
     return !user.nil? && !user.scout.nil?

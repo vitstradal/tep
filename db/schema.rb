@@ -73,7 +73,7 @@ ActiveRecord::Schema.define(version: 24) do
     t.boolean  "enable_only_specific_organisers",   default: false
     t.boolean  "uninvited_participants_dont_see",   default: false
     t.boolean  "uninvited_organisers_dont_see",     default: false
-    t.boolean  "limit_maybe"
+    t.boolean  "limit_maybe",                       default: false
     t.date     "maybe_deadline"
     t.datetime "created_at"
     t.datetime "updated_at"

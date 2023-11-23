@@ -118,6 +118,22 @@ jQuery(document).ready(function($) {
 
         $('#sosna_solver_how_i_met_pikomat').change();
 
+	$('#event_event_category').change(function (){
+                var val = $(this).val()
+                $('#event_start').hide()
+                $('#event_end').hide()
+		$('#event_date').hide()
+                if( val == 'we'  )  {
+                  $('#event_date').show(400)
+                }
+                else {
+                  //$('#event_start').show(400)
+                  $('#event_end').show(400)
+                }
+        });
+
+        $('#event_event_category').change();
+
         // ctrl-enter submit formu in textarea
         $('.ctrl-enter-submit').keydown(function (e) {
                 if (e.ctrlKey && e.keyCode == 13) {

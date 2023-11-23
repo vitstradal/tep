@@ -35,6 +35,15 @@ class EventCategory < ActiveRecord::Base
     multi_day ? "Ano" : "Ne"
   end
 
+  def self.multi_day?(code)
+    category = EventCategory.find_by(code: code)
+    if category.nil?
+      return false
+    else
+      return category.multi_day
+    end
+  end
+
   def visible_txt()
     VISIBLE_STATUSES_TXT[visible]
   end

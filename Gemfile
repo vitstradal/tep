@@ -26,6 +26,8 @@ gem 'sanitize'
 gem 'unicode_utils'
 gem 'magick_title', '>= 0.2.0' 
 
+gem 'composite_primary_keys', '~> 8.0'
+
 #gem 'ffi-locale', github: 'k3rni/ffi-locale'
 gem 'ffi-locale', :git => 'https://github.com/k3rni/ffi-locale'
 # never use ffi-locale without gitgub!!!

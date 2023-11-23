@@ -54,12 +54,12 @@ class CreateTableEvents < ActiveRecord::Migration
       t.boolean :enable_only_specific_organisers, :default => false
       t.boolean :uninvited_participants_dont_see, :default => false
       t.boolean :uninvited_organisers_dont_see, :default => false
-      t.boolean :limit_maybe
+      t.boolean :limit_maybe, :default => false
       t.date :maybe_deadline
       t.timestamps
     end
       
-    create_table :event_participants, id: false, primary_key: [:event, :scout] do |t|
+    create_table :event_participants, id: false, primary_key: [:event_id, :scout_id] do |t|
       t.belongs_to :event
       t.belongs_to :scout
       t.string :status, :default => "yes"
@@ -71,16 +71,16 @@ class CreateTableEvents < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index(:event_participants, :event)
-    add_index(:event_participants, :scout)
+    add_index(:event_participants, :event_id)
+    add_index(:event_participants, :scout_id)
 
-    create_table :event_invitations, id: false, primary_key: [:event, :scout] do |t|
+    create_table :event_invitations, id: false, primary_key: [:event_id, :scout_id] do |t|
       t.belongs_to :event
       t.belongs_to :scout
       t.string :chosen, :default => "participant"
     end
 
-    add_index(:event_invitations, :event)
-    add_index(:event_invitations, :scout)
+    add_index(:event_invitations, :event_id)
+    add_index(:event_invitations, :scout_id)
   end
 end

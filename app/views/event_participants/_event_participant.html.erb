@@ -45,7 +45,7 @@
     <% end %>
 
     <br>
-      <%= form_for :event_participant, :url => update_participant_event_path(event_participant.event_id, event_participant.scout_id) do |f| %>
+      <%= form_for :event_participant, :url => update_event_participant_path(event_participant.event_id, event_participant.scout_id) do |f| %>
       <% f.hidden_field :scout_id %>
       <% f.hidden_field :event_id %>
 
@@ -66,10 +66,25 @@
 
       <%= f.submit "Uložit", :class => 'btn btn-primary' %>
     <% end %>
+
+    <% if (can? :delete, EventParticipant) || ((can? :update, EventParticipant) && ! event_participant.event.open_for_everyone?) %>
+      <div style="margin-top:1mm;"></div>
+    <% end %>
+
     <% if can? :delete, EventParticipant %>
-      <%= form_tag delete_participant_event_path(event_participant.event_id, event_participant.scout_id) do %>
+      <div class="col-sm-1", style="text-align:left">
+      <%= form_tag delete_event_participant_path(event_participant.event_id, event_participant.scout_id) do %>
         <%= submit_tag  'Smazat', :class=>'btn btn-danger' %>
       <% end %>
+      </div>
+    <% end %>
+    <% if (can? :update, EventParticipant) && ! event_participant.event.open_for_everyone? %>
+      <div class="col-sm-2", style="text-align:right">
+        <%= render :partial => "form_choose_participant", locals: { event: event_participant.event, scout: event_participant.scout,  chosen: "participant", text: "Účastník" } %>
+      </div>
+      <div class="col-sm-2", style="text-align:left">
+        <%= render :partial => "form_choose_participant", locals: { event: event_participant.event, scout: event_participant.scout, chosen: "substitute", text: "Náhradník" } %>
+      </div>
     <% end %>
 
   <% else %>

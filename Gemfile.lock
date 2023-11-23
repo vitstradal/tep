@@ -64,6 +64,8 @@ GEM
     cancan (1.6.10)
     combine_pdf (0.2.37)
       ruby-rc4 (>= 0.1.5)
+    composite_primary_keys (8.1.8)
+      activerecord (~> 4.2.0)
     concurrent-ruby (1.0.5)
     crass (1.0.4)
     devise (4.5.0)
@@ -226,6 +228,7 @@ DEPENDENCIES
   activerecord-session_store
   cancan
   combine_pdf (~> 0.2.12)
+  composite_primary_keys (~> 8.0)
   devise
   devise-encryptable
   devise-i18n

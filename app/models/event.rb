@@ -12,6 +12,10 @@ class StartBeforeEndValidator < ActiveModel::Validator
       failed= true
     end
 
+    if !EventCategory::multi_day?(record.event_category)
+      record.event_end = record.event_start
+    end
+
     if(record.event_end.nil?)
       record.errors[:event_end] << "Akce musí mít jasně definovaný konec!"
       failed = true
@@ -113,6 +117,10 @@ class Event < ActiveRecord::Base
     end
 
     return false
+  end
+
+  def open_for_everyone?()
+    return !limit_num_participants && !enable_only_specific_participants && !enable_only_specific_organisers
   end
 
   def can_substitute?(scout)

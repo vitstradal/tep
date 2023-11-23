@@ -187,7 +187,7 @@ class Ability
       can :update, EventParticipant
       can :delete, EventParticipant
 
-      can :delete_other, Scout
+      can :manage, Scout
       can :manage, EventCategory
     end
 

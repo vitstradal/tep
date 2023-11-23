@@ -6,11 +6,11 @@
   <% if @edit_participants %>
     <%= button_tag "Zpět", :href => event_path(@event), :class=>'btn', :ico =>'fa-reply' %>
   <% else %>
-    <%= button_tag "Edituj účastníky", :href => edit_participants_event_path(@event), :class=>'btn btn-danger', :ico => 'fa-edit' %>
+    <%= button_tag "Edituj účastníky", :href => edit_event_participants_path(@event), :class=>'btn btn-danger', :ico => 'fa-edit' %>
   <% end %>
 <% end %>
 <% if (can? :edit, EventInvitation) && !@edit_participants && (@event.enable_only_specific_participants || @event.enable_only_specific_substitutes || @event.enable_only_specific_organisers) %>
-  <%= button_tag "Edituj pozvané", :href => edit_invitations_event_path(@event), :class=>'btn btn-danger', :ico => 'fa-edit' %>
+  <%= button_tag "Edituj pozvané", :href => edit_event_invitations_path(@event), :class=>'btn btn-danger', :ico => 'fa-edit' %>
 <% end %>
 </h1>
 
