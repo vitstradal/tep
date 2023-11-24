@@ -163,11 +163,14 @@
       <% end %>
       <%= menu_li '/onas', 'Akce', ico: 'fa-bomb' do %>
         <ul class="submenu">
-          <%= menu_lii wiki_main_path('tabor'),        'Tábory' %>
-          <%= menu_lii wiki_main_path('soustredeni'),  'Soustředění' %>
-          <%= menu_lii wiki_main_path('setkani'),      'Setkání'  %>
-          <%= menu_lii wiki_main_path('fotky'),        'Fotky'  %>
-          <%= menu_lii events_path,                    'Akce' %>            
+          <%= menu_lii events_path,                    'Přehled akcí' %>            
+          <%= menu_lii Scout::get_scout_path(current_user), 'Můj účastnický účet' %>
+          <% if can? :read_other, Scout %>
+            <%= menu_lii scouts_path, 'Přehled účastnických účtů' %>
+          <% end %>
+          <% if can? :read, EventCategory %>
+            <%= menu_lii event_categories_path, 'Typy akcí' %>
+          <% end %>
         </ul>
       <% end %>
       <%= menu_li '/onas', 'Přihláška', ico: 'fa-book' do %>
@@ -189,7 +192,6 @@
             <% end %>
             <%= menu_lii :edit_user_registration, 'Změna hesla' %>
             <%= menu_lii wiki_main_path('faq'),   'Nápověda'   %>
-            <%= menu_lii Scout::get_scout_path(current_user), 'Účastnický účet' %>
           </ul>
         <% end %>
       <% else %>

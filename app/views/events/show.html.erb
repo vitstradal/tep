@@ -2,11 +2,12 @@
 <% if (can? :edit, Event) && !@edit_participants %>
   <%= button_tag "Edituj akci", :href => edit_event_path(@event), :class=>'btn btn-danger', :ico => 'fa-edit' %>
 <% end %>
-<% if can? :edit_participants, Event %>
-  <% if @edit_participants %>
+<% if @edit_participants %>
     <%= button_tag "Zpět", :href => event_path(@event), :class=>'btn', :ico =>'fa-reply' %>
-  <% else %>
+<% else %>
+  <% if can? :update_other, EventParticipant %>
     <%= button_tag "Edituj účastníky", :href => edit_event_participants_path(@event), :class=>'btn btn-danger', :ico => 'fa-edit' %>
+    <%= button_tag "Pozvi nové účastníky", :href => enroll_others_event_path(@event, "ev", "ev"), :class=>'btn btn-danger', :ico => 'fa-edit' %>
   <% end %>
 <% end %>
 <% if (can? :edit, EventInvitation) && !@edit_participants && (@event.enable_only_specific_participants || @event.enable_only_specific_substitutes || @event.enable_only_specific_organisers) %>
@@ -26,8 +27,8 @@
 
 <%= link_to "Ukaž výběr všech akcí!", events_path %>
 
-<% if !@already_happened %>
-  <% if !@edit_participants and Scout::scouts?(current_user) %>
+<% if !@already_happened && !@edit_paticipants %>
+  <% if Scout::scouts?(current_user) && current_user.scout.activated %>
     <% if @event.can_participate?(current_user.scout) %>
       <%= render :partial => "form_enroll", :locals => { :chosen => "participant" } %>
     <% elsif @event.can_substitute?(current_user.scout) %>
@@ -35,9 +36,13 @@
     <% else %>
       Bohužel jsi nebyl vybrán ani mezi účastníky, ani mezi náhradníky. Tedy se na tuto akci nemůžeš přihlásit. Pokud si myslíš, že se jedná o chybu, neváhej nám napsat :-).
     <% end %>
-  <% elsif !@edit_participants %>
+  <% elsif Scout::scouts?(current_user) && ! current_user.scout.activated %>
     <p>
-      Abys ses mohl přihlásit na nějakou akci, musíš mít založený účastnický účet, a navíc ještě musíš být přihlášený/á. Účastnický účet si můžeš založit
+  Aby ses mohl/a přihlásit, musíš mít aktivovaný uživatelský účet. Účet si aktivuješ tak, že do něj vyplníš všechny potřebné informace a klikneš na tlačítko <i>Uložit</i>. Svůj uživatelský účet najdeš <%= link_to "zde", scout_path(current_user.scout) %>.
+    </p>
+  <% else %>
+    <p>
+      Abys ses mohl/a přihlásit na nějakou akci, musíš mít založený účastnický účet, a navíc ještě musíš být přihlášený/á. Účastnický účet si můžeš založit
       <%= link_to "zde", new_scout_path %>.
     </p>
   <% end %>

@@ -20,8 +20,11 @@ class Scout < ActiveRecord::Base
 
   validates_associated :user
 
-  GRADES = ["4", "5", "6", "7", "8", "9", "10"]
+  GRADES = ["6", "7", "8", "9"]
   GRADES_TXT = { "4" => "čtvrtá", "5" => "pátá", "6" => "prima", "7" => "sekunda", "8" => "tercie", "9" => "kvarta", "10" => "kvinta"}
+
+  YOUNGEST_TO_FILTER = 6
+  OLDEST_TO_FILTER = 9
 
   def self.scouts?(user)
     return !user.nil? && !user.scout.nil?
@@ -43,7 +46,7 @@ class Scout < ActiveRecord::Base
     if Scout::scouts?(user)
       return '/scouts/' + Scout::scout_id(user).to_s
     else
-      return '/scouts'
+      return '/scouts/new'
     end
   end
 
@@ -78,7 +81,11 @@ class Scout < ActiveRecord::Base
   end
 
   def birth_str
-    birth.strftime('%m/%d/%Y')
+    begin
+      return birth.strftime('%m/%d/%Y')
+    rescue
+      "Nedefinované"
+    end
   end
 
   def male?
@@ -147,5 +154,43 @@ class Scout < ActiveRecord::Base
     else
       return scouts.select{|s| s.org? }
     end
+  end
+
+  def self.find_by_participation(event, status, chosen, role)
+    query = "SELECT s.* FROM scouts s "
+    args = []
+
+    if status == "nvt"
+      "WHERE NOT EXISTS (SELECT ep.* FROM event_participants ep WHERE ep.event_id = ? AND ep.scout_id = s.id)"
+      args << event.id
+    else
+      if status != "ev" || chosen != "ev"
+        query += "INNER JOIN event_participants ep ON ep.scout_id = s.id AND ep.event_id = ? WHERE "
+        args << event.id
+      end
+
+      if status != "ev"
+        query += "ep.status = ? " + (chosen != "ev" ? "AND " : "")
+        args << role
+      end
+
+      if chosen != "ev"
+        query += "ep.chosen = ? "
+        args << chosen
+      end
+    end
+    
+    args.unshift(query)
+
+    scouts = Scout.find_by_sql(args)
+
+    case role
+    when 'p'
+      scouts = scouts.select{|s| ! s.org?}
+    when 'o'
+      scouts = scouts.select{|s| s.org?}
+    end
+
+    return scouts
   end
 end

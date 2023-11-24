@@ -1,0 +1,55 @@
+<% pp EventParticipant.all %>
+
+<h1>Editace účastníků akce akce <%= @event.title %>
+<%= button_tag "Zpět", :href => event_path(@event), :class=>'btn', :ico =>'fa-reply' %>
+</h1>
+<div class="tabbable">
+  <ul id="myTab" class="nav nav-tabs">
+     <li <%= class_active_if "ev" == @chosen %>> <%= link_to 'Všichni', enroll_others_event_path(status: @status, chosen: "ev", role: @role) %></li>
+     <% EventParticipant::CHOSEN_OPTIONS.each do |opt| %>
+       <li <%= class_active_if opt == @chosen %> ><%= link_to EventParticipant::CHOSEN_OPTIONS_TXT[opt], enroll_others_event_path(status: @status, chosen: opt, role: @role) %></li>
+     <% end %>
+    
+     <li <%= class_active_if "ev" == @status %> style="margin-left:16mm"> <%= link_to 'Všichni', enroll_others_event_path(status: "ev", chosen: @chosen, role: @role) %></li>
+     <li <%= class_active_if "yes" == @status %> style="margin-left:00mm"> <%= link_to 'Jedou', enroll_others_event_path(status: "yes", chosen: @chosen, role: @role) %></li>
+     <li <%= class_active_if "maybe" == @status %> style="margin-left:00mm"> <%= link_to 'Neví', enroll_others_event_path(status: "maybe", chosen: @chosen, role: @role) %></li>
+     <li <%= class_active_if "no" == @status %> style="margin-left:00mm"> <%= link_to 'Nejedou', enroll_others_event_path(status: "no", chosen: @chosen, role: @role) %></li>
+     <li <%= class_active_if "nvt" == @status %> style="margin-left:00mm"> <%= link_to 'Nepřihlášení', enroll_others_event_path(status: "nvt", chosen: @chosen, role: @role) %></li>
+
+     <li <%= class_active_if "p" == @role %> style="margin-left:16mm"> <%= link_to 'Účastníci', enroll_others_event_path(status: @status, chosen: @chosen, role: "p") %></li>
+     <li <%= class_active_if "o" == @role %>> <%= link_to 'Orgové', enroll_others_event_path(status: @status, chosen: @chosen, role: "o") %></li>
+  </ul>
+
+   <div class="tab-content">
+    <div class="tabtab-pane in active">
+      <div class="table-div">
+        <table class="table table-hover table-condensed table-bordered">
+        <tr>
+          <th>Id</th>
+          <th>Jméno</th>
+          <th>Příjmení</th>
+          <th>Přezdívka</th>
+          <th>Status</th>
+          <th>Pozice</th>
+          <th>Role</th>
+          <th style="text-align: center" colspan="3">Přihlaš jako</th>
+        </tr>
+        <% @scouts.each do |scout|  %>
+        <tr>
+           <td> <%= link_to scout.id, scout_path(scout.id) %> </td>
+           <td> <%= scout.name %> </td>
+           <td> <%= scout.last_name %> </td>
+           <td> <%= scout.nickname %> </td>
+           <td> <%= EventParticipant::status_txt_long(@event, scout) %> </td>
+           <td> <%= EventParticipant::chosen_txt(@event, scout) %> </td>
+           <td> <%= EventParticipant::role_txt(@event, scout) %> </td>
+           <td style="border-right-style: hidden; text-align: center"> <%= render partial: "form_enroll_other", locals: { event: @event, scout: scout, chosen: "participant", delete: false, role: @role, text: "Přihlásit", status: @status, chosen_filter: @chosen } %> </td>
+           <td style="border-right-style: hidden; text-align: center"> <%= render partial: "form_enroll_other", locals: { event: @event, scout: scout, chosen: "substitute", delete: false, role: @role, text: "Náhradník", status: @status, chosen_filter: @chosen } %> </td>
+           <td> <%= render partial: "form_enroll_other", locals: { event: @event, scout: scout, chosen: "none", delete: true, role: @role, text: "Smazat", status: @status, chosen_filter: @chosen } %> </td>
+        </tr>
+        <% end %>
+        </table>
+      </div>
+    </div>
+   </div>  
+</div>

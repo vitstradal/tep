@@ -6,6 +6,7 @@
      <li <%=class_active_if(@tab=='config')%>> <%= link_to 'Nastavení',    '#config', 'data-toggle' => 'tab' %></li>
      <li <%=class_active_if(@tab=='group' )%>> <%= link_to 'Skupiny',      '#group',  'data-toggle' => 'tab' %></li>
      <li <%=class_active_if(@tab=='solver')%>> <%= link_to 'Řešitel',      '#solver', 'data-toggle' => 'tab' %></li>
+     <li <%=class_active_if(@tab=='scout')%>> <%= link_to 'Skaut',         '#scout', 'data-toggle' => 'tab' %></li>
      <li <%=class_active_if(@tab=='mail'  )%>> <%= link_to 'Maily',        '#mail',   'data-toggle' => 'tab' %></li>
      <li <%=class_active_if(@tab=='jabber')%>> <%= link_to 'Jabber',       '#jabber',  'data-toggle' => 'tab' %></li>
      <li <%=class_active_if(@tab=='remove')%>> <%= link_to 'Smazat',       '#remove', 'data-toggle' => 'tab' %></li>
@@ -56,7 +57,6 @@
       <% end %>
     </div> <%# tab-pane %>
     <div class="tab-pane <%=active_in_if(@tab=='solver')%>" id='solver'>
-
       Řešitelé:
       <ul>
         <% @solvers.each do |solver| %>
@@ -70,6 +70,21 @@
         <% end %>
       </ul>
     </div> <%# tab-pane %>
+
+    <div class="tab-pane <%=active_in_if(@tab=='scout')%>" id='scout'>
+      <% if Scout::scouts?(@user) %>
+        <%= render :partial => "scouts/form_edit", locals: { is_edit: true, scout: @user.scout } %>
+        <%= render partial: "scouts/button_delete", locals: { scout: @user.scout } %>
+      <% else %>
+        <i> Tento uživatel účastnický účet nemá.</i><br>
+        <%= form_tag create_other_scout_path, method: :post do %>
+          <%= hidden_field_tag :user_id, @user.id %>
+          <%= hidden_field_tag :path, user_show_path(@user) %>
+          <%= submit_tag "Založit účet" %>
+        <% end %>
+      <% end %>
+    </div> <%# tab-pane %>
+
     <div class="tab-pane <%=active_in_if(@tab=='remove')%>" id='remove'>
       <%= form_tag user_delete_path(id:@user.id) do %>
          <%= submit_tag  'Smazat uživatele (nebude žádné "jsi si jistý?")', :class=>'btn btn-danger' %>

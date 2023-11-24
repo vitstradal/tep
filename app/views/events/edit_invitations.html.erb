@@ -5,10 +5,10 @@
   <ul id="myTab" class="nav nav-tabs">
      <li <%= class_active_if "ev" == @chosen %>> <%= link_to 'Všichni', filter_event_invitations_path(chosen: "ev", role: @role) %></li>
      <% EventInvitation::CHOSEN_OPTIONS.each do |opt| %>
-       <li <%= class_active_if opt == @chosen %> ><%= link_to EventInvitation::CHOSEN_OPTIONS_TXT[opt], filter_invitations_event_path(chosen: opt, role: @role) %></li>
+       <li <%= class_active_if opt == @chosen %> ><%= link_to EventInvitation::CHOSEN_OPTIONS_TXT[opt], filter_event_invitations_path(chosen: opt, role: @role) %></li>
      <% end %>
      <% if current_user.admin? %>
-       <li <%= class_active_if "p" == @role %>> <%= link_to 'Účastníci', filter_event_invitations_path(chosen: @chosen, role: "p") %></li>
+       <li <%= class_active_if "p" == @role %> style="margin-left:122mm"> <%= link_to 'Účastníci', filter_event_invitations_path(chosen: @chosen, role: "p") %></li>
        <li <%= class_active_if "o" == @role %>> <%= link_to 'Orgové', filter_event_invitations_path(chosen: @chosen, role: "o") %></li>
 
      <% end %>

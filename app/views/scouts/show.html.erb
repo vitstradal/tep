@@ -7,71 +7,7 @@
 <% end %>
 </h1>
 
-<% if current_user.org? %>
-<p>
-<%= "ID: " + @scout.id.to_s %>
-</p>
-<% end %>
-
-<p>
-<%= "Jméno: " + @scout.name %>
-</p>
-
-<p>
-<%= "Příjmení: " + @scout.last_name %>
-</p>
-
-<p>
-<%= "Přezdívka: " + @scout.nickname %>
-</p>
-
-<p>
-<%= "Pohlaví: " + @scout.sex_str() %>
-</p>
-
-<p>
-<%= "Datum narození: " + @scout.birth_str() %>
-</p>
-
-<p>
-<%= "Ročník: " + @scout.grade.to_s %>
-</p>
-
-<p>
-<%= "Adresa: " + @scout.address %>
-</p>
-
-<p>
-<%= "Email: " + @scout.email %>
-</p>
-
-<p>
-<%= "Email na zákonného zástupce: " + @scout.parent_email %>
-</p>
-
-<p>
-<%= "Telefonní číslo: " + @scout.phone %>
-</p>
-
-<p>
-<%= "Telefonní číslo na zákonného zástupce: " + @scout.parent_phone %>
-</p>
-
-<p>
-<%= "Stravovací návyky: " + @scout.eating_habits %>
-</p>
-
-<p>
-<%= "Zdravotní problémy: " + @scout.health_problems %>
-</p>
-
-<p>
-<%= "Rodné číslo: " + @scout.birth_number %>
-</p>
-
-<p>
-<%= "Zdravotní pojišťovna: " + @scout.health_insurance %>
-</p>
+<%= render :partial => "info", locals: { scout: @scout } %>
 
 <h3>Moje akce</h3>
 

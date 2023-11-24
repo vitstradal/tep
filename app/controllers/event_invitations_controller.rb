@@ -1,18 +1,22 @@
 class EventInvitationsController < ApplicationController
   def save
+    if ! can? :save, EventInvitation
+      render :not_allowed
+      return
+    end
+
     @invitation = EventInvitation.find_by("event_id=? AND scout_id=?", params[:event_id], params[:scout_id])
 
-    pp params
     if @invitation.nil?
       @invitation = EventInvitation.create(invitation_params)
       if @invitation.save
-        redirect_to filter_invitations_event_path(id: params[:event_id], chosen: params[:filter_chosen], role: params[:filter_role])
+        redirect_to filter_event_invitations_path(id: params[:event_id], chosen: params[:filter_chosen], role: params[:filter_role])
       else
         render "events/edit_invitations", status: :unprocessable_entity
       end
     else
       if @invitation.update(invitation_params)
-        redirect_to filter_invitations_event_path(id: params[:event_id], chosen: params[:filter_chosen], role: params[:filter_role])
+        redirect_to filter_event_invitations_path(id: params[:event_id], chosen: params[:filter_chosen], role: params[:filter_role])
       else
         render "events/edit_invitations", status: :unprocessable_entity
       end
@@ -20,10 +24,15 @@ class EventInvitationsController < ApplicationController
   end
 
   def delete
+    if ! can? :delete, EventInvitation
+      render :not_allowed
+      return
+    end
+
     @invitation = EventInvitation.find_by("event_id=? AND scout_id=?", params[:event_id], params[:scout_id])
     @invitation.destroy
 
-    redirect_to edit_invitations_event_path(params[:event_id])
+    redirect_to edit_event_invitations_path(params[:event_id])
   end
   
   private

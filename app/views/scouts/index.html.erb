@@ -11,12 +11,14 @@
 <h1>Přehled účastnických účtů</h1>
   <div class="tabbable">
   <ul id="myTab" class="nav nav-tabs">
-     <li <%= class_active_if "ev" == @grade %>> <%= link_to 'Všichni', filter_scout_path(grade: "ev", role: @role) %></li>
+    <li <%= class_active_if "ev" == @grade %>> <%= link_to 'Všichni', filter_scout_path(grade: "ev", role: @role) %></li>
+     <li <%= class_active_if @grade == "young" %> ><%= link_to "Mladší", filter_scout_path(grade: "young", role: @role) %></li>
      <% Scout::GRADES.each do |grade| %>
        <li <%= class_active_if grade == @grade %> ><%= link_to Scout::GRADES_TXT[grade], filter_scout_path(grade: grade, role: @role) %></li>
      <% end %>
+     <li <%= class_active_if @grade == "old" %>><%= link_to "Starší", filter_scout_path(grade: "old", role: @role) %></li>
      
-     <li <%= class_active_if "p" == @role %>> <%= link_to 'Účastníci', filter_scout_path(grade: @grade, role: "p") %></li>
+     <li <%= class_active_if "p" == @role %> style="margin-left:9cm"> <%= link_to 'Účastníci', filter_scout_path(grade: @grade, role: "p") %></li>
      <li <%= class_active_if "o" == @role %>> <%= link_to 'Orgové', filter_scout_path(grade: @grade, role: "o") %></li>
 
 
@@ -32,16 +34,19 @@
           <th>Jméno</th>
           <th>Příjmení</th>
           <th>Přezdívka</th>
+          <th>Ročník</th>
+          <th>Účet aktivován</th>
           <th>Org</th>
         </tr>
         <% @scouts.each do |scout|  %>
         <tr>
-
            <td> <%= link_to scout.id, scout_path(scout.id) %> </td>
            <td> <%= link_to scout.user.id, user_show_path(scout.user.id) %> </td>
            <td> <%= scout.name %> </td>
            <td> <%= scout.last_name %> </td>
            <td> <%= scout.nickname %> </td>
+           <td> <%= scout.grade %> </td>
+           <th> <%= scout.activated %> </td>
            <td> <%= scout.org? %> </td>
         </tr>
         <% end %>

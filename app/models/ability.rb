@@ -109,6 +109,7 @@ class Ability
 
       can :status, :klep
 
+      can :read_other, Scout
       can :show_other, Scout
       can :read, EventCategory
       can :read, EventParticipant
@@ -182,13 +183,11 @@ class Ability
       #can :update, Jabber
       #can :delete, Jabber
 
-      can :delete, Event
-      can :edit_participants, Event
-      can :update, EventParticipant
-      can :delete, EventParticipant
-
       can :manage, Scout
+      can :manage, Event
       can :manage, EventCategory
+      can :manage, EventInvitation
+      can :manage, EventParticipant
     end
 
     # Wikis

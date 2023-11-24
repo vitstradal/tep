@@ -49,14 +49,16 @@ Tep::Application.routes.draw do
   #get  '/sosna/solution/:id/down(/:ori)'     => 'sosna/solution#download',      :as => :sosna_solution_download
   #get  '/sosna/solution/:id/down_rev(/:ori)'=> 'sosna/solution#download_rev', :as => :sosna_solution_download_rev
 
-  # scouts and events:
+  # scouts:
   get   '/scouts/new_year'                               => 'scouts#new_year',           :as => :new_year_scouts
   get   '/scouts/previous_year'                          => 'scouts#previous_year',      :as => :previous_year_scouts
+  post  '/scouts/create_other'                           => 'scouts#create_other',       :as => :create_other_scout
   get   '/scouts/filter/:grade/:role'                    => 'scouts#index',              :as => :filter_scout
   resources :scouts
-  post  '/scouts/:id/confirm_delete'                     => 'scouts#confirm_delete',     :as => :confirm_delete_scout
-  post  '/scouts/:id/delete'                             => 'scouts#delete',             :as => :delete_scout
+  post  '/scouts/:scout_id/confirm_delete'               => 'scouts#confirm_delete',     :as => :confirm_delete_scout
+  post  '/scouts/:scout_id/delete'                       => 'scouts#delete',             :as => :delete_scout
 
+  # events:
   get   '/event_categories'                              => 'event_categories#index',    :as => :event_categories
   get   '/event_categories/new'                          => 'event_categories#new',      :as => :new_event_category
   post  '/event_categories'                              => 'event_categories#create'
@@ -66,8 +68,8 @@ Tep::Application.routes.draw do
   post  '/event_categories/:code/delete'                 => 'event_categories#delete',   :as => :delete_event_category
 
   get '/events'                                          => 'events#index',              :as => :events
-  get '/events/new'                                      => 'events#new',                 :as => :new_event
-  post '/events/create'                                  => 'events#create',              :as => :create_event
+  get '/events/new'                                      => 'events#new',                :as => :new_event
+  post '/events/create'                                  => 'events#create',             :as => :create_event
   post '/events/filter'                                  => 'events#filter',             :as => :filter_events_helper
   get '/events/filter/:event_category/:enroll_status'    => 'events#index',              :as => :filter_events
   get '/events/:event_id'                                => 'events#show',               :as => :event
@@ -75,9 +77,11 @@ Tep::Application.routes.draw do
   get '/events/:event_id/edit'                           => 'events#edit',               :as => :edit_event
   post '/events/:event_id/delete'                        => 'events#delete',             :as => :event_delete
   post '/events/:event_id/enroll'                        => 'events#enroll',             :as => :event_enroll
+  post '/events/:event_id/enroll_other'                  => 'event_participants#enroll_other',       :as => :enroll_other_event
   get '/events/:event_id/edit_participants'              => 'events#edit_participants',  :as => :edit_event_participants
   get '/events/:event_id/edit_invitations'               => 'events#edit_invitations',   :as => :edit_event_invitations
   get '/events/:event_id/edit_invitations/:chosen/:role' => 'events#edit_invitations',   :as => :filter_event_invitations
+  get '/events/:event_id/enroll_others/(:status)/(:chosen)/(:role)' => 'events#enroll_others', :as => :enroll_others_event
   post 'events/:event_id/participants/:scout_id/update'  => 'event_participants#update', :as => :update_event_participant
   post '/events/:event_id/participants/:scout_id/delete' => 'event_participants#delete', :as => :delete_event_participant
   post '/events/:event_id/participants/:scout_it/choose' => 'event_participants#choose',  :as => :choose_participant

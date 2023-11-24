@@ -9,6 +9,8 @@ class EventParticipant < ActiveRecord::Base
 
   STATUSES_OPTIONS = ["yes", "maybe", "no"]
 
+  STATUS_TXT_LONG = { "yes" => "Jede", "maybe" => "Neví", "no" => "Nejede", "nvt" => "Nehlasoval" }
+
   CHOSEN_OPTIONS = ["participant", "substitute", "none"]
   CHOSEN_OPTIONS_TXT = { "participant" => "Účastník", "substitute" => "Náhradník", "none" => "Nepozvaný" }
 
@@ -33,6 +35,24 @@ class EventParticipant < ActiveRecord::Base
     end
   end
 
+  def self.status_txt_long(event, scout)
+    participant = get_participant(event, scout)
+    begin
+      return STATUS_TXT_LONG[participant.status]
+    rescue
+      return "Nejede"
+    end
+  end
+
+  def self.chosen_txt(event, scout)
+    participant = get_participant(event, scout)
+    begin
+      return CHOSEN_OPTIONS_TXT[participant.chosen]
+    rescue
+      return "Nejede"
+    end
+  end
+
   def male?
     scout.male?
   end
@@ -41,12 +61,24 @@ class EventParticipant < ActiveRecord::Base
     scout.org?
   end
 
+  def self.role_txt(event, scout)
+    begin
+      return get_participant(event, scout).org? ? "Org" : "Účatník"
+    rescue
+      return "Účastník"
+    end
+  end
+
   def self.get_participant(event, scout)
-    EventParticipant.find_by(scout_id: scout.id, event_id: event.id)
+    return EventParticipant.find_by(scout_id: scout.id, event_id: event.id)
   end
 
   def self.chosen(event, scout)
-    get_participant(event, scout).chosen
+    begin
+      get_participant(event, scout).chosen
+    rescue
+      return "none"
+    end
   end
 
   def update_chosen

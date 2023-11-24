@@ -32,8 +32,8 @@ ActiveRecord::Schema.define(version: 24) do
     t.string  "chosen",   default: "participant"
   end
 
-  add_index "event_invitations", [nil], name: "index_event_invitations_on_event"
-  add_index "event_invitations", [nil], name: "index_event_invitations_on_scout"
+  add_index "event_invitations", ["event_id"], name: "index_event_invitations_on_event_id"
+  add_index "event_invitations", ["scout_id"], name: "index_event_invitations_on_scout_id"
 
   create_table "event_participants", id: false, force: :cascade do |t|
     t.integer  "event_id"
@@ -48,8 +48,8 @@ ActiveRecord::Schema.define(version: 24) do
     t.datetime "updated_at"
   end
 
-  add_index "event_participants", [nil], name: "index_event_participants_on_event"
-  add_index "event_participants", [nil], name: "index_event_participants_on_scout"
+  add_index "event_participants", ["event_id"], name: "index_event_participants_on_event_id"
+  add_index "event_participants", ["scout_id"], name: "index_event_participants_on_scout_id"
 
   create_table "events", force: :cascade do |t|
     t.date     "event_start"

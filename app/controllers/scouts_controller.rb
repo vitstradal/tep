@@ -7,8 +7,13 @@ class ScoutsController < ApplicationController
     @grade = params[:grade].nil? ? "ev" : params[:grade]
     @role = params[:role].nil? ? "p" : params[:role]
 
-    if @grade == "ev"
+    case @grade
+    when "ev"
       @scouts = Scout.all()
+    when "young"
+      @scouts = Scout.find_by_sql(["SELECT * FROM scouts WHERE grade < ?", Scout::YOUNGEST_TO_FILTER])
+    when "old"
+      @scouts = Scout.find_by_sql(["SELECT * FROM scouts WHERE grade > ?", Scout::OLDEST_TO_FILTER])
     else
       @scouts = Scout.where(grade: @grade)
     end
@@ -85,7 +90,7 @@ class ScoutsController < ApplicationController
   end
 
   def edit
-    if ! Scout::scouts?(current_user) && params[:id] != current_user.scout.id && (! can? :update_other, Scout)
+    if current_user.nil? || ((! Scout::scouts?(current_user) || (Scout::scouts?(current_user) && params[:id] != current_user.scout.id)) && (! can? :update_other, Scout))
       @msg = "Nemáš práva na upravování uživatelských účtů ostatních užvatelů."
       render :not_allowed
       return
@@ -100,7 +105,7 @@ class ScoutsController < ApplicationController
   end
 
   def update
-    if params[:user_id] != current_user.id && (! can? :update_other, Scout)
+    if current_user.nil? || (params[:user_id] != current_user.id && (! can? :update_other, Scout))
       @msg = "Nemáš práva na upravování uživatelských účtů ostatních uživatelů."
       render :not_allowed
       return
@@ -113,6 +118,8 @@ class ScoutsController < ApplicationController
       return
     end
 
+    @scout.activated = true
+
     if @scout.update(scout_params)
       redirect_to @scout
     else
@@ -121,28 +128,27 @@ class ScoutsController < ApplicationController
   end
 
   def confirm_delete
-    if @scout.user_id != current_user.id && (! can? :delete_other, Scout)
+    @scout = Scout.find(params[:scout_id])
+    if current_user.nil? || (@scout.user_id != current_user.id && (! can? :delete_other, Scout))
       @msg = "Nemáš práva na mazání uživatelských účtů ostatních uživatelů."
       render :not_allowed
       return
     end
-
-    @scout = Scout.find(params[:id])
   end
 
   def delete
-    if @scout.user_id != current_user.id && (! can? :delete_other, Scout)
+    @scout = Scout.find(params[:scout_id])
+    if current_user.nil? || (@scout.user_id != current_user.id && (! can? :delete_other, Scout))
       @msg = "Nemáš práva na mazání uživatelských účtů ostatních uživatelů."
       render :not_allowed
       return
     end
 
-    @scout = Scout.find(params[:id])
     deleting_myself = @scout.user_id == current_user.id
     @scout.destroy
     
     if deleting_myself
-      redirect_to user_path(params[:id])
+      redirect_to user_show_path(params[:scout_id])
     else
       redirect_to scouts_path
     end
@@ -152,12 +158,21 @@ class ScoutsController < ApplicationController
     user =  User.new(roles: [:user])
   end
 
-  def create_user
+  def create_other
+    if ! can? :create_other, Scout
+      @msg = "Na vytváření uživetských účtů ostatním uživatelům nemáš práva."
+      render :not_allowed
+      return
+    end
 
+    user = User.find(params[:user_id])
+    scout = Scout.new(:user_id => user.id, :name => user.name, :last_name => user.last_name, :email => user.email, :activated => false)
+    scout.save(validate: false)
+    redirect_to params[:path]
   end
 
   def new_year
-    if ! current_user.admin?
+    if current_user.nil? || ! current_user.admin?
       @msg = "Na zahájení nového ročníků nemáš právo."
       render :not_allowed
       return
@@ -171,7 +186,7 @@ class ScoutsController < ApplicationController
   end
 
   def previous_year
-    if ! current_user.admin?
+    if current_user.nil? || ! current_user.admin?
       @msg = "Na vrácení ročníků nemáš právo."
       render :not_allowed
       return

@@ -143,13 +143,30 @@ class EventsController < ApplicationController
       return
     end
 
-    if !(can? :create, EventInvitation)
+    if !(can? :read, EventInvitation)
       render 'permission_denied', :locals => { :desired => "zobrazovat ani editovat pozvánky na " }
       return
     end
 
     @editing = true
     render :edit_invitations
+  end
+
+  def enroll_others
+    return unless _find_event(params[:event_id])
+
+    if !(can? :create_other, EventParticipant)
+       render 'permission_denied', :locals => { :desired => "přihlašovat ostatní účastníky na " }
+       return
+    end
+
+    @chosen = params[:chosen] || "ev"
+    @role = params[:role] || "p"
+    @status = params[:status] || "ev"
+
+    @scouts = Scout::find_by_participation(@event, @status, @chosen, @role)
+
+    render :enroll_others
   end
 
   def update
@@ -211,7 +228,7 @@ class EventsController < ApplicationController
         return false
       end
 
-      if Scout::scouts?(current_user) and @event.event_visible?(current_user)
+      if @event.event_visible?(current_user)
         return true
       else
         render :not_allowed_to_show

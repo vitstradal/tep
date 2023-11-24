@@ -1,0 +1,11 @@
+<div class="form-group">
+  <div class="col-sm-offset-3 col-sm-9">
+    <% if (can? :delete_other, Scout) || (scout.is_me?(current_user)) %>
+      <%= form_tag confirm_delete_scout_path(scout_id: scout.id) do %>
+        <%= submit_tag  'Smazat účet', :class=>'btn btn-danger' %>
+      <% end %>
+    <% elsif (can? :update_other, Scout) %>
+      <%= submit_tag  'Smazat účastnický účet může pouze admin nebo vlastník účtu', :class=>'btn btn-disabled' %>
+    <% end %>
+  </div>
+</div>
