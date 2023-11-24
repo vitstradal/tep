@@ -20,11 +20,11 @@
   <%= render :partial => "f_text_area", locals: { f: f, obj: @event, name: :body, text: "Popis akce" } %>
 
 
-  <div id="event_start">
+  <div><!-- id="event_start"> -->
     <%= render :partial => "f_date_field", locals: { f: f, obj: @event, name: :event_start, text: "Začátek akce" } %>
   </div>
 
-  <div id="event_end">
+  <div><!-- id="event_end"> -->
     <%= render :partial => "f_date_field", locals: { f: f, obj: @event, name: :event_end, text: "Konec akce" } %>
   </div>
 

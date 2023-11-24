@@ -69,7 +69,7 @@ class ScoutsController < ApplicationController
       return
     end
 
-    if params[:user_id] != current_user.id && (! can? :create_other, Scout)
+    if params[:scout][:user_id] != current_user.id.to_s && (! can? :create_other, Scout)
       @msg = "Nemáš práva na vytváření uživatelských účtů ostatním užvatelům."
       render :not_allowed
       return

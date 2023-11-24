@@ -127,7 +127,7 @@ jQuery(document).ready(function($) {
                   $('#event_date').show(400)
                 }
                 else {
-                  //$('#event_start').show(400)
+                  $('#event_start').show(400)
                   $('#event_end').show(400)
                 }
         });

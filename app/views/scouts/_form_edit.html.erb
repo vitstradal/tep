@@ -14,7 +14,7 @@
   <div class="form-group">
     <%= f.label :name, "Jméno", :class => 'col-sm-3 control-label no-padding-right' %>
     <div class="col-sm-9 <%= form_error_class scout, :name %>">
-      <%= f.text_field :name, disabled: !current_user.org?, value: scout.name %>
+      <%= f.text_field :name, readonly: ! current_user.org?, value: scout.name %>
       <%= form_error scout, :name %>
     </div>
   </div>    
@@ -22,7 +22,7 @@
   <div class="form-group">
     <%= f.label :last_name, "Příjmení", :class => 'col-sm-3 control-label no-padding-right' %>
     <div class="col-sm-9 <%= form_error_class scout, :last_name %>">
-      <%= f.text_field :last_name, disabled: !current_user.org?, value: scout.last_name %>
+      <%= f.text_field :last_name, readonly: ! current_user.org?, value: scout.last_name %>
       <%= form_error scout, :last_name %>
     </div>
   </div>
@@ -47,9 +47,9 @@
     <%= f.label :birth, "Datum narození", :class => 'col-sm-3 control-label no-padding-right' %>
     <div class="col-sm-9 <%= form_error_class scout, :birth %>">
       <% if scout.birth.nil? %>
-              <%= f.date_field :birth, disabled: !current_user.org? %>
+        <%= f.date_field :birth %>
       <% else %>
-        <%= f.date_field :birth, disabled: !current_user.org?, value: scout.birth.strftime('%Y-%m-%d') %>
+        <%= f.date_field :birth, readonly: ! current_user.org?, value: scout.birth.strftime('%Y-%m-%d') %>
       <% end %>
       <%= form_error scout, :birth %>
     </div>
