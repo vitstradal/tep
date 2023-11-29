@@ -54,7 +54,7 @@ class Scout < ActiveRecord::Base
     if user.nil?
       return false
     else
-      return Scout::scout_id(user).to_i == "#{id}".to_i
+      return user.id.to_s == user_id.to_s
     end
   end
 

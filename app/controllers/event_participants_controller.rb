@@ -71,9 +71,10 @@ class EventParticipantsController < ApplicationController
       render :not_allowed, locals: { desired: "upravovati " }
       return
     end
-
+    pp @participant
     @participant.chosen = params[:chosen]
     @participant.save
+    pp @participant
 
     redirect_to edit_event_participants_path(params[:event_id])
   end

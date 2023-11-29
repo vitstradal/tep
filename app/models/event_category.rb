@@ -44,6 +44,10 @@ class EventCategory < ActiveRecord::Base
     end
   end
 
+  def self.all_multi_day()
+    return ActiveRecord::Base.connection.execute("SELECT code FROM event_categories WHERE multi_day = 't'").map { |ec| ec["code"] }
+  end
+
   def visible_txt()
     VISIBLE_STATUSES_TXT[visible]
   end

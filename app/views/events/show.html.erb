@@ -7,7 +7,7 @@
 <% else %>
   <% if can? :update_other, EventParticipant %>
     <%= button_tag "Edituj účastníky", :href => edit_event_participants_path(@event), :class=>'btn btn-danger', :ico => 'fa-edit' %>
-    <%= button_tag "Pozvi nové účastníky", :href => enroll_others_event_path(@event, "ev", "ev"), :class=>'btn btn-danger', :ico => 'fa-edit' %>
+    <%= button_tag "Přihlaš nové účastníky", :href => enroll_others_event_path(@event, "ev", "ev"), :class=>'btn btn-danger', :ico => 'fa-edit' %>
   <% end %>
 <% end %>
 <% if (can? :edit, EventInvitation) && !@edit_participants && (@event.enable_only_specific_participants || @event.enable_only_specific_substitutes || @event.enable_only_specific_organisers) %>

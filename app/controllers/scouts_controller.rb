@@ -90,7 +90,7 @@ class ScoutsController < ApplicationController
   end
 
   def edit
-    if current_user.nil? || ((! Scout::scouts?(current_user) || (Scout::scouts?(current_user) && params[:id] != current_user.scout.id)) && (! can? :update_other, Scout))
+    if current_user.nil? || ((! Scout::scouts?(current_user) || (Scout::scouts?(current_user) && params[:id] != current_user.scout.id.to_s)) && (! can? :update_other, Scout))
       @msg = "Nemáš práva na upravování uživatelských účtů ostatních užvatelů."
       render :not_allowed
       return
