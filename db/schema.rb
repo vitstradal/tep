@@ -13,7 +13,7 @@
 
 ActiveRecord::Schema.define(version: 24) do
 
-  create_table "event_categories", id: false, force: :cascade do |t|
+  create_table "act_event_categories", id: false, force: :cascade do |t|
     t.string   "code",                   limit: 2
     t.string   "name"
     t.integer  "idx",                              default: 0
@@ -26,18 +26,18 @@ ActiveRecord::Schema.define(version: 24) do
     t.datetime "updated_at"
   end
 
-  add_index "event_categories", ["code"], name: "index_event_categories_on_code", unique: true
+  add_index "act_event_categories", ["code"], name: "index_act_event_categories_on_code", unique: true
 
-  create_table "event_invitations", force: :cascade do |t|
+  create_table "act_event_invitations", force: :cascade do |t|
     t.integer "event_id"
     t.integer "scout_id"
     t.string  "chosen",   default: "participant"
   end
 
-  add_index "event_invitations", ["event_id"], name: "index_event_invitations_on_event_id", unique: true
-  add_index "event_invitations", ["scout_id"], name: "index_event_invitations_on_scout_id", unique: true
+  add_index "act_event_invitations", ["event_id"], name: "index_act_event_invitations_on_event_id", unique: true
+  add_index "act_event_invitations", ["scout_id"], name: "index_act_event_invitations_on_scout_id", unique: true
 
-  create_table "event_participants", force: :cascade do |t|
+  create_table "act_event_participants", force: :cascade do |t|
     t.integer  "event_id"
     t.integer  "scout_id"
     t.string   "status",     default: "yes"
@@ -50,10 +50,10 @@ ActiveRecord::Schema.define(version: 24) do
     t.datetime "updated_at"
   end
 
-  add_index "event_participants", ["event_id"], name: "index_event_participants_on_event_id", unique: true
-  add_index "event_participants", ["scout_id"], name: "index_event_participants_on_scout_id", unique: true
+  add_index "act_event_participants", ["event_id"], name: "index_act_event_participants_on_event_id", unique: true
+  add_index "act_event_participants", ["scout_id"], name: "index_act_event_participants_on_scout_id", unique: true
 
-  create_table "events", force: :cascade do |t|
+  create_table "act_events", force: :cascade do |t|
     t.date     "event_start"
     t.date     "event_end"
     t.string   "title"
@@ -77,6 +77,28 @@ ActiveRecord::Schema.define(version: 24) do
     t.boolean  "uninvited_organisers_dont_see",     default: false
     t.boolean  "limit_maybe",                       default: false
     t.date     "maybe_deadline"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
+  create_table "act_scouts", force: :cascade do |t|
+    t.integer  "user_id"
+    t.string   "name"
+    t.string   "last_name"
+    t.string   "nickname",         default: ""
+    t.string   "sex",              default: "male"
+    t.datetime "birth"
+    t.integer  "grade"
+    t.string   "address"
+    t.string   "email"
+    t.string   "parent_email"
+    t.string   "phone"
+    t.string   "parent_phone"
+    t.text     "eating_habits",    default: ""
+    t.text     "health_problems",  default: ""
+    t.text     "birth_number"
+    t.string   "health_insurance"
+    t.boolean  "activated",        default: true
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -141,28 +163,6 @@ ActiveRecord::Schema.define(version: 24) do
   end
 
   add_index "oauth_applications", ["uid"], name: "index_oauth_applications_on_uid", unique: true
-
-  create_table "scouts", force: :cascade do |t|
-    t.integer  "user_id"
-    t.string   "name"
-    t.string   "last_name"
-    t.string   "nickname",         default: ""
-    t.string   "sex",              default: "male"
-    t.datetime "birth"
-    t.integer  "grade"
-    t.string   "address"
-    t.string   "email"
-    t.string   "parent_email"
-    t.string   "phone"
-    t.string   "parent_phone"
-    t.text     "eating_habits",    default: ""
-    t.text     "health_problems",  default: ""
-    t.text     "birth_number"
-    t.string   "health_insurance"
-    t.boolean  "activated",        default: true
-    t.datetime "created_at"
-    t.datetime "updated_at"
-  end
 
   create_table "sessions", force: :cascade do |t|
     t.string   "session_id", null: false

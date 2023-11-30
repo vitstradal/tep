@@ -1,0 +1,61 @@
+<h1><%= @event.title %>
+<% if (can? :edit, Act::Event) && !@edit_participants %>
+  <%= button_tag "Edituj akci", :href => act_event_edit_path(@event), :class=>'btn btn-danger', :ico => 'fa-edit' %>
+<% end %>
+<% if @edit_participants %>
+    <%= button_tag "Zpět", :href => act_event_path(@event), :class=>'btn', :ico =>'fa-reply' %>
+<% else %>
+  <% if can? :update_other, Act::EventParticipant %>
+    <%= button_tag "Edituj účastníky", :href => act_event_edit_participants_path(@event), :class=>'btn btn-danger', :ico => 'fa-edit' %>
+    <%= button_tag "Přihlaš nové účastníky", :href => act_event_enroll_others_path(@event, "ev", "ev"), :class=>'btn btn-danger', :ico => 'fa-edit' %>
+  <% end %>
+<% end %>
+<% if (can? :edit, Act::EventInvitation) && !@edit_participants && (@event.enable_only_specific_participants || @event.enable_only_specific_substitutes || @event.enable_only_specific_organisers) %>
+  <%= button_tag "Edituj pozvané", :href => act_event_edit_invitations_path(@event), :class=>'btn btn-danger', :ico => 'fa-edit' %>
+<% end %>
+</h1>
+
+<p><%= @event.body %><p>
+
+<% if @event.limit_num_participants %>
+  Na tuto akci může jet maximálně <b><%= @event.max_participants %></b> účastníků. Aktuálně je <%= @num_p_yes %> přihlášených.
+<% end %>
+
+<% if @event.event_info_url != "" %>
+  <p>Více info najdeš <a href="<%= @event.event_info_url %>">tady</a>.</p>
+<% end %>
+
+<%= link_to "Ukaž výběr všech akcí!", act_events_path %>
+
+<% if !@already_happened && !@edit_paticipants %>
+  <% if Act::Scout::scouts?(current_user) && current_user.scout.activated %>
+    <% if @event.can_participate?(current_user.scout) %>
+      <%= render :partial => "form_enroll", :locals => { :chosen => "participant" } %>
+    <% elsif @event.can_substitute?(current_user.scout) %>
+      <%= render :partial => "form_enroll", :locals => { :chosen => "substitute" } %>
+    <% else %>
+      Bohužel jsi nebyl vybrán ani mezi účastníky, ani mezi náhradníky. Tedy se na tuto akci nemůžeš přihlásit. Pokud si myslíš, že se jedná o chybu, neváhej nám napsat :-).
+    <% end %>
+  <% elsif Act::Scout::scouts?(current_user) && ! current_user.scout.activated %>
+    <p>
+  Aby ses mohl/a přihlásit, musíš mít aktivovaný uživatelský účet. Účet si aktivuješ tak, že do něj vyplníš všechny potřebné informace a klikneš na tlačítko <i>Uložit</i>. Svůj uživatelský účet najdeš <%= link_to "zde", act_scout_path(current_user.scout) %>.
+    </p>
+  <% else %>
+    <p>
+      Abys ses mohl/a přihlásit na nějakou akci, musíš mít založený účastnický účet, a navíc ještě musíš být přihlášený/á. Účastnický účet si můžeš založit
+      <%= link_to "zde", act_scout_new_path %>.
+    </p>
+  <% end %>
+<% end %>
+
+<h2>Přihlášení účastníci</h2>
+<% if can? :show_other, Act::Scout %>
+  <p>
+    <%= button_tag "Zobraz hromadné informace", :href => act_event_display_scouts_path(@event), :class => 'btn btn-primary' %>
+  </p>
+<% end %>
+<% if current_user %>
+  <%= render @event.event_participants %>
+<% else %>
+  Pro zobrazení účastníků je potřeba se přihlásit.
+<% end %>

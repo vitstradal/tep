@@ -60,7 +60,7 @@ class User < ActiveRecord::Base
   roles_attribute :roles_mask
 
   has_one :jabber, inverse_of: :user
-  has_one :scout, inverse_of: :user, dependent: :destroy
+  has_one :scout, inverse_of: :user, dependent: :destroy, class_name: 'Act::Scout'
 
   # declare the valid roles -- do not change the order if you add more
   # roles later, always append them at the end!

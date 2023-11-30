@@ -47,7 +47,9 @@ class Ability
     #can :prebind, Jabber
 
     # event
-    can :index, Event
+    can :index, Act::Event
+    can :show, Act::Event
+    can :create, Act::Scout
 
     if user.user?
       can :user_index, Sosna::Solution
@@ -63,8 +65,9 @@ class Ability
       can :update_confirm, Sosna::Solver
       can :info, :tepna
 
-      can :show, Event
-      can :crud, Scout
+      can :read, Act::Scout
+      can :update, Act::Scout
+      can :delete, Act::Scout
     end
 
     if user.org?
@@ -109,11 +112,11 @@ class Ability
 
       can :status, :klep
 
-      can :read_other, Scout
-      can :show_other, Scout
-      can :read, EventCategory
-      can :read, EventParticipant
-      can :read, EventInvitation
+      can :read_other, Act::Scout
+      can :show_other, Act::Scout
+      can :read, Act::EventCategory
+      can :read, Act::EventParticipant
+      can :read, Act::EventInvitation
     end
 
     # master-org, or more-org, 
@@ -134,19 +137,19 @@ class Ability
 
       can :get_confirm_files, Sosna::Solution
 
-      can :create, Event
-      can :new, Event
-      can :create, Event
-      can :edit, Event
-      can :update, Event
+      can :create, Act::Event
+      can :new, Act::Event
+      can :create, Act::Event
+      can :edit, Act::Event
+      can :update, Act::Event
 
-      can :new_other, Scout
-      can :create_other, Scout
-      can :edit_other, Scout
-      can :update_other, Scout
+      can :new_other, Act::Scout
+      can :create_other, Act::Scout
+      can :edit_other, Act::Scout
+      can :update_other, Act::Scout
 
-      can :manage, EventParticipant
-      can :manage, EventInvitation
+      can :manage, Act::EventParticipant
+      can :manage, Act::EventInvitation
     end
 
     if user.admin?
@@ -183,11 +186,11 @@ class Ability
       #can :update, Jabber
       #can :delete, Jabber
 
-      can :manage, Scout
-      can :manage, Event
-      can :manage, EventCategory
-      can :manage, EventInvitation
-      can :manage, EventParticipant
+      can :manage, Act::Scout
+      can :manage, Act::Event
+      can :manage, Act::EventCategory
+      can :manage, Act::EventInvitation
+      can :manage, Act::EventParticipant
     end
 
     # Wikis

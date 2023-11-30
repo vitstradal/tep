@@ -1,6 +1,6 @@
 class CreateTableEvents < ActiveRecord::Migration
   def change
-    create_table :scouts do |t|
+    create_table :act_scouts do |t|
       t.belongs_to :user
       t.string :name
       t.string :last_name
@@ -21,7 +21,7 @@ class CreateTableEvents < ActiveRecord::Migration
       t.timestamps
     end
 
-    create_table :event_categories, id: false, primary_key: [:code] do |t|
+    create_table :act_event_categories, id: false, primary_key: [:code] do |t|
       t.string :code, limit: 2
       t.index :code, unique: true
       t.string :name
@@ -34,7 +34,7 @@ class CreateTableEvents < ActiveRecord::Migration
       t.timestamps
     end
 
-    create_table :events do |t|
+    create_table :act_events do |t|
       t.date :event_start
       t.date :event_end
       t.string :title
@@ -61,7 +61,7 @@ class CreateTableEvents < ActiveRecord::Migration
       t.timestamps
     end
       
-    create_table :event_participants do |t|
+    create_table :act_event_participants do |t|
       t.integer :event_id, index: { unique: true }
       t.integer :scout_id, index: { unique: true }
       t.string :status, :default => "yes"
@@ -73,7 +73,7 @@ class CreateTableEvents < ActiveRecord::Migration
       t.timestamps
     end
 
-    create_table :event_invitations do |t|
+    create_table :act_event_invitations do |t|
       t.integer :event_id, index: { unique: true }
       t.integer :scout_id, index: { unique: true }
       t.string :chosen, :default => "participant"

@@ -1,0 +1,15 @@
+<p>
+<%= form_tag act_events_filter_helper_path, :method => "post" do %>
+    <%= label_tag :event_category, "Typ akce:" %>
+    <%= select_tag :event_category, options_for_select(Act::Event::category_filter_all(current_user), @event_category) %>
+
+   <% if Act::Scout::scouts?(current_user) %>
+      <%= label_tag :enroll_status, "Pouze pokud:" %>
+      <%= select_tag :enroll_status, options_for_select([["Kdykoliv", "ev"], ["Jedu", "yes"], ["Nejedu", "no"], ["Nevím", "maybe"], ["Jsem nehlasoval", "nvt"]], @enroll_status) %>
+    <% else %>
+      <%= hidden_field_tag :enroll_status, "ev" %>
+    <% end %>
+
+    <%= submit_tag "Hledej!", :class => 'btn btn-primary' %>
+  <% end %>
+</p>

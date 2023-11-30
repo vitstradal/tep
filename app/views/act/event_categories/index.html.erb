@@ -1,0 +1,38 @@
+<h1>Typy akcí</h1>
+
+<% if can? :new, Act::Event %>
+  <p>
+  <%= button_tag "Vytvořit nový typ akce akce", :href => act_event_category_new_path, :class => 'btn btn-primary', :ico => "fa-edit" %>
+  </p>
+<% end %>
+
+<table>
+  <tr>
+    <th>Jméno</th>
+    <th>Kód</th>
+    <th>Řadící index?</th>
+    <th>Je víceddenní?</th>
+    <th>Viditelnost</th>
+    <th>Individuálne omezitelná</th>
+    <th>Potenciálně mše</th>
+    <th>Dodatečné informace</th>
+  </tr>
+<% Act::EventCategory.find_each do |c| %>
+  <tr>
+    <th>
+      <% if can? :update, Act::EventCategory %>
+        <%= link_to c.name, act_event_category_edit_path(c) %>
+      <% else %>
+        <%= c.name %>
+      <% end %>
+    </th>
+    <th><%= c.code %></th>
+    <th><%= c.idx %></th>
+    <th><%= c.multi_day_txt() %></th>
+    <th><%= c.visible_txt() %></th>
+    <th><%= c.restrictions_electible_txt %></th>
+    <th><%= c.mass_spec_electible_txt %></th>
+    <th><%= c.description %></th>
+  </tr>
+<% end %>
+</table>

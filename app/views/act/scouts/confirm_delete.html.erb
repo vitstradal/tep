@@ -1,0 +1,10 @@
+<h1>Opravdu cheš smazat tento účastnický účet?</h1>
+<% if (can? :delete_other, Act::Scout) || (@scout.is_me?(current_user)) %>
+  <%= form_tag act_scout_delete_path(@scout) do %>
+    <%= submit_tag  'Ano', :class=>'btn btn-danger' %>
+  <% end %>
+  <br>
+  <%= link_to 'Ne', act_scout_path(@scout), :class => 'btn btn-primary' %>
+<% else %>
+  <%= submit_tag  'Smazat účastnický účet může pouze admin nebo vlastník účtu', :class=>'btn btn-disabled' %></div>
+<% end %>

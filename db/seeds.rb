@@ -27,23 +27,23 @@ if true
         ])
   users.each { |u| u.confirm }
 
-  scouts = Scout.create([
+  scouts = Act::Scout.create([
     { user_id: 1, name: "Antonín", last_name: "Hejný", nickname: "Tonda", sex: "male", birth: "Sun, 02 Jan 2000 00:00:00 UTC +00:00", grade: "16", address: "Ulice 123", email: "antonin.hejny@gmail.com", parent_email: "a.hejny@centrum.cz", phone: "123456789", parent_phone: "987654321", eating_habits: "Jí vše :-)", health_problems: "Zdravotní problémy nemá", birth_number: "01234567891", health_insurance: "OZP", activated: true}
   ])
 
-  event_categories = EventCategory.create([
+  event_categories = Act::EventCategory.create([
     { code: "we", name: "Pikostředa", idx: 0, multi_day: false, description: "Pravidlně od 19:00 na Karlíně", visible: "ev", restrictions_electible: false },
     { code: "kl", name: "Kus ledu", idx: 100, multi_day: true, description: "Orgovské setkání pro konzultaci všeho možného", visible: "org", restrictions_electible: true }
   ])
 
-  events = Event.create([
+  events = Act::Event.create([
     { event_start: "Tue, 02 Jan 2024", event_end: "Tue, 02 Jan 2024", title: "První Pikostředa", body: "Přineste si s sebou hroadu deskovek :D", event_category: "we" }
   ])
 
-  event_participants = EventParticipant.create([
+  event_participants = Act::EventParticipant.create([
     { event_id: 1, scout_id: 1, status: "yes", note: "Už se těším :)) " }           
   ])
 
-  pp EventParticipant.all
-  pp EventParticipant.primary_key
+  pp Act::EventParticipant.all
+  pp Act::EventParticipant.primary_key
 end

@@ -1,0 +1,77 @@
+<% if can? :new_year, Act::Scout %>
+  <%= link_to "Nový ročník", act_scouts_new_year_path, class: "btn btn-danger" %>
+<% end %>
+
+<% if can? :new_year, Act::Scout %>
+  <%= link_to "Předchozí ročník", act_scouts_previous_year_path, class: "btn btn-danger" %>
+<% end %>
+
+
+<% if can? :show_other, Act::Scout %>
+<h1>Přehled účastnických účtů</h1>
+  <div class="tabbable">
+  <ul id="myTab" class="nav nav-tabs">
+    <li <%= class_active_if "ev" == @grade %>> <%= link_to 'Všichni', act_scout_filter_path(grade: "ev", role: @role) %></li>
+     <li <%= class_active_if @grade == "young" %> ><%= link_to "Mladší", act_scout_filter_path(grade: "young", role: @role) %></li>
+     <% Act::Scout::GRADES.each do |grade| %>
+       <li <%= class_active_if grade == @grade %> ><%= link_to Act::Scout::GRADES_TXT[grade], act_scout_filter_path(grade: grade, role: @role) %></li>
+     <% end %>
+     <li <%= class_active_if @grade == "old" %>><%= link_to "Starší", act_scout_filter_path(grade: "old", role: @role) %></li>
+     
+     <li <%= class_active_if "p" == @role %> style="margin-left:9cm"> <%= link_to 'Účastníci', act_scout_filter_path(grade: @grade, role: "p") %></li>
+     <li <%= class_active_if "o" == @role %>> <%= link_to 'Orgové', act_scout_filter_path(grade: @grade, role: "o") %></li>
+
+
+  </ul>
+
+   <div class="tab-content">
+    <div class="tabtab-pane in active">
+      <div class="table-div">
+        <table class="table table-hover table-condensed table-bordered">
+        <tr>
+          <th>Id</th>
+          <th>User Id</th>
+          <th>Jméno</th>
+          <th>Příjmení</th>
+          <th>Přezdívka</th>
+          <th>Ročník</th>
+          <th>Účet aktivován</th>
+          <th>Org</th>
+        </tr>
+        <% @scouts.each do |scout|  %>
+        <tr>
+           <td> <%= link_to scout.id, act_scout_path(scout.id) %> </td>
+           <td> <%= link_to scout.user.id, user_show_path(scout.user.id) %> </td>
+           <td> <%= scout.name %> </td>
+           <td> <%= scout.last_name %> </td>
+           <td> <%= scout.nickname %> </td>
+           <td> <%= scout.grade %> </td>
+           <th> <%= scout.activated %> </td>
+           <td> <%= scout.org? %> </td>
+        </tr>
+        <% end %>
+        </table>
+      </div>
+    </div>
+   </div>
+</div>
+
+<% else %>
+
+<h1>Účastnické účty</h1>
+
+<p>
+Účastnické účty slouží k tomu, aby ses mohl přihlásit na Pikomatí akce. Oproti starému systému přihlašování tak nebudeš mouset vyplňovat na každou akci celou přihlášku znovu.
+</p>
+
+<p>
+<% if current_user.nil? %>
+  Na vytvoření účastnického účtu se ale musíš nejprve
+  <%= link_to "Přihlásit", "users/sign_in" %>
+<% elsif ! Act::Scout::scouts?(current_user) %>
+<%= button_tag "Vytvoř si vlastní účet!", :href => act_scout_new_path, :class => 'btn btn-primary' %>.
+<% else %>
+  Ty již účastnický účet máš. Proto neváhej, a na nějakou akci se přihlaš :-). Seznam všech akcí nalezneš <%= link_to "zde", act_events_path %>.
+<% end %>
+</p>
+<% end %>

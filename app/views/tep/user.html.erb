@@ -72,9 +72,9 @@
     </div> <%# tab-pane %>
 
     <div class="tab-pane <%=active_in_if(@tab=='scout')%>" id='scout'>
-      <% if Scout::scouts?(@user) %>
-        <%= render :partial => "scouts/form_edit", locals: { is_edit: true, scout: @user.scout } %>
-        <%= render partial: "scouts/button_delete", locals: { scout: @user.scout } %>
+      <% if Act::Scout::scouts?(@user) %>
+        <%= render :partial => "act/scouts/form_edit", locals: { is_edit: true, scout: @user.scout } %>
+        <%= render partial: "act/scouts/button_delete", locals: { scout: @user.scout } %>
       <% else %>
         <i> Tento uživatel účastnický účet nemá.</i><br>
         <%= form_tag create_other_scout_path, method: :post do %>
