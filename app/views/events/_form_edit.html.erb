@@ -6,14 +6,23 @@
   <% method = :post %>
 <% end %>
 
-<%= form_for :event, :url => url_dest, :method => method, :html => {:class=>'form-horizontal'} do |f| %>
+<%= form_for :event, :url => url_dest, :method => method, :html => {:class=>'form-horizontal', id: "event_form"} do |f| %>
   <div class="<%= form_error_class @event, :name%>">
 
     <%= render :partial => "f_select", locals: { f: f, obj: @event, name: :event_category, text: "Typ akce", options: Event::category_filter(current_user) } %>
 
     <span id="multi_day_categories" data-categories=<%= EventCategory::all_multi_day().to_json %>></span>
+    <span id="visibility_info_categories" data-ev=<%= EventCategory::all_for_ev().to_json %> data-user=<%= EventCategory::all_for_user().to_json %> data-org=<%= EventCategory::all_for_org().to_json %>></span>
+    <span id="restrictions_electible_categories" data-codes=<%= EventCategory::all_restrictible().to_json %>></span>
+    <span id="mass_spec_electible_categories" data-codes=<%= EventCategory::all_mass_spec_electible().to_json %>></span>
 
+  <div id='event_visible_all_div'>
     <%= render :partial => "f_select", locals: { f: f, obj: @event, name: :visible, text: "Kdo se o akci vůbec dozví", options: [["každý", "ev"], ["user", "user"], ["org", "org"]] } %>
+  </div>
+
+  <div id='event_visible_restricted_div'>
+    <%= render :partial => "f_select", locals: { f: f, obj: @event, name: :visible, text: "Kdo se o akci vůbec dozví", options: [["user", "user"], ["org", "org"]] } %>
+  </div>
   
   <%= render :partial => "f_text_field", locals: { f: f, obj: @event, name: :title, text: "Název akce" } %>
 

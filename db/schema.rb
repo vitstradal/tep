@@ -14,28 +14,30 @@
 ActiveRecord::Schema.define(version: 24) do
 
   create_table "event_categories", id: false, force: :cascade do |t|
-    t.string   "code",        limit: 2
+    t.string   "code",                   limit: 2
     t.string   "name"
-    t.integer  "idx",                   default: 0
-    t.boolean  "multi_day",             default: true
-    t.text     "description",           default: ""
-    t.string   "visible",               default: "ev"
+    t.integer  "idx",                              default: 0
+    t.boolean  "multi_day",                        default: true
+    t.text     "description",                      default: ""
+    t.string   "visible",                          default: "ev"
+    t.boolean  "restrictions_electible",           default: true
+    t.boolean  "mass_spec_electible",              default: true
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
   add_index "event_categories", ["code"], name: "index_event_categories_on_code", unique: true
 
-  create_table "event_invitations", id: false, force: :cascade do |t|
+  create_table "event_invitations", force: :cascade do |t|
     t.integer "event_id"
     t.integer "scout_id"
     t.string  "chosen",   default: "participant"
   end
 
-  add_index "event_invitations", ["event_id"], name: "index_event_invitations_on_event_id"
-  add_index "event_invitations", ["scout_id"], name: "index_event_invitations_on_scout_id"
+  add_index "event_invitations", ["event_id"], name: "index_event_invitations_on_event_id", unique: true
+  add_index "event_invitations", ["scout_id"], name: "index_event_invitations_on_scout_id", unique: true
 
-  create_table "event_participants", id: false, force: :cascade do |t|
+  create_table "event_participants", force: :cascade do |t|
     t.integer  "event_id"
     t.integer  "scout_id"
     t.string   "status",     default: "yes"
@@ -48,8 +50,8 @@ ActiveRecord::Schema.define(version: 24) do
     t.datetime "updated_at"
   end
 
-  add_index "event_participants", ["event_id"], name: "index_event_participants_on_event_id"
-  add_index "event_participants", ["scout_id"], name: "index_event_participants_on_scout_id"
+  add_index "event_participants", ["event_id"], name: "index_event_participants_on_event_id", unique: true
+  add_index "event_participants", ["scout_id"], name: "index_event_participants_on_scout_id", unique: true
 
   create_table "events", force: :cascade do |t|
     t.date     "event_start"

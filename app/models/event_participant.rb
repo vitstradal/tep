@@ -2,8 +2,6 @@ class EventParticipant < ActiveRecord::Base
   belongs_to :event
   belongs_to :scout
 
-  self.primary_keys = :event_id, :scout_id
-
   validates_associated :event
   validates_associated :scout
 

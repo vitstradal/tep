@@ -58,6 +58,23 @@
   </div>
 
   <div class="form-group">
+    <%= f.label :restrictions_electible, "Nabídneš orgovi při vytváření akce možnost limitovat, kteří účastníci (a kolik) se může přihlásit?", :class => 'col-sm-4 control-label no-padding-right'%>
+    <div class="col-sm-8 <%= form_error_class @event_category, :restrictions_electible %>">
+      <%= f.check_box :restrictions_electible %>
+      <%= form_error @event_category, :restrictions_electible %>
+    </div>
+  </div>
+
+  <div class="form-group">
+    <%= f.label :mass_spec_electible, "Nabídneš orgovi při vytváření akce možnost účastníkům povolit specifikovat, jestli chtějí na mši?", :class => 'col-sm-4 control-label no-padding-right'%>
+    <div class="col-sm-8 <%= form_error_class @event_category, :mass_spec_electible %>">
+      <%= f.check_box :mass_spec_electible %>
+      <%= form_error @event_category, :mass_spec_electible %>
+    </div>
+  </div>
+
+
+  <div class="form-group">
     <div class="col-sm-offset-2 col-sm-9">
       <%= f.submit :class=>'btn btn-primary', :value=>'Uložit typ akce' %>
     </div>

@@ -29,6 +29,8 @@ class CreateTableEvents < ActiveRecord::Migration
       t.boolean :multi_day, :default => true
       t.text :description, :default => ""
       t.string :visible, :default => "ev"
+      t.boolean :restrictions_electible, :default => true
+      t.boolean :mass_spec_electible, :default => true
       t.timestamps
     end
 
@@ -59,9 +61,9 @@ class CreateTableEvents < ActiveRecord::Migration
       t.timestamps
     end
       
-    create_table :event_participants, id: false, primary_key: [:event_id, :scout_id] do |t|
-      t.belongs_to :event
-      t.belongs_to :scout
+    create_table :event_participants do |t|
+      t.integer :event_id, index: { unique: true }
+      t.integer :scout_id, index: { unique: true }
       t.string :status, :default => "yes"
       t.string :note, :default => ""
       t.string :place, :default => ""
@@ -71,16 +73,10 @@ class CreateTableEvents < ActiveRecord::Migration
       t.timestamps
     end
 
-    add_index(:event_participants, :event_id)
-    add_index(:event_participants, :scout_id)
-
-    create_table :event_invitations, id: false, primary_key: [:event_id, :scout_id] do |t|
-      t.belongs_to :event
-      t.belongs_to :scout
+    create_table :event_invitations do |t|
+      t.integer :event_id, index: { unique: true }
+      t.integer :scout_id, index: { unique: true }
       t.string :chosen, :default => "participant"
     end
-
-    add_index(:event_invitations, :event_id)
-    add_index(:event_invitations, :scout_id)
   end
 end

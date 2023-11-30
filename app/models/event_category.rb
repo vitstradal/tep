@@ -35,6 +35,15 @@ class EventCategory < ActiveRecord::Base
     multi_day ? "Ano" : "Ne"
   end
 
+  def restrictions_electible_txt()
+    restrictions_electible ? "Ano" : "Ne"
+  end
+
+  def mass_spec_electible_txt()
+    mass_spec_electible ? "Ano" : "Ne"
+  end
+
+
   def self.multi_day?(code)
     category = EventCategory.find_by(code: code)
     if category.nil?
@@ -46,6 +55,26 @@ class EventCategory < ActiveRecord::Base
 
   def self.all_multi_day()
     return ActiveRecord::Base.connection.execute("SELECT code FROM event_categories WHERE multi_day = 't'").map { |ec| ec["code"] }
+  end
+
+  def self.all_for_ev()
+    return ActiveRecord::Base.connection.execute("SELECT code FROM event_categories WHERE visible = 'ev'").map { |ec| ec["code"] }
+  end
+
+  def self.all_for_user()
+    return ActiveRecord::Base.connection.execute("SELECT code FROM event_categories WHERE visible = 'user'").map { |ec| ec["code"] }
+  end
+
+  def self.all_for_org()
+    return ActiveRecord::Base.connection.execute("SELECT code FROM event_categories WHERE visible = 'org'").map { |ec| ec["code"] }
+  end
+
+  def self.all_restrictible()
+    return ActiveRecord::Base.connection.execute("SELECT code FROM event_categories WHERE restrictions_electible = 't'").map { |ec| ec["code"] }
+  end
+
+  def self.all_mass_spec_electible()
+    return ActiveRecord::Base.connection.execute("SELECT code FROM event_categories WHERE mass_spec_electible = 't'").map { |ec| ec["code"] }
   end
 
   def visible_txt()

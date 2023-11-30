@@ -2,8 +2,6 @@ class EventInvitation < ActiveRecord::Base
   belongs_to :event
   belongs_to :scout
 
-  self.primary_keys = :event_id, :scout_id
-
   CHOSEN_OPTIONS = ["participant", "substitute", "none"]
   CHOSEN_OPTIONS_TXT = { "participant" => "Účastník", "substitute" => "Náhradník", "none" => "Nepozvaný" }
 

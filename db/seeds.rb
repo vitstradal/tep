@@ -32,7 +32,8 @@ if true
   ])
 
   event_categories = EventCategory.create([
-    { code: "we", name: "Pikostředa", idx: 0, multi_day: false, description: "Pravidlně od 19:00 na Karlíně", visible: "ev" }
+    { code: "we", name: "Pikostředa", idx: 0, multi_day: false, description: "Pravidlně od 19:00 na Karlíně", visible: "ev", restrictions_electible: false },
+    { code: "kl", name: "Kus ledu", idx: 100, multi_day: true, description: "Orgovské setkání pro konzultaci všeho možného", visible: "org", restrictions_electible: true }
   ])
 
   events = Event.create([
@@ -43,6 +44,6 @@ if true
     { event_id: 1, scout_id: 1, status: "yes", note: "Už se těším :)) " }           
   ])
 
-  pp  EventParticipant.all
+  pp EventParticipant.all
   pp EventParticipant.primary_key
 end
