@@ -57,12 +57,16 @@ Tep::Application.routes.draw do
 
   get   '/act/scouts'                                        => 'act/scouts#index',              :as => :act_scouts
   get   '/act/scouts/new'                                    => 'act/scouts#new',                :as => :act_scout_new
+  get   '/act/scouts/new_complet'                            => 'act/scouts#new_complet',        :as => :act_scout_new_complet
   post  '/act/scouts'                                        => 'act/scouts#create'
+  post  '/act/scouts/create_complet'                         => 'act/scouts#create_complet',     :as => :act_scout_create_complet
   get   '/act/scouts/:scout_id'                              => 'act/scouts#show',               :as => :act_scout
   get   '/act/scouts/:scout_id/edit'                         => 'act/scouts#edit',               :as => :act_scout_edit
   patch '/act/scouts/:scout_id'                              => 'act/scouts#update',             :as => :act_scout_update
   post  '/act/scouts/:scout_id/confirm_delete'               => 'act/scouts#confirm_delete',     :as => :act_scout_confirm_delete
   post  '/act/scouts/:scout_id/delete'                       => 'act/scouts#delete',             :as => :act_scout_delete
+  get   '/act/scout/tnx'                                     => 'act/scouts#create_tnx',       :as => :act_scout_create_tnx
+
 
   # events:
   get   '/act/event_categories'                              => 'act/event_categories#index',    :as => :act_event_categories
@@ -83,12 +87,12 @@ Tep::Application.routes.draw do
   get '/act/events/:event_id/edit'                           => 'act/events#edit',               :as => :act_event_edit
   post '/act/events/:event_id/delete'                        => 'act/events#delete',             :as => :act_event_delete
   post '/act/events/:event_id/enroll'                        => 'act/events#enroll',             :as => :act_event_enroll
-  post '/act/events/:event_id/enroll_other'                  => 'act/event_participants#enroll_other',       :as => :act_event_enroll_other
+  post '/act/events/:event_id/enroll_other'                  => 'act/event_participants#enroll_other', :as => :act_event_enroll_other
   get '/act/events/:event_id/edit_participants'              => 'act/events#edit_participants',  :as => :act_event_edit_participants
   get '/act/events/:event_id/edit_invitations'               => 'act/events#edit_invitations',   :as => :act_event_edit_invitations
   get '/act/events/:event_id/edit_invitations/:chosen/:role' => 'act/events#edit_invitations',   :as => :act_event_filter_invitations
   get '/act/events/:event_id/enroll_others/(:status)/(:chosen)/(:role)' => 'act/events#enroll_others', :as => :act_event_enroll_others
-  post '/act/events/:event_id/participants/:scout_id/update'  => 'act/event_participants#update', :as => :act_event_update_participant
+  post '/act/events/:event_id/participants/:scout_id/update' => 'act/event_participants#update', :as => :act_event_update_participant
   post '/act/events/:event_id/participants/:scout_id/delete' => 'act/event_participants#delete', :as => :act_event_delete_participant
   post '/act/events/:event_id/participants/:scout_it/choose' => 'act/event_participants#choose', :as => :act_event_participant_choose
   get '/act/events/:event_id/display_scouts'                 => 'act/events#display_scouts',     :as => :act_event_display_scouts

@@ -2,10 +2,6 @@
 <%= button_tag "Zrušit", :href => act_scout_path(@scout), :class=>'btn', :ico =>'fa-reply' %>
 </h1>
 
-<% if (can? :edit_other, Act::Scout) || (@scout.is_me?(current_user)) %>
-  <%= render :partial => "form_edit", :locals => { :is_edit => true, :scout => @scout } %>
-<% else %>
-  Na editování účastnických účtů ostatních bohužel nemáš práva.
-<% end %>
+<%= render :partial => "form_edit", :locals => { :is_edit => true, :scout => @scout } %>
 
 <%= render partial: "button_delete", :locals => { :scout => @scout } %> 

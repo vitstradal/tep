@@ -15,6 +15,7 @@
     <th>Viditelnost</th>
     <th>Individuálne omezitelná</th>
     <th>Potenciálně mše</th>
+    <th>Default aktivovanosti uživatelského účtu</th>
     <th>Dodatečné informace</th>
   </tr>
 <% Act::EventCategory.find_each do |c| %>
@@ -32,6 +33,7 @@
     <th><%= c.visible_txt() %></th>
     <th><%= c.restrictions_electible_txt %></th>
     <th><%= c.mass_spec_electible_txt %></th>
+    <th><%= Act::Scout::OPTIONS_ACTIVATED_TXT[c.activation_needed_default] %></th>
     <th><%= c.description %></th>
   </tr>
 <% end %>

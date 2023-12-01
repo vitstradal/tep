@@ -1,30 +1,61 @@
 class Act::Scout < ActiveRecord::Base
   belongs_to :user
+  #validates_associated :user
+
   has_many :event_participants, dependent: :destroy
   has_many :event_invitations, dependent: :destroy
 
+  ACTIVATION_STATUS_FOR_FULL = "full"
+  ACTIVATION_STATUS_FOR_LIGHT = "light"
+  ACTIVATION_STATUS_FOR_DESACTIVATED = "desact"
+
+  OPTIONS_ACTIVATED = [ ACTIVATION_STATUS_FOR_FULL, ACTIVATION_STATUS_FOR_LIGHT, ACTIVATION_STATUS_FOR_DESACTIVATED ]
+
+  OPTIONS_ACTIVATED_TXT = { ACTIVATION_STATUS_FOR_FULL => "Všechny", ACTIVATION_STATUS_FOR_LIGHT => "Pouze pikostředy", ACTIVATION_STATUS_FOR_DESACTIVATED => "Zatím žádné" }
+
+  OPTIONS_ACTIVATED_PROMPT = [[ OPTIONS_ACTIVATED_TXT[ACTIVATION_STATUS_FOR_FULL], ACTIVATION_STATUS_FOR_FULL ], [ OPTIONS_ACTIVATED_TXT[ACTIVATION_STATUS_FOR_LIGHT], ACTIVATION_STATUS_FOR_LIGHT ]]
+
+
+  validates :activated, inclusion: { in: OPTIONS_ACTIVATED, message: "Účet musí být aktivován na specifické hodnoty" }
   validates :name, presence: true
   validates :last_name, presence: true
-  validates :birth, presence: true
-  validates :nickname, uniqueness: { case_sensitive: false, message: "tuhle přezdívku už někdo má" }
-  validates :grade, presence: true, numericality: { only_integer: true, message: "musí být číslo" }
-  validates :address, presence: true
-  validates :email, presence: true
-  validates :parent_email, presence: true
-  validates :phone, presence: true
-  validates :parent_phone, presence: true
-  validates :birth_number, presence: true
-  validates :health_insurance, presence: true
-  validates :sex, presence: true
-  validates :activated, presence: true
 
-  validates_associated :user
+  validates :nickname, uniqueness: { case_sensitive: false, message: "tuhle přezdívku už někdo má" }
+
+  with_options if: :act_light? do 
+    validates :grade, presence: true, numericality: { only_integer: true, message: "musí být číslo" }
+    validates :email, presence: true
+    validates :phone, presence: true
+    validates :parent_email, presence: true
+    validates :parent_phone, presence: true
+  end
+  
+  with_options if: :act_full? do
+    validates :birth, presence: true
+    validates :address, presence: true
+    validates :birth_number, presence: true
+    validates :health_insurance, presence: true
+    validates :sex, presence: true
+  end
 
   GRADES = ["6", "7", "8", "9"]
   GRADES_TXT = { "4" => "čtvrtá", "5" => "pátá", "6" => "prima", "7" => "sekunda", "8" => "tercie", "9" => "kvarta", "10" => "kvinta"}
 
   YOUNGEST_TO_FILTER = 6
   OLDEST_TO_FILTER = 9
+
+  def act_full?()
+    pp activated
+    return activated == ACTIVATION_STATUS_FOR_FULL
+  end
+
+  def act_light?()
+    return activated == ACTIVATION_STATUS_FOR_LIGHT || activated == ACTIVATION_STATUS_FOR_FULL
+  end
+
+  def act_no?()
+    return activated == ACTIVATION_STATUS_FOR_DESACTIVATED
+  end
 
   def self.scouts?(user)
     return !user.nil? && !user.scout.nil?

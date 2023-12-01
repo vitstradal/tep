@@ -14,14 +14,15 @@
 ActiveRecord::Schema.define(version: 24) do
 
   create_table "act_event_categories", id: false, force: :cascade do |t|
-    t.string   "code",                   limit: 2
+    t.string   "code",                      limit: 2
     t.string   "name"
-    t.integer  "idx",                              default: 0
-    t.boolean  "multi_day",                        default: true
-    t.text     "description",                      default: ""
-    t.string   "visible",                          default: "ev"
-    t.boolean  "restrictions_electible",           default: true
-    t.boolean  "mass_spec_electible",              default: true
+    t.integer  "idx",                                 default: 0
+    t.boolean  "multi_day",                           default: true
+    t.text     "description",                         default: ""
+    t.string   "visible",                             default: "ev"
+    t.boolean  "restrictions_electible",              default: true
+    t.boolean  "mass_spec_electible",                 default: true
+    t.string   "activation_needed_default",           default: "full"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
@@ -75,6 +76,7 @@ ActiveRecord::Schema.define(version: 24) do
     t.boolean  "enable_only_specific_organisers",   default: false
     t.boolean  "uninvited_participants_dont_see",   default: false
     t.boolean  "uninvited_organisers_dont_see",     default: false
+    t.string   "activation_needed",                 default: "full"
     t.boolean  "limit_maybe",                       default: false
     t.date     "maybe_deadline"
     t.datetime "created_at"
@@ -98,7 +100,7 @@ ActiveRecord::Schema.define(version: 24) do
     t.text     "health_problems",  default: ""
     t.text     "birth_number"
     t.string   "health_insurance"
-    t.boolean  "activated",        default: true
+    t.string   "activated",        default: "full"
     t.datetime "created_at"
     t.datetime "updated_at"
   end

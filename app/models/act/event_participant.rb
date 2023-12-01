@@ -52,11 +52,11 @@ class Act::EventParticipant < ActiveRecord::Base
   end
 
   def male?
-    scout.male?
+    ! scout.nil? || scout.male?
   end
 
   def org?
-    scout.org?
+    ! scout.nil? && scout.org?
   end
 
   def self.role_txt(event, scout)

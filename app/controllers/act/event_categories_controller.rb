@@ -78,7 +78,7 @@ class Act::EventCategoriesController < ActController
     end
 
     if @event_category.update(event_category_params)
-      redirect_to event_categories_path
+      redirect_to act_event_categories_path
     else
       render :edit, status: :unprocessable_entity
     end
@@ -99,7 +99,7 @@ class Act::EventCategoriesController < ActController
 
     @event_category.destroy
 
-    redirect_to event_categories_path
+    redirect_to act_event_categories_path
   end
 
   private

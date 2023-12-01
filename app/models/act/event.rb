@@ -61,6 +61,7 @@ class Act::Event < ActiveRecord::Base
   belongs_to :event_type
 
   validates :title, presence: true
+  validates :activation_needed, inclusion: { in: Act::Scout::OPTIONS_ACTIVATED, message: "Účet musí být aktivován na specifické hodnoty" }
   validates_with Act::StartBeforeEndValidator
   validates_with Act::LimitNumParticipantsValidator
   validates_with Act::PlaceValidator
@@ -121,6 +122,10 @@ class Act::Event < ActiveRecord::Base
 
   def open_for_everyone?()
     return !limit_num_participants && !enable_only_specific_participants && !enable_only_specific_organisers
+  end
+
+  def fulfils_activation?(scout)
+    return (activation_needed == Act::Scout::ACTIVATION_STATUS_FOR_FULL && scout.act_full?) || (activation_needed == Act::Scout::ACTIVATION_STATUS_FOR_LIGHT && scout.act_light?)
   end
 
   def can_substitute?(scout)

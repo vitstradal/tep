@@ -3,7 +3,7 @@
 <% if can? :show_other, Act::Scout %>
   <%= button_tag "Zrušit", :href => act_scouts_path, :class=>'btn', :ico =>'fa-reply' %>
 <% else %>
-  <%= button_tag "Zrušit", :href => act_root_path, :class=>'btn', :ico =>'fa-reply' %>
+  <%= button_tag "Zrušit", :href => root_path, :class=>'btn', :ico =>'fa-reply' %>
 <% end %>
 
 <%= render :partial => "form_edit", :locals => { :is_edit => false, :scout => @scout } %>

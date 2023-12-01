@@ -15,7 +15,7 @@
   <%= button_tag "Vytvořit novou akci", :href => act_event_new_path, :class => 'btn btn-primary', :ico => "fa-edit" %>
 <% end %>
 <% if can? :read, Act::EventCategory %>
-  <%= button_tag "Typy akcí", :href => act_event_categories_path, :class => 'btn btn-primary', :ico => "fa-edit" %>
+  <%= button_tag "Typy akcí", :href => act_event_categories_path, :class => 'btn btn-primary', :ico => "fa-flask" %>
 <% end %>
 
 <%= render :partial => "form_filter" %>

@@ -37,9 +37,9 @@
            <td> <%= scout.last_name %> </td>
            <td> <%= scout.nickname %> </td>
            <td> <%= Act::EventInvitation::chosen_txt(@event, scout) %> </td>
-           <td style="border-right-style: hidden; text-align: center"> <%= render :partial => "form_invite", locals: { event: @event, scout: scout, chosen: "participant", text: "Pozvat", filter_chosen: @chosen, filter_role: @role } %> </td>
-           <td style="border-right-style: hidden; text-align: center"> <%= render :partial => "form_invite", locals: { event: @event, scout: scout, chosen: "substitute", text: "Náhradník", filter_chosen: @chosen, filter_role: @role } %> </td>
-           <td style="text-align: center"> <%= render :partial => "form_invite", locals: { event: @event, scout: scout, chosen: "none", text: "Zavrhnout", filter_chosen: @chosen, filter_role: @role } %> </td>
+           <td style="border-right-style: hidden; text-align: center"> <%= render :partial => "form_invite", locals: { event: @event, scout: scout, chosen: "participant", text: "Pozvat", filter_chosen: @chosen, filter_role: @role, btn_class: "btn btn-success" } %> </td>
+           <td style="border-right-style: hidden; text-align: center"> <%= render :partial => "form_invite", locals: { event: @event, scout: scout, chosen: "substitute", text: "Náhradník", filter_chosen: @chosen, filter_role: @role, btn_class: "btn btn-warning" } %> </td>
+           <td style="text-align: center"> <%= render :partial => "form_invite", locals: { event: @event, scout: scout, chosen: "none", text: "Zavrhnout", filter_chosen: @chosen, filter_role: @role, btn_class: "btn btn-danger" } %> </td>
         </tr>
         <% end %>
         </table>

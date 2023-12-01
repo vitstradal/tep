@@ -1,20 +1,31 @@
 <% if is_edit %>
   <% url = act_scout_path(scout) %>
   <% method = :patch %>
-<% else %>
+<% elsif !@new_complet %>
   <% url = act_scouts_path %>
+  <% method = :post %>
+<% else %>
+  <% url = act_scout_create_complet_path %>
   <% method = :post %>
 <% end %>
 
-<%= form_for :scout, :url => url, :method => method, :html => {:class=>'form-horizontal'} do |f| %>
+<%= form_for :scout, :url => url, :method => method, :html => {:class=>'form-horizontal', id: 'scout_form'} do |f| %>
   <div class="<%= form_error_class scout, :name, :last_name%>">
 
   <%= f.hidden_field :user_id %>
 
   <div class="form-group">
+    <%= f.label :activated, "O které akce mám zájem ", :class => 'col-sm-3 control-label no-padding-right' %>
+    <div class="col-sm-9 <%= form_error_class scout, :activated %>">
+      <%= f.select :activated, Act::Scout::OPTIONS_ACTIVATED_PROMPT, selected: scout.activated %>
+      <%= form_error scout, :activated %>
+    </div>
+  </div> 
+
+  <div class="form-group">
     <%= f.label :name, "Jméno", :class => 'col-sm-3 control-label no-padding-right' %>
     <div class="col-sm-9 <%= form_error_class scout, :name %>">
-      <%= f.text_field :name, readonly: ! current_user.org?, value: scout.name %>
+      <%= f.text_field :name, readonly: ! current_user.nil? && ! current_user.org?, value: scout.name %>
       <%= form_error scout, :name %>
     </div>
   </div>    
@@ -22,7 +33,7 @@
   <div class="form-group">
     <%= f.label :last_name, "Příjmení", :class => 'col-sm-3 control-label no-padding-right' %>
     <div class="col-sm-9 <%= form_error_class scout, :last_name %>">
-      <%= f.text_field :last_name, readonly: ! current_user.org?, value: scout.last_name %>
+      <%= f.text_field :last_name, readonly: ! current_user.nil? && ! current_user.org?, value: scout.last_name %>
       <%= form_error scout, :last_name %>
     </div>
   </div>
@@ -30,7 +41,7 @@
   <div class="form-group">
     <%= f.label :nickname, "Přezdívka (pod jakým jménem tě uvidí ostatní)", :class => 'col-sm-3 control-label no-padding-right' %>
     <div class="col-sm-9 <%= form_error_class scout, :nickname %>">
-      <%= f.text_field :nickname, value: scout.nickname %>
+      <%= f.text_field :nickname, value: scout.nickname, class: "act-scout-ev", placeholder: "Např. \"Krtek\"" %>
       <%= form_error scout, :nickname %>
     </div>
   </div>
@@ -49,11 +60,10 @@
       <% if scout.birth.nil? %>
         <%= f.date_field :birth %>
       <% else %>
-        <%= f.date_field :birth, readonly: ! current_user.org?, value: scout.birth.strftime('%Y-%m-%d') %>
+        <%= f.date_field :birth, readonly: ! current_user.nil? && ! current_user.org?, value: scout.birth.strftime('%Y-%m-%d') %>
       <% end %>
       <%= form_error scout, :birth %>
     </div>
-
   </div>
 
   <div class="form-group">
@@ -78,7 +88,6 @@
       <%= f.text_field :email, value: scout.email %>
       <%= form_error scout, :email %>
     </div>
-
   </div>
 
   <div class="form-group">
@@ -87,7 +96,6 @@
       <%= f.text_field :parent_email, value: scout.parent_email %>
       <%= form_error scout, :parent_email %>
     </div>
-
   </div>
 
   <div class="form-group">
@@ -96,7 +104,6 @@
       <%= f.text_field :phone, value: scout.phone %>
       <%= form_error scout, :phone %>
     </div>
-
   </div>
 
   <div class="form-group">
@@ -105,7 +112,6 @@
       <%= f.text_field :parent_phone, value: scout.parent_phone %>
       <%= form_error scout, :parent_phone %>
     </div>
-
   </div>
 
   <div class="form-group">
@@ -114,7 +120,6 @@
       <%= f.text_area :eating_habits, value: scout.eating_habits %>
       <%= form_error scout, :eating_habits %>
     </div>
-
   </div>
 
   <div class="form-group">
@@ -123,7 +128,6 @@
       <%= f.text_area :health_problems, value: scout.health_problems %>
       <%= form_error scout, :health_problems %>
     </div>
-
   </div>
 
   <div class="form-group">
@@ -132,7 +136,6 @@
       <%= f.text_field :birth_number, value: scout.birth_number %>
       <%= form_error scout, :birth_number %>
     </div>
-
   </div>
 
   <div class="form-group">
@@ -142,8 +145,6 @@
       <%= form_error scout, :health_insurance %>
     </div>
   </div>
-
-  <%= f.hidden_field :activated, :value => true %>
 
   <% if !is_edit %>
     <div class="form-group">

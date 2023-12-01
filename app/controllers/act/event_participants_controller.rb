@@ -46,9 +46,9 @@ class Act::EventParticipantsController < ActController
 
     @participant.update_chosen()
     if @participant.update(participant_params)
-      redirect_to edit_event_participants_path(params[:event_id])
+      redirect_to act_event_edit_participants_path(params[:event_id])
     else
-      render edit_event_participants_path(params[:event_id]), status: :unprocessable_entity
+      render act_event_edit_participants_path(params[:event_id]), status: :unprocessable_entity
     end
   end
 
@@ -62,7 +62,7 @@ class Act::EventParticipantsController < ActController
 
     @participant.destroy
 
-    redirect_to edit_event_participants_path(params[:event_id])
+    redirect_to act_event_edit_participants_path(params[:event_id])
   end
 
   def choose
@@ -71,12 +71,9 @@ class Act::EventParticipantsController < ActController
       render :not_allowed, locals: { desired: "upravovati " }
       return
     end
-    pp @participant
     @participant.chosen = params[:chosen]
     @participant.save
-    pp @participant
-
-    redirect_to edit_event_participants_path(params[:event_id])
+    redirect_to act_event_edit_participants(params[:event_id])
   end
 
   private

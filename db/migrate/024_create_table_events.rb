@@ -17,7 +17,7 @@ class CreateTableEvents < ActiveRecord::Migration
       t.text :health_problems, :default => ""
       t.text :birth_number
       t.string :health_insurance
-      t.boolean :activated, :default => true
+      t.string :activated, :default => "full"
       t.timestamps
     end
 
@@ -31,6 +31,7 @@ class CreateTableEvents < ActiveRecord::Migration
       t.string :visible, :default => "ev"
       t.boolean :restrictions_electible, :default => true
       t.boolean :mass_spec_electible, :default => true
+      t.string :activation_needed_default, :default => "full"
       t.timestamps
     end
 
@@ -56,6 +57,7 @@ class CreateTableEvents < ActiveRecord::Migration
       t.boolean :enable_only_specific_organisers, :default => false
       t.boolean :uninvited_participants_dont_see, :default => false
       t.boolean :uninvited_organisers_dont_see, :default => false
+      t.string :activation_needed, :default => "full"
       t.boolean :limit_maybe, :default => false
       t.date :maybe_deadline
       t.timestamps

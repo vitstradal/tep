@@ -1,11 +1,11 @@
-<p><%= link_to @event_participant.scout.scout_name, scout_url(@event_participant.scout) %>
+<p><%= link_to @event_participant.scout.scout_name, act_scout_url(@event_participant.scout) %>
 <% if @is_new %>
   Se přihlásil na 
 <% else %>
   Změnil svoji přihlášku na 
 <% end %>
 akci 
-<%= link_to @event.title, event_url(@event) %>.
+<%= link_to @event.title, act_event_url(@event) %>.
 </p>
 
 Aktuální stav přihlášky:

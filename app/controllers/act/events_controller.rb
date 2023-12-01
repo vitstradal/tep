@@ -193,7 +193,7 @@ class Act::EventsController < ActController
     return unless _find_event(params[:event_id])
     @event.destroy
 
-    redirect_to events_path
+    redirect_to act_events_path
   end
 
   def filter
@@ -208,7 +208,7 @@ class Act::EventsController < ActController
 
     return unless _find_event(params[:event_id])
 
-    @event_participants = Act::EventParticipant.find_by_sql(["SELECT * FROM event_participants WHERE event_id = ?", params[:event_id]])
+    @event_participants = Act::EventParticipant.find_by_sql(["SELECT * FROM act_event_participants WHERE event_id = ?", params[:event_id]])
     @filter_hashes = params[:filter_hashes].nil? ? Act::Scout::ATTR_BOOL_TABLE : params[:filter_hashes]
   end
 

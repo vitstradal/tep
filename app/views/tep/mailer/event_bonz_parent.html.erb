@@ -5,7 +5,7 @@ Dobrý den,
 <% else %>
   Vaše dcera
 <% end %>
-<%= link_to @event_participant.scout.scout_name, scout_url(@event_participant.scout) %>
+<%= link_to @event_participant.scout.scout_name, act_scout_url(@event_participant.scout) %>
 <% if @is_new %>
   <% if @event_participant.male?() %>
   se přihlásil na
@@ -20,7 +20,7 @@ Dobrý den,
   <% end %>
 <% end %>
 akci 
-<%= link_to @event.title, event_url(@event) %>.
+<%= link_to @event.title, act_event_url(@event) %>.
 </p>
 
 Aktuální stav přihlášky:
@@ -98,7 +98,7 @@ Tento email byl vygenerován automaticky, prosím neodpovídejte na něj. Pokud 
 <% else %>
   Vaší dcery
 <% end %>
-na akcích, změňte si je, prosím, na našich stránkách v nastavení <%= link_to scout_url(@event_participant), "účastnického profilu" %>.
+na akcích, změňte si je, prosím, na našich stránkách v nastavení <%= link_to act_scout_url(@event_participant), "účastnického profilu" %>.
 </p>
 
 <p>

@@ -77,7 +77,7 @@
         <%= render partial: "act/scouts/button_delete", locals: { scout: @user.scout } %>
       <% else %>
         <i> Tento uživatel účastnický účet nemá.</i><br>
-        <%= form_tag create_other_scout_path, method: :post do %>
+        <%= form_tag act_scout_create_other_path, method: :post do %>
           <%= hidden_field_tag :user_id, @user.id %>
           <%= hidden_field_tag :path, user_show_path(@user) %>
           <%= submit_tag "Založit účet" %>

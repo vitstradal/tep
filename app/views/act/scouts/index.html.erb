@@ -1,9 +1,9 @@
 <% if can? :new_year, Act::Scout %>
-  <%= link_to "Nový ročník", act_scouts_new_year_path, class: "btn btn-danger" %>
+  <%= button_tag "Nový ročník", :href => act_scouts_new_year_path, class: "btn btn-danger", ico: "fa-flash" %>
 <% end %>
 
 <% if can? :new_year, Act::Scout %>
-  <%= link_to "Předchozí ročník", act_scouts_previous_year_path, class: "btn btn-danger" %>
+  <%= button_tag "Předchozí ročník", :href => act_scouts_previous_year_path, class: "btn btn-danger", ico: "fa-flash" %>
 <% end %>
 
 
