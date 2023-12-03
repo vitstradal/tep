@@ -45,7 +45,6 @@ class Act::Scout < ActiveRecord::Base
   OLDEST_TO_FILTER = 9
 
   def act_full?()
-    pp activated
     return activated == ACTIVATION_STATUS_FOR_FULL
   end
 

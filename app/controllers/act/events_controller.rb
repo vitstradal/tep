@@ -246,7 +246,7 @@ class Act::EventsController < ActController
         person_txt = event_participant.male? ? "Účastníka" : "Účastnice"
       end
 
-      Tep::Mailer.event_bonz_org(bonz_email, 'PIKOMAT: ' + new_txt + person_txt + "na akci", event_participant, is_new).deliver_later
+      Act::Mailer.event_bonz_org(bonz_email, 'PIKOMAT: ' + new_txt + person_txt + "na akci", event_participant, is_new).deliver_later
     end
   end
 
@@ -255,7 +255,7 @@ class Act::EventsController < ActController
     if !bonz_email.nil? and bonz_email != ""
       new_txt = is_new ? "Přihlášení" : "Změna přihlášky"
       gender_txt = event_participant.male? ? "Vašeho syna" : "Vaší dcery"
-      Tep::Mailer.event_bonz_parent(bonz_email, 'PIKOMAT: ' + new_txt + gender_txt + "na akci", event_participant, is_new).deliver_later
+      Act::Mailer.event_bonz_parent(bonz_email, 'PIKOMAT: ' + new_txt + gender_txt + "na akci", event_participant, is_new).deliver_later
     end
   end
 

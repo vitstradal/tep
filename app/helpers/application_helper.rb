@@ -14,7 +14,7 @@ module ApplicationHelper
   # opt:: stejné jako `link_to` a navíc:
   #       ico:: class z font-awesome jaká icona se má použít (třeba `fa-user`).
   # block:: materiál textu linku
-  def ilink_to(text = nil , url = nil, opt = nil, &block)
+  def link_to(text = nil , url = nil, opt = nil, &block)
     url, opt, text = opt, text, capture(&block) if block_given?
     opt ||= {}
     ico = opt.delete(:ico)
