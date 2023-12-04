@@ -10,12 +10,12 @@
 <% end %>
 
 <%= form_for :scout, :url => url, :method => method, :html => {:class=>'form-horizontal', id: 'scout_form'} do |f| %>
-  <div class="<%= form_error_class scout, :name, :last_name%>">
+  <div class="<%= form_error_class scout, :name, :last_name %>">
 
-  <%= f.hidden_field :user_id %>
+  <%= f.hidden_field :user_id, value: scout.user_id %>
 
   <div class="form-group">
-    <%= f.label :activated, "O které akce mám zájem ", :class => 'col-sm-3 control-label no-padding-right' %>
+    <%= f.label :activated, 'O které akce mám zájem (Pokud zvolíš "pouze pikostředy", nemusíš vyplňovat některé osobní údaje)', :class => 'col-sm-3 control-label no-padding-right' %>
     <div class="col-sm-9 <%= form_error_class scout, :activated %>">
       <%= f.select :activated, Act::Scout::OPTIONS_ACTIVATED_PROMPT, selected: scout.activated %>
       <%= form_error scout, :activated %>
@@ -60,7 +60,7 @@
       <% if scout.birth.nil? %>
         <%= f.date_field :birth %>
       <% else %>
-        <%= f.date_field :birth, readonly: ! current_user.nil? && ! current_user.org?, value: scout.birth.strftime('%Y-%m-%d') %>
+        <%= f.date_field :birth, readonly: ! current_user.nil? && ! current_user.org?, value: f.object ? f.object.strftime("%d.%m.%Y") : nil %>
       <% end %>
       <%= form_error scout, :birth %>
     </div>

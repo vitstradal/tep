@@ -1,16 +1,21 @@
 <div class="table-div">
   <% events.each do |event| %>
-    <% if event.event_visible?(current_user)%>
+    <div class="act_events_leave_space">
+    <div class="act_events_bck_white">
+        <center>
+          <% if event.event_visible?(current_user)%>
       <b><%= event.title %> (<%= event.date_str() %>):</b>
         <% if event.event_info_url != "" %>
-          <a href="<%= event.event_info_url %>">info</a> <%= link_to "přihlašování", event %>
+          <%= button_tag "info", href: event.event_info_url, class: "btn btn-xs btn-primary" %> <%= button_tag "přihlašování", href: act_event_path(event), class: "btn btn-xs btn-purple" %>
       <% else %>
-        <%= link_to "info a přihlašování", event %>
+        <%= button_tag "info a přihlašování", href: act_event_path(event), class: "btn btn-xs btn-pink" %>
       <% end %>
       <% if event.event_photos_url != "" %>
-        <a href="<%= event.event_photos_url %>">fotky</a>
+        <%= button_tag "fotky", href: event.event_photos_url, class: "btn btn-xs btn-success" %>
       <% end %>
-      <br>
     <% end %>
+        </center>
+    </div>
+    </div>
   <% end %>
 </div>

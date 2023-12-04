@@ -1,6 +1,6 @@
 class Act::Scout < ActiveRecord::Base
   belongs_to :user
-  #validates_associated :user
+  validates_associated :user
 
   has_many :event_participants, dependent: :destroy
   has_many :event_invitations, dependent: :destroy
@@ -61,7 +61,7 @@ class Act::Scout < ActiveRecord::Base
   end
 
   def org?()
-    return user.org?
+    return ! user.nil? && user.org?
   end
 
   def self.scout_id(user)

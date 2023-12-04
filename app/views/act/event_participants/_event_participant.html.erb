@@ -1,7 +1,7 @@
 <p>
 <% if event_participant.scout.org? %>
   <b style="color:#196f3d;">
-<% elsif %>
+<% elsif event_participant.chosen == "substitute" %>
   <b style="color:#ba4a00;">
 <% else %>
   <b>
@@ -71,21 +71,26 @@
       <div style="margin-top:1mm;"></div>
     <% end %>
 
-    <% if can? :delete, Act::EventParticipant %>
-      <div class="col-sm-1", style="text-align:left">
+    <% if (can? :delete, Act::EventParticipant) || ((can? :update, Act::EventParticipant) && ! event_participant.event.open_for_everyone?) %>
+      <table>
+        <% if can? :delete, Act::EventParticipant %>
+      <tr>
       <%= form_tag act_event_delete_participant_path(event_participant.event_id, event_participant.scout_id) do %>
         <%= submit_tag  'Smazat', :class=>'btn btn-danger' %>
-      <% end %>
-      </div>
+      <% end %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </tr>
     <% end %>
     <% if (can? :update, Act::EventParticipant) && ! event_participant.event.open_for_everyone? %>
-      <div class="col-sm-2", style="text-align:right">
-        <%= render :partial => "form_choose_participant", locals: { event: event_participant.event, scout: event_participant.scout,  chosen: "participant", text: "Účastník" } %>
-      </div>
-      <div class="col-sm-2", style="text-align:left">
-        <%= render :partial => "form_choose_participant", locals: { event: event_participant.event, scout: event_participant.scout, chosen: "substitute", text: "Náhradník" } %>
-      </div>
+      <tr>
+        <%= render :partial => "form_choose_participant", locals: { event: event_participant.event, scout: event_participant.scout,  chosen: "participant", text: "Účastník", btn_class: "btn btn-success" } %>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </tr>
+      <tr>
+        <%= render :partial => "form_choose_participant", locals: { event: event_participant.event, scout: event_participant.scout, chosen: "substitute", text: "Náhradník", btn_class: "btn btn-warning" } %>
+      </tr>
     <% end %>
+      </table>
+  <% end %>
 
   <% else %>
     - 

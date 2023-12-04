@@ -3,13 +3,13 @@
 </h1>
 <div class="tabbable">
   <ul id="myTab" class="nav nav-tabs">
-     <li <%= class_active_if "ev" == @chosen %>> <%= link_to 'Všichni', act_event_filter_invitations_path(chosen: "ev", role: @role) %></li>
+     <li <%= class_active_if "ev" == @chosen %>> <%= link_to 'Všichni', act_event_edit_invitations_path(chosen: "ev", role: @role) %></li>
      <% Act::EventInvitation::CHOSEN_OPTIONS.each do |opt| %>
-       <li <%= class_active_if opt == @chosen %> ><%= link_to Act::EventInvitation::CHOSEN_OPTIONS_TXT[opt], act_event_filter_invitations_path(chosen: opt, role: @role) %></li>
+       <li <%= class_active_if opt == @chosen %> ><%= link_to Act::EventInvitation::CHOSEN_OPTIONS_TXT[opt], act_event_edit_invitations_path(chosen: opt, role: @role) %></li>
      <% end %>
      <% if current_user.admin? %>
-       <li <%= class_active_if "p" == @role %> style="margin-left:122mm"> <%= link_to 'Účastníci', act_event_filter_invitations_path(chosen: @chosen, role: "p") %></li>
-       <li <%= class_active_if "o" == @role %>> <%= link_to 'Orgové', act_event_filter_invitations_path(chosen: @chosen, role: "o") %></li>
+       <li <%= class_active_if "p" == @role %> style="margin-left:122mm"> <%= link_to 'Účastníci', act_event_edit_invitations_path(chosen: @chosen, role: "p") %></li>
+       <li <%= class_active_if "o" == @role %>> <%= link_to 'Orgové', act_event_edit_invitations_path(chosen: @chosen, role: "o") %></li>
 
      <% end %>
 

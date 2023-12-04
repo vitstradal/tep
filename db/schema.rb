@@ -35,8 +35,9 @@ ActiveRecord::Schema.define(version: 24) do
     t.string  "chosen",   default: "participant"
   end
 
-  add_index "act_event_invitations", ["event_id"], name: "index_act_event_invitations_on_event_id", unique: true
-  add_index "act_event_invitations", ["scout_id"], name: "index_act_event_invitations_on_scout_id", unique: true
+  add_index "act_event_invitations", ["event_id", "scout_id"], name: "index_act_event_invitations_on_event_id_and_scout_id", unique: true
+  add_index "act_event_invitations", ["event_id"], name: "index_act_event_invitations_on_event_id"
+  add_index "act_event_invitations", ["scout_id"], name: "index_act_event_invitations_on_scout_id"
 
   create_table "act_event_participants", force: :cascade do |t|
     t.integer  "event_id"
@@ -51,8 +52,9 @@ ActiveRecord::Schema.define(version: 24) do
     t.datetime "updated_at"
   end
 
-  add_index "act_event_participants", ["event_id"], name: "index_act_event_participants_on_event_id", unique: true
-  add_index "act_event_participants", ["scout_id"], name: "index_act_event_participants_on_scout_id", unique: true
+  add_index "act_event_participants", ["event_id", "scout_id"], name: "index_act_event_participants_on_event_id_and_scout_id", unique: true
+  add_index "act_event_participants", ["event_id"], name: "index_act_event_participants_on_event_id"
+  add_index "act_event_participants", ["scout_id"], name: "index_act_event_participants_on_scout_id"
 
   create_table "act_events", force: :cascade do |t|
     t.date     "event_start"

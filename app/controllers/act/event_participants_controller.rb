@@ -1,8 +1,8 @@
 class Act::EventParticipantsController < ActController
   def enroll_other
-    @participant = Act::EventParticipant.find_by(event_id: params[:event_id], scout_id: params[:scout_id])
+    participant = Act::EventParticipant.find_by(event_id: params[:event_id], scout_id: params[:scout_id])
 
-    if @participant.nil? && (! can? :create_other, Act::EventParticipant)
+    if participant.nil? && (! can? :create_other, Act::EventParticipant)
       render :not_allowed, locals: { desired: "vytvářeti " }
       return
     end
@@ -12,24 +12,28 @@ class Act::EventParticipantsController < ActController
       return
     end
 
-    if @participant.nil?
-      @participant = Act::EventParticipant.new(event_id: params[:event_id], scout_id: params[:scout_id], status: "yes", chosen: params[:chosen])
+    if participant.nil?
+      participant = Act::EventParticipant.new
+      participant.event_id = params[:event_id]
+      participant.scout_id = params[:scout_id]
+      participant.status = "yes"
+      participant.chosen = params["chosen"]
     elsif params[:delete] != "true"
-      if ! params[:chosen].nil? && params[:chosen] != @participant.chosen
-        @participant.chosen = params[:chosen]
-        @participant.save
+      if ! params[:chosen].nil? && params[:chosen] != participant.chosen
+        participant.chosen = params[:chosen]
+        participant.save
       end
       redirect_to params[:path]
       return
     end
 
     if params[:delete] == "true"
-      @participant.destroy
+      participant.destroy
       redirect_to params[:path]
       return
     end
 
-    if @participant.save
+    if participant.save
       redirect_to params[:path]
     else
       render params[:path], status: :unprocessable_entity
@@ -53,7 +57,7 @@ class Act::EventParticipantsController < ActController
   end
 
   def delete
-    @participant = Act::EventParticipant.find_by([params[:event_id], params[:scout_id]])
+    @participant = Act::EventParticipant.find_by(event_id: params[:event_id], scout_id: params[:scout_id])
 
     if (! can? :delete_other, Act::EventParticipant) && @participant.scout.user.id != current_user.id
       render :not_allowed, locals: { desired: "upravovati " }
@@ -66,14 +70,14 @@ class Act::EventParticipantsController < ActController
   end
 
   def choose
-    @participant = Act::EventParticipant.find_by([params[:event_id], params[:scout_id]])
+    @participant = Act::EventParticipant.find_by(event_id: params[:event_id], scout_id: params[:scout_id])
     if (! can? :update_other, Act::EventParticipant) && @participant.scout.user.id != current_user.id
       render :not_allowed, locals: { desired: "upravovati " }
       return
     end
     @participant.chosen = params[:chosen]
     @participant.save
-    redirect_to act_event_edit_participants(params[:event_id])
+    redirect_to act_event_edit_participants_path(params[:event_id])
   end
 
   private

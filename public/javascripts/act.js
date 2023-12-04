@@ -7,8 +7,8 @@ function getFnc_equalToBoolean(val) {
 }
 
 function setToDefault(str, base) {
-  form = document.forms[ base + '_form'];
-  element = form.elements[ base + '_' + str];
+  form = document.forms[ base + '_form' ];
+  element = form.elements[ base + '_' + str ];
   if (element && element.type == "checkbox") {
     element.checked = false;
   }
@@ -18,7 +18,7 @@ function enableConditioned(str, cond, base) {
   if (cond) {
     $('#' + str).show(400);
   } else {
-    $('#' + str).hide()
+    $('#' + str).hide();
     setToDefault(str, base);
   }
 }
@@ -37,10 +37,9 @@ function _executeIf(to_check, to_enable, test_fnc, act_fnc, base) {
     for(let idx in to_check) {
       condition |= test_fnc($('#' + to_check[idx]));
     }
-    console.log(to_check)
-    console.log(condition)
     for(let idx in to_enable) {
       act_fnc(to_enable[idx], condition, base);
+      $('#event_' + to_enable[idx]).change();
     }
   }
 }
@@ -80,20 +79,22 @@ jQuery(document).ready(function($) {
 		multi_day_categories = JSON.parse(document.getElementById("multi_day_categories").dataset.codes)
                 $('#event_start').hide()
                 $('#event_end').hide()
-                $('#event_date').hide()
                 if( multi_day_categories.includes(val) )  {
                   $('#event_start').show(400)
                   $('#event_end').show(400)
+                  document.getElementById('event_start_label').innerHTML = "Začátek akce"
                 }
                 else {
-                  $('#event_date').show(400)
+                  $('#event_start').show(400)
+		  document.getElementById('event_start_label').innerHTML = "Datum konání akce"
                 }
         });
 
+	if (JSON.parse(document.getElementById("act_scout_is_edit").dataset.value) == false) {
 	$('#event_event_category').change(function (){
                 var val = $(this).val()
                 full_act_categories = JSON.parse(document.getElementById("full_act_categories").dataset.codes)
-                form = document.forms[ 'event_form'];
+                form = document.forms[ 'event_form' ];
                 element = form.elements[ 'event_activation_needed' ];
                 if( full_act_categories.includes(val) )  {
                   element.value = "full";
@@ -102,10 +103,11 @@ jQuery(document).ready(function($) {
                   element.value = "light";
                 }
         });
+	}
 
         $('#event_event_category').change();
 
-	showIf('event_limit_num_participants', 'max_participants')
+	showIf('event_limit_num_participants', 'max_participants');
 
 	showIf(['event_enable_only_specific_participants', 'event_enable_only_specific_substitutes'], 'uninvited_participants_dont_see');
 
@@ -117,9 +119,9 @@ jQuery(document).ready(function($) {
 
         showIf('event_event_category', 'event_visible_restricted_div', false, JSON.parse(document.getElementById("visibility_info_categories").dataset.user));
 
-	showIf('event_event_category', ['limit_num_participants', 'max_participants', 'enable_only_specific_participants', 'enable_only_specific_substitutes', 'uninvited_participants_dont_see', 'enable_only_specific_organisers', 'uninvited_organisers_dont_see'], false, JSON.parse(document.getElementById("restrictions_electible_categories").dataset.codes));
+	showIf('event_event_category', ['max_participants', 'limit_num_participants', 'uninvited_participants_dont_see', 'enable_only_specific_participants', 'enable_only_specific_substitutes', 'uninvited_organisers_dont_see', 'enable_only_specific_organisers'], false, JSON.parse(document.getElementById("restrictions_electible_categories").dataset.codes));
 
-	showIf('event_event_category', 'spec_mass', JSON.parse(document.getElementById("mass_spec_electible_categories").dataset.codes));
+	showIf('event_event_category', 'spec_mass', false, JSON.parse(document.getElementById("mass_spec_electible_categories").dataset.codes));
 	}
 
 	if (!(document.forms['scout_form'] === undefined)) {

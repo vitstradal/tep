@@ -93,23 +93,27 @@ class Act::Event < ActiveRecord::Base
 
   def date_str()
     if event_start == event_end
-      event_start.strftime('%m/%d/%Y')
+      event_start.strftime('%d/%m/%Y')
     else
-      event_start.strftime('%m/%d/%Y') + " - " + event_end.strftime('%m/%d/%Y')
+      event_start.strftime('%d/%m/%Y') + " - " + event_end.strftime('%d/%m/%Y')
     end
   end
 
   def can_participate?(scout)
-    if scout.org?
-      return true
-    end
-
     participant = Act::EventParticipant::get_participant(scout, self)
     if ! participant.nil? && participant.chosen == "participant"
       return true
     end
+
+    if scout.org? && enable_only_specific_organisers? && ! Act::EventInvitation::chosen_p?(self, scout)
+      return false
+    end
+
+    if scout.org?
+      return true
+    end
     
-    if num_signed("yes", false, true, true) >= max_participants
+    if limit_num_participants && num_signed("yes", false, true, true) >= max_participants
       return false
     end
 
@@ -132,6 +136,14 @@ class Act::Event < ActiveRecord::Base
    participant = Act::EventParticipant::get_participant(scout, self)
 
    if ! participant.nil? && participant.chosen == "substitute"
+     return true
+   end
+
+   if scout.org? && enable_only_specific_organisers? && ! Act::EventInvitation::chosen_p?(self, scout)
+     return false
+   end
+
+   if scout.org?
      return true
    end
     

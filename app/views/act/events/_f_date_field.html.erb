@@ -1,5 +1,5 @@
 <div class="form-group", id=<%=name%>>
-  <%= f.label name, text, :class => 'col-sm-2 control-label no-padding-right'%>
+  <%= f.label name, text, :class => 'col-sm-2 control-label no-padding-right', id: name.to_s + "_label" %>
   <div class="col-sm-10 <%= form_error_class obj, name %>">
     <%= f.date_field name %>
    <%= form_error obj, name %>

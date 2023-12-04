@@ -26,24 +26,41 @@
       <% end %>
     </b>
   </tr>
-  <% @event_participants.each do |participant| %>
-    <% if participant.status == "yes" %>
-      <tr bgcolor = "#58d68d">
-    <% elsif participant.status == "maybe" %>
-      <tr bgcolor = "#f5b041">
-    <% elsif participant.status == "no" %>
-      <tr bgcolor = "#ec7063">
-    <% else %>
-      <tr>
-    <% end %>
 
-      <% for attr in Act::Scout::ATTR_TABLE do %>
-        <% if @filter_hashes.key?(attr[0].to_s) %>
-          <td>
-            <%= participant.scout.send(attr[0]) %>
-          </td>
+  <tr>
+    <% for attr in Act::Scout::ATTR_TABLE do %>
+      <% if @filter_hashes.key?(attr[0].to_s) %>
+        <td>Organizátoři</td>
       <% end %>
     <% end %>
-    </tr>
-  <% end %>
+  </tr>
+
+  <%= render :partial => "display_scouts_single_type", locals: { event_participants: @orgs_yes } %>
+  <%= render :partial => "display_scouts_single_type", locals: { event_participants: @orgs_maybe } %>
+  <%= render :partial => "display_scouts_single_type", locals: { event_participants: @orgs_no } %>
+  
+  <tr>
+    <% for attr in Act::Scout::ATTR_TABLE do %>
+      <% if @filter_hashes.key?(attr[0].to_s) %>
+        <td>Účastníci</td>
+      <% end %>
+    <% end %>
+  </tr>
+
+    <%= render :partial => "display_scouts_single_type", locals: { event_participants: @parts_yes } %>
+  <%= render :partial => "display_scouts_single_type", locals: { event_participants: @parts_maybe } %>
+  <%= render :partial => "display_scouts_single_type", locals: { event_participants: @parts_no } %>
+
+  <tr>
+    <% for attr in Act::Scout::ATTR_TABLE do %>
+      <% if @filter_hashes.key?(attr[0].to_s) %>
+        <td>Náhradníci</td>
+      <% end %>
+    <% end %>
+  </tr>
+
+    <%= render :partial => "display_scouts_single_type", locals: { event_participants: @substitutes_yes } %>
+  <%= render :partial => "display_scouts_single_type", locals: { event_participants: @substitutes_maybe } %>
+  <%= render :partial => "display_scouts_single_type", locals: { event_participants: @substitutes_no } %>
+
 </table>

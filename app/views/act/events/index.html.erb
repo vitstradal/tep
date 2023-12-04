@@ -1,8 +1,20 @@
-<h1>Zobrazování akcí</h1>
+<div class="act_events_background_imagex">
 
-<p>
+<center>
+<div class="act_events_bck_white">
+  <h1>Zobrazování akcí</h1>
+</div>
+
+  <div class="col-sm-1"></div>
+  <center>
+    <div class="col-sm-10">
+<p class="act_events_bck_white">
 Řešíš Pikomat a chtěl bys poznat ostatní řešitele? Máš pocit, že se ve třídě nemáš s kým bavit, a rád bys někam zapadl? Přijď na některé z našich setkání! Pravidelně pořádáme jednodenní i vícedenní akce, kterých se účastní jak naši nejlepší řešitelé, tak i ti, kteří s řešením zrovna začínají. Pikomat, to je kolektiv stmelený dohromady společnými prožitky a společenství plné přátelské atmosféry.
 </p>
+    </div>
+  </center>
+  <div class="col-sm-1"></div>
+  <br><br><br><br><br>
 
 <% unless Act::Scout::scouts?(current_user) %>
   <p>
@@ -27,4 +39,5 @@
 <h2>Již proběhlé akce</h2>
 
 <%= render :partial => "events_brief", locals: { events: @past_events } %>
-
+</div>
+</center>

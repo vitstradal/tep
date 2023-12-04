@@ -2,6 +2,6 @@
   <%= submit_tag text, class: "btn btn-disabled", ico: "fa-flash" %>
 <% else %>
   <%= form_tag act_event_participant_choose_path(event.id, scout.id, chosen: chosen), method: :post do %>
-    <%= submit_tag text, :class => 'btn btn-primary' %>
+    <%= submit_tag text, :class => btn_class %>
   <% end %>
 <% end %>

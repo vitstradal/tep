@@ -64,8 +64,8 @@ class CreateTableEvents < ActiveRecord::Migration
     end
       
     create_table :act_event_participants do |t|
-      t.integer :event_id, index: { unique: true }
-      t.integer :scout_id, index: { unique: true }
+      t.integer :event_id, index: true
+      t.integer :scout_id, index: true
       t.string :status, :default => "yes"
       t.string :note, :default => ""
       t.string :place, :default => ""
@@ -75,10 +75,14 @@ class CreateTableEvents < ActiveRecord::Migration
       t.timestamps
     end
 
+    add_index :act_event_participants, [:event_id, :scout_id], unique: true
+
     create_table :act_event_invitations do |t|
-      t.integer :event_id, index: { unique: true }
-      t.integer :scout_id, index: { unique: true }
+      t.integer :event_id, index: true
+      t.integer :scout_id, index: true
       t.string :chosen, :default => "participant"
     end
+
+    add_index :act_event_invitations, [:event_id, :scout_id], unique: true
   end
 end

@@ -36,7 +36,6 @@ Tep::Application.configure do
 
   config.eager_load = false
 
-
-  config.action_mailer.delivery_method = :sendmail
+  config.action_mailer.delivery_method = :sendmail  
 end
 

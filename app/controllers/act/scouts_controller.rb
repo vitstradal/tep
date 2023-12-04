@@ -163,7 +163,6 @@ class Act::ScoutsController < ActController
       render :not_found
       return
     end
-    @user_id = @scout.user_id
   end
 
   def update
@@ -179,8 +178,6 @@ class Act::ScoutsController < ActController
       render :not_found
       return
     end
-
-    @scout.activated = true
 
     if @scout.update(scout_params)
       redirect_to @scout
@@ -216,10 +213,6 @@ class Act::ScoutsController < ActController
     end
   end
 
-  def new_user
-    user =  Act::User.new(roles: [:user])
-  end
-
   def create_other
     if ! can? :create_other, Act::Scout
       @msg = "Na vytváření uživetských účtů ostatním uživatelům nemáš práva."
@@ -227,8 +220,8 @@ class Act::ScoutsController < ActController
       return
     end
 
-    user = Act::User.find_by(id: params[:user_id])
-    scout = Act::Scout.new(:user_id => user.id, :name => user.name, :last_name => user.last_name, :email => user.email, :activated => false)
+    user = User.find_by(id: params[:user_id])
+    scout = Act::Scout.new(:user_id => user.id, :name => user.name, :last_name => user.last_name, :email => user.email, :activated => "desact")
     scout.save(validate: false)
     redirect_to params[:path]
   end

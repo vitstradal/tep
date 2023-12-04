@@ -51,12 +51,13 @@ class Act::EventsController < ActController
     @num_p_yes = @event.num_signed("yes", false, true)
 
     @already_happened = @event.event_end < Date.current
+
+    _get_participants()
   end
 
   def enroll
-    @event_participant = Act::EventParticipant.find_by([params[:event_id], Act::Scout::scout_id(current_user)])
+    @event_participant = Act::EventParticipant.find_by(event_id: params[:event_id], scout_id: Act::Scout::scout_id(current_user))
     if @event_participant
-
       participant_copy = @event_participant.dup
       @event_participant.update_chosen()
 
@@ -124,6 +125,8 @@ class Act::EventsController < ActController
       render 'permission_denied', :locals => { :desired => "editovat ostatní účastníky na " }
       return
     end
+
+    _get_participants()
 
     @edit_participants = true
     render :show
@@ -208,7 +211,11 @@ class Act::EventsController < ActController
 
     return unless _find_event(params[:event_id])
 
-    @event_participants = Act::EventParticipant.find_by_sql(["SELECT * FROM act_event_participants WHERE event_id = ?", params[:event_id]])
+    _get_participants()
+
+    _filter_orgs()
+    _filter_parts()
+
     @filter_hashes = params[:filter_hashes].nil? ? Act::Scout::ATTR_BOOL_TABLE : params[:filter_hashes]
   end
 
@@ -218,7 +225,7 @@ class Act::EventsController < ActController
     end
 
     def participant_params
-      params.require(:event_participant).permit(:event_id, :scout_id, :status, :note, :place, :mass, :scout_info)
+      params.require(:event_participant).permit!#(:event_id, :scout_id, :status, :note, :place, :mass, :scout_info)
     end
 
     def _find_event(event_id)
@@ -257,6 +264,28 @@ class Act::EventsController < ActController
       gender_txt = event_participant.male? ? "Vašeho syna" : "Vaší dcery"
       Act::Mailer.event_bonz_parent(bonz_email, 'PIKOMAT: ' + new_txt + gender_txt + "na akci", event_participant, is_new).deliver_later
     end
+  end
+
+  def _get_participants()
+    @participants_yes = Act::EventParticipant.where(event_id: @event.id).where(status: "yes").where(chosen: "participant")
+    @participants_maybe = Act::EventParticipant.where(event_id: @event.id).where(status: "maybe").where(chosen: "participant")
+    @participants_no = Act::EventParticipant.where(event_id: @event.id).where(status: "no").where(chosen: "participant")
+
+    @substitutes_yes = Act::EventParticipant.where(event_id: @event.id).where(status: "yes").where(chosen: "substitute")
+    @substitutes_maybe = Act::EventParticipant.where(event_id: @event.id).where(status: "maybe").where(chosen: "substitute")
+    @substitutes_no = Act::EventParticipant.where(event_id: @event.id).where(status: "no").where(chosen: "substitute")
+  end
+
+  def _filter_orgs()
+    @orgs_yes = @participants_yes.select{ |p| p.scout.org? }
+    @orgs_maybe = @participants_maybe.select{ |p| p.scout.org? }
+    @orgs_no = @participants_no.select{ |p| p.scout.org? }
+  end
+
+  def _filter_parts()
+    @parts_yes = @participants_yes.select{ |p| ! p.scout.org? }
+    @parts_maybe = @participants_maybe.select{ |p| ! p.scout.org? }
+    @parts_no = @participants_no.select{ |p| ! p.scout.org? }
   end
 
 end

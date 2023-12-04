@@ -8,15 +8,15 @@ class Act::EventInvitationsController < ActController
     @invitation = Act::EventInvitation.find_by("event_id=? AND scout_id=?", params[:event_id], params[:scout_id])
 
     if @invitation.nil?
-      @invitation = Act::EventInvitation.create(invitation_params)
+      @invitation = Act::EventInvitation.new(invitation_params)
       if @invitation.save
-        redirect_to act_event_filter_invitations_path(id: params[:event_id], chosen: params[:filter_chosen], role: params[:filter_role])
+        redirect_to act_event_edit_invitations_path(event_id: params[:event_id], chosen: params[:filter_chosen], role: params[:filter_role])
       else
         render "act/events/edit_invitations", status: :unprocessable_entity
       end
     else
       if @invitation.update(invitation_params)
-        redirect_to act_event_filter_invitations_path(id: params[:event_id], chosen: params[:filter_chosen], role: params[:filter_role])
+        redirect_to act_event_edit_invitations_path(event_id: params[:event_id], chosen: params[:filter_chosen], role: params[:filter_role])
       else
         render "act/events/edit_invitations", status: :unprocessable_entity
       end
