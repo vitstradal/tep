@@ -11,6 +11,7 @@
   <title>Pikomat MFF UK</title>
   <meta name="description" content="Pikomat matematická korespondenční soutěž, matematické soustředění, matematické tábory." />
   <%= stylesheet_link_tag '/ace/css/bootstrap.min.css' %>
+  <%= stylesheet_link_tag '/ace/css/colorbox.css' %>
   <%= stylesheet_link_tag '/ace/css/bootstrap.min.css' %>
   <%= stylesheet_link_tag '/stylesheets/font-awesome.min.css' %>
   <%= stylesheet_link_tag '/ace/css/ace-fonts.css' %>
@@ -380,7 +381,6 @@
 
 <%#= javascript_include_tag '/ace/js/ace-extra.min.js' %>
 <%= javascript_include_tag '/ace/js/uncompressed/ace-extra.js' %>
-
 <%= javascript_include_tag '/ace/js/jquery.min.js' %>
 <%= javascript_include_tag '/ace/js/bootstrap.min.js' %>
 <%= javascript_include_tag '/ace/js/jquery-ui.custom.min.js' %>
@@ -397,13 +397,14 @@
 <%= javascript_include_tag '/ace-editor/ace.js' %>
 <%= javascript_include_tag '/ace/js/ace-elements.min.js' %>
 <%# javascript_include_tag '/ace/js/ace.min.js' %>
+<%= javascript_include_tag '/ace/js/jquery.colorbox-min.js' %>
 <% if @use_ckeditor %>
   <%= javascript_include_tag '/javascripts/ckeditor.js' %>
   <%= javascript_include_tag '/javascripts/html2tracwiki.js' %>
   <%= javascript_include_tag '/javascripts/diff.js' %>
 <% end %>
 <%= javascript_include_tag '/ace/js/uncompressed/ace.js' %>
-<%= javascript_include_tag '/javascripts/tep.js' %>
+<%= javascript_include_tag '/javascripts/tep.js?v=3' %>
 <% if @special_page %>
   <%= javascript_include_tag "/javascripts/special.js"  %>
 <% end %>

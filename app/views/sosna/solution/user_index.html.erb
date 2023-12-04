@@ -89,6 +89,8 @@
             <%= link_to sol.filename_corr_display, :action => :download_rev, :id => sol.id %>
           <% elsif sol.has_paper_mail %>
             <i class="fa fa-envelope blue"></i> <i>opravené řešení bylo zasláno poštou</i>
+          <% elsif sol.filename_orig %>
+            <i class="fa fa-ban red"></i> <i>řešení zatím není opravena</i>
           <% else %>
             <i class="fa fa-ban red"></i> <i>úlohu řešitel neřešil</i>
           <% end %>

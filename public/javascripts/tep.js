@@ -203,8 +203,104 @@ jQuery(document).ready(function($) {
 
       $('#klep-link').each(function() { update_klep_status() });
 
-});
+var colorbox_params = {
+              rel: 'colorbox',
+       reposition: true,
+      scalePhotos: true,
+        scrolling: false,
+         previous: '<i class="ace-icon fa fa-arrow-left"></i>',
+             next: '<i class="ace-icon fa fa-arrow-right"></i>',
+            close: '&times;',
+          current: '{current} of {total}',
+         maxWidth: '100%',
+        maxHeight: '100%',
+       onComplete: function(){
+         $.colorbox.resize();
+       }
+    }
 
+      /* colorbox */
+      $('[data-rel="colorbox"]').colorbox(colorbox_params);
+      $('#cboxLoadingGraphic').append("<i class='ace-icon fa fa-spinner orange'></i>");
+
+      $('#adventomat-modal').each(function() { init_adventomat() })
+}); //main
+     
+function init_adventomat() {
+      /* adventomat */
+      console.log("init_adventomat")
+      $('.adventomat-btn').click(function(ev) {
+           ev.preventDefault()
+
+           $('#adventomat-date').text($(this).data('date'))
+           $('input[name=date]').val($(this).data('date'))
+           $('#adventomat-text').text($(this).data('text'))
+           $('#adventomat-text').data('sol', $(this).data('sol'))
+
+           console.log("adventomat click", this)
+           $('#adventomat-modal').modal({keyboard: true, show: true})
+      });
+      $('.adventomat-cancel').click(function(ev) {
+          ev.stopPropagation()
+          ev.preventDefault()
+          $('#adventomat-modal').modal('hide')
+      })
+      $('.adventomat-submit').click(function(ev) {
+          ev.preventDefault()
+          ev.stopPropagation()
+          const date =  $('#adventomat-date').text()
+          const real_solution= $('#adventomat-text').data('sol') + ''
+          const her_solution= $('input[name="Tvoje řešení"]').val() + ''
+          console.log("sol", real_solution, her_solution )
+          const is_solved = real_solution.trim() == her_solution.trim()
+          const thanks =  is_solved ? 'To je správně.' : 'To je bohužel špatně.'
+          if( is_solved ) {
+              adventomat_set_solved(date)
+              adventomat_set_button_solved(date)
+          }
+          console.log("thanks", thanks)
+          $('input[name=tnx]').val(thanks)
+          $('#inform-form').each(function (ev) {
+              $(this).submit()
+          })
+      })
+      adventomat_get_solved().forEach( function (day, idx) {
+          adventomat_set_button_solved(day)
+      })
+}
+
+function uniq(arr) {
+    return arr.filter( function (value, index, a) {
+       return a.indexOf(value) === index;
+    });
+}
+
+function adventomat_set_solved(id) {
+        var values = adventomat_get_solved()
+        values.push(id)
+        console.log("solved+=", id, localStorage.getItem('adventomat'))
+        localStorage.setItem('adventomat', uniq(values).join('|'))
+}
+
+function adventomat_get_solved(id) {
+        var value = localStorage.getItem('adventomat')
+        if( value == null || value == '' ) {
+           return []
+        }
+        return value.split('|')
+}
+
+function adventomat_set_button_solved(id) {
+        $('button[data-date="'+id+'"]').each( function (idx, el) {
+           console.log("tracing", idx, $(this).data('date'))
+           if( $(this).data('date') == id ) {
+             $(this).addClass('btn-success')
+             $(this).removeClass('btn-warning')
+             $(this).find('i').removeClass('fa-question').addClass('fa-star')
+             console.log("setting solved", this)
+           }
+        })
+}
 
 function _show(el_selector, want_show) {
         
