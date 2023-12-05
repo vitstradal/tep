@@ -9,10 +9,10 @@
       <tr>
     <% end %>
 
-      <% for attr in Act::Scout::ATTR_TABLE do %>
+      <% for attr in Act::Participant::ATTR_TABLE do %>
         <% if @filter_hashes.key?(attr[0].to_s) %>
           <td>
-            <%= participant.scout.send(attr[0]) %>
+            <%= participant.participant.send(attr[0]) %>
           </td>
       <% end %>
     <% end %>

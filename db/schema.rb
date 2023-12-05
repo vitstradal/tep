@@ -31,30 +31,30 @@ ActiveRecord::Schema.define(version: 24) do
 
   create_table "act_event_invitations", force: :cascade do |t|
     t.integer "event_id"
-    t.integer "scout_id"
-    t.string  "chosen",   default: "participant"
+    t.integer "participant_id"
+    t.string  "chosen",         default: "participant"
   end
 
-  add_index "act_event_invitations", ["event_id", "scout_id"], name: "index_act_event_invitations_on_event_id_and_scout_id", unique: true
+  add_index "act_event_invitations", ["event_id", "participant_id"], name: "index_act_event_invitations_on_event_id_and_participant_id", unique: true
   add_index "act_event_invitations", ["event_id"], name: "index_act_event_invitations_on_event_id"
-  add_index "act_event_invitations", ["scout_id"], name: "index_act_event_invitations_on_scout_id"
+  add_index "act_event_invitations", ["participant_id"], name: "index_act_event_invitations_on_participant_id"
 
   create_table "act_event_participants", force: :cascade do |t|
     t.integer  "event_id"
-    t.integer  "scout_id"
-    t.string   "status",     default: "yes"
-    t.string   "note",       default: ""
-    t.string   "place",      default: ""
-    t.string   "scout_info", default: ""
-    t.boolean  "mass",       default: false
-    t.string   "chosen",     default: "none"
+    t.integer  "participant_id"
+    t.string   "status",           default: "yes"
+    t.string   "note",             default: ""
+    t.string   "place",            default: ""
+    t.string   "participant_info", default: ""
+    t.boolean  "mass",             default: false
+    t.string   "chosen",           default: "none"
     t.datetime "created_at"
     t.datetime "updated_at"
   end
 
-  add_index "act_event_participants", ["event_id", "scout_id"], name: "index_act_event_participants_on_event_id_and_scout_id", unique: true
+  add_index "act_event_participants", ["event_id", "participant_id"], name: "index_act_event_participants_on_event_id_and_participant_id", unique: true
   add_index "act_event_participants", ["event_id"], name: "index_act_event_participants_on_event_id"
-  add_index "act_event_participants", ["scout_id"], name: "index_act_event_participants_on_scout_id"
+  add_index "act_event_participants", ["participant_id"], name: "index_act_event_participants_on_participant_id"
 
   create_table "act_events", force: :cascade do |t|
     t.date     "event_start"
@@ -67,7 +67,7 @@ ActiveRecord::Schema.define(version: 24) do
     t.string   "visible",                           default: "ev"
     t.boolean  "spec_place",                        default: false
     t.string   "spec_place_detail",                 default: ""
-    t.boolean  "spec_scout",                        default: false
+    t.boolean  "spec_participant",                  default: false
     t.boolean  "spec_mass",                         default: false
     t.string   "bonz_org",                          default: ""
     t.boolean  "bonz_parent",                       default: false
@@ -85,7 +85,7 @@ ActiveRecord::Schema.define(version: 24) do
     t.datetime "updated_at"
   end
 
-  create_table "act_scouts", force: :cascade do |t|
+  create_table "act_participants", force: :cascade do |t|
     t.integer  "user_id"
     t.string   "name"
     t.string   "last_name"

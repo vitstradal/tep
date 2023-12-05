@@ -67,7 +67,7 @@ function showIf(to_check, to_enable, checked=true, val="", base="event") {
   executeIf(to_check, to_enable, checked=checked, val=val, enableConditioned, base);
 }
 
-function colorIf(to_check, to_enable, checked=true, val="", base="scout") {
+function colorIf(to_check, to_enable, checked=true, val="", base="participant") {
   executeIf(to_check, to_enable, checked=checked, val=val, colorConditioned, base);
 }
 
@@ -90,7 +90,7 @@ jQuery(document).ready(function($) {
                 }
         });
 
-	if (JSON.parse(document.getElementById("act_scout_is_edit").dataset.value) == false) {
+	if (JSON.parse(document.getElementById("act_participant_is_edit").dataset.value) == false) {
 	$('#event_event_category').change(function (){
                 var val = $(this).val()
                 full_act_categories = JSON.parse(document.getElementById("full_act_categories").dataset.codes)
@@ -124,7 +124,7 @@ jQuery(document).ready(function($) {
 	showIf('event_event_category', 'spec_mass', false, JSON.parse(document.getElementById("mass_spec_electible_categories").dataset.codes));
 	}
 
-	if (!(document.forms['scout_form'] === undefined)) {
-	colorIf('scout_activated', ['scout_sex', 'scout_birth', 'scout_address', 'scout_eating_habits', 'scout_health_problems', 'scout_birth_number', 'scout_health_insurance'], false, "full", "scout");
+	if (!(document.forms['participant_form'] === undefined)) {
+	colorIf('participant_activated', ['participant_sex', 'participant_birth', 'participant_address', 'participant_eating_habits', 'participant_health_problems', 'participant_birth_number', 'participant_health_insurance'], false, "full", "participant");
 	}
 });

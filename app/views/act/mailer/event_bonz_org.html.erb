@@ -1,4 +1,4 @@
-<p><%= link_to @event_participant.scout.scout_name, act_scout_url(@event_participant.scout) %>
+<p><%= link_to @event_participant.participant.participant_name, act_participant_url(@event_participant.participant) %>
 <% if @is_new %>
   Se přihlásil na 
 <% else %>
@@ -43,9 +43,9 @@ Aktuální stav přihlášky:
   <p>
 <% end %>
 
-<% if @event.spec_scout %>
+<% if @event.spec_participant %>
   <p>
-    <% if @event_participant.scout_info == "" %>
+    <% if @event_participant.participant_info == "" %>
       K 
       <% if @event_participant.male?() %>
         účastníkovi
@@ -60,7 +60,7 @@ Aktuální stav přihlášky:
       <% else %>
         účastnici
       <% end %>
-      : <%= @event_participant.scout_info %>
+      : <%= @event_participant.participant_info %>
     <% end %>
   </p>
 <% end %>

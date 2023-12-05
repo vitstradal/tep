@@ -1,4 +1,8 @@
 class Act::EventCategoriesController < ActController
+  ##
+  #   GET  /act/event_categories/index/
+  #
+  # Zobrazí všechny typy akcí
   def index
     if !(can? :read, Act::EventCategory)
       render 'not_allowed', locals: { :desired => "read" }
@@ -6,6 +10,14 @@ class Act::EventCategoriesController < ActController
     end
   end
 
+  ##
+  #  GET /act/event_categories/code
+  #
+  # Zobrazí daný typ akce
+  #
+  # *Params*
+  # code:: kód typu akce
+  #
   def show
     if !(can? :read, Act::EventCategory)
       render 'not_allowed', locals: { :desired => "read" }
@@ -20,6 +32,14 @@ class Act::EventCategoriesController < ActController
     end
   end
   
+  ##
+  #  GET /act/event_categories/new
+  #
+  # Formulář na nový typ akce
+  #
+  # *Provides*
+  # @event_category:: typ akce
+  #
   def new
     if !(can? :create, Act::EventCategory)
       render 'not_allowed', locals: { desired: "create" }
@@ -29,6 +49,15 @@ class Act::EventCategoriesController < ActController
     @event_category = Act::EventCategory.new
   end
 
+  ##
+  #  POST /act/event_categories/create
+  #
+  # Vytvoří nový typ akce
+  #
+  # *Params*
+  # event_category_params[]:: parametry upravované akce
+  #
+  # *Redirect* @event_category
   def create
     if !(can? :create, Act::EventCategory)
       render 'not_allowed', locals: { desired: "create" }
@@ -44,6 +73,17 @@ class Act::EventCategoriesController < ActController
     end
   end
 
+  ##
+  #  GET /act/event_categories/:participant_id/edit
+  #
+  # Formulář na úpravu typu akce
+  #
+  # *Params*
+  # code:: kód typu akce
+  #
+  # *Provides*
+  # @event_category:: typ akce
+  #
   def edit
     if !(can? :update, Act::EventCategory)
       render 'not_allowed', locals: { desired: "update" }
@@ -58,6 +98,15 @@ class Act::EventCategoriesController < ActController
     end
   end
 
+  ##
+  #  PATCH /act/event_categories/:participant_id/update
+  #
+  # Upraví typ akce
+  #
+  # *Params*
+  # event_category_params[]:: parametry upravované akce
+  #
+  # *Redirect* act_event_categories_path
   def update
     if !(can? :update, Act::EventCategory)
       render 'not_allowed', locals: { desired: "update" }
@@ -84,6 +133,15 @@ class Act::EventCategoriesController < ActController
     end
   end
 
+  ##
+  #  POST /act/event_categories/:participant_id/delete
+  #
+  # Smaže typ akce
+  #
+  # *Params*
+  # code:: kód typu akce
+  #
+  # *Redirect* act_event_categories_path
   def delete
     if !(can? :delete, Act::EventCategory)
       render 'not_allowed', locals: { desired: "delete" }

@@ -34,18 +34,18 @@
           <th>Role</th>
           <th style="text-align: center" colspan="3">Přihlaš jako</th>
         </tr>
-        <% @scouts.each do |scout|  %>
+        <% @participants.each do |participant|  %>
         <tr>
-           <td> <%= link_to scout.id, act_scout_path(scout.id) %> </td>
-           <td> <%= scout.name %> </td>
-           <td> <%= scout.last_name %> </td>
-           <td> <%= scout.nickname %> </td>
-           <td> <%= Act::EventParticipant::status_txt_long(@event, scout) %> </td>
-           <td> <%= Act::EventParticipant::chosen_txt(@event, scout) %> </td>
-           <td> <%= Act::EventParticipant::role_txt(@event, scout) %> </td>
-           <td style="border-right-style: hidden; text-align: center"> <%= render partial: "form_enroll_other", locals: { event: @event, scout: scout, chosen: "participant", delete: false, role: @role, text: "Přihlásit", status: @status, chosen_filter: @chosen, btn_class: "btn btn-success" } %> </td>
-           <td style="border-right-style: hidden; text-align: center"> <%= render partial: "form_enroll_other", locals: { event: @event, scout: scout, chosen: "substitute", delete: false, role: @role, text: "Náhradník", status: @status, chosen_filter: @chosen, btn_class: "btn btn-warning" } %> </td>
-           <td> <%= render partial: "form_enroll_other", locals: { event: @event, scout: scout, chosen: "none", delete: true, role: @role, text: "Smazat", status: @status, chosen_filter: @chosen, btn_class: "btn btn-danger" } %> </td>
+           <td> <%= link_to participant.id, act_participant_path(participant.id) %> </td>
+           <td> <%= participant.name %> </td>
+           <td> <%= participant.last_name %> </td>
+           <td> <%= participant.nickname %> </td>
+           <td> <%= Act::EventParticipant::status_txt_long(@event, participant) %> </td>
+           <td> <%= Act::EventParticipant::chosen_txt(@event, participant) %> </td>
+           <td> <%= Act::EventParticipant::role_txt(@event, participant) %> </td>
+           <td style="border-right-style: hidden; text-align: center"> <%= render partial: "form_enroll_other", locals: { event: @event, participant: participant, chosen: "participant", delete: false, role: @role, text: "Přihlásit", status: @status, chosen_filter: @chosen, btn_class: "btn btn-success" } %> </td>
+           <td style="border-right-style: hidden; text-align: center"> <%= render partial: "form_enroll_other", locals: { event: @event, participant: participant, chosen: "substitute", delete: false, role: @role, text: "Náhradník", status: @status, chosen_filter: @chosen, btn_class: "btn btn-warning" } %> </td>
+           <td> <%= render partial: "form_enroll_other", locals: { event: @event, participant: participant, chosen: "none", delete: true, role: @role, text: "Smazat", status: @status, chosen_filter: @chosen, btn_class: "btn btn-danger" } %> </td>
         </tr>
         <% end %>
         </table>

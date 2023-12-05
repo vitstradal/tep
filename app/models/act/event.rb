@@ -1,8 +1,33 @@
-##
-# Třída reprezentující tabulku přihlášených a popř. nějaké krátké info ohledně akce.
-#
-#
-require 'pp'
+  ##
+  # TAkce, na kterou se mohou (pokud to organizátoři povolí) přihlašovat účastníci
+  #
+  #  
+  # *Columns*
+  #    t.integer  "event_id",                            index: true
+  #    t.date     "event_start"
+  #    t.date     "event_end"
+  #    t.string   "title"
+  #    t.text     "body"
+  #    t.string   "event_category",                     :default => "ot"
+  #    t.string   "event_info_url",                     :default => ""
+  #    t.string   "event_photos_url",                   :default => ""
+  #    t.string   "visible",                            :default => "ev"
+  #    t.boolean  "spec_place",                         :default => false
+  #    t.string   "spec_place_detail",                  :default => ""
+  #    t.boolean  "spec_participant",                   :default => false
+  #    t.boolean  "spec_mass",                          :default => false
+  #    t.string   "bonz_org",                           :default => ""
+  #    t.boolean  "bonz_parent",                        :default => false
+  #    t.boolean  "limit_num_participants",             :default => false
+  #    t.integer  "max_participants",                   :default => 0
+  #    t.boolean  "enable_only_specific_participants",  :default => false
+  #    t.boolean  "enable_only_specific_substitutes",   :default => false
+  #    t.boolean  "enable_only_specific_organisers",    :default => false
+  #    t.boolean  "uninvited_participants_dont_see",    :default => false
+  #    t.boolean  "uninvited_organisers_dont_see",      :default => false
+  #    t.string   "activation_needed",                  :default => "full"
+  #    t.boolean  "limit_maybe",                        :default => false
+  #    t.date     "maybe_deadline"
 
 class Act::StartBeforeEndValidator < ActiveModel::Validator
   def validate(record)
@@ -61,7 +86,7 @@ class Act::Event < ActiveRecord::Base
   belongs_to :event_type
 
   validates :title, presence: true
-  validates :activation_needed, inclusion: { in: Act::Scout::OPTIONS_ACTIVATED, message: "Účet musí být aktivován na specifické hodnoty" }
+  validates :activation_needed, inclusion: { in: Act::Participant::OPTIONS_ACTIVATED, message: "Účet musí být aktivován na specifické hodnoty" }
   validates_with Act::StartBeforeEndValidator
   validates_with Act::LimitNumParticipantsValidator
   validates_with Act::PlaceValidator
@@ -84,7 +109,7 @@ class Act::Event < ActiveRecord::Base
 
     # helper method for deciding whether the target event should be visible for the current user
   def event_visible?(user)
-    if (! user.nil? && user.admin?) || ((visible == 'ev' || (!user.nil? && (user.org? || visible=='user'))) && (Act::EventInvitation::chosen_ps?(self, Act::Scout::get_scout(user)) || ((user.nil? || ! user.org?) && !uninvited_participants_dont_see) || (user.org? && !uninvited_organisers_dont_see)))
+    if (! user.nil? && user.admin?) || ((visible == 'ev' || (!user.nil? && (user.org? || visible=='user'))) && (Act::EventInvitation::chosen_ps?(self, Act::Participant::get_participant(user)) || ((user.nil? || ! user.org?) && !uninvited_participants_dont_see) || (user.org? && !uninvited_organisers_dont_see)))
       true
     else
       false
@@ -99,17 +124,17 @@ class Act::Event < ActiveRecord::Base
     end
   end
 
-  def can_participate?(scout)
-    participant = Act::EventParticipant::get_participant(scout, self)
-    if scout.admin? || participant.nil? && participant.chosen == "participant"
+  def can_participate?(participant)
+    event_participant = Act::EventParticipant::get_event_participant(participant, self)
+    if participant.admin? || ! event_participant.nil? && event_participant.chosen == "participant"
       return true
     end
 
-    if scout.org? && enable_only_specific_organisers? && ! Act::EventInvitation::chosen_p?(self, scout)
+    if participant.org? && enable_only_specific_organisers? && ! Act::EventInvitation::chosen_p?(self, participant)
       return false
     end
 
-    if scout.org?
+    if participant.org?
       return true
     end
     
@@ -117,7 +142,7 @@ class Act::Event < ActiveRecord::Base
       return false
     end
 
-    if !enable_only_specific_participants || Act::EventInvitation::chosen_p?(self, scout)
+    if !enable_only_specific_participants || Act::EventInvitation::chosen_p?(self, participant)
       return true
     end
 
@@ -128,26 +153,26 @@ class Act::Event < ActiveRecord::Base
     return !limit_num_participants && !enable_only_specific_participants && !enable_only_specific_organisers
   end
 
-  def fulfils_activation?(scout)
-    return (activation_needed == Act::Scout::ACTIVATION_STATUS_FOR_FULL && scout.act_full?) || (activation_needed == Act::Scout::ACTIVATION_STATUS_FOR_LIGHT && scout.act_light?)
+  def fulfils_activation?(participant)
+    return (activation_needed == Act::Participant::ACTIVATION_STATUS_FOR_FULL && participant.act_full?) || (activation_needed == Act::Participant::ACTIVATION_STATUS_FOR_LIGHT && participant.act_light?)
   end
 
-  def can_substitute?(scout)
-   participant = Act::EventParticipant::get_participant(scout, self)
+  def can_substitute?(participant)
+   event_participant = Act::EventParticipant::get_participant(participant, self)
 
-   if ! participant.nil? && participant.chosen == "substitute"
+   if ! event_participant.nil? && event_participant.chosen == "substitute"
      return true
    end
 
-   if scout.org? && enable_only_specific_organisers? && ! Act::EventInvitation::chosen_p?(self, scout)
+   if participant.org? && enable_only_specific_organisers? && ! Act::EventInvitation::chosen_p?(self, participant)
      return false
    end
 
-   if scout.org?
+   if participant.org?
      return true
    end
     
-   if !enable_only_specific_substitutes || Act::EventInvitation::chosen_ps?(self, scout)
+   if !enable_only_specific_substitutes || Act::EventInvitation::chosen_ps?(self, participant)
      return true
    end
 
@@ -171,10 +196,10 @@ class Act::Event < ActiveRecord::Base
     participants.length()
   end
 
-  def self.generate_sql(scout, event_category, enroll_status)
+  def self.generate_sql(participant, event_category, enroll_status)
     query_start = "SELECT e.* FROM act_events e "
 
-    common_enroll = "JOIN act_event_participants p ON (p.scout_id = ? AND p.event_id = e.id"
+    common_enroll = "JOIN act_event_participants p ON (p.participant_id = ? AND p.event_id = e.id"
 
     case enroll_status
     when "ev"
@@ -206,7 +231,7 @@ class Act::Event < ActiveRecord::Base
     args_common = []
 
     if enroll_status != "ev"
-      args_common.append(scout.id)
+      args_common.append(participant.id)
     end
 
     if not ["ev", "nvt"].member?(enroll_status)

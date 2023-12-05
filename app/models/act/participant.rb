@@ -1,4 +1,29 @@
-class Act::Scout < ActiveRecord::Base
+  ##
+  # Účastnický účet umožňující uživateli jezdit na akce. Může být buďto
+  # - neaktivován (activaed == "desact") ... pak uživatel nemůže jezdit nikam, (ale stále může být na nějakou akci pozván)
+  # - light (activated == "light") ... pak se může uživatel účastnit pouze některých akcí, typicky jednodenních
+  # - plně aktivován (activated == "full") .. pak se může uživatel účastnit všech standardních akcí
+  #
+  # *Columns*
+  #    t.belongs_to "user"
+  #    t.string     "name"
+  #    t.string     "last_name"
+  #    t.string     "nickname",         :default => ""
+  #    t.string     "sex,"              :default => "male"
+  #    t.datetime   "birth"
+  #    t.integer    "grade"
+  #    t.string     "address"
+  #    t.string     "email"
+  #    t.string     "parent_email"
+  #    t.string     "phone"
+  #    t.string     "parent_phone"
+  #    t.text       "eating_habits",    :default => ""
+  #    t.text       "health_problems",  :default => ""
+  #    t.text       "birth_number"
+  #    t.string     "health_insurance"
+  #    t.string     "activated",        :default => "full"           index: true
+  
+class Act::Participant < ActiveRecord::Base
   belongs_to :user
   validates_associated :user
 
@@ -56,8 +81,8 @@ class Act::Scout < ActiveRecord::Base
     return activated == ACTIVATION_STATUS_FOR_DESACTIVATED
   end
 
-  def self.scouts?(user)
-    return !user.nil? && !user.scout.nil?
+  def self.has_participant?(user)
+    return !user.nil? && !user.participant.nil?
   end
 
   def org?()
@@ -68,19 +93,19 @@ class Act::Scout < ActiveRecord::Base
     return ! user.nil? && user.admin?
   end
 
-  def self.scout_id(user)
-    if user.nil? || user.scout.nil?
+  def self.participant_id(user)
+    if user.nil? || user.participant.nil?
       return nil
     else
-      return user.scout.id
+      return user.participant.id
     end
   end
 
-  def self.get_scout_path(user)
-    if Act::Scout::scouts?(user)
-      return '/act/scouts/' + Act::Scout::scout_id(user).to_s
+  def self.get_participant_path(user)
+    if Act::Participant::has_participant?(user)
+      return act_participant_path(participant_id: user.participant.id)
     else
-      return '/act/scouts/new'
+      return act_participant_new_path
     end
   end
 
@@ -92,15 +117,15 @@ class Act::Scout < ActiveRecord::Base
     end
   end
 
-  def self.get_scout(user)
+  def self.get_participant(user)
     if user.nil?
       return nil
     else
-      return user.scout
+      return user.participant
     end
   end
 
-  def scout_name
+  def participant_name
     if not nickname == ""
       "#{nickname}"
     elsif !name.nil?  && !last_name.nil?
@@ -171,35 +196,35 @@ class Act::Scout < ActiveRecord::Base
   end
 
   def self.find_by_invitation(event, chosen, role)
-    query1 = "SELECT s.* FROM act_scouts s WHERE "
-    query2 = "EXISTS (SELECT si.* FROM act_event_invitations si WHERE si.scout_id = s.id AND si.event_id = ? AND (si.chosen = ?"
+    query1 = "SELECT s.* FROM act_participants s WHERE "
+    query2 = "EXISTS (SELECT si.* FROM act_event_invitations si WHERE si.participant_id = s.id AND si.event_id = ? AND (si.chosen = ?"
     case chosen
     when "participant"
-      scouts = Act::Scout.find_by_sql([query1 + query2 + "))", event.id, "participant"])
+      participants = Act::Participant.find_by_sql([query1 + query2 + "))", event.id, "participant"])
     when "substitute"
-      scouts = Act::Scout.find_by_sql([query1 + query2 + "))", event.id, "substitute"])
+      participants = Act::Participant.find_by_sql([query1 + query2 + "))", event.id, "substitute"])
     when "ev"
-      scouts = Act::Scout.find_each
+      participants = Act::Participant.find_each
     else
-      scouts = Act::Scout.find_by_sql([query1 + "NOT " + query2 + " OR si.chosen = ?))", event.id, "participant", "substitute"])
+      participants = Act::Participant.find_by_sql([query1 + "NOT " + query2 + " OR si.chosen = ?))", event.id, "participant", "substitute"])
     end
     if role == "p"
-      return scouts.select{|s| ! s.org? }
+      return participants.select{|s| ! s.org? }
     else
-      return scouts.select{|s| s.org? }
+      return participants.select{|s| s.org? }
     end
   end
 
   def self.find_by_participation(event, status, chosen, role)
-    query = "SELECT s.* FROM act_scouts s "
+    query = "SELECT s.* FROM act_participants s "
     args = []
 
     if status == "nvt"
-      "WHERE NOT EXISTS (SELECT ep.* FROM act_event_participants ep WHERE ep.event_id = ? AND ep.scout_id = s.id)"
+      "WHERE NOT EXISTS (SELECT ep.* FROM act_event_participants ep WHERE ep.event_id = ? AND ep.participant_id = s.id)"
       args << event.id
     else
       if status != "ev" || chosen != "ev"
-        query += "INNER JOIN act_event_participants ep ON ep.scout_id = s.id AND ep.event_id = ? WHERE "
+        query += "INNER JOIN act_event_participants ep ON ep.participant_id = s.id AND ep.event_id = ? WHERE "
         args << event.id
       end
 
@@ -216,15 +241,15 @@ class Act::Scout < ActiveRecord::Base
     
     args.unshift(query)
 
-    scouts = Act::Scout.find_by_sql(args)
+    participants = Act::Participant.find_by_sql(args)
 
     case role
     when 'p'
-      scouts = scouts.select{|s| ! s.org?}
+      participants = participants.select{|s| ! s.org?}
     when 'o'
-      scouts = scouts.select{|s| s.org?}
+      participants = participants.select{|s| s.org?}
     end
 
-    return scouts
+    return participants
   end
 end

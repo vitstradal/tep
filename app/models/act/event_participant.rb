@@ -1,9 +1,21 @@
+  ##
+  #   Třída sloužící k uchování záznmu o účasti člověka na akci spolu se všemi poznámkami, chce/nechce na mši apod.
+  #
+  # *Columns*
+  #    t.integer  "event_id",         index: true
+  #    t.integer  "participant_id",   index: true
+  #    t.string   "status",           :default => "yes"
+  #    t.string   "note",             :default => ""
+  #    t.string   "place",            :default => ""
+  #    t.string   "participant_info", :default => ""
+  #    t.boolean  "mass",             :default => false
+  #    t.string   "chosen",           :default => "none"
 class Act::EventParticipant < ActiveRecord::Base
   belongs_to :event
-  belongs_to :scout
+  belongs_to :participant
 
   validates_associated :event
-  validates_associated :scout
+  validates_associated :participant
 
   STATUSES_OPTIONS = ["yes", "maybe", "no"]
 
@@ -16,10 +28,8 @@ class Act::EventParticipant < ActiveRecord::Base
 
   validates :chosen, inclusion: { in: CHOSEN_OPTIONS, message: "Účastník musí být buťo pozvaný, nebo náhradník, anebo none" }
 
-  def get_user
-    User.find(user_id)
-  end
-
+  ##
+  # *Returns* čitelná hodnota stavu přihlášenosti
   def show_status
     case status
     when "yes"
@@ -33,8 +43,10 @@ class Act::EventParticipant < ActiveRecord::Base
     end
   end
 
-  def self.status_txt_long(event, scout)
-    participant = get_participant(event, scout)
+  ##
+  # *Returns* čitelná hodnota stavu přihlášenosti v delší podobě
+  def self.status_txt_long(event, participant)
+    participant = get_participant(event, participant)
     begin
       return STATUS_TXT_LONG[participant.status]
     rescue
@@ -42,8 +54,10 @@ class Act::EventParticipant < ActiveRecord::Base
     end
   end
 
-  def self.chosen_txt(event, scout)
-    participant = get_participant(event, scout)
+  ##
+  # *Returns* čitelná hodnota stavu účastník/náhradník
+  def self.chosen_txt(event, participant)
+    participant = get_participant(event, participant)
     begin
       return CHOSEN_OPTIONS_TXT[participant.chosen]
     rescue
@@ -52,41 +66,51 @@ class Act::EventParticipant < ActiveRecord::Base
   end
 
   def male?
-    ! scout.nil? || scout.male?
+    ! participant.nil? || participant.male?
   end
 
   def org?
-    ! scout.nil? && scout.org?
+    ! participant.nil? && participant.org?
   end
 
-  def self.role_txt(event, scout)
+  ##
+  # *Returns* čitelná hodnota stavu účastník/náhradník
+  def self.role_txt(event, participant)
     begin
-      return get_participant(event, scout).org? ? "Org" : "Účatník"
+      return get_participant(event, participant).org? ? "Org" : "Účatník"
     rescue
       return "Účastník"
     end
   end
 
-  def self.get_participant(event, scout)
-    return Act::EventParticipant.find_by(scout_id: scout.id, event_id: event.id)
+  ##
+  # *Returns* event_participant pro danou akci a daný účastnický účet
+  def self.get_event_participant(event, participant)
+    return Act::EventParticipant.find_by(participant_id: participant.id, event_id: event.id)
   end
 
-  def self.chosen(event, scout)
+  ##
+  # *Returns* stav účastník/náhradník/none
+  def self.chosen(event, participant)
     begin
-      get_participant(event, scout).chosen
+      get_participant(event, participant).chosen
     rescue
       return "none"
     end
   end
 
+  ##
+  # pokud není hodnota stavu účastník/náhradník/none rozumná, tak ji udělej rozumnou
   def update_chosen
     if status != "yes" and status != "maybe"
       chosen = "none"
     end
   end
 
+  ##
+  # *Returns* je třeba poslat mail?
   def self.mail_change?(old, new)
-    care_if_changed = [:status, :place, :scout_info, :mass, :chosen]
+    care_if_changed = [:status, :place, :participant_info, :mass, :chosen]
     care_if_changed.each do |attr|
       if old.send(attr) != new.send(attr)
         return true

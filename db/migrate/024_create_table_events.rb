@@ -1,6 +1,6 @@
 class CreateTableEvents < ActiveRecord::Migration
   def change
-    create_table :act_scouts do |t|
+    create_table :act_participants do |t|
       t.belongs_to :user
       t.string :name
       t.string :last_name
@@ -46,7 +46,7 @@ class CreateTableEvents < ActiveRecord::Migration
       t.string :visible, :default => "ev"
       t.boolean :spec_place, :default => false
       t.string :spec_place_detail, :default => ""
-      t.boolean :spec_scout, :default => false
+      t.boolean :spec_participant, :default => false
       t.boolean :spec_mass, :default => false
       t.string :bonz_org, :default => ""
       t.boolean :bonz_parent, :default => false
@@ -65,24 +65,24 @@ class CreateTableEvents < ActiveRecord::Migration
       
     create_table :act_event_participants do |t|
       t.integer :event_id, index: true
-      t.integer :scout_id, index: true
+      t.integer :participant_id, index: true
       t.string :status, :default => "yes"
       t.string :note, :default => ""
       t.string :place, :default => ""
-      t.string :scout_info, :default => ""
+      t.string :participant_info, :default => ""
       t.boolean :mass, :default => false
       t.string :chosen, :default => "none"
       t.timestamps
     end
 
-    add_index :act_event_participants, [:event_id, :scout_id], unique: true
+    add_index :act_event_participants, [:event_id, :participant_id], unique: true
 
     create_table :act_event_invitations do |t|
       t.integer :event_id, index: true
-      t.integer :scout_id, index: true
+      t.integer :participant_id, index: true
       t.string :chosen, :default => "participant"
     end
 
-    add_index :act_event_invitations, [:event_id, :scout_id], unique: true
+    add_index :act_event_invitations, [:event_id, :participant_id], unique: true
   end
 end

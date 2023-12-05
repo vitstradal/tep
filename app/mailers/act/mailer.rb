@@ -34,4 +34,16 @@ class Act::Mailer < Devise::Mailer
     @is_new = is_new
     mail(to: to, from: 'tep@pikomat.mff.cuni.cz', subject: subj)
   end
+
+  ##
+  # *Tempate* app/views/act/mailer/first_login_instructions.html.erb
+  #
+  # *Params*
+  # record::
+  # token:: token
+  # opts::
+  def first_login_instructions(record, token, opts={})
+    @token = token
+    devise_mail(record, :first_login_instructions)
+  end
 end

@@ -1,0 +1,65 @@
+<% if current_user.org? %>
+<p>
+<%= "ID: " + participant.id.to_s %>
+</p>
+<% end %>
+
+<p>
+<%= "Jméno: " + participant.name.to_s %>
+</p>
+
+<p>
+<%= "Příjmení: " + participant.last_name.to_s %>
+</p>
+
+<p>
+<%= "Přezdívka: " + participant.nickname.to_s %>
+</p>
+
+<p>
+<%= "Pohlaví: " + participant.sex_str() %>
+</p>
+
+<p>
+<%= "Datum narození: " + participant.birth_str() %>
+</p>
+
+<p>
+<%= "Ročník: " + participant.grade.to_s %>
+</p>
+
+<p>
+<%= "Adresa: " + participant.address.to_s %>
+</p>
+
+<p>
+<%= "Email: " + participant.email.to_s %>
+</p>
+
+<p>
+<%= "Email na zákonného zástupce: " + participant.parent_email.to_s %>
+</p>
+
+<p>
+<%= "Telefonní číslo: " + participant.phone.to_s %>
+</p>
+
+<p>
+<%= "Telefonní číslo na zákonného zástupce: " + participant.parent_phone.to_s %>
+</p>
+
+<p>
+<%= "Stravovací návyky: " + participant.eating_habits.to_s %>
+</p>
+
+<p>
+<%= "Zdravotní problémy: " + participant.health_problems.to_s %>
+</p>
+
+<p>
+<%= "Rodné číslo: " + participant.birth_number.to_s %>
+</p>
+
+<p>
+<%= "Zdravotní pojišťovna: " + participant.health_insurance.to_s %>
+</p>

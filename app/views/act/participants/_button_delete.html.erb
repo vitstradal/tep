@@ -1,10 +1,10 @@
 <div class="form-group">
   <div class="col-sm-offset-3 col-sm-9">
-    <% if (can? :delete_other, Act::Scout) || (scout.is_me?(current_user)) %>
-      <%= form_tag act_scout_confirm_delete_path(scout_id: scout.id) do %>
+    <% if (can? :delete_other, Act::Participant) || (participant.is_me?(current_user)) %>
+      <%= form_tag act_participant_confirm_delete_path(participant_id: participant.id) do %>
         <%= submit_tag  'Smazat účet', :class=>'btn btn-danger' %>
       <% end %>
-    <% elsif (can? :update_other, Act::Scout) %>
+    <% elsif (can? :update_other, Act::Participant) %>
       <%= submit_tag  'Smazat účastnický účet může pouze admin nebo vlastník účtu', :class=>'btn btn-disabled' %>
     <% end %>
   </div>

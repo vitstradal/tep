@@ -25,7 +25,7 @@
   
   <%= f.hidden_field :event_id, value: @event.id %>
 
-  <%= f.hidden_field :scout_id, value: Act::Scout::scout_id(current_user) %>
+  <%= f.hidden_field :participant_id, value: Act::Participant::participant_id(current_user) %>
 
   <%= f.hidden_field :chosen, value: chosen %>
 
@@ -46,13 +46,13 @@
     <%= f.hidden_field :place %>
   <% end %>
 
-  <% if @event.spec_scout %>
+  <% if @event.spec_participant %>
     <p>
-    <%= f.label :scout_info, "Na co chci u svého dítěte upozornit (neveřejné): " %><br>
-      <%= f.text_field :scout_info %>
+    <%= f.label :participant_info, "Na co chci u svého dítěte upozornit (neveřejné): " %><br>
+      <%= f.text_field :participant_info %>
     </p>
   <% else %>
-    <%= f.hidden_field :scout_info %>
+    <%= f.hidden_field :participant_info %>
   <% end %>
 
 
@@ -66,7 +66,7 @@
   <% end %>
 
 
-  <b>Zkontrolujte si, že všechny informace uvedené ve vašem <%= link_to "účastnickém profilu", act_scout_path(current_user.scout) %> jsou aktuální!</b>
+  <b>Zkontrolujte si, že všechny informace uvedené ve vašem <%= link_to "účastnickém profilu", act_participant_path(current_user.participant) %> jsou aktuální!</b>
 
   <p>
     <%= f.submit "Uložit přihlášku", :class => 'btn btn-primary' %>

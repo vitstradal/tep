@@ -1,7 +1,0 @@
-<h1>Editovat účastnický účet
-<%= button_tag "Zrušit", :href => act_scout_path(@scout), :class=>'btn', :ico =>'fa-reply' %>
-</h1>
-
-<%= render :partial => "form_edit", :locals => { :is_edit => true, :scout => @scout } %>
-
-<%= render partial: "button_delete", :locals => { :scout => @scout } %> 

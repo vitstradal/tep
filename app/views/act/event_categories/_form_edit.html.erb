@@ -76,7 +76,7 @@
   <div class="form-group">
     <%= f.label :activation_needed_default, "Default pole \"Jaký stupeň aktivace účastnického účtu je zapotřebí\"", :class => 'col-sm-4 control-label no-padding-right'%>
     <div class="col-sm-8 <%= form_error_class @event_category, :activation_needed_default %>">
-      <%= f.select :activation_needed_default, Act::Scout::OPTIONS_ACTIVATED_PROMPT %>
+      <%= f.select :activation_needed_default, Act::Participant::OPTIONS_ACTIVATED_PROMPT %>
       <%= form_error @event_category, :activation_needed_default %>
     </div>
   </div>

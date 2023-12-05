@@ -1,15 +1,15 @@
 <div class="col-sm-6">
   <center>
     <h2>Účastnický účet</h2>
-<% if (can? :edit_other, Act::Scout) || Act::Scout::scout_id(current_user) == @scout.id.to_i %>
-  <%= button_tag "Edituj účet", :href => act_scout_edit_path(@scout), :class=>'btn btn-primary', :ico => 'fa-edit' %>
+<% if (can? :edit_other, Act::Participant) || Act::Participant::participant_id(current_user) == @participant.id.to_i %>
+  <%= button_tag "Edituj účet", :href => act_participant_edit_path(@participant), :class=>'btn btn-primary', :ico => 'fa-edit' %>
 <% end %>
-<% if can? :show_other, Act::Scout %>
-  <%= button_tag "Zpět", :href => act_scouts_path, :class=>'btn', :ico =>'fa-reply' %>
+<% if can? :show_other, Act::Participant %>
+  <%= button_tag "Zpět", :href => act_participants_path, :class=>'btn', :ico =>'fa-reply' %>
 <% end %>
 <br><br>
 
-<%= render :partial => "info", locals: { scout: @scout } %>
+<%= render :partial => "info", locals: { participant: @participant } %>
 
   </center></div>
 

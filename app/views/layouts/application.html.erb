@@ -165,9 +165,9 @@
       <%= menu_li '/onas', 'Akce', ico: 'fa-bomb' do %>
         <ul class="submenu">
           <%= menu_lii act_events_path,                    'Přehled akcí' %>            
-          <%= menu_lii Act::Scout::get_scout_path(current_user), 'Můj účastnický účet' %>
-          <% if can? :read_other, Act::Scout %>
-            <%= menu_lii act_scouts_path, 'Přehled účastnických účtů' %>
+          <%= menu_lii act_participant_new_path, 'Můj účastnický účet' %>
+          <% if can? :read_other, Act::Participant %>
+            <%= menu_lii act_participants_path, 'Přehled účastnických účtů' %>
           <% end %>
           <% if can? :read, Act::EventCategory %>
             <%= menu_lii act_event_categories_path, 'Typy akcí' %>

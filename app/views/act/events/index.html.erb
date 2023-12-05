@@ -16,10 +16,10 @@
   <div class="col-sm-1"></div>
   <br><br><br><br><br>
 
-<% unless Act::Scout::scouts?(current_user) %>
+<% unless Act::Participant::has_participant?(current_user) %>
   <p>
   Abys ses mohl přihlásit na nějakou akci, musíš mít založený účastnický účet, a navíc ještě musíš být přihlášený/á. Účastnický účet si můžeš založit 
-  <%= link_to "zde", act_scout_new_path %>.
+  <%= link_to "zde", act_participant_new_path %>.
   </p>
 <% end %>
 

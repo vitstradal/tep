@@ -49,23 +49,23 @@ Tep::Application.routes.draw do
   #get  '/sosna/solution/:id/down(/:ori)'     => 'sosna/solution#download',      :as => :sosna_solution_download
   #get  '/sosna/solution/:id/down_rev(/:ori)'=> 'sosna/solution#download_rev', :as => :sosna_solution_download_rev
 
-  # scouts:
-  get   '/act/scouts/new_year'                               => 'act/scouts#new_year',           :as => :act_scouts_new_year
-  get   '/act/scouts/previous_year'                          => 'act/scouts#previous_year',      :as => :act_scouts_previous_year
-  post  '/act/scouts/create_other'                           => 'act/scouts#create_other',       :as => :act_scout_create_other
-  get   '/act/scouts/filter/:grade/:role'                    => 'act/scouts#index',              :as => :act_scout_filter
+  # participants:
+  get   '/act/participants/new_year'                               => 'act/participants#new_year',           :as => :act_participants_new_year
+  get   '/act/participants/previous_year'                          => 'act/participants#previous_year',      :as => :act_participants_previous_year
+  post  '/act/participants/create_other'                           => 'act/participants#create_other',       :as => :act_participant_create_other
+  get   '/act/participants/filter/:grade/:role'                    => 'act/participants#index',              :as => :act_participant_filter
 
-  get   '/act/scouts'                                        => 'act/scouts#index',              :as => :act_scouts
-  get   '/act/scouts/new'                                    => 'act/scouts#new',                :as => :act_scout_new
-  get   '/act/scouts/new_complet'                            => 'act/scouts#new_complet',        :as => :act_scout_new_complet
-  post  '/act/scouts'                                        => 'act/scouts#create'
-  post  '/act/scouts/create_complet'                         => 'act/scouts#create_complet',     :as => :act_scout_create_complet
-  get   '/act/scouts/:scout_id'                              => 'act/scouts#show',               :as => :act_scout
-  get   '/act/scouts/:scout_id/edit'                         => 'act/scouts#edit',               :as => :act_scout_edit
-  patch '/act/scouts/:scout_id'                              => 'act/scouts#update',             :as => :act_scout_update
-  post  '/act/scouts/:scout_id/confirm_delete'               => 'act/scouts#confirm_delete',     :as => :act_scout_confirm_delete
-  post  '/act/scouts/:scout_id/delete'                       => 'act/scouts#delete',             :as => :act_scout_delete
-  get   '/act/scout/tnx'                                     => 'act/scouts#create_tnx',       :as => :act_scout_create_tnx
+  get   '/act/participants'                                        => 'act/participants#index',              :as => :act_participants
+  get   '/act/participants/new'                                    => 'act/participants#new',                :as => :act_participant_new
+  get   '/act/participants/new_complet'                            => 'act/participants#new_complet',        :as => :act_participant_new_complet
+  post  '/act/participants'                                        => 'act/participants#create'
+  post  '/act/participants/create_complet'                         => 'act/participants#create_complet',     :as => :act_participant_create_complet
+  get   '/act/participants/:participant_id'                              => 'act/participants#show',               :as => :act_participant
+  get   '/act/participants/:participant_id/edit'                         => 'act/participants#edit',               :as => :act_participant_edit
+  patch '/act/participants/:participant_id'                              => 'act/participants#update',             :as => :act_participant_update
+  post  '/act/participants/:participant_id/confirm_delete'               => 'act/participants#confirm_delete',     :as => :act_participant_confirm_delete
+  post  '/act/participants/:participant_id/delete'                       => 'act/participants#delete',             :as => :act_participant_delete
+  get   '/act/participant/tnx'                                     => 'act/participants#create_tnx',       :as => :act_participant_create_tnx
 
 
   # events:
@@ -91,13 +91,13 @@ Tep::Application.routes.draw do
   get '/act/events/:event_id/edit_participants'              => 'act/events#edit_participants',  :as => :act_event_edit_participants
   get '/act/events/:event_id/edit_invitations/(:chosen)/(:role)' => 'act/events#edit_invitations',   :as => :act_event_edit_invitations
   get '/act/events/:event_id/enroll_others/(:status)/(:chosen)/(:role)' => 'act/events#enroll_others', :as => :act_event_enroll_others
-  post '/act/events/:event_id/participants/:scout_id/update' => 'act/event_participants#update', :as => :act_event_update_participant
-  post '/act/events/:event_id/participants/:scout_id/delete' => 'act/event_participants#delete', :as => :act_event_delete_participant
-  post '/act/events/:event_id/participants/:scout_id/choose' => 'act/event_participants#choose', :as => :act_event_participant_choose
-  get '/act/events/:event_id/display_scouts'                 => 'act/events#display_scouts',     :as => :act_event_display_scouts
-  post '/act/events/:event_id/display_scouts'                => 'act/events#display_scouts',     :as => :act_event_display_scout
+  post '/act/events/:event_id/participants/:participant_id/update' => 'act/event_participants#update', :as => :act_event_update_participant
+  post '/act/events/:event_id/participants/:participant_id/delete' => 'act/event_participants#delete', :as => :act_event_delete_participant
+  post '/act/events/:event_id/participants/:participant_id/choose' => 'act/event_participants#choose', :as => :act_event_participant_choose
+  get '/act/events/:event_id/display_participants'                 => 'act/events#display_participants',     :as => :act_event_display_participants
+  post '/act/events/:event_id/display_participants'                => 'act/events#display_participants',     :as => :act_event_display_participant
 
-  post '/act/event_invitations/:event_id/:scout_id/save'     => 'act/event_invitations#save',    :as => :act_event_save_invitation
+  post '/act/event_invitations/:event_id/:participant_id/save'     => 'act/event_invitations#save',    :as => :act_event_save_invitation
 
   # org:
   get  '/sosna/solutions/lidi(/:roc(/:level(/:se(/:ul))))' => 'sosna/solution#lidi',           :as => :sosna_solutions_lidi

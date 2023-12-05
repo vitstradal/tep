@@ -27,7 +27,7 @@ if true
         ])
   users.each { |u| u.confirm }
 
-  scouts = Act::Scout.create([
+  participants = Act::Participant.create([
     { user_id: 1, name: "Antonín", last_name: "Hejný", nickname: "Tonda", sex: "male", birth: "Sun, 02 Jan 2000 00:00:00 UTC +00:00", grade: "16", address: "Ulice 123", email: "antonin.hejny@gmail.com", parent_email: "a.hejny@centrum.cz", phone: "123456789", parent_phone: "987654321", eating_habits: "Jí vše :-)", health_problems: "Zdravotní problémy nemá", birth_number: "01234567891", health_insurance: "OZP", activated: "full"}
   ])
 
@@ -41,7 +41,7 @@ if true
   ])
 
   event_participants = Act::EventParticipant.create([
-    { event_id: 1, scout_id: 1, status: "yes", note: "Už se těším :)) " }           
+    { event_id: 1, participant_id: 1, status: "yes", note: "Už se těším :)) " }           
   ])
 
   pp Act::EventParticipant.all

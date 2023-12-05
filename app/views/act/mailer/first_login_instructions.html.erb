@@ -1,0 +1,30 @@
+<p>Vítej pikomaťáku!</p>
+
+<% if @resource.org? %>
+  <p>Tento e-mail ti přišel, protože si o tobě někdo myslí (možná i ty), že chceš organizovat Pikomat.</p>
+  <p>Registraci dokončíš pomocí tohoto linku:</p>
+
+  <p><%= link_to 'Dokončit registraci', user_finish_registration_url(:token => @token || 'fake') %></p>
+
+<% else %>
+  <p>Tento e-mail ti přišel, protože si někdo (pravděpodoboně ty) zkusil vytvořit účastnický účet v korespondenčním semináři Pikomat.</p>
+  <p>Pro dokončení registrace použij následující odkaz:</p>
+
+  <p><%= link_to 'Dokončit registraci', user_finish_registration_url(:token => @token || 'fake')
+      %>
+  </p>
+
+  <p>Pokud jsi již registrovaný, tento mail je ti poslán z důvodu nutnosti
+     aktualizace údajů a potvrzení souhlasu o zpracování osobních udajů na další
+     ročník Pikomatu. Prosím, přihlaš se tedy na svůj účet na Pikomatu
+     a aktualizuj údaje. Tímto se přihlásíš do dalšího ročníku Pikomatu.</p>
+
+<% end %>
+
+<p>Na tvoji účast na akcích se těší organizátoři Pikomatu MFF UK.</p>
+
+<p><a href="http://pikomat.mff.cuni.cz/">http://pikomat.mff.cuni.cz/</a></p>
+
+<hr>
+
+<p>Pokud jsi o účast v Pikomatu nežádal, pak, prosím, ignoruj tento dopis.</p>

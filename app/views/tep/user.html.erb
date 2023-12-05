@@ -6,7 +6,7 @@
      <li <%=class_active_if(@tab=='config')%>> <%= link_to 'Nastavení',    '#config', 'data-toggle' => 'tab' %></li>
      <li <%=class_active_if(@tab=='group' )%>> <%= link_to 'Skupiny',      '#group',  'data-toggle' => 'tab' %></li>
      <li <%=class_active_if(@tab=='solver')%>> <%= link_to 'Řešitel',      '#solver', 'data-toggle' => 'tab' %></li>
-     <li <%=class_active_if(@tab=='scout')%>> <%= link_to 'Skaut',         '#scout', 'data-toggle' => 'tab' %></li>
+     <li <%=class_active_if(@tab=='participant')%>> <%= link_to 'Skaut',         '#participant', 'data-toggle' => 'tab' %></li>
      <li <%=class_active_if(@tab=='mail'  )%>> <%= link_to 'Maily',        '#mail',   'data-toggle' => 'tab' %></li>
      <li <%=class_active_if(@tab=='jabber')%>> <%= link_to 'Jabber',       '#jabber',  'data-toggle' => 'tab' %></li>
      <li <%=class_active_if(@tab=='remove')%>> <%= link_to 'Smazat',       '#remove', 'data-toggle' => 'tab' %></li>
@@ -71,13 +71,13 @@
       </ul>
     </div> <%# tab-pane %>
 
-    <div class="tab-pane <%=active_in_if(@tab=='scout')%>" id='scout'>
-      <% if Act::Scout::scouts?(@user) %>
-        <%= render :partial => "act/scouts/form_edit", locals: { is_edit: true, scout: @user.scout } %>
-        <%= render partial: "act/scouts/button_delete", locals: { scout: @user.scout } %>
+    <div class="tab-pane <%=active_in_if(@tab=='participant')%>" id='participant'>
+      <% if Act::Participant::has_participant?(@user) %>
+        <%= render :partial => "act/participants/form_edit", locals: { is_edit: true, participant: @user.participant } %>
+        <%= render partial: "act/participants/button_delete", locals: { participant: @user.participant } %>
       <% else %>
         <i> Tento uživatel účastnický účet nemá.</i><br>
-        <%= form_tag act_scout_create_other_path, method: :post do %>
+        <%= form_tag act_participant_create_other_path, method: :post do %>
           <%= hidden_field_tag :user_id, @user.id %>
           <%= hidden_field_tag :path, user_show_path(@user) %>
           <%= submit_tag "Založit účet" %>

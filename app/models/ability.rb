@@ -49,7 +49,7 @@ class Ability
     # event
     can :index, Act::Event
     can :show, Act::Event
-    can :create, Act::Scout
+    can :create, Act::Participant
 
     if user.user?
       can :user_index, Sosna::Solution
@@ -65,9 +65,9 @@ class Ability
       can :update_confirm, Sosna::Solver
       can :info, :tepna
 
-      can :read, Act::Scout
-      can :update, Act::Scout
-      can :delete, Act::Scout
+      can :read, Act::Participant
+      can :update, Act::Participant
+      can :delete, Act::Participant
     end
 
     if user.org?
@@ -112,8 +112,8 @@ class Ability
 
       can :status, :klep
 
-      can :read_other, Act::Scout
-      can :show_other, Act::Scout
+      can :read_other, Act::Participant
+      can :show_other, Act::Participant
       can :read, Act::EventCategory
       can :read, Act::EventParticipant
       can :read, Act::EventInvitation
@@ -143,10 +143,10 @@ class Ability
       can :edit, Act::Event
       can :update, Act::Event
 
-      can :new_other, Act::Scout
-      can :create_other, Act::Scout
-      can :edit_other, Act::Scout
-      can :update_other, Act::Scout
+      can :new_other, Act::Participant
+      can :create_other, Act::Participant
+      can :edit_other, Act::Participant
+      can :update_other, Act::Participant
 
       can :manage, Act::EventParticipant
       can :manage, Act::EventInvitation
@@ -186,7 +186,7 @@ class Ability
       #can :update, Jabber
       #can :delete, Jabber
 
-      can :manage, Act::Scout
+      can :manage, Act::Participant
       can :manage, Act::Event
       can :manage, Act::EventCategory
       can :manage, Act::EventInvitation
