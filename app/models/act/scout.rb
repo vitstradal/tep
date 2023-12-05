@@ -64,6 +64,10 @@ class Act::Scout < ActiveRecord::Base
     return ! user.nil? && user.org?
   end
 
+  def admin?()
+    return ! user.nil? && user.admin?
+  end
+
   def self.scout_id(user)
     if user.nil? || user.scout.nil?
       return nil

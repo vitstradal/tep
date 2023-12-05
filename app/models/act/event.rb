@@ -101,7 +101,7 @@ class Act::Event < ActiveRecord::Base
 
   def can_participate?(scout)
     participant = Act::EventParticipant::get_participant(scout, self)
-    if ! participant.nil? && participant.chosen == "participant"
+    if scout.admin? || participant.nil? && participant.chosen == "participant"
       return true
     end
 

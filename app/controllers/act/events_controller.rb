@@ -66,7 +66,6 @@ class Act::EventsController < ActController
           _send_bonz_org(@event_participant.event.bonz_org, @event_participant, false)
           _send_bonz_parent(@event_participant.scout.parent_email, @event_participant, false)
         end
-
         redirect_to @event_participant.event
       else
         render :show, status: :unprocessable_entity
@@ -77,7 +76,6 @@ class Act::EventsController < ActController
       if @event_participant.save
         _send_bonz_org(@event_participant.event.bonz_org, @event_participant, true)
         _send_bonz_parent(@event_participant.scout.parent_email, @event_participant, true)
-
         redirect_to Act::Event.find(params[:event_id])
       else
         render :show, status: :unprocessable_entity
@@ -246,11 +244,11 @@ class Act::EventsController < ActController
   def _send_bonz_org(bonz_email, event_participant, is_new)
     # mail h-orgovi akce
     if !bonz_email.nil? and bonz_email != ""
-      new_txt = is_new ? "Přihlášení" : "Změna přihlášky"
+      new_txt = is_new ? "Přihlášení " : "Změna přihlášky "
       if event_participant.org?
-        person_txt = event_participant.male? ? "Orga" : "Orgyně"
+        person_txt = event_participant.male? ? "orga " : "Orgyně "
       else
-        person_txt = event_participant.male? ? "Účastníka" : "Účastnice"
+        person_txt = event_participant.male? ? "účastníka" : "Účastnice"
       end
 
       Act::Mailer.event_bonz_org(bonz_email, 'PIKOMAT: ' + new_txt + person_txt + "na akci", event_participant, is_new).deliver_later
@@ -260,8 +258,8 @@ class Act::EventsController < ActController
   def _send_bonz_parent(bonz_email, event_participant, is_new)
     # mail rodici ucastnika
     if !bonz_email.nil? and bonz_email != ""
-      new_txt = is_new ? "Přihlášení" : "Změna přihlášky"
-      gender_txt = event_participant.male? ? "Vašeho syna" : "Vaší dcery"
+      new_txt = is_new ? "Přihlášení " : "Změna přihlášky "
+      gender_txt = event_participant.male? ? "Vašeho syna " : "Vaší dcery "
       Act::Mailer.event_bonz_parent(bonz_email, 'PIKOMAT: ' + new_txt + gender_txt + "na akci", event_participant, is_new).deliver_later
     end
   end
