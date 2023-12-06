@@ -1,3 +1,6 @@
+  ##
+  #   Typ akce je škatulka zjednodušující práci s akcemi samotnými. Každá akce náleží právě jednomu typu akce.
+  #
 class Act::EventCategoriesController < ActController
   ##
   #   GET  /act/event_categories/index/

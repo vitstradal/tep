@@ -16,15 +16,15 @@
 
 <table>
   <tr>
-    <b>
-      <% for attr in Act::Participant::ATTR_TABLE do %>
-        <% if @filter_hashes.key?(attr[0].to_s) %>
-          <td>
+    <% for attr in Act::Participant::ATTR_TABLE do %>
+      <% if @filter_hashes.key?(attr[0].to_s) %>
+        <td>
+          <b>
             <%= attr[1] %>
-          </td>
-        <% end %>
+          </b>
+        </td>
       <% end %>
-    </b>
+    <% end %>
   </tr>
 
   <tr>
