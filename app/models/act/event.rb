@@ -1,5 +1,5 @@
   ##
-  # TAkce, na kterou se mohou (pokud to organizátoři povolí) přihlašovat účastníci
+  # Akce, na kterou se mohou (pokud to organizátoři povolí) přihlašovat účastníci
   #
   #  
   # *Columns*
@@ -29,6 +29,8 @@
   #    t.boolean  "limit_maybe",                        :default => false
   #    t.date     "maybe_deadline"
 
+  ##
+  # Zkontroluje, že akce končí až po svém začátku. Pokud je jednodenní, tak navíc zkopíruje hodnotu položky "konec akce" do položky "začátek akce"
 class Act::StartBeforeEndValidator < ActiveModel::Validator
   def validate(record)
     failed = false
@@ -56,6 +58,8 @@ class Act::StartBeforeEndValidator < ActiveModel::Validator
   end
 end
 
+  ##
+  # Pokud org zaškrtne, že chce limitovat termín, do kdy mají účastníci upravit status přihlášky na ano/ne a nedá k tomu evný termín, tak ho za to seřvi
 class Act::LimitMaybyeValidator < ActiveModel::Validator
   def validate(record)
     if record.limit_maybe && record.maybe_deadline.nil?
@@ -64,6 +68,8 @@ class Act::LimitMaybyeValidator < ActiveModel::Validator
   end
 end
 
+  ##
+  # Pokud org zaškrtne, že chce limitovat maximální počet účastníků na akci a nezadá žádný konkrétní, tak ho za to seřvi
 class Act::LimitNumParticipantsValidator < ActiveModel::Validator
   def validate(record)
     if record.limit_num_participants && (record.max_participants.nil? || !(record.max_participants.is_a? Integer))
@@ -72,6 +78,8 @@ class Act::LimitNumParticipantsValidator < ActiveModel::Validator
   end
 end
 
+  ##
+  # Pokud org zaškrtne, že chce účastníkům umožnit specifikovat místo nástupu na akci a nezadá žádná konkrétní, tak ho za to seřvi
 class Act::PlaceValidator < ActiveModel::Validator
   def validate(record)
     if record.spec_place && (record.spec_place_detail.nil? || !(record.spec_place_detail.is_a? String) || record.spec_place_detail.empty?)
@@ -93,6 +101,8 @@ class Act::Event < ActiveRecord::Base
 
   VISIBLE_STATUSES = ['everyone', 'user', 'org']
 
+  ##
+  # *Returns* typy akcí, které daný uživatel vidí
   def self.category_filter(current_user)
     sql = "SELECT name, code, visible FROM act_event_categories ORDER BY idx"
     event_categories = ActiveRecord::Base.connection.execute(sql)
@@ -101,6 +111,8 @@ class Act::Event < ActiveRecord::Base
     return result
   end
 
+  ##
+  # *Returns* typy akcí, které daný uživatel vidí + typ "všechny akce"!"
   def self.category_filter_all(current_user)
     categories = Act::Event::category_filter(current_user)
     categories.append(['Všechny', 'ev'])
@@ -116,6 +128,8 @@ class Act::Event < ActiveRecord::Base
     end
   end
 
+  ##
+  # *Returns* datum konání akce v nějakém čitelném formátu
   def date_str()
     if event_start == event_end
       event_start.strftime('%d/%m/%Y')
@@ -124,6 +138,8 @@ class Act::Event < ActiveRecord::Base
     end
   end
 
+  ##
+  # *Returns* jestli se daný účastnický účet může této akce zúčastnit jako "participant" (nikoliv jako náhradník)
   def can_participate?(participant)
     event_participant = Act::EventParticipant::get_event_participant(participant, self)
     if participant.admin? || ! event_participant.nil? && event_participant.chosen == "participant"
@@ -149,14 +165,20 @@ class Act::Event < ActiveRecord::Base
     return false
   end
 
+  ##
+  # *Returns* jestli na tu akci může jet úplně každý
   def open_for_everyone?()
     return !limit_num_participants && !enable_only_specific_participants && !enable_only_specific_organisers
   end
 
+  ##
+  # *Returns* jestli daný účastnický účet je dostatečně aktivovaný pro to, aby se této akce mohl zúčastnit
   def fulfils_activation?(participant)
     return (activation_needed == Act::Participant::ACTIVATION_STATUS_FOR_FULL && participant.act_full?) || (activation_needed == Act::Participant::ACTIVATION_STATUS_FOR_LIGHT && participant.act_light?)
   end
 
+  ##
+  # *Returns* jestli se daný účastnický účet může této akce zúčastnit jako náhradník (nikoliv jako účastník)
   def can_substitute?(participant)
    event_participant = Act::EventParticipant::get_participant(participant, self)
 
@@ -179,6 +201,8 @@ class Act::Event < ActiveRecord::Base
    return false
   end
 
+  ##
+  # *Returns* kolik účastníků je na tuto akci zapsaných daným způsobem
   def num_signed(status, orgs_only, children_only, participants_only=false)
     participants = Act::EventParticipant.where(event_id: id).where(status: status)
     if orgs_only
@@ -196,6 +220,8 @@ class Act::Event < ActiveRecord::Base
     participants.length()
   end
 
+  ##
+  # *Returns* sql dotaz pro vyfiltrování těch akcí, které jsou daného typu a an které je účastník přihlášen daným způsobem
   def self.generate_sql(participant, event_category, enroll_status)
     query_start = "SELECT e.* FROM act_events e "
 

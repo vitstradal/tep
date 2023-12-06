@@ -3,13 +3,26 @@ class Act::Mailer < Devise::Mailer
 
   ##
   #
-  # *Tempate* app/views/tep/mailer/event_bonz_email.html.erb
+  # *Tempate* app/views/tep/mailer/event_bonz_org.html.erb
   #
   # *Params*
   # to:: to
   # subj:: subject
   # event_participant::
   # is_new::
+  # 
+  # *Provides*
+  # @event:: O kterou akci se jedná
+  # @event_participant:: Přihláška na danou akci, která se právě změnila
+  # @is_new:: Jestli byla daná přihláška právě vytvořena
+  # @num_p_yes:: Kolik účastníků na danou akci jede
+  # @num_p_no:: Kolik účastníků na danou akci nejede
+  # @num_p_maybe:: Kolik účastníků ještě neví, jestli chce na danou akci jet
+  # @num_p_voted:: Kolik účastníků hlasovalo, jestli chce na danou akci jet
+  # @num_o_yes:: Kolik organizátorů na danou akci jede
+  # @num_o_no:: Kolik organizátorů na danou akci nejede
+  # @num_o_maybe:: Kolik organizátorů ještě neví, jestli chce na danou akci jet
+  # @num_o_voted:: Kolik organizátorů hlasovalo, jestli chce na danou akci jet
   def event_bonz_org(to, subj, event_participant, is_new)
     @event = event_participant.event
     @event_participant = event_participant
@@ -28,6 +41,20 @@ class Act::Mailer < Devise::Mailer
     mail(to: to, from: 'tep@pikomat.mff.cuni.cz', subject: subj)
   end
 
+  ##
+  #
+  # *Tempate* app/views/tep/mailer/event_bonz_parent.html.erb
+  #
+  # *Params*
+  # to:: to
+  # subj:: subject
+  # event_participant::
+  # is_new::
+  # 
+  # *Provides*
+  # @event:: O kterou akci se jedná
+  # @event_participant:: Přihláška na danou akci, která se právě změnila
+  # @is_new:: Jestli byla daná přihláška právě vytvořena
   def event_bonz_parent(to, subj, event_participant, is_new)
     @event = event_participant.event
     @event_participant = event_participant

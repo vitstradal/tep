@@ -69,30 +69,44 @@ class Act::Participant < ActiveRecord::Base
   YOUNGEST_TO_FILTER = 6
   OLDEST_TO_FILTER = 9
 
+  ##
+  # *Returns* je účet plně aktivován?
   def act_full?()
     return activated == ACTIVATION_STATUS_FOR_FULL
   end
 
+  ##
+  # *Returns* je účet aktivován jakožto "light"?
   def act_light?()
     return activated == ACTIVATION_STATUS_FOR_LIGHT || activated == ACTIVATION_STATUS_FOR_FULL
   end
 
+  ##
+  # *Returns* je účet desaktivován?
   def act_no?()
     return activated == ACTIVATION_STATUS_FOR_DESACTIVATED
   end
 
+  ##
+  # *Returns* je účet desaktivován?
   def self.has_participant?(user)
     return !user.nil? && !user.participant.nil?
   end
 
+  ##
+  # *Returns* patří účet orgovi?
   def org?()
     return ! user.nil? && user.org?
   end
 
+  ##
+  # *Returns* patří účet adminovi?
   def admin?()
     return ! user.nil? && user.admin?
   end
 
+  ##
+  # *Returns* id účastnického účtu patřícího danému uživateli
   def self.participant_id(user)
     if user.nil? || user.participant.nil?
       return nil
@@ -101,14 +115,8 @@ class Act::Participant < ActiveRecord::Base
     end
   end
 
-  def self.get_participant_path(user)
-    if Act::Participant::has_participant?(user)
-      return act_participant_path(participant_id: user.participant.id)
-    else
-      return act_participant_new_path
-    end
-  end
-
+  ##
+  # *Returns* patří tento účastnický účet zadanému uživatelskému účtu?
   def is_me?(user)
     if user.nil?
       return false
@@ -117,6 +125,8 @@ class Act::Participant < ActiveRecord::Base
     end
   end
 
+  ##
+  # *Returns* účastnický účet zadaného uživatele, pokud existuje. Jinak nil.
   def self.get_participant(user)
     if user.nil?
       return nil
@@ -125,6 +135,8 @@ class Act::Participant < ActiveRecord::Base
     end
   end
 
+  ##
+  # *Returns* přezdívka (pokud neexistuje, tak jméno a přijmení) tohoto účastnického účtu
   def participant_name
     if not nickname == ""
       "#{nickname}"
@@ -139,18 +151,24 @@ class Act::Participant < ActiveRecord::Base
     end
   end
 
+  ##
+  # *Returns* datum narození čitelně
   def birth_str
     begin
-      return birth.strftime('%m/%d/%Y')
+      return birth.strftime('%d/%m/%Y')
     rescue
       "Nedefinované"
     end
   end
 
+  ##
+  # *Returns* jedná se o muže?
   def male?
     sex == "male"
   end
 
+  ##
+  # *Returns* pohlaví čitelně
   def sex_str()
     male? ? "Muž" : "Žena"
   end
@@ -182,6 +200,8 @@ class Act::Participant < ActiveRecord::Base
     ATTR_BOOL_TABLE[key] = "true"
   end
 
+  ##
+  # *Returns* chybová hláška pro danou kolonku
   def self.display_error_msg(error)
     case error
     when :grade
@@ -195,6 +215,8 @@ class Act::Participant < ActiveRecord::Base
     return response
   end
 
+  ##
+  # *Returns* účastnické účty, které jsou pozvané daným způsobem
   def self.find_by_invitation(event, chosen, role)
     query1 = "SELECT s.* FROM act_participants s WHERE "
     query2 = "EXISTS (SELECT si.* FROM act_event_invitations si WHERE si.participant_id = s.id AND si.event_id = ? AND (si.chosen = ?"
@@ -215,6 +237,8 @@ class Act::Participant < ActiveRecord::Base
     end
   end
 
+  ##
+  # *Returns* účastnické účty, které jsou přihlášené daným způsobem
   def self.find_by_participation(event, status, chosen, role)
     query = "SELECT s.* FROM act_participants s "
     args = []
