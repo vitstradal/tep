@@ -105,14 +105,6 @@ jQuery(document).ready(function($) {
         });
 	}
 
-	showIf('event_limit_num_participants', 'max_participants');
-
-	showIf(['event_enable_only_specific_participants', 'event_enable_only_specific_substitutes'], 'uninvited_participants_dont_see');
-
-	showIf('event_enable_only_specific_organisers', 'uninvited_organisers_dont_see');
-
-	showIf('event_spec_place', 'spec_place_detail');
-
 	showIf('event_event_category', 'event_visible_all_div', false, JSON.parse(document.getElementById("visibility_info_categories").dataset.ev));
 
   showIf('event_event_category', 'event_visible_restricted_div', false, JSON.parse(document.getElementById("visibility_info_categories").dataset.user));
@@ -120,8 +112,16 @@ jQuery(document).ready(function($) {
 	showIf('event_event_category', ['max_participants', 'limit_num_participants', 'uninvited_participants_dont_see', 'enable_only_specific_participants', 'enable_only_specific_substitutes', 'uninvited_organisers_dont_see', 'enable_only_specific_organisers'], false, JSON.parse(document.getElementById("restrictions_electible_categories").dataset.codes));
 
 	showIf('event_event_category', 'spec_mass', false, JSON.parse(document.getElementById("mass_spec_electible_categories").dataset.codes));
-
+  
   $('#event_event_category').change();
+
+	showIf('event_limit_num_participants', 'max_participants');
+
+	showIf(['event_enable_only_specific_participants', 'event_enable_only_specific_substitutes'], 'uninvited_participants_dont_see');
+
+	showIf('event_enable_only_specific_organisers', 'uninvited_organisers_dont_see');
+
+	showIf('event_spec_place', 'spec_place_detail');
 	}
 
 	if (!(document.forms['participant_form'] === undefined)) {

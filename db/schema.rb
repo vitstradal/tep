@@ -30,9 +30,11 @@ ActiveRecord::Schema.define(version: 24) do
   add_index "act_event_categories", ["code"], name: "index_act_event_categories_on_code", unique: true
 
   create_table "act_event_invitations", force: :cascade do |t|
-    t.integer "event_id"
-    t.integer "participant_id"
-    t.string  "chosen",         default: "participant"
+    t.integer  "event_id"
+    t.integer  "participant_id"
+    t.string   "chosen",         default: "participant"
+    t.datetime "created_at"
+    t.datetime "updated_at"
   end
 
   add_index "act_event_invitations", ["event_id", "participant_id"], name: "index_act_event_invitations_on_event_id_and_participant_id", unique: true
