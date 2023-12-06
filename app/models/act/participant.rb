@@ -240,21 +240,21 @@ class Act::Participant < ActiveRecord::Base
   ##
   # *Returns* účastnické účty, které jsou přihlášené daným způsobem
   def self.find_by_participation(event, status, chosen, role)
-    query = "SELECT s.* FROM act_participants s "
+    query = "SELECT p.* FROM act_participants p "
     args = []
 
     if status == "nvt"
-      "WHERE NOT EXISTS (SELECT ep.* FROM act_event_participants ep WHERE ep.event_id = ? AND ep.participant_id = s.id)"
+      query += "WHERE NOT EXISTS (SELECT ep.* FROM act_event_participants ep WHERE ep.event_id = ? AND ep.participant_id = p.id)"
       args << event.id
     else
       if status != "ev" || chosen != "ev"
-        query += "INNER JOIN act_event_participants ep ON ep.participant_id = s.id AND ep.event_id = ? WHERE "
+        query += "INNER JOIN act_event_participants ep ON ep.participant_id = p.id AND ep.event_id = ? WHERE "
         args << event.id
       end
 
       if status != "ev"
         query += "ep.status = ? " + (chosen != "ev" ? "AND " : "")
-        args << role
+        args << status
       end
 
       if chosen != "ev"
@@ -264,6 +264,8 @@ class Act::Participant < ActiveRecord::Base
     end
     
     args.unshift(query)
+
+    pp args
 
     participants = Act::Participant.find_by_sql(args)
 
