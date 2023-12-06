@@ -46,7 +46,7 @@ class Act::EventParticipant < ActiveRecord::Base
   ##
   # *Returns* čitelná hodnota stavu přihlášenosti v delší podobě
   def self.status_txt_long(event, participant)
-    participant = get_participant(event, participant)
+    participant = get_event_participant(event, participant)
     begin
       return STATUS_TXT_LONG[participant.status]
     rescue
@@ -57,7 +57,7 @@ class Act::EventParticipant < ActiveRecord::Base
   ##
   # *Returns* čitelná hodnota stavu účastník/náhradník
   def self.chosen_txt(event, participant)
-    participant = get_participant(event, participant)
+    participant = get_event_participant(event, participant)
     begin
       return CHOSEN_OPTIONS_TXT[participant.chosen]
     rescue
@@ -77,7 +77,7 @@ class Act::EventParticipant < ActiveRecord::Base
   # *Returns* čitelná hodnota stavu účastník/náhradník
   def self.role_txt(event, participant)
     begin
-      return get_participant(event, participant).org? ? "Org" : "Účatník"
+      return get_event_participant(event, participant).org? ? "Org" : "Účatník"
     rescue
       return "Účastník"
     end
@@ -93,7 +93,7 @@ class Act::EventParticipant < ActiveRecord::Base
   # *Returns* stav účastník/náhradník/none
   def self.chosen(event, participant)
     begin
-      get_participant(event, participant).chosen
+      get_event_participant(event, participant).chosen
     rescue
       return "none"
     end

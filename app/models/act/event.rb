@@ -121,7 +121,7 @@ class Act::Event < ActiveRecord::Base
 
     # helper method for deciding whether the target event should be visible for the current user
   def event_visible?(user)
-    if (! user.nil? && user.admin?) || ((visible == 'ev' || (!user.nil? && (user.org? || visible=='user'))) && (Act::EventInvitation::chosen_ps?(self, Act::Participant::get_participant(user)) || ((user.nil? || ! user.org?) && !uninvited_participants_dont_see) || (user.org? && !uninvited_organisers_dont_see)))
+    if (! user.nil? && user.admin?) || ((visible == 'ev' || (!user.nil? && (user.org? || visible=='user'))) && (Act::EventInvitation::chosen_ps?(self, Act::Participant::get_event_participant(user)) || ((user.nil? || ! user.org?) && !uninvited_participants_dont_see) || (user.org? && !uninvited_organisers_dont_see)))
       true
     else
       false
@@ -180,7 +180,7 @@ class Act::Event < ActiveRecord::Base
   ##
   # *Returns* jestli se daný účastnický účet může této akce zúčastnit jako náhradník (nikoliv jako účastník)
   def can_substitute?(participant)
-   event_participant = Act::EventParticipant::get_participant(participant, self)
+   event_participant = Act::EventParticipant::get_event_participant(participant, self)
 
    if ! event_participant.nil? && event_participant.chosen == "substitute"
      return true
