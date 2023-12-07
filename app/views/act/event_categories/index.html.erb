@@ -1,10 +1,14 @@
 <h1>Typy akcí</h1>
 
-<% if can? :new, Act::Event %>
-  <p>
-  <%= button_tag "Vytvořit nový typ akce akce", :href => act_event_category_new_path, :class => 'btn btn-primary', :ico => "fa-edit" %>
-  </p>
-<% end %>
+<p>
+  <% if can? :new, Act::Event %>
+    <%= button_tag "Vytvořit nový typ akce akce", :href => act_event_category_new_path, :class => 'btn btn-primary', :ico => "fa-edit" %>
+  <% end %>
+
+  <% if can? :read, Act::EventCategory %>
+    <%= button_tag "Návod na používání", :href => act_event_categories_jakna_path, :class => 'btn btn-info', :ico => "fa-print" %>
+  <% end %>
+</p>
 
 <table>
   <tr>

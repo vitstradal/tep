@@ -4,7 +4,7 @@
 </h1>
 
 <% if can? :delete, Act::EventCategory %>
-  <%= render :partial => "form_edit", :locals => { :is_edit => true } %>
+  <%= render :partial => "form_edit", :locals => { :is_edit => true, :is_jakna => false } %>
 <% end %>
 
 <hr>

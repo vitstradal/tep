@@ -163,6 +163,19 @@ class Act::EventCategoriesController < ActController
     redirect_to act_event_categories_path
   end
 
+  ##
+  #  POST /act/event_categories/jakna
+  #
+  # Ukáže uživatelskou dokumentaci k typům akcí
+  #
+  #
+  def jakna
+    @event_category = Act::EventCategory.new(code: "be", idx: 80, name: "Besídka", multi_day: true, 
+    description: "Tradiční pikomatí akce konaná před Vánoci. Rozdávají se tam dárky.",
+    visible: "ev", restrictions_electible: false, mass_spec_electible: true, activation_needed_default: "light")
+
+  end
+
   private
     def event_category_params
       params.require(:event_category).permit!

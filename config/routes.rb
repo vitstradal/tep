@@ -67,9 +67,9 @@ Tep::Application.routes.draw do
   post  '/act/participants/:participant_id/delete'                       => 'act/participants#delete',             :as => :act_participant_delete
   get   '/act/participant/tnx'                                     => 'act/participants#create_tnx',       :as => :act_participant_create_tnx
 
-
-  # events:
+  # event_categories:
   get   '/act/event_categories'                              => 'act/event_categories#index',    :as => :act_event_categories
+  get   '/act/event_categories/jakna'                        => 'act/event_categories#jakna',    :as => :act_event_categories_jakna
   get   '/act/event_categories/new'                          => 'act/event_categories#new',      :as => :act_event_category_new
   post  '/act/event_categories'                              => 'act/event_categories#create'
   get   '/act/event_categories/:code'                        => 'act/event_categories#show',     :as => :act_event_category
@@ -77,6 +77,7 @@ Tep::Application.routes.draw do
   patch '/act/event_categories/:code'                        => 'act/event_categories#update'
   post  '/act/event_categories/:code/delete'                 => 'act/event_categories#delete',   :as => :act_event_category_delete
 
+  # events
   get '/act/events'                                          => 'act/events#index',              :as => :act_events
   get '/act/events/new'                                      => 'act/events#new',                :as => :act_event_new
   post '/act/events/create'                                  => 'act/events#create',             :as => :act_event_create
@@ -97,6 +98,7 @@ Tep::Application.routes.draw do
   get '/act/events/:event_id/display_participants'                 => 'act/events#display_participants',     :as => :act_event_display_participants
   post '/act/events/:event_id/display_participants'                => 'act/events#display_participants',     :as => :act_event_display_participant
 
+  # event_invitations
   post '/act/event_invitations/:event_id/:participant_id/save'     => 'act/event_invitations#save',    :as => :act_event_save_invitation
 
   # org:

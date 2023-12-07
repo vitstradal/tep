@@ -6,84 +6,96 @@
   <% method = :post %>
 <% end %>
 
+<% if is_jakna %>
+  <% offset_closer = '5' %>
+  <% offset_farther = '10' %>
+  <% offset_closer_complement = '7' %>
+  <% offset_farther_complement = '2' %>
+<% else %>
+  <% offset_closer = '2' %>
+  <% offset_farther = '4' %>
+  <% offset_closer_complement = '10' %>
+  <% offset_farther_complement = '8' %>
+<% end %>
+
 <%= form_for :event_category, :url => url_dest, :method => method, :html => {:class=>'form-horizontal'} do |f| %>
   <div class="<%= form_error_class @event_category, :name%>">
   
   <div class="form-group">
-    <%= f.label :code, "Kód", :class => 'col-sm-2 control-label no-padding-right'%>
-    <div class="col-sm-10 <%= form_error_class @event_category, :code %>">
+    <%= f.label :code, "Kód", :class => 'col-sm-' + offset_closer + ' control-label no-padding-right' %>
+    <div class="col-sm-<%= offset_closer_complement %> <%= form_error_class @event_category, :code %>">
       <%= f.text_field :code %>
       <%= form_error @event_category, :code %>
     </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :idx, "Řadící index", :class => 'col-sm-2 control-label no-padding-right'%>
-    <div class="col-sm-10 <%= form_error_class @event_category, :idx %>">
+    <%= f.label :idx, "Řadící index", :class => 'col-sm-' + offset_closer + ' control-label no-padding-right' %>
+    <div class="col-sm-<%= offset_closer_complement %> <%= form_error_class @event_category, :idx %>">
       <%= f.text_field :idx %>
       <%= form_error @event_category, :idx %>
     </div>
   </div>
   
   <div class="form-group">
-    <%= f.label :name, "Jméno", :class => 'col-sm-2 control-label no-padding-right'%>
-    <div class="col-sm-10 <%= form_error_class @event_category, :name %>">
+    <%= f.label :name, "Jméno", :class => 'col-sm-' + offset_closer + ' control-label no-padding-right' %>
+    <div class="col-sm-<%= offset_closer_complement %>  <%= form_error_class @event_category, :name %>">
       <%= f.text_field :name %>
       <%= form_error @event_category, :name %>
     </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :multi_day, "Počet dní", :class => 'col-sm-2 control-label no-padding-right'%>
-    <div class="col-sm-10 <%= form_error_class @event_category, :multi_day %>">
+    <%= f.label :multi_day, "Počet dní", :class => 'col-sm-' + offset_closer + ' control-label no-padding-right' %>
+    <div class="col-sm-<%= offset_closer_complement %>  <%= form_error_class @event_category, :multi_day %>">
       <%= f.select :multi_day, [["Jednodenní", false], ["Vícedenní", true]] %>
       <%= form_error @event_category, :multi_day %>
     </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :description, "Popis:", :class => 'col-sm-2 control-label no-padding-right'%>
-    <div class="col-sm-10 <%= form_error_class @event_category, :description %>">
+    <%= f.label :description, "Popis:", :class => 'col-sm-' + offset_closer + ' control-label no-padding-right' %>
+    <div class="col-sm-<%= offset_closer_complement %>  <%= form_error_class @event_category, :description %>">
       <%= f.text_field :description %>
       <%= form_error @event_category, :description %>
     </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :visible, "Kdo se o typu akce vůbec dozví", :class => 'col-sm-2 control-label no-padding-right'%>
-    <div class="col-sm-9 <%= form_error_class @event_category, :visible %>">
+    <%= f.label :visible, "Kdo se o typu akce vůbec dozví", :class => 'col-sm-' + offset_closer + ' control-label no-padding-right' %>
+    <div class="col-sm-<%= offset_closer_complement %>  <%= form_error_class @event_category, :visible %>">
       <%= f.select :visible, [["každý", "ev"], ["user", "user"], ["org", "org"]] %>
       <%= form_error @event_category, :visible %>
     </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :restrictions_electible, "Nabídneš orgovi při vytváření akce možnost limitovat, kteří účastníci (a kolik) se může přihlásit?", :class => 'col-sm-4 control-label no-padding-right'%>
-    <div class="col-sm-8 <%= form_error_class @event_category, :restrictions_electible %>">
+    <%= f.label :restrictions_electible, "Nabídneš orgovi při vytváření akce možnost limitovat, kteří účastníci (a kolik) se může přihlásit?", :class => 'col-sm-' + offset_farther + ' control-label no-padding-right' %>
+    <div class="col-sm-<%= offset_farther_complement %>  <%= form_error_class @event_category, :restrictions_electible %>">
       <%= f.check_box :restrictions_electible %>
       <%= form_error @event_category, :restrictions_electible %>
     </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :mass_spec_electible, "Nabídneš orgovi při vytváření akce možnost účastníkům povolit specifikovat, jestli chtějí na mši?", :class => 'col-sm-4 control-label no-padding-right'%>
-    <div class="col-sm-8 <%= form_error_class @event_category, :mass_spec_electible %>">
+    <%= f.label :mass_spec_electible, "Nabídneš orgovi při vytváření akce možnost účastníkům povolit specifikovat, jestli chtějí na mši?", :class => 'col-sm-' + offset_farther + ' control-label no-padding-right' %>
+    <div class="col-sm-<%= offset_farther_complement %> <%= form_error_class @event_category, :mass_spec_electible %>">
       <%= f.check_box :mass_spec_electible %>
       <%= form_error @event_category, :mass_spec_electible %>
     </div>
   </div>
 
   <div class="form-group">
-    <%= f.label :activation_needed_default, "Default pole \"Jaký stupeň aktivace účastnického účtu je zapotřebí\"", :class => 'col-sm-4 control-label no-padding-right'%>
-    <div class="col-sm-8 <%= form_error_class @event_category, :activation_needed_default %>">
+    <%= f.label :activation_needed_default, "Default pole \"Jaký stupeň aktivace účastnického účtu je zapotřebí\"", :class => 'col-sm-' + offset_closer + ' control-label no-padding-right' %>
+    <div class="col-sm-<%= offset_closer_complement %> <%= form_error_class @event_category, :activation_needed_default %>">
       <%= f.select :activation_needed_default, Act::Participant::OPTIONS_ACTIVATED_PROMPT %>
       <%= form_error @event_category, :activation_needed_default %>
     </div>
   </div>
 
   <div class="form-group">
-    <div class="col-sm-offset-2 col-sm-9">
-      <%= f.submit :class=>'btn btn-primary', :value=>'Uložit typ akce' %>
+    <div class="col-sm-offset-<%= offset_closer %> col-sm-<%= offset_closer_complement %>">
+      <%= f.submit :class=>'btn btn-primary', :value=>'Uložit typ akce', :disabled => is_jakna %>
     </div>
   </div>
 

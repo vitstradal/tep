@@ -15,7 +15,7 @@
   <%= f.hidden_field :user_id, value: participant.user_id %>
 
   <div class="form-group">
-    <%= f.label :activated, 'O které akce mám zájem (Pokud zvolíš "pouze pikostředy", nemusíš vyplňovat některé osobní údaje)', :class => 'col-sm-3 control-label no-padding-right' %>
+    <%= f.label :activated, 'O které akce mám zájem (Pokud zvolíš "pouze jednodenní", nemusíš vyplňovat některé osobní údaje)', :class => 'col-sm-3 control-label no-padding-right' %>
     <div class="col-sm-9 <%= form_error_class participant, :activated %>">
       <%= f.select :activated, Act::Participant::OPTIONS_ACTIVATED_PROMPT, selected: participant.activated %>
       <%= form_error participant, :activated %>
