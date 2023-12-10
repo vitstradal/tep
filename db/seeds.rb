@@ -33,7 +33,9 @@ if true
 
   event_categories = Act::EventCategory.create([
     { code: "we", name: "Pikostředa", idx: 0, multi_day: false, description: "Pravidlně od 19:00 na Karlíně", visible: "ev", restrictions_electible: false, activation_needed_default: "light"  },
-    { code: "kl", name: "Kus ledu", idx: 100, multi_day: true, description: "Orgovské setkání pro konzultaci všeho možného", visible: "org", restrictions_electible: true, activation_needed_default: "full" }
+    { code: "kl", name: "Kus ledu", idx: 100, multi_day: true, description: "Orgovské setkání pro konzultaci všeho možného", visible: "org", restrictions_electible: true, activation_needed_default: "full" },
+    { code: "be", name: "Besídka", idx: 80, multi_day: false, description: "Tradiční pikomatí akce konaná před Vánoci. Rozdávají se tam dárky.", visible: "ev", restrictions_electible: false, activation_needed_default: "light"  },
+    { code: "so", name: "Soustředění", idx: 20, multi_day: false, description: "Matematický náročná akce konaná dvakrát do roka, na které jsou zvaní jen ti nejlepší řešitelé. Konaná typicky v Kunžaku.", visible: "ev", restrictions_electible: true, activation_needed_default: "full"  }
   ])
 
   events = Act::Event.create([

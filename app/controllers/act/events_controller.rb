@@ -384,6 +384,24 @@ class Act::EventsController < ActController
     @filter_hashes = params[:filter_hashes].nil? ? Act::Participant::ATTR_BOOL_TABLE : params[:filter_hashes]
   end
 
+  ##
+  #  POST /act/events/jakna
+  #
+  # Ukáže uživatelskou dokumentaci k akcím
+  #
+  #
+  def jakna
+    @besidka = Act::Event.new(event_start: "Tue, 02 Jan 2024", event_end: "Tue, 02 Jan 2024", event_category: "be", title: "Besídka 2023", 
+    body: "", visible: "ev", activation_needed: "light", 
+    bonz_org: "antonin.hejny@gmail.com", event_info_url: "https://pikomat.mff.cuni.cz/setkani/besidka2023", spec_mass: false, bonz_parent: true,
+    spec_participant: true)
+    @sous = Act::Event.new(event_start: "Tue, 02 Jan 2024", event_end: "Tue, 10 Jan 2024", event_category: "so", title: "Jarní sous 2023", 
+    body: "", visible: "ev", activation_needed: "full", 
+    bonz_org: "antonin.hejny@gmail.com", event_info_url: "https://pikomat.mff.cuni.cz/soustredeni/2023/", spec_mass: true, bonz_parent: true,
+    spec_participant: true, spec_place: true, spec_place_detail: "Praha,Brno,Ostrava", 
+    enable_only_specific_participants: true, enable_only_specific_substitutes: true, limit_num_participants: true, max_participants: 22)
+  end
+
   private
     def event_params
       params.require(:event).permit!

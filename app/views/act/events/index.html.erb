@@ -27,7 +27,10 @@
   <%= button_tag "Vytvořit novou akci", :href => act_event_new_path, :class => 'btn btn-primary', :ico => "fa-edit" %>
 <% end %>
 <% if can? :read, Act::EventCategory %>
-  <%= button_tag "Typy akcí", :href => act_event_categories_path, :class => 'btn btn-primary', :ico => "fa-flask" %>
+  <%= button_tag "Typy akcí", :href => act_event_categories_path, :class => 'btn btn-purple', :ico => "fa-flask" %>
+<% end %>
+<% if ! current_user.nil? && current_user.org? %>
+  <%= button_tag "Návod na používání", :href => act_events_jakna_path, :class => 'btn btn-info', :ico => "fa-print" %>
 <% end %>
 
 <%= render :partial => "form_filter" %>
