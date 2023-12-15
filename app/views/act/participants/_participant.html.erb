@@ -1,0 +1,7 @@
+<p>
+<% if can? :edit_other, Act::Participant %>
+  <%= link_to participant.participant_name(), act_participant_path(participant) %>
+<% else %>
+  <b> <%= participant.participant_name() %> </b>
+<% end %>
+</p>

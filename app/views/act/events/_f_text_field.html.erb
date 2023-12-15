@@ -1,0 +1,8 @@
+<div class="form-group", id=<%=name%>>
+  <%= f.label name, text, :class => 'col-sm-' + (is_jakna ? '7' : '2') + ' control-label no-padding-right'%>
+  <div class="col-sm-<%= is_jakna ? '5' : '10' %> <%= form_error_class obj, name %>">
+    <%= f.text_field name %>
+   <%= form_error obj, name %>
+  </div>
+</div>
+
