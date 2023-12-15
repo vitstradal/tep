@@ -19,13 +19,33 @@
 require 'pp'
 if true
   users = User.create([
-             {:email => "adm@pikomat.mff.cuni.cz", :roles => [:admin, :org, :user],  :password => "adm je pes"},
-             {:email => "usr@pikomat.mff.cuni.cz", :roles => [:user],                :password => "usr je pes"},
-             {:email => "org@pikomat.mff.cuni.cz", :roles => [:org, :user],          :password => "org je pes"},
+             {:email => "adm@pikomat.mff.cuni.cz", :roles => [:admin, :morg, :org, :user],  :password => "adm je pes", :name => "Antonín", :last_name => "Hejný"},
+             {:email => "usr@pikomat.mff.cuni.cz", :roles => [:user],                :password => "usr je pes", :name => "David", :last_name => "Hájek"},
+             {:email => "org@pikomat.mff.cuni.cz", :roles => [:org, :user],          :password => "org je pes", :name => "Tereza", :last_name => "Kubínová"},
+             {:email => "morg@pikomat.mff.cuni.cz", :roles => [:morg, :org, :user],          :password => "morg je pes", :name => "František", :last_name => "Steinhauser"},
+             {:email => "antonin.hejny@gmail.com", :roles => [:user],          :password => "usr je pes", :name => "Martin", :last_name => "Švanda"},
         ])
-
   users.each { |u| u.confirm }
 
+  participants = Act::Participant.create([
+    { user_id: 1, name: "Antonín", last_name: "Hejný", nickname: "Tonda", sex: "male", birth: "Sun, 02 Jan 2000 00:00:00 UTC +00:00", grade: "16", address: "Ulice 123", email: "antonin.hejny@gmail.com", parent_email: "a.hejny@centrum.cz", phone: "123456789", parent_phone: "987654321", eating_habits: "Jí vše :-)", health_problems: "Zdravotní problémy nemá", birth_number: "01234567891", health_insurance: "OZP", activated: "full"}
+  ])
+
+  event_categories = Act::EventCategory.create([
+    { code: "we", name: "Pikostředa", idx: 0, multi_day: false, description: "Pravidlně od 19:00 na Karlíně", visible: "ev", restrictions_electible: false, activation_needed_default: "light"  },
+    { code: "kl", name: "Kus ledu", idx: 100, multi_day: true, description: "Orgovské setkání pro konzultaci všeho možného", visible: "org", restrictions_electible: true, activation_needed_default: "full" },
+    { code: "be", name: "Besídka", idx: 80, multi_day: false, description: "Tradiční pikomatí akce konaná před Vánoci. Rozdávají se tam dárky.", visible: "ev", restrictions_electible: false, activation_needed_default: "light"  },
+    { code: "so", name: "Soustředění", idx: 20, multi_day: false, description: "Matematický náročná akce konaná dvakrát do roka, na které jsou zvaní jen ti nejlepší řešitelé. Konaná typicky v Kunžaku.", visible: "ev", restrictions_electible: true, activation_needed_default: "full"  }
+  ])
+
+  events = Act::Event.create([
+    { event_start: "Tue, 02 Jan 2024", event_end: "Tue, 02 Jan 2024", title: "První Pikostředa", body: "Přineste si s sebou hroadu deskovek :D", event_category: "we" }
+  ])
+
+  event_participants = Act::EventParticipant.create([
+    { event_id: 1, participant_id: 1, status: "yes", note: "Už se těším :)) " }           
+  ])
+
+  pp Act::EventParticipant.all
+  pp Act::EventParticipant.primary_key
 end
-
-

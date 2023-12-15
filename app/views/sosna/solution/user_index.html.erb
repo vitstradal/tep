@@ -26,7 +26,7 @@
 
 <div class="table-div">
   <table class="table table-bordered">
-    <tr> 
+    <tr>
      <th>Úloha</td>
      <th>Řešení</td>
      <% if show_nahrat  %>
@@ -38,7 +38,12 @@
      <% if current_user.admin? %>
        <th>Akce (admin only)</th>
      <% end %>
-   </tr> 
+   </tr>
+  <% if @problems.size == 0 %>
+    <tr>
+      <td colspan="5"><i>V této sérii zatím nejsou žádné úlohy</i></td>
+    </tr>
+  <% end %>
   <% @problems.each do |p| %>
     <% sol = @solutions_by_solver[@solver.id][p.problem_no]  %>
     <tr>
@@ -79,11 +84,13 @@
         <% sol_in_this_round_allowed ||= @annual < @config[:annual] %>
         <% if p.junior_level? and not @solver.junior? %>
            -
-        <% elsif sol_in_this_round_allowed %> 
+        <% elsif sol_in_this_round_allowed %>
           <% if sol.filename_corr_display %>
             <%= link_to sol.filename_corr_display, :action => :download_rev, :id => sol.id %>
           <% elsif sol.has_paper_mail %>
             <i class="fa fa-envelope blue"></i> <i>opravené řešení bylo zasláno poštou</i>
+          <% elsif sol.filename_orig %>
+            <i class="fa fa-ban red"></i> <i>řešení zatím není opravena</i>
           <% else %>
             <i class="fa fa-ban red"></i> <i>úlohu řešitel neřešil</i>
           <% end %>
@@ -103,8 +110,8 @@
             <% end %>
           </td>
         <% end %>
-  
-  
+
+
     </tr>
   <% end %>
   <% if @show_confirmation_upload %>
