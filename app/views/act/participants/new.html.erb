@@ -1,0 +1,46 @@
+<h1>Nový účastnický účet</h1>
+
+<% if can? :show_other, Act::Participant %>
+  <%= button_tag "Zrušit", :href => act_participants_path, :class=>'btn', :ico =>'fa-reply' %>
+<% else %>
+  <%= button_tag "Zrušit", :href => root_path, :class=>'btn', :ico =>'fa-reply' %>
+<% end %>
+
+<%= render :partial => "form_edit", :locals => { :is_edit => false, :participant => @participant } %>
+
+<hr>
+<a name="souhlas"></a>
+<h3>Souhlas se zpracovnáním osobních údajů</h3>
+
+<p>
+Tímto uděluji souhlas Univerzitě Karlově, se sídlem Ovocný trh 560/5, 116 36
+Praha 1, IČO 00216208 (dále jen UK), která je správcem osobních údajů všech
+fakult a součástí UK, ke zpracování osobních údajů pro potřeby korespondenčního
+semináře Pikomat MFF UK Matematicko-fyzikální fakulty UK (dále jen Pikomat
+a MFF UK).</p>
+
+<p>
+Tento souhlas uděluji pro všechny výše uvedené osobní údaje.
+Beru na vědomí, že tyto údaje mohu kdykoliv smazat či přepsat,
+a to opět v sekci "účastnický účet", ale že taková akce není žádaná,
+pokud se plánuji zúčastnit někeré akce Pikomatu MFF UK. </p>
+
+<p>
+Osobní údaje budou zpracovávány pouze pro účely jednotlivých akcí Pikomatu MFF UK. Údaje nebudou předány třetí osobě ani využívány k jiným účelům, než ke kterým
+byly poskytnuty. Tento souhlas uděluji ze své vlastní a svobodné vůle. </p>
+
+<p>
+Dále máte právo:
+  <ul>
+    <li> požádat o informaci, jaké osobní údaje jsou o vás zpracovávány,</li>
+    <li> požadovat opravu osobních údajů, pokud jsou neplatné nebo zastaralé,</li>
+    <li> požadovat, aby nebyly vaše osobní údaje zpracovávány do doby, než bude vyřešena oprávněnost výše uvedených požadavků,</li>
+    <li> požadovat, aby byly vaše osobní údaje předány jinému správci,</li>
+    <li> podat stížnost u dozorového úřadu.</li>
+  </ul>
+</p>
+
+<p>
+V případě jakéhokoliv dotazu nebo uplatnění svých práv můžete kontaktovat pověřence pro ochranu osobních údajů na e-mailové adrese gdpr@cuni.cz.</p>
+
+

@@ -1,0 +1,74 @@
+<% if chosen == "participant" %>
+  <h2>Přihláška</h2>
+<% elsif chosen == "substitute" %>
+  <h2>Přihláška pro náhradníka</h2>
+<% else %>
+  <h2>Vyskytla se chyba. Prosím, sděl nám, že jsi ji dostal.</h2>
+<% end %>
+
+<% require 'pp' %>
+
+<%= form_for :event_participant, :url => { :action => :enroll } do |f| %>
+
+  <% if @event.errors.any? %>
+    <div id="error_explanation">
+      <h2>
+        <%= pluralize(@event.errors.count, "error") %> vyskytly se následující chyby:
+      </h2>
+      <ul>
+        <% @event.errors.full_messages.each do |msg| %>
+          <li><%= msg %></li>
+        <% end %>
+      </ul>
+    </div>
+  <% end %>
+  
+  <%= f.hidden_field :event_id, value: @event.id %>
+
+  <%= f.hidden_field :participant_id, value: Act::Participant::participant_id(current_user) %>
+
+  <%= f.hidden_field :chosen, value: chosen %>
+
+  <b>
+  <%= f.select :status, [["půjdu", "yes"], ["možná", "maybe"], ["nezúčastním se", "no"]] %>
+  </b>
+  <p>
+  <%= f.label :note, "Poznámky (veřejné):" %><br>
+    <%= f.text_field :note %>
+  </p>
+
+  <% if @event.spec_place %>
+    <p>
+      <%= f.label :place, "Nastupuji v " %>
+      <%= f.select :place, @event.spec_place_detail.split(',') %>
+    </p>
+  <% else %>
+    <%= f.hidden_field :place %>
+  <% end %>
+
+  <% if @event.spec_participant %>
+    <p>
+    <%= f.label :participant_info, "Na co chci u svého dítěte upozornit (neveřejné): " %><br>
+      <%= f.text_field :participant_info %>
+    </p>
+  <% else %>
+    <%= f.hidden_field :participant_info %>
+  <% end %>
+
+
+  <% if @event.spec_mass %>
+    <p>
+      <%= f.label :mass, "Dítě na mši " %>
+      <%= f.select :mass, [["chce", true], ["nechce", false]] %>
+    </p>
+  <% else %>
+    <%= f.hidden_field :mass %>
+  <% end %>
+
+
+  <b>Zkontrolujte si, že všechny informace uvedené ve vašem <%= link_to "účastnickém profilu", act_participant_path(current_user.participant) %> jsou aktuální!</b>
+
+  <p>
+    <%= f.submit "Uložit přihlášku", :class => 'btn btn-primary' %>
+  </p>
+<% end %>

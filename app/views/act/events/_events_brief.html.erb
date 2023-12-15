@@ -1,0 +1,22 @@
+<table class="act_events_table <%= half_page ? "act_table_50" : "act_table_70" %>">
+  <% events.each do |event| %>
+    <tr>
+      <% if event.event_visible?(current_user) %>
+        <th class="act_right squeezed"><b><%= event.title %></th>
+        <th class="act_center <%= half_page ? "normal" : "squeezed act_pad_left_20" %>"> <%= event.date_str() %></b></th>
+        <th class="act_center <%= half_page ? "normal" : "squeezed" %>">
+        <% if event.event_info_url != "" %>
+          <%= button_tag "info", href: event.event_info_url, class: "btn btn-xs btn-primary" %> <%= button_tag "přihlašování", href: act_event_path(event), class: "btn btn-xs btn-purple" %>
+        <% else %>
+          <%= button_tag "info a přihlašování", href: act_event_path(event), class: "btn btn-xs btn-pink" %>
+        <% end %>
+        </th>
+        <th class="act_left squeezed">
+        <% if event.event_photos_url != "" %>
+          <%= button_tag "fotky", href: event.event_photos_url, class: "btn btn-xs btn-success" %>
+        <% end %>
+        </th>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
