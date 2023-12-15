@@ -249,7 +249,7 @@ function init_adventomat() {
           ev.preventDefault()
           ev.stopPropagation()
           const date =  $('#adventomat-date').text()
-          const real_solution= $('#adventomat-text').data('sol') + ''
+          const real_solution= fakedecrypt($('#adventomat-text').data('sol')+'')
           const her_solution= $('input[name="Tvoje řešení"]').val() + ''
           console.log("sol", real_solution, her_solution )
           const is_solved = real_solution.trim() == her_solution.trim()
@@ -631,11 +631,13 @@ function editor_wrap(editor, pre, post) {
  */
 function fakedecrypt(x)
 {
-  var f = 'abcdefghijklmnopqrstuvwxyz512';
-  var t = 'pqrstuvwxyzabcdefghijklmno@.-';
+  // thi is from app/controller/giwi_controller.rb
+  const FAKECRYPT_FROM = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@'
+  const FAKECRYPT_TO   = 'pqrstuvwxyzabcdefghijklmnoPQRSTUVWXYZABCDEFGHIJKLMNO314@9870256'
+
   var ret = '';
   for(var i=0; i < x.length; i++) {
-    ret += t[f.indexOf(x[i])] || x[i];
+    ret += FAKECRYPT_FROM[FAKECRYPT_TO.indexOf(x[i])] || x[i];
   }
   return ret;
 

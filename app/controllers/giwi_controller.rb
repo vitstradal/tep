@@ -9,6 +9,9 @@ require 'yaml'
 require 'caldavreport'
 require 'magick_title'
 
+FAKECRYPT_FROM = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@'
+FAKECRYPT_TO   = 'pqrstuvwxyzabcdefghijklmnoPQRSTUVWXYZABCDEFGHIJKLMNO314@9870256'
+
 ##
 # Controller pro zorbazovaní (pomocí `trac-wiki` a editaci wiki, pomocí knihovny `lib/giwi.rb`).
 #
@@ -545,7 +548,8 @@ class GiwiController < ApplicationController
     return text
   end
   def _template_fakecrypt(env, argv)
-    return argv['00'].tr('A-Z', 'L-ZA-K').tr('a-z', 'l-za-k').tr('@.-', '512')
+    #return argv['00'].tr('A-Z', 'L-ZA-K').tr('a-z', 'l-za-k').tr('@.-', '512')
+    return argv['00'].tr(FAKECRYPT_FROM, FAKECRYPT_TO)
   end
   def _template_textimg(env, argv)
     text = argv['00']
