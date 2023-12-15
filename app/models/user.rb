@@ -60,6 +60,7 @@ class User < ActiveRecord::Base
   roles_attribute :roles_mask
 
   has_one :jabber, inverse_of: :user
+  has_one :participant, inverse_of: :user, dependent: :destroy, class_name: 'Act::Participant'
 
   # declare the valid roles -- do not change the order if you add more
   # roles later, always append them at the end!
@@ -95,5 +96,9 @@ class User < ActiveRecord::Base
   def send_first_login_instructions(is_bonus = false)
      token_raw = set_reset_password_token
      send_devise_notification(:first_login_instructions, token_raw, is_bonus)
+  end
+
+  def org?
+    return roles.include?(:org)
   end
 end

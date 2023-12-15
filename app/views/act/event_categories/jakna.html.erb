@@ -1,0 +1,68 @@
+<h1>Návod na používání typů akcí <%= button_tag "Zpět", :href => act_event_categories_path, :class=>'btn', :ico =>'fa-reply' %></h1>
+
+<div class="col-sm-6">
+<p>
+    Každá akce musí mít právě jeden typ. Tímto typem může být například Pikosobota, Víkendovka nebo Jiné. 
+    Typ akce jednak umožňuje efektivní vyhledávání akcí, druhak usnadňuje tvorbu akce.
+    Typ jiné slouží po situace, kdy je organizována nějaká zcela unikátní akce, u které se nepředpokládá, že by se v budoucnu opakovala.
+</p>
+
+<p>
+    Napravo je vidět ukázka formuláře pro besídku. <b>Kód</b> je dvoupísmenná zkratka, která se bude objevovat v odkazech.
+</p>
+
+<p>
+    <%= form_tag act_events_filter_helper_path do %>
+    <b>Řadící index</b> je hodnota, která určuje, jak vysoko se bude typ akce objevovat v nabídkách. Například když uživatel chce filtrovat akce podle typu:
+    <%= select_tag :event_category, options_for_select(Act::Event::category_filter_all(current_user), @event_category) %>
+    tak typy akcí s nižším indexem se budou objevovat výše. Řadící indexy 1-9 jsou rezervovány pro akce, které se konají alespoň jednou za měsíc.
+    Indexy 11-46 pro důležíté akce (Tábor, Soustředění, Kus ledu) a akce, které se sice konají častěji, ale samy o sobě již tak důležité nejsou (Víkendovky).
+    indexy 50-99 jsou pro akce, které se konají zhruba jednou do roka a jsou krátké (Besídka). 
+    Nejvyšší index by měl mít typ akce "Jiné", protože esteticky dává smysl, když "Jiné" je na konci seznamu.
+    <% end %>
+</p>
+
+<p>
+    Další položkou je <b>jméno</b>. Tato hodnota se objevuje například ve výběru typů akcí o odstavec výše a má být krátkým a výstižným pojmenováním pro danou akci.
+    Jméno typu akce by mělo začínat velkým písmenem.
+</p>
+
+<p>
+    <b>Počet dní</b> je zkratka, která pokud má hodnotu "Jednodenní", tak tvůrcům konkrétních akcí daného typu umožňuje 
+    specifikovat termín vybráním pouze jednoho datumu.
+    Pokud je typ akce jednodenní, pak již žádná instance nemůže být vícedenní. Naopak pokud je typ akce vícedenní, pak je ale při tvorbě konkrétní akce
+    stále možné dát začátek i konec na stejné datum, což je ekvivalentní tomu, jako by se jednalo o jednodenní typ akce.
+    Tedy jedinou výhodou jednoenních typů akcí je, že není potřeba tolikrát kliknout. Což se ale může vyplatit, když se ta akce koná každý týden.
+    A člověk v tom pak neudělá chybu.
+</p>
+
+<p>
+    <b>Popis</b> je vysvětlení na pár řádků, co je ten typ akce zač. Slouží jen pro potřeby orgů, aby se v tom dalo lépe vyznat.
+</p>
+
+<p>
+    <b>Kdo se o typu akce vůbec dozví</b> ovlivňuje, kdo daný typ akce bude schopný filtrovat. 
+    Například u každého Kusu ledu můžeme manuálně nastavit, že ho běžný řešitel neuvidí, aby tohle heslo viděl v rámci nabídky pro filtrování.
+</p>
+
+<p>
+    <b>Nabídneš orgovi při vytváření akce možnost limitovat, kteří účastníci (a kolik) se může přihlásit?</b> a 
+    <b>Nabídneš orgovi při vytváření akce možnost účastníkům povolit specifikovat, jestli chtějí na mši?</b>
+    Slouží k tomu, že když org vytváří daný typ akce, tak se mu možná neche projíždět všechny možnosti toho, co by mohl a nemusel zaškrtnout.
+    Například když vytvářím Pikostředu, tak už dopředu vím, že nebudu zvát žádné náhradníky.
+    Pokud je zaškrtnutý první čtvereček, tak orgovi vytvářejícímu akci webovka zobrazí možnosti 
+    "limitovat maximální počet účastníků", "pozvat pouze některé účastníky" a "pozvat pouze některé náhradníky."
+    Druhý čtvereček pak umožňuje u dané akce rozhodnout, jestli povolíme účastníkům, aby se rozhodli, jestli chtějí jít na mši.
+</p>
+
+<p>
+    <b>Default pole "Jaký stupeň aktivace účastnického účtu je zapotřebí"</b>
+    Když org vytváří nějakou konkrétní akci, tak mu vybraný typ akce poradí, jakou hodnotu tohoto políčka má zaškrnout.
+    Plný účet chceme typicky u každé vícedenní akce. 
+</p>
+
+</div>
+
+<div class="col-sm-6">
+<%= render :partial => "form_edit", :locals => { :is_edit => false, :is_jakna => true } %>
+</div>

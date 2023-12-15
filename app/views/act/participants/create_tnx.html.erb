@@ -1,0 +1,31 @@
+<h1>Vítej Pikomaťáku!</h1>
+
+
+<% if current_user && current_user.admin? %>
+  <p>Vytvořil jsi uživatele na jeho emailovou adresu
+  <% if (params[:send_first]||'') == 'true'  %>
+     <b>byl</b>
+  <% else %>
+     <b>nebyl</b>
+  <% end %>
+  poslán uvítací email.
+  </p>
+
+<% else %>
+
+<p>Díky, že jsi se přihlásil.</p>
+
+<% if (params[:send_first]||'') == 'true'  %>
+  <p>
+    Na zadanou emailovou adresu ti přijdou instrukce k dokončení registrace.
+  </p>
+<% else %>
+<% end %>
+
+<p>
+Na tvoji účast na akcích se těší organizátoři Pikomatu MFF UK.
+</p>
+
+
+
+<% end %>

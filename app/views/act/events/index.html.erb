@@ -1,0 +1,37 @@
+<div class="act_events_bck_white">
+  <h1>Zobrazování akcí</h1>
+</div>
+
+<p class="act_events_bck_white">
+Řešíš Pikomat a chtěl bys poznat ostatní řešitele? Máš pocit, že se ve třídě nemáš s kým bavit, a rád bys někam zapadl? Přijď na některé z našich setkání! Pravidelně pořádáme jednodenní i vícedenní akce, kterých se účastní jak naši nejlepší řešitelé, tak i ti, kteří s řešením zrovna začínají. Pikomat, to je kolektiv stmelený dohromady společnými prožitky a společenství plné přátelské atmosféry.
+</p>
+
+<% unless Act::Participant::has_participant?(current_user) %>
+  <p>
+    <div class="alert alert-warning">
+      Abys ses mohl přihlásit na nějakou akci, musíš mít založený účastnický účet, a navíc ještě musíš být přihlášený/á. Účastnický účet si můžeš založit 
+      <%= link_to "zde", act_participant_new_path %>.
+    </div>
+  </p>
+<% end %>
+
+<% if can? :new, Act::Event %>
+  <%= button_tag "Vytvořit novou akci", :href => act_event_new_path, :class => 'btn btn-primary', :ico => "fa-edit" %>
+<% end %>
+<% if can? :read, Act::EventCategory %>
+  <%= button_tag "Typy akcí", :href => act_event_categories_path, :class => 'btn btn-purple', :ico => "fa-flask" %>
+<% end %>
+<% if current_user && current_user.org? %>
+  <%= button_tag "Návod na používání", :href => act_events_jakna_path, :class => 'btn btn-info', :ico => "fa-print" %>
+<% end %>
+
+<%= render :partial => "form_filter" %>
+
+<h2>Budoucí akce</h2>
+
+<%= render :partial => "events_brief", locals: { events: @future_events, half_page: false } %>
+
+<h2>Již proběhlé akce</h2>
+
+<%= render :partial => "events_brief", locals: { events: @past_events, half_page: false } %>
+</div>

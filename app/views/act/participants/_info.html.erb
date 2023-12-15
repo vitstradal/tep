@@ -1,0 +1,33 @@
+<% if current_user.org? %>
+    <%= render :partial => "display_doubleton", locals: { first: "ID", second: participant.id.to_s } %>
+<% end %>
+
+<%= render :partial => "display_doubleton", locals: { first: "Jméno", second: participant.name.to_s } %>
+
+<%= render :partial => "display_doubleton", locals: { first: "Příjmení", second: participant.last_name.to_s } %>
+
+<%= render :partial => "display_doubleton", locals: { first: "Přezdívka", second: participant.nickname.to_s } %>
+
+<%= render :partial => "display_doubleton", locals: { first: "Pohlaví", second: participant.sex_str() } %>
+
+<%= render :partial => "display_doubleton", locals: { first: "Datum narození", second: participant.birth_str() } %>
+
+<%= render :partial => "display_doubleton", locals: { first: "Ročník", second: participant.grade.to_s } %>
+
+<%= render :partial => "display_doubleton", locals: { first: "Adresa", second: participant.address.to_s } %>
+
+<%= render :partial => "display_doubleton", locals: { first: "Email", second: participant.email.to_s } %>
+
+<%= render :partial => "display_doubleton", locals: { first: "Email na zákonného zástupce", second: participant.parent_email.to_s } %>
+
+<%= render :partial => "display_doubleton", locals: { first: "Telefonní číslo", second: participant.phone.to_s } %>
+
+<%= render :partial => "display_doubleton", locals: { first: "Telefonní číslo na zákonného zástupce", second: participant.parent_phone.to_s } %>
+
+<%= render :partial => "display_doubleton", locals: { first: "Stravovací návyky", second: participant.eating_habits.to_s } %>
+
+<%= render :partial => "display_doubleton", locals: { first: "Zdravotní problémy", second: participant.health_problems.to_s } %>
+
+<%= render :partial => "display_doubleton", locals: { first: "Rodné číslo", second: participant.birth_number.to_s } %>
+
+<%= render :partial => "display_doubleton", locals: { first: "Zdravotní pojišťovna", second: participant.health_insurance.to_s } %>

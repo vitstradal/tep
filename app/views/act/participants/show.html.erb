@@ -1,0 +1,28 @@
+<div class="col-sm-6">
+  <h2>Účastnický účet
+<% if (can? :edit_other, Act::Participant) || Act::Participant::participant_id(current_user) == @participant.id.to_i %>
+  <%= button_tag "Edituj účet", :href => act_participant_edit_path(@participant), :class=>'btn btn-primary', :ico => 'fa-edit' %>
+<% end %>
+<% if can? :show_other, Act::Participant %>
+  <%= button_tag "Zpět", :href => act_participants_path, :class=>'btn', :ico =>'fa-reply' %>
+<% end %></h2>
+
+<%= render :partial => "info", locals: { participant: @participant } %>
+
+</div>
+
+<h2>Moje akce</h2>
+
+<%= render :partial => "act/events/events_brief", locals: { events: @my_events, half_page: true } %>
+
+<h2>Kam bych se ještě mohl/a přihlásit</h2>
+
+<%= render :partial => "act/events/events_brief", locals: { events: @not_my_events, half_page: true } %>
+
+<h2>Kam ještě nevím, jestli chci jet</h2>
+
+<%= render :partial => "act/events/events_brief", locals: { events: @maybe_events, half_page: true } %>
+
+<h2>Kam vím, že nepojedu</h2>
+
+<%= render :partial => "act/events/events_brief", locals: { events: @no_events, half_page: true } %>
