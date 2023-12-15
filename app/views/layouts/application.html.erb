@@ -11,6 +11,7 @@
   <title>Pikomat MFF UK</title>
   <meta name="description" content="Pikomat matematická korespondenční soutěž, matematické soustředění, matematické tábory." />
   <%= stylesheet_link_tag '/ace/css/bootstrap.min.css' %>
+  <%= stylesheet_link_tag '/ace/css/colorbox.css' %>
   <%= stylesheet_link_tag '/ace/css/bootstrap.min.css' %>
   <%= stylesheet_link_tag '/stylesheets/font-awesome.min.css' %>
   <%= stylesheet_link_tag '/ace/css/ace-fonts.css' %>
@@ -24,6 +25,7 @@
   <%# stylesheet_link_tag '/ace/css/ace-part2.css' %>
   <%= stylesheet_link_tag '/stylesheets/andulka/stylesheet.css' %>
   <%= stylesheet_link_tag '/stylesheets/tep.css' %>
+  <%= stylesheet_link_tag '/stylesheets/act.css' %>
   <% if @special_page %>
     <%= stylesheet_link_tag '/stylesheets/special.css' %>
   <% end %>
@@ -163,10 +165,14 @@
       <% end %>
       <%= menu_li '/onas', 'Akce', ico: 'fa-bomb' do %>
         <ul class="submenu">
-          <%= menu_lii wiki_main_path('tabor'),        'Tábory' %>
-          <%= menu_lii wiki_main_path('soustredeni'),  'Soustředění' %>
-          <%= menu_lii wiki_main_path('setkani'),      'Setkání'  %>
-          <%= menu_lii wiki_main_path('fotky'),        'Fotky'  %>
+          <%= menu_lii act_events_path,                    'Přehled akcí' %>            
+          <%= menu_lii act_participant_new_path, 'Můj účastnický účet' %>
+          <% if can? :read_other, Act::Participant %>
+            <%= menu_lii act_participants_path, 'Přehled účastnických účtů' %>
+          <% end %>
+          <% if can? :read, Act::EventCategory %>
+            <%= menu_lii act_event_categories_path, 'Typy akcí' %>
+          <% end %>
         </ul>
       <% end %>
       <%= menu_li '/onas', 'Přihláška', ico: 'fa-book' do %>
@@ -380,7 +386,6 @@
 
 <%#= javascript_include_tag '/ace/js/ace-extra.min.js' %>
 <%= javascript_include_tag '/ace/js/uncompressed/ace-extra.js' %>
-
 <%= javascript_include_tag '/ace/js/jquery.min.js' %>
 <%= javascript_include_tag '/ace/js/bootstrap.min.js' %>
 <%= javascript_include_tag '/ace/js/jquery-ui.custom.min.js' %>
@@ -397,13 +402,15 @@
 <%= javascript_include_tag '/ace-editor/ace.js' %>
 <%= javascript_include_tag '/ace/js/ace-elements.min.js' %>
 <%# javascript_include_tag '/ace/js/ace.min.js' %>
+<%= javascript_include_tag '/ace/js/jquery.colorbox-min.js' %>
 <% if @use_ckeditor %>
   <%= javascript_include_tag '/javascripts/ckeditor.js' %>
   <%= javascript_include_tag '/javascripts/html2tracwiki.js' %>
   <%= javascript_include_tag '/javascripts/diff.js' %>
 <% end %>
+<%= javascript_include_tag '/javascripts/act.js' %>
 <%= javascript_include_tag '/ace/js/uncompressed/ace.js' %>
-<%= javascript_include_tag '/javascripts/tep.js' %>
+<%= javascript_include_tag '/javascripts/tep.js?v=3' %>
 <% if @special_page %>
   <%= javascript_include_tag "/javascripts/special.js"  %>
 <% end %>
