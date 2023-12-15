@@ -44,6 +44,7 @@ class Tep::Mailer < Devise::Mailer
     subj ||= "PIKOMAT: Vyplnění formuláře"
     mail(to: to, from: 'tep@pikomat.mff.cuni.cz', subject: subj)
   end
+
   ##
   # *Tempate* app/views/tep/mailer/wiki_edit_modify.html.erb
   #
