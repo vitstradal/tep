@@ -1,0 +1,3 @@
+class ActController < ApplicationController
+
+end

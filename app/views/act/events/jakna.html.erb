@@ -1,0 +1,101 @@
+<h1>Návod na tvorbu akcí <%= button_tag "Zpět", :href => act_events_path, :class=>'btn', :ico =>'fa-reply' %></h1>
+
+
+<div class="col-sm-6">
+
+<h2>Pikobesídka</h2>
+
+<p>
+    Typ akce zvol takový, který se co nejvíce blíží realitě. Pokud žádný nevidíš, zvol Jiné. Pokud bys chtěl zvolit jiné a víš, 
+    že tahle akce se bude ještě několikrát konat, vytvoř pro ni <%= link_to "vlastní typ", act_event_categories_path %> (řekni adminovi).
+</p>
+
+<p>
+    Napravo je vidět ukázka formuláře pro besídku. Chceme ji co nejvíce propagovat, proto se o ní dozví každý. 
+    Sraz je na hlaváku pro všechny, takže po účastnících specifikaci místa nástupu nechceme.
+    Jestli rodičům umožňovat sdělení k dítěti je diskutabilní - u akcí jako pikostředa to asi nechceme, u vícedenních akcí to chceme.
+    V tomto formuláři bylo vybráno, že chceme.
+</p>
+
+<p>
+    Kolonka "po přihlášní přijde rodičům mail" se vztahuje jak na podání přihlášky, 
+    tak na její změnu. Do změny se přitom počítají všechny atributy, až na veřejnou pozvánku.
+    U víceddeních akcí určitě chceme, u dvouhodinových spíš nechecme.
+</p>
+
+<p>
+    Stupeň aktivace platí jak pro účastníky, tak pro orgy. Při vytváření akcí se chceš skutečně řídit tím, jestli je ta akce jedno- či vícedenní.
+    Bonz mail vyplň svůj, a na něj ti pak budou chodit oznámení o tom, jak se účastníci (a orgové) na akci přihlašují. 
+    Pokud nechceš sám sebe spamovat, tak to políčko nech prázdné.
+</p>
+
+<p>
+    Odkaz na další informace je viditelný všem, kdo vidí danou akci, a chceš do něj dát ideálně odkaz na stránku na piki, s tradiční sadou informací.
+    Pokud je množství informací, které chceš předat účastníkům, zanedbatelné, tak nech políčko s odkazem prázné, a všechny informace vyplň do Popisu akce.
+    Odkaz na fotky vyplň až po akci, kdy máš fotky zpracované a chceš je zveřejnit.
+</p>
+
+<br><br><br><br><br><br>
+
+<h2>Sous</h2>
+
+<p>
+    Na sous se typicky zvou jen ti nejlepší řešitelé. To uděláš tak, že jednak zaklikneš "Chceš limitovat maximální počet účastníků" a do 
+    kolonky pod tím "Limit na počet účastníků" napíšeš například 22. Druhak zaklikneš "Pozvat pouze některé účastníky" a "Pozvat pouze některé náhradníky".
+    Pokud chceš tajit sous před těmi, které jsi nepozval, tak zaškrtni "Nepozvaní účastníci o akci neví". Ale to typicky nechceš, takže nech to políčko nezaškrtnuté.
+</p>
+
+<p>
+    Po vyplnění všech políček klikni na "Uložit akci". Pro vybrání konkrétních účastníků a náhradníků jdi do přehledu dané akce a klikni na
+    <%= button_tag "Edituj pozvané", :href => act_events_jakna_path(), :class=>'btn btn-purple', :ico => 'fa-envelope' %>. Za normálních okolností tě to 
+    přesměruje na stránku, kde u každého řešitele s účastnickým účtem budeš moci zakliknout "pozvat", "náhradník" nebo zavrhnout. "Zavrhnout" zničí pozvánku.
+    Změnit typ pozvánky (nebo ji znovu vytvořit) je možné i opakovaně.
+</p>
+
+<p>
+    Pokud bys rád pozval řeitele, který nemá účastnický účet, tak mu ho můžeš (pokud máš admina) založit skrz 
+    "Admin->Uživatelé->Id konkrétního uživatele->Účastník->Založit účet". Tímto způsobem bude možné daného řešitele pozvat, ale
+    pro přihlášení na sous si bude muset nejprve vyplnit všechny kolonky ve svém účastnickém účtu.
+</p>
+
+<br><br>
+
+<h2>Orgovské akce</h2>
+
+<p>
+    Pokud chceš vytvořit akci čistě pro orgy (např kus ledu), prostě v kolonce "Kdo se o akci vůbec dozví" vyber "org". A možná nechceš orgy
+    buzerovat s vyplňováním všech kolonek v účastnickém účtu, tak dle svého uvážení zmírni minimální potřebnou aktivaci účtu na jednodenní akce.
+    Jinak postupuj obdobně, jako pro besídku.
+</p>
+
+<br><br>
+
+<h2>Mazání akcí</h2>
+
+<p>
+    Po skončení akce tuto akci orzhodně nemaž! Naopak, po skončení akce přidej odkaz na fotky v rámci editace dané akce.
+    Smazáním akce mimo jiné obecně ztratíš všechny informace o tom, kdo se na ni kdy přihlásil.
+</p>
+
+<br><br>
+
+<h2>Oprávnění</h2>
+
+<p>
+    Na vytvoření a editaci akcí musíš být morg, na jejich zmazání admin. Na editaci typů akcí je také potřeba admin.
+    Běžný org může oproti běžným účastníkům navíc pouze zobrazovat detailnější informace ohledně přihlášených účastníků.
+</p>
+
+</div>
+
+<div class="col-sm-6">
+<% @event = @besidka %>
+<%= render :partial => "form_edit", :locals => { :is_edit => false, :is_jakna => true } %>
+</div>
+
+<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+
+<div class="col-sm-6">
+<% @event = @sous %>
+<%= render :partial => "form_edit", :locals => { :is_edit => false, :is_jakna => true } %>
+</div>

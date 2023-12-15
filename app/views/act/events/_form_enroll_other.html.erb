@@ -1,0 +1,7 @@
+<% if Act::EventParticipant::chosen(event, participant) == chosen %>
+  <%= submit_tag text, class: "btn btn-disabled", ico: "fa-flash" %>
+<% else %>
+  <%= form_tag act_event_enroll_other_path(event_id: event.id, participant_id: participant.id, chosen: chosen, delete: delete, path: act_event_enroll_others_path(event_id: event.id, status: status, chosen: chosen_filter, role: role)), method: :post do %>
+    <%= submit_tag text, :class => btn_class %>
+  <% end %>
+<% end %>
