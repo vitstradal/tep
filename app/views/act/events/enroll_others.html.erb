@@ -7,14 +7,14 @@
      <% Act::EventParticipant::CHOSEN_OPTIONS.each do |opt| %>
        <li <%= class_active_if opt == @chosen %> ><%= link_to Act::EventParticipant::CHOSEN_OPTIONS_TXT[opt], act_event_enroll_others_path(status: @status, chosen: opt, role: @role) %></li>
      <% end %>
-    
-     <li class="act_left_margin_61" <%= class_active_if "ev" == @status %>> <%= link_to 'Všichni', act_event_enroll_others_path(status: "ev", chosen: @chosen, role: @role) %></li>
-     <li class="act_no_left_margin" <%= class_active_if "yes" == @status %>> <%= link_to 'Jedou', act_event_enroll_others_path(status: "yes", chosen: @chosen, role: @role) %></li>
-     <li class="act_no_left_margin" <%= class_active_if "maybe" == @status %>> <%= link_to 'Neví', act_event_enroll_others_path(status: "maybe", chosen: @chosen, role: @role) %></li>
-     <li class="act_no_left_margin" <%= class_active_if "no" == @status %>> <%= link_to 'Nejedou', act_event_enroll_others_path(status: "no", chosen: @chosen, role: @role) %></li>
-     <li class="act_no_left_margin" <%= class_active_if "nvt" == @status %>> <%= link_to 'Nepřihlášení', act_event_enroll_others_path(status: "nvt", chosen: @chosen, role: @role) %></li>
 
-     <li class="act_left_margin_61" <%= class_active_if "p" == @role %>> <%= link_to 'Účastníci', act_event_enroll_others_path(status: @status, chosen: @chosen, role: "p") %></li>
+     <li class="act_margin_enroll_others<%= " active" if ("ev" == @status) %>"> <%= link_to 'Všichni', act_event_enroll_others_path(status: "ev", chosen: @chosen, role: @role) %></li>
+     <li class="act_no_left_margin<%= " active" if ("yes" == @status) %>"> <%= link_to 'Jedou', act_event_enroll_others_path(status: "yes", chosen: @chosen, role: @role) %></li>
+     <li class="act_no_left_margin<%= " active" if ("maybe" == @status) %>"> <%= link_to 'Neví', act_event_enroll_others_path(status: "maybe", chosen: @chosen, role: @role) %></li>
+     <li class="act_no_left_margin<%= " active" if ("no" == @status) %>"> <%= link_to 'Nejedou', act_event_enroll_others_path(status: "no", chosen: @chosen, role: @role) %></li>
+     <li class="act_no_left_margin<%= " active" if ("nvt" == @status) %>"> <%= link_to 'Nepřihlášení', act_event_enroll_others_path(status: "nvt", chosen: @chosen, role: @role) %></li>
+
+     <li class="act_margin_enroll_others<%= " active" if ("p" == @role) %>" > <%= link_to 'Účastníci', act_event_enroll_others_path(status: @status, chosen: @chosen, role: "p") %></li>
      <li <%= class_active_if "o" == @role %>> <%= link_to 'Orgové', act_event_enroll_others_path(status: @status, chosen: @chosen, role: "o") %></li>
   </ul>
 
@@ -41,13 +41,26 @@
            <td> <%= Act::EventParticipant::status_txt_long(@event, participant) %> </td>
            <td> <%= Act::EventParticipant::chosen_txt(@event, participant) %> </td>
            <td> <%= Act::EventParticipant::role_txt(@event, participant) %> </td>
-           <td class="der-borright-style: hidden; text-align: center"> <%= render partial: "form_enroll_other", locals: { event: @event, participant: participant, chosen: "participant", delete: false, role: @role, text: "Přihlásit", status: @status, chosen_filter: @chosen, btn_class: "btn btn-success" } %> </td>
-           <td style="border-right-style: hidden; text-align: center"> <%= render partial: "form_enroll_other", locals: { event: @event, participant: participant, chosen: "substitute", delete: false, role: @role, text: "Náhradník", status: @status, chosen_filter: @chosen, btn_class: "btn btn-warning" } %> </td>
-           <td> <%= render partial: "form_enroll_other", locals: { event: @event, participant: participant, chosen: "none", delete: true, role: @role, text: "Smazat", status: @status, chosen_filter: @chosen, btn_class: "btn btn-danger" } %> </td>
+           <td style="border-right-style: hidden; text-align: center">
+            <%= render partial: "form_enroll_other", locals: {
+              event: @event, participant: participant, chosen: "participant", delete: false, role: @role,
+              text: "Přihlásit", status: @status, chosen_filter: @chosen, btn_class: "btn btn-success"
+            } %> </td>
+
+           <td style="border-right-style: hidden; text-align: center">
+            <%= render partial: "form_enroll_other", locals: {
+              event: @event, participant: participant, chosen: "substitute", delete: false, role: @role,
+              text: "Náhradník", status: @status, chosen_filter: @chosen, btn_class: "btn btn-warning"
+            } %> </td>
+
+           <td> <%= render partial: "form_enroll_other", locals: {
+              event: @event, participant: participant, chosen: "none", delete: true, role: @role,
+              text: "Smazat", status: @status, chosen_filter: @chosen, btn_class: "btn btn-danger"
+            } %> </td>
         </tr>
         <% end %>
         </table>
       </div>
     </div>
-   </div>  
+   </div>
 </div>

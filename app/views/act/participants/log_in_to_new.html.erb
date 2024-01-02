@@ -1,9 +1,16 @@
 <h1>Chyba - nepřihlášený uživatel</h1>
 <p>
-Aby sis mohl založit uživatelský účet, musíš se nejprve
-<%= link_to "přihlásit", new_user_session_url %>.<br>
+Aby sis mohl založit účastnický účet, musíš se nejprve
+<a href=<%= new_user_session_url %> class="btn btn-xs btn-purple" type="submit">
+    <span class="ace-icon fa fa-user"></span>
+    <span>přihlásit</span>
+</a>
 </p>
 
 <p>
-Pokud nemáš ani uživatelský účet (nikdy jsi Pikomat neřešil), <%= link_to "vytvoř si účastnicý účet od nuly", act_participant_new_complet_path %>!
+Pokud nemáš ani uživatelský účet (nikdy jsi Pikomat neřešil), tak si ho
+<a href=<%= act_participant_new_complet_path %> class="btn btn-xs btn-purple" type="submit">
+    <span class="ace-icon fa fa-edit"></span>
+    <span>Vytvoř od nuly!</span>
+</a>
 </p>

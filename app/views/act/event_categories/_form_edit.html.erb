@@ -20,7 +20,7 @@
 
 <%= form_for :event_category, :url => url_dest, :method => method, :html => {:class=>'form-horizontal'} do |f| %>
   <div class="<%= form_error_class @event_category, :name%>">
-  
+
   <div class="form-group">
     <%= f.label :code, "Kód", :class => 'col-sm-' + offset_closer + ' control-label no-padding-right' %>
     <div class="col-sm-<%= offset_closer_complement %> <%= form_error_class @event_category, :code %>">
@@ -39,7 +39,7 @@
       <%= form_error @event_category, :idx %>
     </div>
   </div>
-  
+
   <div class="form-group">
     <%= f.label :name, "Jméno", :class => 'col-sm-' + offset_closer + ' control-label no-padding-right' %>
     <div class="col-sm-<%= offset_closer_complement %>  <%= form_error_class @event_category, :name %>">

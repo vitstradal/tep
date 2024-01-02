@@ -1,10 +1,10 @@
 <p><%= link_to @event_participant.participant.participant_name, act_participant_url(@event_participant.participant) %>
 <% if @is_new %>
-  Se přihlásil na 
+  Se přihlásil na
 <% else %>
-  Změnil svoji přihlášku na 
+  Změnil svoji přihlášku na
 <% end %>
-akci 
+akci
 <%= link_to @event.title, act_event_url(@event) %>.
 </p>
 
@@ -38,7 +38,7 @@ Aktuální stav přihlášky:
       Účastník
     <% else %>
       Účastnice
-    <% end %>  
+    <% end %>
     nastupuje v <b><%= @event_participant.place %></b>
   <p>
 <% end %>
@@ -46,7 +46,7 @@ Aktuální stav přihlášky:
 <% if @event.spec_participant %>
   <p>
     <% if @event_participant.participant_info == "" %>
-      K 
+      K
       <% if @event_participant.male?() %>
         účastníkovi
       <% else %>
@@ -54,7 +54,7 @@ Aktuální stav přihlášky:
       <% end %>
       neměl rodič žádné zvláštní připomínky.
     <% else %>
-      Připomínky rodiče k 
+      Připomínky rodiče k
       <% if @event_participant.male?() %>
         účastníkovi
       <% else %>
@@ -73,7 +73,7 @@ Aktuální stav přihlášky:
       Účastnice
     <% end %>
     na mši
-    <% if @event_participant.mass == 'yes' %>
+    <% if @event_participant.mass %>
       <b>chce</b>.
     <% else %>
       <b>nechce</b>.

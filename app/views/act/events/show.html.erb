@@ -37,14 +37,14 @@
       <%= render :partial => "form_enroll", :locals => { :chosen => "substitute" } %>
     <% else %>
       <div class="alert alert-warning">
-        Bohužel jsi nebyl vybrán ani mezi účastníky, ani mezi náhradníky. Tedy se na tuto akci nemůžeš přihlásit. 
+        Bohužel jsi nebyl vybrán ani mezi účastníky, ani mezi náhradníky. Tedy se na tuto akci nemůžeš přihlásit.
         Pokud si myslíš, že se jedná o chybu, neváhej nám napsat.
       </div>
     <% end %>
   <% elsif Act::Participant::has_participant?(current_user) && ! @event.fulfils_activation?(current_user.participant) %>
     <div class="alert alert-warning">
-      Aby ses mohl/a přihlásit na tuto akci, musíš mít plně aktivovaný uživatelský účet (nejen částečně). 
-      Účet si aktivuješ tak, že do něj vyplníš všechny potřebné informace a klikneš na tlačítko <i>Uložit</i>. 
+      Aby ses mohl/a přihlásit na tuto akci, musíš mít plně aktivovaný uživatelský účet (nejen částečně).
+      Účet si aktivuješ tak, že do něj vyplníš všechny potřebné informace a klikneš na tlačítko <i>Uložit</i>.
       Svůj uživatelský účet najdeš <%= link_to "zde", act_participant_path(current_user.participant) %>.
       </div>
   <% else %>
@@ -63,7 +63,7 @@
   <div class="col-sm-6">
 <% end %>
 <h2>Přihlášení účastníci</h2>
-<% if can? :show_other, Act::Participant %>
+<% if can? :read_other, Act::Participant %>
   <p>
   <% if ! @edit_participants %>
     <%= button_tag "Zobraz hromadné informace", :href => act_event_display_participants_path(@event), :class => 'btn btn-info', :ico => 'fa-book' %>
@@ -71,9 +71,12 @@
   </p>
 <% end %>
 <% if current_user %>
-  <%= render @participants_yes %>
-  <%= render @participants_maybe %>
-  <%= render @participants_no %>
+  <%= render @parts_yes %>
+  <%= render @parts_maybe %>
+  <%= render @parts_no %>
+  <%= render @orgs_yes %>
+  <%= render @orgs_maybe %>
+  <%= render @orgs_no %>
 <% else %>
   Pro zobrazení účastníků je potřeba se přihlásit.
 <% end %>
@@ -87,7 +90,7 @@
 
   <h2>Přihlášení náhradníci</h2>
 
-  <% if can? :show_other, Act::Participant %>
+  <% if can? :read_other, Act::Participant %>
     <p>
     <% if ! @edit_participants %>
       <%= button_tag "Zobraz hromadné informace", :href => act_event_display_participants_path(@event), :class => 'btn btn-info', :ico => 'fa-book' %>

@@ -142,8 +142,8 @@ class Act::Event < ActiveRecord::Base
   ##
   # *Returns* jestli se daný účastnický účet může této akce zúčastnit jako "participant" (nikoliv jako náhradník)
   def can_participate?(participant)
-    event_participant = Act::EventParticipant::get_event_participant(participant, self)
-    if participant.admin? || event_participant && event_participant.chosen == "participant"
+    event_participant = Act::EventParticipant::get_event_participant(self, participant)
+    if participant.admin? || event_participant && event_participant.chosen == "participant" && event_participant.status == "yes"
       return true
     end
 
@@ -181,7 +181,7 @@ class Act::Event < ActiveRecord::Base
   ##
   # *Returns* jestli se daný účastnický účet může této akce zúčastnit jako náhradník (nikoliv jako účastník)
   def can_substitute?(participant)
-   event_participant = Act::EventParticipant::get_event_participant(participant, self)
+   event_participant = Act::EventParticipant::get_event_participant(self, participant)
 
    if event_participant && event_participant.chosen == "substitute"
      return true

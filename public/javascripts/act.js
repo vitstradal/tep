@@ -27,7 +27,7 @@ function colorConditioned(str, cond) {
   if (cond) {
     document.getElementById(str).style.backgroundColor = "#FFFFFF";
   } else {
-    document.getElementById(str).style.backgroundColor = "#F8F8F0";	
+    document.getElementById(str).style.backgroundColor = "#F8F8F0";
   }
 }
 
@@ -112,7 +112,7 @@ jQuery(function($) {
 	showIf('event_event_category', ['max_participants', 'limit_num_participants', 'uninvited_participants_dont_see', 'enable_only_specific_participants', 'enable_only_specific_substitutes', 'uninvited_organisers_dont_see', 'enable_only_specific_organisers'], false, JSON.parse(document.getElementById("restrictions_electible_categories").dataset.codes));
 
 	showIf('event_event_category', 'spec_mass', false, JSON.parse(document.getElementById("mass_spec_electible_categories").dataset.codes));
-  
+
   $('#event_event_category').change();
 
 	showIf('event_limit_num_participants', 'max_participants');
@@ -133,19 +133,20 @@ jQuery(function($) {
     $.getScript( url, function() {
       const table = new DataTable('#act_display_participants', {
           paging: false,
+          ordering: false,
           searching: false,
           info: false,
           scrollY: false,
-          scrollX: false
+          scrollX: true
       });
-      
+
       document.querySelectorAll('a.toggle-vis').forEach((el) => {
           el.addEventListener('click', function (e) {
               e.preventDefault();
-      
+
               let columnIdx = e.target.getAttribute('data-column');
               let column = table.column(columnIdx);
-      
+
               // Toggle the visibility
               column.visible(!column.visible());
           });

@@ -1,4 +1,4 @@
-<h1>Účastníci akce 
+<h1>Účastníci akce
   <%= @event.title %>
   <%= button_tag "Zpět", :href => act_event_path(@event), :class=>'btn', :ico =>'fa-reply' %>
 </h1>
@@ -26,7 +26,7 @@
               </b>
             </td>
           <% end %>
-        </tr>    
+        </tr>
 
         </thead>
         <tbody>
@@ -40,7 +40,7 @@
         <%= render :partial => "display_participants_single_type", locals: { event_participants: @orgs_yes } %>
         <%= render :partial => "display_participants_single_type", locals: { event_participants: @orgs_maybe } %>
         <%= render :partial => "display_participants_single_type", locals: { event_participants: @orgs_no } %>
-        
+
         <tr>
           <% for attr in @attr_table do %>
             <td>Účastníci</td>
@@ -64,4 +64,4 @@
       </table>
     </div>
   </div>
-</div>  
+</div>

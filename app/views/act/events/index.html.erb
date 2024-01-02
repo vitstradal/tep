@@ -1,3 +1,4 @@
+<div class="col-xs-12">
 <div class="act_events_bck_white">
   <h1>Zobrazování akcí</h1>
 </div>
@@ -9,29 +10,37 @@
 <% unless Act::Participant::has_participant?(current_user) %>
   <p>
     <div class="alert alert-warning">
-      Abys ses mohl přihlásit na nějakou akci, musíš mít založený účastnický účet, a navíc ještě musíš být přihlášený/á. Účastnický účet si můžeš založit 
+      Abys ses mohl přihlásit na nějakou akci, musíš mít založený účastnický účet, a navíc ještě musíš být přihlášený/á. Účastnický účet si můžeš založit
       <%= link_to "zde", act_participant_new_path %>.
     </div>
   </p>
 <% end %>
 
 <% if can? :new, Act::Event %>
-  <%= button_tag "Vytvořit novou akci", :href => act_event_new_path, :class => 'btn btn-primary', :ico => "fa-edit" %>
+  <a href=<%= act_event_new_url %> class="btn btn-primary" type="submit">
+    <span class="ace-icon fa fa-edit"></span>
+    <span>Vytvořit </span>
+    <span class="hidden-xs">novou </span>
+    <span>akci</span>
+  </a>
 <% end %>
 <% if can? :read, Act::EventCategory %>
-  <%= button_tag "Typy akcí", :href => act_event_categories_path, :class => 'btn btn-purple', :ico => "fa-flask" %>
+  <a href=<%= act_event_categories_url %> class="btn btn-purple" type="submit">
+    <span class="ace-icon fa fa-flask"></span>
+     <span>Typy akcí</span>
+  </a>
 <% end %>
 <% if current_user && current_user.org? %>
-  <%= button_tag "Návod na používání", :href => act_events_jakna_path, :class => 'btn btn-info', :ico => "fa-print" %>
+  <a href=<%= act_events_jakna_path %> class="btn btn-info" type="submit">
+    <span class="ace-icon fa fa-print"></span>
+    <span>Návod</span>
+    <span class="hidden-xs"> na používání</span>
+  </a>
 <% end %>
 
 <%= render :partial => "form_filter" %>
 
-<h2>Budoucí akce</h2>
+<%= render :partial => "events_brief", locals: { events: @future_events, half_page: false, header: "Budoucí akce" } %>
 
-<%= render :partial => "events_brief", locals: { events: @future_events, half_page: false } %>
-
-<h2>Již proběhlé akce</h2>
-
-<%= render :partial => "events_brief", locals: { events: @past_events, half_page: false } %>
+<%= render :partial => "events_brief", locals: { events: @past_events, half_page: false, header: "Již proběhlé akce" } %>
 </div>

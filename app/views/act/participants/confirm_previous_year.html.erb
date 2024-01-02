@@ -1,0 +1,21 @@
+<h1>Opravdu chceš snížit ročník?</h1>
+Tímto se sníží ročník každého účastnického účtu o jeden. Tuto akci proveď pouze ve chvíli, kdy došlo k chybnému zvýšení ročníku.<br>
+
+<p>
+  <b>Tuto akci neprováděj, pokud nevíš, co děláš!</b>
+</p>
+
+<p>
+<% if can? :previous_year, Act::Participant %>
+  <a href=<%= act_participants_previous_year_path %> class="btn btn-danger" type="submit">
+    <span class="ace-icon fa fa-flash"></span>
+    <span>Ano, chci vrátit ročník</span>
+  </a>
+<% else %>
+  <%= submit_tag  'Vrátit rok na předcházející může pouze admin.', :class=>'btn btn-disabled' %></div>
+<% end %>
+</p>
+
+<p>
+  <%= link_to 'Ne, raději ročník vracet nebudu', act_participants_path, :class => 'btn btn-primary' %>
+<p>

@@ -6,8 +6,6 @@
   <h2>Vyskytla se chyba. Prosím, sděl nám, že jsi ji dostal.</h2>
 <% end %>
 
-<% require 'pp' %>
-
 <%= form_for :event_participant, :url => { :action => :enroll } do |f| %>
 
   <% if @event.errors.any? %>
@@ -22,7 +20,7 @@
       </ul>
     </div>
   <% end %>
-  
+
   <%= f.hidden_field :event_id, value: @event.id %>
 
   <%= f.hidden_field :participant_id, value: Act::Participant::participant_id(current_user) %>
@@ -55,10 +53,9 @@
     <%= f.hidden_field :participant_info %>
   <% end %>
 
-
   <% if @event.spec_mass %>
     <p>
-      <%= f.label :mass, "Dítě na mši " %>
+      <%= f.label :mass, "Dítě na nedělení mši " %>
       <%= f.select :mass, [["chce", true], ["nechce", false]] %>
     </p>
   <% else %>

@@ -38,7 +38,7 @@ class Act::EventCategory < ActiveRecord::Base
   end
 
   VISIBLE_STATUSES = ['ev', 'user', 'org']
-  VISIBLE_STATUSES_TXT = { 'ev' => 'Každý', 'user' => 'Uživatel', 'org' => 'org' }
+  VISIBLE_STATUSES_TXT = { 'ev' => 'Každý', 'user' => 'Uživatel', 'org' => 'Org' }
 
   ##
   # *Returns* Vidí daný uživatel daný typ akce?

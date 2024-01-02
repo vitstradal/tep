@@ -45,11 +45,11 @@ class Act::Participant < ActiveRecord::Base
   validates :name, presence: true
   validates :last_name, presence: true
 
-  validates :nickname, uniqueness: { case_sensitive: false, message: "tuhle přezdívku už někdo má" }
+  validates :nickname, uniqueness: { case_sensitive: false, message: "tuhle přezdívku už někdo má" }, unless: "nickname == ''"
 
   with_options if: :act_light? do 
     validates :grade, presence: true, numericality: { only_integer: true, message: "musí být číslo" }
-    validates :email, presence: true
+    validates :email, presence: true, uniqueness: { case_sensitive: false, message: 'Tento email již někdo používá. Pokud vlastníš uživatelský účet s tímto emailem, tak se před výtvořením účtu přihlaš.' }
     validates :phone, presence: true
     validates :parent_email, presence: true
     validates :parent_phone, presence: true
@@ -63,8 +63,8 @@ class Act::Participant < ActiveRecord::Base
     validates :sex, presence: true
   end
 
-  GRADES = ["6", "7", "8", "9"]
-  GRADES_TXT = { "4" => "čtvrtá", "5" => "pátá", "6" => "prima", "7" => "sekunda", "8" => "tercie", "9" => "kvarta", "10" => "kvinta"}
+  GRADES = [ "6", "7", "8", "9" ]
+  GRADES_TXT = { "4" => "Čtvrtá", "5" => "Pátá", "6" => "Prima", "7" => "Sekunda", "8" => "Tercie", "9" => "Kvarta", "10" => "Kvinta"}
 
   YOUNGEST_TO_FILTER = 6
   OLDEST_TO_FILTER = 9

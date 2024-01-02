@@ -1,13 +1,18 @@
 <% if can? :new_year, Act::Participant %>
-  <%= button_tag "Nový ročník", :href => act_participants_new_year_path, class: "btn btn-danger", ico: "fa-flash" %>
+  <a href=<%= act_participants_confirm_new_year_path %> class="btn btn-danger" type="submit">
+    <span class="ace-icon fa fa-flash"></span>
+    <span>Nový ročník</span>
+  </a>
 <% end %>
 
 <% if can? :new_year, Act::Participant %>
-  <%= button_tag "Předchozí ročník", :href => act_participants_previous_year_path, class: "btn btn-danger", ico: "fa-flash" %>
+  <a href=<%= act_participants_confirm_previous_year_path %> class="btn btn-danger" type="submit">
+    <span class="ace-icon fa fa-flash"></span>
+    <span>Předchozí ročník</span>
+  </a>
 <% end %>
 
-
-<% if can? :show_other, Act::Participant %>
+<% if can? :read_other, Act::Participant %>
 <h1>Přehled účastnických účtů</h1>
   <div class="tabbable">
   <ul id="myTab" class="nav nav-tabs">
@@ -17,11 +22,9 @@
        <li <%= class_active_if grade == @grade %> ><%= link_to Act::Participant::GRADES_TXT[grade], act_participant_filter_path(grade: grade, role: @role) %></li>
      <% end %>
      <li <%= class_active_if @grade == "old" %>><%= link_to "Starší", act_participant_filter_path(grade: "old", role: @role) %></li>
-     
-     <li <%= class_active_if "p" == @role %> style="margin-left:9cm"> <%= link_to 'Účastníci', act_participant_filter_path(grade: @grade, role: "p") %></li>
+
+     <li class="col-lg-offset-4 col-md-offset-2 col-xs-offset-1 <%= " active" if "p" == @role %>"> <%= link_to 'Účastníci', act_participant_filter_path(grade: @grade, role: "p") %></li>
      <li <%= class_active_if "o" == @role %>> <%= link_to 'Orgové', act_participant_filter_path(grade: @grade, role: "o") %></li>
-
-
   </ul>
 
    <div class="tab-content">
@@ -41,7 +44,13 @@
         <% @participants.each do |participant|  %>
         <tr>
            <td> <%= link_to participant.id, act_participant_path(participant.id) %> </td>
-           <td> <%= link_to participant.user.id, user_show_path(participant.user.id) %> </td>
+           <td>
+            <% if participant.user %>
+              <%= link_to participant.user.id, user_show_path(participant.user.id) %>
+            <% else %>
+              <b style="color:Red;">Uživatel nepřiřazen</b>
+            <% end %>
+           </td>
            <td> <%= participant.name %> </td>
            <td> <%= participant.last_name %> </td>
            <td> <%= participant.nickname %> </td>
@@ -67,7 +76,7 @@
 <p>
 <% if current_user.nil? %>
   Na vytvoření účastnického účtu se ale musíš nejprve
-  <%= link_to "Přihlásit", "users/sign_in" %>
+  <%= button_tag "přihlásit", :href => new_user_session_url, class: "btn btn-xs btn-primary" %>.<br>
 <% elsif ! Act::Participant::has_participant?(current_user) %>
 <%= button_tag "Vytvoř si vlastní účet!", :href => act_participant_new_path, :class => 'btn btn-primary' %>.
 <% else %>
