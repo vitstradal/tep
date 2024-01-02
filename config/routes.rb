@@ -52,6 +52,8 @@ Tep::Application.routes.draw do
   # participants:
   get   '/act/participants/new_year'                               => 'act/participants#new_year',           :as => :act_participants_new_year
   get   '/act/participants/previous_year'                          => 'act/participants#previous_year',      :as => :act_participants_previous_year
+  get   '/act/participants/confirm_new_year'                       => 'act/participants#confirm_new_year',   :as => :act_participants_confirm_new_year
+  get   '/act/participants/confirm_previous_year'                  => 'act/participants#confirm_previous_year', :as => :act_participants_confirm_previous_year
   post  '/act/participants/create_other'                           => 'act/participants#create_other',       :as => :act_participant_create_other
   get   '/act/participants/filter/:grade/:role'                    => 'act/participants#index',              :as => :act_participant_filter
 
@@ -63,9 +65,9 @@ Tep::Application.routes.draw do
   get   '/act/participants/:participant_id'                        => 'act/participants#show',               :as => :act_participant
   get   '/act/participants/:participant_id/edit'                   => 'act/participants#edit',               :as => :act_participant_edit
   patch '/act/participants/:participant_id'                        => 'act/participants#update',             :as => :act_participant_update
-  post  '/act/participants/:participant_id/confirm_delete'         => 'act/participants#confirm_delete',     :as => :act_participant_confirm_delete
+  get  '/act/participants/:participant_id/confirm_delete'         => 'act/participants#confirm_delete',     :as => :act_participant_confirm_delete
   post  '/act/participants/:participant_id/delete'                 => 'act/participants#delete',             :as => :act_participant_delete
-  get   '/act/participant/tnx'                                     => 'act/participants#create_tnx',         :as => :act_participant_create_tnx
+  get  '/act/participant/tnx'                                      => 'act/participants#create_tnx',         :as => :act_participant_create_tnx
 
   # event_categories:
   get   '/act/event_categories'                                    => 'act/event_categories#index',          :as => :act_event_categories

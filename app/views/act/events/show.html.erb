@@ -63,7 +63,7 @@
   <div class="col-sm-6">
 <% end %>
 <h2>Přihlášení účastníci</h2>
-<% if can? :show_other, Act::Participant %>
+<% if can? :read_other, Act::Participant %>
   <p>
   <% if ! @edit_participants %>
     <%= button_tag "Zobraz hromadné informace", :href => act_event_display_participants_path(@event), :class => 'btn btn-info', :ico => 'fa-book' %>
@@ -71,9 +71,12 @@
   </p>
 <% end %>
 <% if current_user %>
-  <%= render @participants_yes %>
-  <%= render @participants_maybe %>
-  <%= render @participants_no %>
+  <%= render @parts_yes %>
+  <%= render @parts_maybe %>
+  <%= render @parts_no %>
+  <%= render @orgs_yes %>
+  <%= render @orgs_maybe %>
+  <%= render @orgs_no %>
 <% else %>
   Pro zobrazení účastníků je potřeba se přihlásit.
 <% end %>
@@ -87,7 +90,7 @@
 
   <h2>Přihlášení náhradníci</h2>
 
-  <% if can? :show_other, Act::Participant %>
+  <% if can? :read_other, Act::Participant %>
     <p>
     <% if ! @edit_participants %>
       <%= button_tag "Zobraz hromadné informace", :href => act_event_display_participants_path(@event), :class => 'btn btn-info', :ico => 'fa-book' %>

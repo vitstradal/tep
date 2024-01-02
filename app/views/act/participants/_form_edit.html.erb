@@ -1,11 +1,11 @@
 <% if is_edit %>
   <% url = act_participant_path(participant) %>
   <% method = :patch %>
-<% elsif !@new_complet %>
-  <% url = act_participants_path %>
+<% elsif @new_complet %>
+  <% url = act_participant_create_complet_path %>
   <% method = :post %>
 <% else %>
-  <% url = act_participant_create_complet_path %>
+  <% url = act_participants_path %>
   <% method = :post %>
 <% end %>
 
@@ -60,7 +60,7 @@
       <% if participant.birth.nil? %>
         <%= f.date_field :birth %>
       <% else %>
-        <%= f.date_field :birth, readonly: current_user && ! current_user.org?, value: f.object ? f.object.strftime("%d.%m.%Y") : nil %>
+        <%= f.date_field :birth, readonly: current_user && ! current_user.org?, value: participant.birth.strftime("%F") %>
       <% end %>
       <%= form_error participant, :birth %>
     </div>

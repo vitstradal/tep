@@ -15,9 +15,8 @@ table.act_events_table { border: none; }
 table.act_events_table { border: none; }
 table.act_table_70 { width: 70%; }
 table.act_table_50 { width: 50%; }
-table.act_events_table th.normal { border: none; width: 30% }
-table.act_events_table th.squeezed { border: none; width: 20% }
+table.act_events_table th.borderless { border: none; }
 .act_pad_left_20 { padding-left: 25px;}
 
 li.act_no_left_margin { margin-left: 00px; }
-li.act_left_margin_61 { margin-left: 61px; }
+li.act_margin_enroll_others { margin-left: 81px; }

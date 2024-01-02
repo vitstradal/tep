@@ -35,7 +35,14 @@
     Odkaz na fotky vyplň až po akci, kdy máš fotky zpracované a chceš je zveřejnit.
 </p>
 
-<br><br><br><br><br><br>
+</div>
+<div class="col-sm-6">
+
+<% @event = @besidka %>
+<%= render :partial => "form_edit", :locals => { :is_edit => false, :is_jakna => true } %>
+
+</div>
+<div class="col-sm-6">
 
 <h2>Sous</h2>
 
@@ -87,13 +94,9 @@
 </p>
 
 </div>
-
 <div class="col-sm-6">
-<% @event = @besidka %>
-<%= render :partial => "form_edit", :locals => { :is_edit => false, :is_jakna => true } %>
-</div>
 
-<br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br><br>
+<br><br>
 
 <div class="col-sm-6">
 <% @event = @sous %>

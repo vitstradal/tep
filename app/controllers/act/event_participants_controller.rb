@@ -23,27 +23,28 @@ class Act::EventParticipantsController < ActController
     end
 
     if participant.nil?
+      is_creating = true
       participant = Act::EventParticipant.new
       participant.event_id = params[:event_id]
       participant.participant_id = params[:participant_id]
       participant.status = "yes"
       participant.chosen = params[:chosen]
     elsif params[:delete] != "true"
+      is_creating = false
       if params[:chosen] && params[:chosen] != participant.chosen
         participant.chosen = params[:chosen]
-        participant.save
       end
-      redirect_to params[:path]
-      return
     end
 
     if params[:delete] == "true"
       participant.destroy
+      add_success "Přihláška na akci byla úspěšně smazána" 
       redirect_to params[:path]
       return
     end
 
     if participant.save
+      add_success "Přihláška na akci byla úspěšně " + (is_creating ? "vytvořena" : "změněna")
       redirect_to params[:path]
     else
       render params[:path], status: :unprocessable_entity
@@ -72,6 +73,7 @@ class Act::EventParticipantsController < ActController
 
     @event_participant.update_chosen()
     if @event_participant.update(event_participant_params)
+      add_success "Přihláška na akci byla úspěšně změněna"
       redirect_to act_event_edit_participants_path(params[:event_id])
     else
       render act_event_edit_participants_path(params[:event_id]), status: :unprocessable_entity
@@ -97,6 +99,7 @@ class Act::EventParticipantsController < ActController
 
     @event_participant.destroy
 
+    add_success "Přihláška na akci byla úspěšně smazána"
     redirect_to act_event_edit_participants_path(params[:event_id])
   end
 
@@ -122,6 +125,8 @@ class Act::EventParticipantsController < ActController
     
     @event_participant.chosen = params[:chosen]
     @event_participant.save
+
+    add_success "Přihláška na akci byla úspěšně změněna" 
     redirect_to act_event_edit_participants_path(params[:event_id])
   end
 

@@ -73,7 +73,7 @@ Aktuální stav přihlášky:
       Účastnice
     <% end %>
     na mši
-    <% if @event_participant.mass == 'yes' %>
+    <% if @event_participant.mass %>
       <b>chce</b>.
     <% else %>
       <b>nechce</b>.

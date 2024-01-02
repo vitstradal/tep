@@ -9,7 +9,7 @@
   <% if @edit_participants %>
     <div class="col-sm-offset-0 col-sm-2">
   <% end %>
-  <% if can? :show_other, Act::Participant %>
+  <% if can? :read_other, Act::Participant %>
     <%= link_to event_participant.participant.participant_name(), act_participant_path(event_participant.participant_id) %>
   <% else %>
     <%= event_participant.participant.participant_name() %>

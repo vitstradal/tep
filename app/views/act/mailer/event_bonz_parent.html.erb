@@ -5,7 +5,7 @@ Dobrý den,
 <% else %>
   Vaše dcera
 <% end %>
-<%= link_to @event_participant.participant.participant_name, act_participant_url(@event_participant.participant) %>
+<%= link_to @event_participant.participant.name + " " + @event_participant.participant.last_name , act_participant_url(@event_participant.participant) %>
 <% if @is_new %>
   <% if @event_participant.male?() %>
   se přihlásil na
@@ -49,7 +49,7 @@ Aktuální stav přihlášky:
 
 <% if @event.spec_place %>
   <p>
-    Účastník nastupuje v <b><%= @event_participant.place %></b>
+    <%= @event_participant.male? ? "Účastník" : "Účastnice" %> nastupuje v: <b><%= @event_participant.place %></b>
   <p>
 <% end %>
 
@@ -82,8 +82,8 @@ Aktuální stav přihlášky:
     <% else %>
       Účastnice
     <% end %>
-    na mši
-    <% if @event_participant.mass == 'yes' %>
+    na mši:
+    <% if @event_participant.mass %>
       <b>chce</b>.
     <% else %>
       <b>nechce</b>.

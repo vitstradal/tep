@@ -22,7 +22,7 @@ class Act::EventParticipant < ActiveRecord::Base
   STATUS_TXT_LONG = { "yes" => "Jede", "maybe" => "Neví", "no" => "Nejede", "nvt" => "Nehlasoval" }
 
   CHOSEN_OPTIONS = ["participant", "substitute", "none"]
-  CHOSEN_OPTIONS_TXT = { "participant" => "Účastník", "substitute" => "Náhradník", "none" => "Nepozvaný" }
+  CHOSEN_OPTIONS_TXT = { "participant" => "Účastník", "substitute" => "Náhradník", "none" => "Jiné" }
 
   validates :status, inclusion: { in: STATUSES_OPTIONS, message: "Účstník musí být buťo přihlášený, nebo neví, anebo nepřihlášený (yes, maybe, no)" }
 
@@ -66,18 +66,26 @@ class Act::EventParticipant < ActiveRecord::Base
   end
 
   def male?
-    participant || participant.male?
+    (! participant.nil?) && participant.male?
   end
 
   def org?
-    participant && participant.org?
+    (! participant.nil?) && participant.org?
+  end
+
+  def participant?
+    return chosen == "participant"
+  end
+
+  def substitute?
+    return chosen == "substitute"
   end
 
   ##
   # *Returns* čitelná hodnota stavu účastník/náhradník
   def self.role_txt(event, participant)
     begin
-      return get_event_participant(event, participant).org? ? "Org" : "Účatník"
+      return get_event_participant(event, participant).org? ? "Org" : "Účastník"
     rescue
       return "Účastník"
     end

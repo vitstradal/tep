@@ -1,4 +1,4 @@
-<h1>Opravdu cheš smazat tento účastnický účet?</h1>
+<h1>Opravdu chceš smazat tento účastnický účet?</h1>
 <% if (can? :delete_other, Act::Participant) || (@participant.is_me?(current_user)) %>
   <%= form_tag act_participant_delete_path(@participant) do %>
     <%= submit_tag  'Ano', :class=>'btn btn-danger' %>

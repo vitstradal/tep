@@ -133,10 +133,11 @@ jQuery(function($) {
     $.getScript( url, function() {
       const table = new DataTable('#act_display_participants', {
           paging: false,
+          ordering: false,
           searching: false,
           info: false,
           scrollY: false,
-          scrollX: false
+          scrollX: true
       });
       
       document.querySelectorAll('a.toggle-vis').forEach((el) => {

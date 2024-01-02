@@ -112,8 +112,6 @@ class Ability
 
       can :status, :klep
 
-      can :read_other, Act::Participant
-      can :show_other, Act::Participant
       can :read, Act::EventCategory
       can :read, Act::EventParticipant
       can :read, Act::EventInvitation
@@ -143,6 +141,7 @@ class Ability
       can :edit, Act::Event
       can :update, Act::Event
 
+      can :read_other, Act::Participant
       can :new_other, Act::Participant
       can :create_other, Act::Participant
       can :edit_other, Act::Participant
@@ -177,7 +176,6 @@ class Ability
       can :user_delete,      :tep
       can :user_action,      :tep
       can :user_role_change, :tep
-
 
       can :index,  Sosna::Config
       can :update, Sosna::Config

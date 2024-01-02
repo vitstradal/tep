@@ -1,0 +1,21 @@
+<h1>Opravdu chceš začít nový ročník?</h1>
+Tímto se zvýší ročník každého účastnického účtu o jeden. Tuto akci je vhodné provést prvního září.<br>
+
+<p>
+  <b>Tuto akci neprováděj, pokud nevíš, co děláš!</b>
+</p>
+
+<p>
+<% if can? :new_year, Act::Participant %>
+  <a href=<%= act_participants_new_year_path %> class="btn btn-danger" type="submit">
+    <span class="ace-icon fa fa-flash"></span> 
+    <span>Ano, chci nový ročník</span>
+  </a>
+<% else %>
+  <%= submit_tag  'Nový ročník může zahájit pouze admin.', :class=>'btn btn-disabled' %></div>
+<% end %>
+</p>
+
+<p>
+  <%= link_to 'Ne, raději nový ročník začínat nebudu', act_participants_path, :class => 'btn btn-primary' %>
+<p>

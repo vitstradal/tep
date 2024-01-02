@@ -1,10 +1,12 @@
-<h1>Nový účastnický účet</h1>
-
-<% if can? :show_other, Act::Participant %>
+<h1>Nový účastnický účet
+<% if can? :read_other, Act::Participant %>
   <%= button_tag "Zrušit", :href => act_participants_path, :class=>'btn', :ico =>'fa-reply' %>
+<% elsif @new_complet %>
+  <%= button_tag "Zrušit", :href => act_participant_new_path, :class=>'btn', :ico =>'fa-reply' %>
 <% else %>
   <%= button_tag "Zrušit", :href => root_path, :class=>'btn', :ico =>'fa-reply' %>
 <% end %>
+</h1>
 
 <%= render :partial => "form_edit", :locals => { :is_edit => false, :participant => @participant } %>
 

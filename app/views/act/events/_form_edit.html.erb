@@ -45,13 +45,13 @@
 
   <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :uninvited_participants_dont_see, text: "Nepozvaní účastníci o akci neví" } %>
 
-  <% if current_user.admin? %>
+  <% if current_user && current_user.admin? %>
     <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :enable_only_specific_organisers, text: "Pozvat pouze některé orgy" } %>
   <% else %>
     <%= f.hidden_field :enable_only_specific_organisers %>
   <% end %>
 
-  <% if current_user.admin? %>
+  <% if current_user && current_user.admin? %>
     <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :uninvited_organisers_dont_see, text: "Nepozvaní organizátoři o akci neví" } %>
   <% else %>
     <%= f.hidden_field :uninvited_organisers_dont_see %>
