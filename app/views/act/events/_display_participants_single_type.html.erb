@@ -1,0 +1,18 @@
+<% event_participants.each do |participant| %>
+  <% if participant.status == "yes" %>
+    <tr bgcolor = "#58d68d">
+  <% elsif participant.status == "maybe" %>
+    <tr bgcolor = "#f5b041">
+  <% elsif participant.status == "no" %>
+    <tr bgcolor = "#ec7063">
+  <% else %>
+    <tr>
+  <% end %>
+
+  <% for attr in Act::Participant::ATTR_TABLE do %>
+    <td>
+      <%= participant.participant.send(attr[0]) %>
+    </td>
+  <% end %>
+  </tr>
+<% end %>

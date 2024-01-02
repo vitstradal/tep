@@ -1,0 +1,85 @@
+<% if is_edit %>
+  <span id="act_participant_is_edit" data-value="true"></span>
+  <% url_dest = act_event_path %>
+  <% method = :patch %>
+<% else %>
+  <span id="act_participant_is_edit" data-value="false"></span>
+  <% url_dest = act_event_create_path %>
+  <% method = :post %>
+<% end %>
+
+<%= form_for :event, :url => url_dest, :method => method, :html => {:class=>'form-horizontal', id: "event_form"} do |f| %>
+  <div class="<%= form_error_class @event, :name%>">
+
+    <%= render :partial => "f_select", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :event_category, text: "Typ akce", options: Act::Event::category_filter(current_user) } %>
+
+    <span id="multi_day_categories" data-codes=<%= Act::EventCategory::all_multi_day().to_json %>></span>
+    <span id="visibility_info_categories" data-ev=<%= Act::EventCategory::all_for_ev().to_json %> data-user=<%= Act::EventCategory::all_for_user().to_json %> data-org=<%= Act::EventCategory::all_for_org().to_json %>></span>
+    <span id="restrictions_electible_categories" data-codes=<%= Act::EventCategory::all_restrictible().to_json %>></span>
+    <span id="mass_spec_electible_categories" data-codes=<%= Act::EventCategory::all_mass_spec_electible().to_json %>></span>
+    <span id="full_act_categories" data-codes=<%= Act::EventCategory::all_full_act().to_json %>></span>
+
+  <div id='event_visible_all_divx'>
+    <%= render :partial => "f_select", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :visible, text: 'Kdo se o akci vůbec dozví', options: [["každý", "ev"], ["user", "user"], ["org", "org"]] } %>
+  </div>
+
+  <div id='event_visible_restricted_div'>
+    <% #render :partial => "f_select", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :visible, text: 'Kdo se o akci vůbec dozví', options: [["user", "user"], ["org", "org"]] } %>
+  </div>
+  
+  <%= render :partial => "f_text_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :title, text: "Název akce" } %>
+
+  <%= render :partial => "f_text_area", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :body, text: "Popis akce" } %>
+
+  <%= render :partial => "f_date_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :event_start, text: "Začátek akce" } %>
+  
+  <%= render :partial => "f_date_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :event_end, text: "Konec akce" } %>
+
+  <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :limit_num_participants, text: "Chceš limitovat maximální počet účastníků?" } %>
+
+  <%= render :partial => "f_text_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :max_participants, text: "Limit na počet účastníků" } %>
+
+  <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :enable_only_specific_participants, text: "Pozvat pouze některé účastníky" } %>
+
+  <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :enable_only_specific_substitutes, text: "Pozvat pouze některé náhradníky" } %>
+
+  <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :uninvited_participants_dont_see, text: "Nepozvaní účastníci o akci neví" } %>
+
+  <% if current_user && current_user.admin? %>
+    <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :enable_only_specific_organisers, text: "Pozvat pouze některé orgy" } %>
+  <% else %>
+    <%= f.hidden_field :enable_only_specific_organisers %>
+  <% end %>
+
+  <% if current_user && current_user.admin? %>
+    <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :uninvited_organisers_dont_see, text: "Nepozvaní organizátoři o akci neví" } %>
+  <% else %>
+    <%= f.hidden_field :uninvited_organisers_dont_see %>
+  <% end %>
+
+  <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :spec_place, text: "Účastníci specifikují místo nástupu" } %>
+
+  <%= render :partial => "f_text_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :spec_place_detail, text: "Místa nástupu (jednotlivá místa odděl čárkami)" } %>
+
+  <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :spec_participant, text: "Rodiče mají možnost sdělení k účastníkovi" } %>
+
+  <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :spec_mass, text: "Účastníci specifikují zájem o mši" } %>
+
+  <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :bonz_parent, text: "Po přihlášení přijde rodičům mail" } %> 
+
+  <%= render :partial => "f_select", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :activation_needed, text: "Jaký stupeň aktivace účastnického účtu je zapotřebí", options: Act::Participant::OPTIONS_ACTIVATED_PROMPT } %>
+
+  <%= render :partial => "f_text_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :bonz_org, text: "Bonz mail" } %>
+
+  <%= render :partial => "f_text_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :event_info_url, text: "Odkaz na další informace" } %>
+
+  <%= render :partial => "f_text_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :event_photos_url, text: "Odkaz na fotky" } %>
+ 
+  <div class="form-group">
+    <div class="col-sm-offset-<%= is_jakna ? '8' : '3' %> col-sm-<%= is_jakna ? '4' : '9' %>">
+      <%= f.submit :class=>'btn btn-primary', :value=>'Uložit akci', :disabled => is_jakna %>
+    </div>
+  </div>
+
+  </div>
+<% end %>

@@ -1,0 +1,67 @@
+<h1>Účastníci akce 
+  <%= @event.title %>
+  <%= button_tag "Zpět", :href => act_event_path(@event), :class=>'btn', :ico =>'fa-reply' %>
+</h1>
+
+<br>
+
+<div class="tabbable">
+  <div class="tab-content">
+    <div>
+      <% @attr_table.each_with_index do |attr, index| %>
+        <a class="toggle-vis" data-column="<%= index %>"><%= attr[1] %></a>
+        <%= "-" if index < @attr_table.length() - 1 %>
+      <% end %>
+      <br><br>
+    </div>
+
+    <div class="table-div">
+      <table id="act_display_participants">
+        <thead>
+        <tr>
+          <% for attr in @attr_table do %>
+            <td>
+              <b>
+                <%= attr[1] %>
+              </b>
+            </td>
+          <% end %>
+        </tr>    
+
+        </thead>
+        <tbody>
+
+        <tr>
+          <% for attr in @attr_table do %>
+            <td>Organizátoři</td>
+          <% end %>
+        </tr>
+
+        <%= render :partial => "display_participants_single_type", locals: { event_participants: @orgs_yes } %>
+        <%= render :partial => "display_participants_single_type", locals: { event_participants: @orgs_maybe } %>
+        <%= render :partial => "display_participants_single_type", locals: { event_participants: @orgs_no } %>
+        
+        <tr>
+          <% for attr in @attr_table do %>
+            <td>Účastníci</td>
+          <% end %>
+        </tr>
+
+        <%= render :partial => "display_participants_single_type", locals: { event_participants: @parts_yes } %>
+        <%= render :partial => "display_participants_single_type", locals: { event_participants: @parts_maybe } %>
+        <%= render :partial => "display_participants_single_type", locals: { event_participants: @parts_no } %>
+
+        <tr>
+          <% for attr in @attr_table do %>
+            <td>Náhradníci</td>
+          <% end %>
+        </tr>
+
+        <%= render :partial => "display_participants_single_type", locals: { event_participants: @substitutes_yes } %>
+        <%= render :partial => "display_participants_single_type", locals: { event_participants: @substitutes_maybe } %>
+        <%= render :partial => "display_participants_single_type", locals: { event_participants: @substitutes_no } %>
+          </tbody>
+      </table>
+    </div>
+  </div>
+</div>  

@@ -1,0 +1,10 @@
+<% if Act::EventInvitation::chosen(event, participant) == chosen %>
+  <%= submit_tag text, class: "btn btn-disabled", ico: "fa-flash" %>
+<% else %>
+  <%= form_for :event_invitation, url: act_event_save_invitation_url(event_id: @event.id, participant_id: participant.id, filter_chosen: filter_chosen, filter_role: filter_role), html: { class: 'form-inline' } do |f| %>
+  <%= f.hidden_field :event_id, value: event.id %>
+  <%= f.hidden_field :participant_id, value: participant.id %>
+  <%= f.hidden_field :chosen, value: chosen %>
+  <%= f.submit text, class: btn_class %>
+<% end %>
+<% end %>

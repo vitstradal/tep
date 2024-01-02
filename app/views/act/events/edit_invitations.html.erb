@@ -1,0 +1,48 @@
+<h1>Editace pozvaných na akci <%= @event.title %>
+<%= button_tag "Zpět", :href => act_event_path(@event), :class=>'btn', :ico =>'fa-reply' %>
+</h1>
+<div class="tabbable">
+  <ul id="myTab" class="nav nav-tabs">
+     <li <%= class_active_if "ev" == @chosen %>> <%= link_to 'Všichni', act_event_edit_invitations_path(chosen: "ev", role: @role) %></li>
+     <% Act::EventInvitation::CHOSEN_OPTIONS.each do |opt| %>
+       <li <%= class_active_if opt == @chosen %> ><%= link_to Act::EventInvitation::CHOSEN_OPTIONS_TXT[opt], act_event_edit_invitations_path(chosen: opt, role: @role) %></li>
+     <% end %>
+     <% if current_user.admin? %>
+       <li class="col-lg-offset-6 col-md-offset-4 col-xs-offset-1 <%= " active" if "p" == @role %>"> <%= link_to 'Účastníci', act_event_edit_invitations_path(chosen: @chosen, role: "p") %></li>
+       <li <%= class_active_if "o" == @role %>> <%= link_to 'Orgové', act_event_edit_invitations_path(chosen: @chosen, role: "o") %></li>
+
+     <% end %>
+
+  </ul>
+
+   <div class="tab-content">
+    <div class="tabtab-pane in active">
+      <div class="table-div">
+        <table class="table table-hover table-condensed table-bordered">
+        <tr>
+          <th>Id</th>
+          <th>Email</th>
+          <th>Jméno</th>
+          <th>Příjmení</th>
+          <th>Přezdívka</th>
+          <th>Status</th>
+          <th style="text-align: center" colspan="3">Akční tlačítka</th>
+        </tr>
+        <% @participants.each do |participant|  %>
+        <tr>
+           <td> <%= link_to participant.id, act_participant_path(participant.id) %> </td>
+           <td> <%= participant.email %> </td>
+           <td> <%= participant.name %> </td>
+           <td> <%= participant.last_name %> </td>
+           <td> <%= participant.nickname %> </td>
+           <td> <%= Act::EventInvitation::chosen_txt(@event, participant) %> </td>
+           <td style="border-right-style: hidden; text-align: center"> <%= render :partial => "form_invite", locals: { event: @event, participant: participant, chosen: "participant", text: "Pozvat", filter_chosen: @chosen, filter_role: @role, btn_class: "btn btn-success" } %> </td>
+           <td style="border-right-style: hidden; text-align: center"> <%= render :partial => "form_invite", locals: { event: @event, participant: participant, chosen: "substitute", text: "Náhradník", filter_chosen: @chosen, filter_role: @role, btn_class: "btn btn-warning" } %> </td>
+           <td style="text-align: center"> <%= render :partial => "form_invite", locals: { event: @event, participant: participant, chosen: "none", text: "Zavrhnout", filter_chosen: @chosen, filter_role: @role, btn_class: "btn btn-danger" } %> </td>
+        </tr>
+        <% end %>
+        </table>
+      </div>
+    </div>
+   </div>  
+</div>

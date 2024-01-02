@@ -1,0 +1,110 @@
+<h1><%= @event.title %>
+<% if (can? :edit, Act::Event) && !@edit_participants %>
+  <%= button_tag "Edituj akci", :href => act_event_edit_path(@event), :class=>'btn btn-warning', :ico => 'fa-wrench' %>
+<% end %>
+<% if @edit_participants %>
+    <%= button_tag "Zpět", :href => act_event_path(@event), :class=>'btn', :ico =>'fa-reply' %>
+<% else %>
+  <% if can? :update_other, Act::EventParticipant %>
+    <%= button_tag "Edituj účastníky", :href => act_event_edit_participants_path(@event), :class=>'btn btn-danger', :ico => 'fa-pencil-square-o ' %>
+    <%= button_tag "Přihlaš nové účastníky", :href => act_event_enroll_others_path(@event, "ev", "ev"), :class=>'btn btn-success', :ico => 'fa-users' %>
+  <% end %>
+<% end %>
+<% if (can? :edit, Act::EventInvitation) && !@edit_participants && (@event.enable_only_specific_participants || @event.enable_only_specific_substitutes || @event.enable_only_specific_organisers) %>
+  <%= button_tag "Edituj pozvané", :href => act_event_edit_invitations_path(@event), :class=>'btn btn-purple', :ico => 'fa-envelope' %>
+<% end %>
+</h1>
+
+<p><%= @event.body %><p>
+
+<p><b>Datum: <%= @event.date_str %></b><p>
+
+<% if @event.limit_num_participants %>
+  Na tuto akci může jet maximálně <b><%= @event.max_participants %></b> účastníků. Aktuálně je <%= @num_p_yes %> přihlášených.
+<% end %>
+
+<% if @event.event_info_url != "" %>
+  <p>Více info najdeš <a href="<%= @event.event_info_url %>">tady</a>.</p>
+<% end %>
+
+<%= link_to "Ukaž výběr všech akcí!", act_events_path %>
+
+<% if ((! @already_happened) && (! @edit_participants)) %>
+  <% if Act::Participant::has_participant?(current_user) && @event.fulfils_activation?(current_user.participant) %>
+    <% if @event.can_participate?(current_user.participant) %>
+      <%= render :partial => "form_enroll", :locals => { :chosen => "participant" } %>
+    <% elsif @event.can_substitute?(current_user.participant) %>
+      <%= render :partial => "form_enroll", :locals => { :chosen => "substitute" } %>
+    <% else %>
+      <div class="alert alert-warning">
+        Bohužel jsi nebyl vybrán ani mezi účastníky, ani mezi náhradníky. Tedy se na tuto akci nemůžeš přihlásit. 
+        Pokud si myslíš, že se jedná o chybu, neváhej nám napsat.
+      </div>
+    <% end %>
+  <% elsif Act::Participant::has_participant?(current_user) && ! @event.fulfils_activation?(current_user.participant) %>
+    <div class="alert alert-warning">
+      Aby ses mohl/a přihlásit na tuto akci, musíš mít plně aktivovaný uživatelský účet (nejen částečně). 
+      Účet si aktivuješ tak, že do něj vyplníš všechny potřebné informace a klikneš na tlačítko <i>Uložit</i>. 
+      Svůj uživatelský účet najdeš <%= link_to "zde", act_participant_path(current_user.participant) %>.
+      </div>
+  <% else %>
+    <div class="alert alert-warning">
+      Abys ses mohl/a přihlásit na nějakou akci, musíš mít založený účastnický účet, a navíc ještě musíš být přihlášený/á. Účastnický účet si můžeš založit
+      <%= link_to "zde", act_participant_new_path %>.
+    </div>
+  <% end %>
+<% end %>
+
+<% show_substitutes = ! @event.open_for_everyone? || @substitutes_yes.length() > 0 || @substitutes_maybe.length() > 0 || @substitutes_no.length() > 0 %>
+
+<% if ! show_substitutes || @edit_participants %>
+  <div>
+<% else %>
+  <div class="col-sm-6">
+<% end %>
+<h2>Přihlášení účastníci</h2>
+<% if can? :read_other, Act::Participant %>
+  <p>
+  <% if ! @edit_participants %>
+    <%= button_tag "Zobraz hromadné informace", :href => act_event_display_participants_path(@event), :class => 'btn btn-info', :ico => 'fa-book' %>
+  <% end %>
+  </p>
+<% end %>
+<% if current_user %>
+  <%= render @parts_yes %>
+  <%= render @parts_maybe %>
+  <%= render @parts_no %>
+  <%= render @orgs_yes %>
+  <%= render @orgs_maybe %>
+  <%= render @orgs_no %>
+<% else %>
+  Pro zobrazení účastníků je potřeba se přihlásit.
+<% end %>
+  </div>
+<% if show_substitutes %>
+  <% if ! @edit_participants %>
+    <div class="col-sm-6">
+  <% else %>
+    <div>
+  <% end %>
+
+  <h2>Přihlášení náhradníci</h2>
+
+  <% if can? :read_other, Act::Participant %>
+    <p>
+    <% if ! @edit_participants %>
+      <%= button_tag "Zobraz hromadné informace", :href => act_event_display_participants_path(@event), :class => 'btn btn-info', :ico => 'fa-book' %>
+    <% end %>
+    </p>
+  <% end %>
+  <% if current_user %>
+    <%= render @substitutes_yes %>
+    <%= render @substitutes_maybe %>
+    <%= render @substitutes_no %>
+  <% else %>
+    Pro zobrazení náhradníků je také potřeba se přihlásit.
+  <% end %>
+  <% if @edit_participants %>
+    </div>
+  <% end %>
+<% end %>

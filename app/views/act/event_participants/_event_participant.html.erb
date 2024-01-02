@@ -1,0 +1,122 @@
+<p>
+<% if event_participant.participant.org? %>
+  <b style="color:#196f3d;">
+<% elsif event_participant.chosen == "substitute" %>
+  <b style="color:#ba4a00;">
+<% else %>
+  <b>
+<% end %>
+  <% if @edit_participants %>
+    <div class="col-sm-offset-0 col-sm-2">
+  <% end %>
+  <% if can? :read_other, Act::Participant %>
+    <%= link_to event_participant.participant.participant_name(), act_participant_path(event_participant.participant_id) %>
+  <% else %>
+    <%= event_participant.participant.participant_name() %>
+  <% end %>
+  <% if @edit_participants %>
+    </div>
+  <% else %>
+    <% if event_participant.participant.org? %>
+      (org)
+    <% end %>
+  <% end %>
+
+  <% if @edit_participants %>
+    <div class="col-sm-offset-0 col-sm-2">
+      poznámka:
+    </div>
+    <% if event_participant.event.spec_place %>
+      <div class="col-sm-offset-0 col-sm-3">
+        nastupuje v:
+      </div>
+    <% end %>
+
+    <% if event_participant.event.spec_participant %>
+      <div class="col-sm-offset-0 col-sm-2">
+        specifika dítěte:
+      </div>
+    <% end %>
+
+    <% if event_participant.event.spec_mass %>
+      <div class="col-sm-offset-0 col-sm-1">
+        na mši:
+      </div>
+    <% end %>
+
+    <br>
+      <%= form_for :event_participant, :url => act_event_update_participant_path(event_participant.event_id, event_participant.participant_id) do |f| %>
+      <% f.hidden_field :participant_id %>
+      <% f.hidden_field :event_id %>
+
+      <%= f.select :status, [["půjdu", "yes"], ["možná", "maybe"], ["nezúčastním se", "no"]], :selected => event_participant.status %>
+      <%= f.text_field :note, :value => event_participant.note %>
+
+      <% if event_participant.event.spec_place %>
+        <%= f.text_field :place, :value => event_participant.place %>
+      <% end %>
+
+      <% if event_participant.event.spec_participant %>
+        <%= f.text_field :participant_info, :value => event_participant.participant_info %>
+      <% end %>
+
+      <% if event_participant.event.spec_mass %>
+        <%= f.select :mass, [["chce", true], ["nechce", false]], :selected => event_participant.mass %>
+      <% end %>
+
+      <%= f.submit "Uložit", :class => 'btn btn-primary' %>
+    <% end %>
+
+    <% if (can? :delete, Act::EventParticipant) || ((can? :update, Act::EventParticipant) && ! event_participant.event.open_for_everyone?) %>
+      <div style="margin-top:1mm;"></div>
+    <% end %>
+
+    <% if (can? :delete, Act::EventParticipant) || ((can? :update, Act::EventParticipant) && ! event_participant.event.open_for_everyone?) %>
+      <table>
+        <% if can? :delete, Act::EventParticipant %>
+      <tr>
+      <%= form_tag act_event_delete_participant_path(event_participant.event_id, event_participant.participant_id) do %>
+        <%= submit_tag  'Smazat', :class=>'btn btn-danger' %>
+      <% end %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </tr>
+    <% end %>
+    <% if (can? :update, Act::EventParticipant) && ! event_participant.event.open_for_everyone? %>
+      <tr>
+        <%= render :partial => "form_choose_participant", locals: { event: event_participant.event, participant: event_participant.participant,  chosen: "participant", text: "Účastník", btn_class: "btn btn-success" } %>
+        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+      </tr>
+      <tr>
+        <%= render :partial => "form_choose_participant", locals: { event: event_participant.event, participant: event_participant.participant, chosen: "substitute", text: "Náhradník", btn_class: "btn btn-warning" } %>
+      </tr>
+    <% end %>
+      </table>
+  <% end %>
+
+  <% else %>
+    - 
+    <%= event_participant.show_status %>
+    <% if event_participant.note != "" %>
+      (<%= event_participant.note %>)
+    <% end %>
+
+    <% if current_user.org? or event_participant.participant.is_me?(current_user) %>
+      <% if event_participant.event.spec_place %>
+        ;Nástup: <%= event_participant.place %>; 
+      <% end %>
+
+      <% if event_participant.event.spec_participant %>
+        Specifika dítěte: <%= event_participant.participant_info %>; 
+      <% end %>
+
+      <% if event_participant.event.spec_mass %>
+        <% if event_participant.mass %>
+          Mši chce; 
+        <% else %>
+          Mši nechce; 
+        <% end %>
+      <% end %>
+    <% end %>
+  <% end %>
+  </b>
+</p>
+

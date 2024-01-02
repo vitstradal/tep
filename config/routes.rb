@@ -49,6 +49,60 @@ Tep::Application.routes.draw do
   #get  '/sosna/solution/:id/down(/:ori)'     => 'sosna/solution#download',      :as => :sosna_solution_download
   #get  '/sosna/solution/:id/down_rev(/:ori)'=> 'sosna/solution#download_rev', :as => :sosna_solution_download_rev
 
+  # participants:
+  get   '/act/participants/new_year'                               => 'act/participants#new_year',           :as => :act_participants_new_year
+  get   '/act/participants/previous_year'                          => 'act/participants#previous_year',      :as => :act_participants_previous_year
+  get   '/act/participants/confirm_new_year'                       => 'act/participants#confirm_new_year',   :as => :act_participants_confirm_new_year
+  get   '/act/participants/confirm_previous_year'                  => 'act/participants#confirm_previous_year', :as => :act_participants_confirm_previous_year
+  post  '/act/participants/create_other'                           => 'act/participants#create_other',       :as => :act_participant_create_other
+  get   '/act/participants/filter/:grade/:role'                    => 'act/participants#index',              :as => :act_participant_filter
+
+  get   '/act/participants'                                        => 'act/participants#index',              :as => :act_participants
+  get   '/act/participants/new'                                    => 'act/participants#new',                :as => :act_participant_new
+  get   '/act/participants/new_complet'                            => 'act/participants#new_complet',        :as => :act_participant_new_complet
+  post  '/act/participants'                                        => 'act/participants#create'
+  post  '/act/participants/create_complet'                         => 'act/participants#create_complet',     :as => :act_participant_create_complet
+  get   '/act/participants/:participant_id'                        => 'act/participants#show',               :as => :act_participant
+  get   '/act/participants/:participant_id/edit'                   => 'act/participants#edit',               :as => :act_participant_edit
+  patch '/act/participants/:participant_id'                        => 'act/participants#update',             :as => :act_participant_update
+  get  '/act/participants/:participant_id/confirm_delete'         => 'act/participants#confirm_delete',     :as => :act_participant_confirm_delete
+  post  '/act/participants/:participant_id/delete'                 => 'act/participants#delete',             :as => :act_participant_delete
+  get  '/act/participant/tnx'                                      => 'act/participants#create_tnx',         :as => :act_participant_create_tnx
+
+  # event_categories:
+  get   '/act/event_categories'                                    => 'act/event_categories#index',          :as => :act_event_categories
+  get   '/act/event_categories/jakna'                              => 'act/event_categories#jakna',          :as => :act_event_categories_jakna
+  get   '/act/event_categories/new'                                => 'act/event_categories#new',            :as => :act_event_category_new
+  post  '/act/event_categories'                                    => 'act/event_categories#create'
+  get   '/act/event_categories/:code'                              => 'act/event_categories#show',           :as => :act_event_category
+  get   '/act/event_categories/:code/edit'                         => 'act/event_categories#edit',           :as => :act_event_category_edit
+  patch '/act/event_categories/:code'                              => 'act/event_categories#update'
+  post  '/act/event_categories/:code/delete'                       => 'act/event_categories#delete',         :as => :act_event_category_delete
+
+  # events
+  get '/act/events'                                                => 'act/events#index',                    :as => :act_events
+  get '/act/events/new'                                            => 'act/events#new',                      :as => :act_event_new
+  post '/act/events/create'                                        => 'act/events#create',                   :as => :act_event_create
+  post '/act/events/filter'                                        => 'act/events#filter',                   :as => :act_events_filter_helper
+  get  '/act/event/jakna'                                          => 'act/events#jakna',                    :as => :act_events_jakna
+  get '/act/events/filter/:event_category/:enroll_status'          => 'act/events#index',                    :as => :act_events_filter
+  get '/act/events/:event_id'                                      => 'act/events#show',                     :as => :act_event
+  patch '/act/events/:event_id'                                    => 'act/events#update',                   :as => :act_event_update
+  get '/act/events/:event_id/edit'                                 => 'act/events#edit',                     :as => :act_event_edit
+  post '/act/events/:event_id/delete'                              => 'act/events#delete',                   :as => :act_event_delete
+  post '/act/events/:event_id/enroll'                              => 'act/events#enroll',                   :as => :act_event_enroll
+  post '/act/events/:event_id/enroll_other'                        => 'act/event_participants#enroll_other', :as => :act_event_enroll_other
+  get '/act/events/:event_id/edit_participants'                    => 'act/events#edit_participants',        :as => :act_event_edit_participants
+  get '/act/events/:event_id/edit_invitations/(:chosen)/(:role)'   => 'act/events#edit_invitations',         :as => :act_event_edit_invitations
+  get '/act/events/:event_id/enroll_others/(:status)/(:chosen)/(:role)' => 'act/events#enroll_others',       :as => :act_event_enroll_others
+  post '/act/events/:event_id/participants/:participant_id/update' => 'act/event_participants#update',       :as => :act_event_update_participant
+  post '/act/events/:event_id/participants/:participant_id/delete' => 'act/event_participants#delete',       :as => :act_event_delete_participant
+  post '/act/events/:event_id/participants/:participant_id/choose' => 'act/event_participants#choose',       :as => :act_event_participant_choose
+  get '/act/events/:event_id/display_participants'                 => 'act/events#display_participants',     :as => :act_event_display_participants
+
+  # event_invitations
+  post '/act/event_invitations/:event_id/:participant_id/save'     => 'act/event_invitations#save',          :as => :act_event_save_invitation
+
   # org:
   get  '/sosna/solutions/lidi(/:roc(/:level(/:se(/:ul))))' => 'sosna/solution#lidi',           :as => :sosna_solutions_lidi
   get  '/sosna/solutions/rocnik(/:roc)'         => 'sosna/solution#rocnik',           :as => :sosna_solutions_rocnik

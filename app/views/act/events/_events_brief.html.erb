@@ -1,0 +1,32 @@
+<div class=<%= half_page ? "col-md-12 col-sm-12 col-xs-12" : "col-xs-12" %>>
+<% if defined?(header) %>
+  <h2><%= header %></h2>
+<% end %>
+<table class="act_events_table <%= half_page ? "" : "col-md-9 col-sm-12 col-xs-12" %>">
+  <% events.each do |event| %>
+    <tr>
+      <% if event.event_visible?(current_user) %>
+        <th class="act_right borderless col-md-3 col-sm-4 col-xs-4"><b><%= event.title %></th>
+        <th class="act_center borderless col-md-2 col-sm-3 col-xs-4"> <%= event.date_str() %></b></th>
+        <th class="act_center borderless col-md-3 col-sm-5 col-xs-4">
+        <% if event.event_info_url != "" %>
+          <%= button_tag "info", href: event.event_info_url, class: "btn btn-xs btn-primary", ico: "fa-book" %> 
+          <%= button_tag "přihlašování", href: act_event_path(event), class: "btn btn-xs btn-purple", ico: "fa-user" %>
+        <% else %>
+          <a href=<%= act_event_path(event) %> class="btn btn-xs btn-pink" type="submit">
+            <span class="ace-icon fa fa-user"></span> 
+            <span class="ace-icon fa fa-book"></span> 
+            <span class="hidden-xs">info a přihlašování</span>
+          </a>
+        <% end %>
+        </th>
+        <th class="act_left borderless col-md-1 col-sm-1 col-xs-0 ">
+        <% if event.event_photos_url != "" %>
+          <%= button_tag "fotky", href: event.event_photos_url, class: "btn btn-xs btn-success", ico: "fa-photo" %>
+        <% end %>
+        </th>
+      <% end %>
+    </tr>
+  <% end %>
+</table>
+</div>

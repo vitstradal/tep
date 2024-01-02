@@ -46,6 +46,11 @@ class Ability
     #can :auth, Jabber
     #can :prebind, Jabber
 
+    # event
+    can :index, Act::Event
+    can :show, Act::Event
+    can :create, Act::Participant
+
     if user.user?
       can :user_index, Sosna::Solution
       can :user_index_junior, Sosna::Solution
@@ -59,6 +64,10 @@ class Ability
       can :user_solver_confirm, Sosna::Solver
       can :update_confirm, Sosna::Solver
       can :info, :tepna
+
+      can :read, Act::Participant
+      can :update, Act::Participant
+      can :delete, Act::Participant
     end
 
     if user.org?
@@ -103,6 +112,9 @@ class Ability
 
       can :status, :klep
 
+      can :read, Act::EventCategory
+      can :read, Act::EventParticipant
+      can :read, Act::EventInvitation
     end
 
     # master-org, or more-org, 
@@ -123,6 +135,20 @@ class Ability
 
       can :get_confirm_files, Sosna::Solution
 
+      can :create, Act::Event
+      can :new, Act::Event
+      can :create, Act::Event
+      can :edit, Act::Event
+      can :update, Act::Event
+
+      can :read_other, Act::Participant
+      can :new_other, Act::Participant
+      can :create_other, Act::Participant
+      can :edit_other, Act::Participant
+      can :update_other, Act::Participant
+
+      can :manage, Act::EventParticipant
+      can :manage, Act::EventInvitation
     end
 
     if user.admin?
@@ -151,13 +177,18 @@ class Ability
       can :user_action,      :tep
       can :user_role_change, :tep
 
-
       can :index,  Sosna::Config
       can :update, Sosna::Config
 
       #can :new,  Jabber
       #can :update, Jabber
       #can :delete, Jabber
+
+      can :manage, Act::Participant
+      can :manage, Act::Event
+      can :manage, Act::EventCategory
+      can :manage, Act::EventInvitation
+      can :manage, Act::EventParticipant
     end
 
     # Wikis

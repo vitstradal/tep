@@ -1,0 +1,30 @@
+<% if @created_for_other == "true" %>
+  <h1>Účet vytvořen</h1>
+
+  <p>Vytvořil jsi účastnický účet. Na jeho emailovou adresu <%= @email %>
+    <% if (params[:send_first]||'') == 'true'  %>
+        <b>byl</b>
+    <% else %>
+        <b>nebyl</b>
+    <% end %>
+    poslán uvítací email.
+  </p>
+<% else %>
+  <h1>Vítej Pikomaťáku!</h1>
+
+  <p>Díky, že jsi se přihlásil.</p>
+
+  <% if (params[:send_first]||'') == 'true'  %>
+    <p>
+      Na zadanou emailovou adresu (<%= @email %>) ti přijdou instrukce k dokončení registrace.
+    </p>
+  <% elsif @created_not_knowingly_for_existing %>
+    <p>
+      Právě vytvořený účastnický účet byl přiřazen již existujícímu uživateli s mailem <%= @email %>
+    <p>
+  <% end %>
+
+  <p>
+  Na tvoji účast na akcích se těší organizátoři Pikomatu MFF UK.
+  </p>
+<% end %>
