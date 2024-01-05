@@ -1,7 +1,7 @@
   ##
   # Akce, na kterou se mohou (pokud to organizátoři povolí) přihlašovat účastníci
   #
-  #  
+  #
   # *Columns*
   #    t.integer  "event_id",                            index: true
   #    t.date     "event_start"
@@ -115,7 +115,7 @@ class Act::Event < ActiveRecord::Base
   # *Returns* typy akcí, které daný uživatel vidí + typ "všechny akce"!"
   def self.category_filter_all(current_user)
     categories = Act::Event::category_filter(current_user)
-    categories.append(['Všechny', 'ev'])
+    categories.unshift(['Všechny', 'ev'])
     return categories
   end
 
@@ -130,12 +130,12 @@ class Act::Event < ActiveRecord::Base
   # *Returns* datum konání akce v nějakém čitelném formátu
   def date_str()
     if event_start == event_end
-      event_start.strftime('%d.%m.%Y')
+      event_start.strftime('%-d.%-m.%-Y')
     else
-      years_equal = event_start.strftime('%Y') == event_end.strftime('%Y') 
-      months_equal = years_equal && (event_start.strftime('%m') == event_end.strftime('%m'))
+      years_equal = event_start.strftime('%-Y') == event_end.strftime('%-Y')
+      months_equal = years_equal && (event_start.strftime('%-m') == event_end.strftime('%-m'))
 
-      event_start.strftime('%d.' + (months_equal ? "" : "%m.") + (years_equal ? "" : ".%Y")) + " -- " + event_end.strftime('%d.%m.%Y')
+      event_start.strftime('%-d.' + (months_equal ? "" : "%-m.") + (years_equal ? "" : ".%-Y")) + " – " + event_end.strftime('%-d.%-m.%-Y')
     end
   end
 
@@ -154,7 +154,7 @@ class Act::Event < ActiveRecord::Base
     if participant.org?
       return true
     end
-    
+
     if limit_num_participants && num_signed("yes", false, true, true) >= max_participants
       return false
     end
@@ -194,7 +194,7 @@ class Act::Event < ActiveRecord::Base
    if participant.org?
      return true
    end
-    
+
    if !enable_only_specific_substitutes || Act::EventInvitation::chosen_ps?(self, participant)
      return true
    end

@@ -2,7 +2,7 @@
 <% if @is_new %>
   Se přihlásil na
 <% else %>
-  Změnil svoji přihlášku na
+  Změnil<%= @event_participant.male?() ? "" : "a" %> svoji přihlášku na
 <% end %>
 akci
 <%= link_to @event.title, act_event_url(@event) %>.

@@ -120,7 +120,7 @@ class Act::EventCategory < ActiveRecord::Base
   def self.all_full_act()
     return ActiveRecord::Base.connection.execute("SELECT code FROM act_event_categories WHERE activation_needed_default = 'full'").map { |ec| ec["code"] }
   end
-  
+
   def visible_txt()
     VISIBLE_STATUSES_TXT[visible]
   end

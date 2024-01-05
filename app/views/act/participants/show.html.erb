@@ -15,13 +15,17 @@
 </div>
 
 <div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
-
 <%= render :partial => "act/events/events_brief", locals: { events: @my_events, half_page: true, header: "Moje akce" } %>
+</div>
 
+<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
 <%= render :partial => "act/events/events_brief", locals: { events: @not_my_events, half_page: true, header: "Kam bych se ještě mohl/a přihlásit" } %>
+</div>
 
+<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
 <%= render :partial => "act/events/events_brief", locals: { events: @maybe_events, half_page: true, header: "Kam ještě nevím, jestli chci jet" } %>
+</div>
 
+<div class="col-xs-12 col-sm-12 col-md-6 col-lg-6">
 <%= render :partial => "act/events/events_brief", locals: { events: @no_events, half_page: true, header: "Kam vím, že nepojedu" } %>
-
 </div>

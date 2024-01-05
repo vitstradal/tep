@@ -93,29 +93,31 @@
   <% end %>
 
   <% else %>
-    -
-    <%= event_participant.show_status %>
+    <% str = "- " + event_participant.show_status + " " %>
+
     <% if event_participant.note != "" %>
-      (<%= event_participant.note %>)
+      <% str += "(" + event_participant.note + ")" %>
     <% end %>
 
-    <% if current_user.org? or event_participant.participant.is_me?(current_user) %>
+    <% if current_user.org? || event_participant.participant.is_me?(current_user) %>
       <% if event_participant.event.spec_place %>
-        ;Nástup: <%= event_participant.place %>;
+        <% str += "; Nástup: " + event_participant.place %>
       <% end %>
 
       <% if event_participant.event.spec_participant %>
-        Specifika dítěte: <%= event_participant.participant_info %>;
+        <% str += "; Specifika dítěte: " + event_participant.participant_info %>
       <% end %>
 
       <% if event_participant.event.spec_mass %>
         <% if event_participant.mass %>
-          Mši chce;
+          <% str += "; Mši chce" %>
         <% else %>
-          Mši nechce;
+          <% str += "; Mši nechce" %>
         <% end %>
       <% end %>
     <% end %>
+
+    <%= str %>
   <% end %>
   </b>
 </p>

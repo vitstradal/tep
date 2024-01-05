@@ -76,9 +76,12 @@
 <p>
 <% if current_user.nil? %>
   Na vytvoření účastnického účtu se ale musíš nejprve
-  <%= button_tag "přihlásit", :href => new_user_session_url, class: "btn btn-xs btn-primary" %>.<br>
+  <a href=<%= new_user_session_url %> class="btn btn-xs btn-primary" type="submit">
+    <span>přihlásit</span></a>
 <% elsif ! Act::Participant::has_participant?(current_user) %>
-<%= button_tag "Vytvoř si vlastní účet!", :href => act_participant_new_path, :class => 'btn btn-primary' %>.
+<a href=<%= act_participant_new_path %> class="btn btn-primary" type="submit">
+  <span class="hidden-xs">Vytvoř si vlastní účet!</span>
+</a>
 <% else %>
   Ty již účastnický účet máš. Proto neváhej, a na nějakou akci se přihlaš :-). Seznam všech akcí nalezneš <%= link_to "zde", act_events_path %>.
 <% end %>

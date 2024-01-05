@@ -22,7 +22,7 @@
   #    t.text       "birth_number"
   #    t.string     "health_insurance"
   #    t.string     "activated",        :default => "full"           index: true
-  
+
 class Act::Participant < ActiveRecord::Base
   belongs_to :user
   validates_associated :user
@@ -47,14 +47,14 @@ class Act::Participant < ActiveRecord::Base
 
   validates :nickname, uniqueness: { case_sensitive: false, message: "tuhle přezdívku už někdo má" }, unless: "nickname == ''"
 
-  with_options if: :act_light? do 
+  with_options if: :act_light? do
     validates :grade, presence: true, numericality: { only_integer: true, message: "musí být číslo" }
     validates :email, presence: true, uniqueness: { case_sensitive: false, message: 'Tento email již někdo používá. Pokud vlastníš uživatelský účet s tímto emailem, tak se před výtvořením účtu přihlaš.' }
     validates :phone, presence: true
     validates :parent_email, presence: true
     validates :parent_phone, presence: true
   end
-  
+
   with_options if: :act_full? do
     validates :birth, presence: true
     validates :address, presence: true
@@ -155,7 +155,7 @@ class Act::Participant < ActiveRecord::Base
   # *Returns* datum narození čitelně
   def birth_str
     begin
-      return birth.strftime('%d.%m.%Y')
+      return birth.strftime('%-d.%-m.%-Y')
     rescue
       "Nedefinované"
     end
@@ -262,7 +262,7 @@ class Act::Participant < ActiveRecord::Base
         args << chosen
       end
     end
-    
+
     args.unshift(query)
 
     participants = Act::Participant.find_by_sql(args)

@@ -25,7 +25,7 @@ class Act::ParticipantsController < ActController
     when "young"
       @participants = Act::Participant.where('grade < ?', Act::Participant::YOUNGEST_TO_FILTER)
     when "old"
-      @participants = Act::Participant.where('grade > ?', Act::Participant::YOUNGEST_TO_FILTER)
+      @participants = Act::Participant.where('grade > ?', Act::Participant::OLDEST_TO_FILTER)
     else
       @participants = Act::Participant.where(grade: @grade)
     end

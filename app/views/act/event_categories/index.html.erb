@@ -2,10 +2,17 @@
 
 <p>
   <% if can? :new, Act::Event %>
-    <%= button_tag "Vytvořit nový typ akce akce", :href => act_event_category_new_path, :class => 'btn btn-primary', :ico => "fa-edit" %>
+    <a href=<%= act_event_category_new_path %> class="btn btn-primary" type="submit">
+      <span class="ace-icon fa fa-edit"></span>
+      <span>Vytvořit nový</span>
+      <span class="hidden-xs">typ akce</span>
+    </a>
   <% end %>
-
-  <%= button_tag "Návod na používání", :href => act_event_categories_jakna_path, :class => 'btn btn-info', :ico => "fa-print" %>
+  <a href=<%= act_event_categories_jakna_path %> class="btn btn-info" type="submit">
+    <span class="ace-icon fa fa-print"></span>
+    <span>Návod</span>
+    <span class="hidden-xs">na používání</span>
+  </a>
 </p>
 
 <table>
