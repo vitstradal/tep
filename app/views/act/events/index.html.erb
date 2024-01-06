@@ -25,22 +25,49 @@
   </a>
 <% end %>
 <% if can? :read, Act::EventCategory %>
-  <a href=<%= act_event_categories_url %> class="btn btn-purple" type="submit">
+  <a href=<%= act_event_categories_url %> class="btn btn-primary" type="submit">
     <span class="ace-icon fa fa-flask"></span>
      <span>Typy akcí</span>
   </a>
 <% end %>
 <% if current_user && current_user.org? %>
-  <a href=<%= act_events_jakna_path %> class="btn btn-info" type="submit">
+  <a href=<%= act_events_jakna_path %> class="btn btn-primary" type="submit">
     <span class="ace-icon fa fa-print"></span>
     <span>Návod</span>
     <span class="hidden-xs"> na používání</span>
   </a>
 <% end %>
 
-<%= render :partial => "form_filter" %>
+<br><br>
 
-<%= render :partial => "events_brief", locals: { events: @future_events, half_page: false, header: "Budoucí akce" } %>
+<div class="tabbable">
+  <ul id="myTab" class="nav nav-tabs">
+    <% Act::Event::FILTER_STATUSES.each do |status| %>
+      <li <%= class_active_if status[:code] == @enroll_status %> >
+      <%= link_to status[:text], act_events_filter_path(event_category: @event_category, enroll_status: status[:code]) %></li>
+    <% end %><br><br>
 
-<%= render :partial => "events_brief", locals: { events: @past_events, half_page: false, header: "Již proběhlé akce" } %>
+    <% Act::Event::category_filter_all(current_user).each do |category| %>
+      <li <%= class_active_if category[:code] == @event_category %> >
+      <%= link_to category[:text], act_events_filter_path(event_category: category[:code], enroll_status: @enroll_status) %></li>
+    <% end %>
+  </ul>
+
+  <div class="tab-content">
+    <div class="tabtab-pane in active">
+      <div class="table-div">
+        <table class="table table-hover table-condensed table-bordered">
+        <%= render :partial => "events_brief", locals: { events: @future_events, half_page: false, old: false } %>
+         <tr class= "act_borderless"><td colspan="4" style="border-left:1px solid #FFFFFF;border-right:1px solid #FFFFFF">&nbsp;</td></tr>
+        <%= render :partial => "events_brief", locals: { events: @past_events, half_page: false, old: true} %>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<% # render :partial => "form_filter" %>
+
+
 </div>

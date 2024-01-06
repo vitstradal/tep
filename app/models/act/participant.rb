@@ -168,6 +168,12 @@ class Act::Participant < ActiveRecord::Base
   end
 
   ##
+  # *Returns* jedná se o ženu?
+  def female?
+    sex == "female"
+  end
+
+  ##
   # *Returns* pohlaví čitelně
   def sex_str()
     male? ? "Muž" : "Žena"

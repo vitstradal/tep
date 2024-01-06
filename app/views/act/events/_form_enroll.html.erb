@@ -62,8 +62,7 @@
     <%= f.hidden_field :mass %>
   <% end %>
 
-
-  <b>Zkontrolujte si, že všechny informace uvedené ve vašem <%= link_to "účastnickém profilu", act_participant_path(current_user.participant) %> jsou aktuální!</b>
+  <b>Zkontrolujte si, že všechny informace uvedené ve vašem <%= link_to "účastnickém profilu", act_participant_path(current_user.participant), :target => '_blank' %> jsou aktuální!</b>
 
   <p>
     <%= f.submit "Uložit přihlášku", :class => 'btn btn-primary' %>

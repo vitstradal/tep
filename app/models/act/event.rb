@@ -101,13 +101,25 @@ class Act::Event < ActiveRecord::Base
 
   VISIBLE_STATUSES = ['everyone', 'user', 'org']
 
+  FILTER_STATUSES = [{ text: "Všechny", code: "all"}, { text: "Jedu", code: "yes"},
+                     { text: "Nejedu", code: "no" }, { text: "Nevím", code: "maybe"}, { text: "Nehlasoval jsem", code: "nvt" }]
+
+  ##
+  # *Returns* všecny typy akcí vhodné do input type select
+  def self.categories_select
+    sql = "SELECT name, code, visible FROM act_event_categories ORDER BY idx"
+    event_categories = ActiveRecord::Base.connection.execute(sql)
+    result = event_categories.map { |category| [category["name"], category["code"]]}
+    return result
+  end
+
   ##
   # *Returns* typy akcí, které daný uživatel vidí
   def self.category_filter(current_user)
     sql = "SELECT name, code, visible FROM act_event_categories ORDER BY idx"
     event_categories = ActiveRecord::Base.connection.execute(sql)
     event_categories = event_categories.select {|item| Act::EventCategory::category_visible?(item["visible"], current_user) }
-    result = event_categories.map { |category| [category["name"], category["code"]] }
+    result = event_categories.map { |category| { text: category["name"], code: category["code"] }}
     return result
   end
 
@@ -115,7 +127,8 @@ class Act::Event < ActiveRecord::Base
   # *Returns* typy akcí, které daný uživatel vidí + typ "všechny akce"!"
   def self.category_filter_all(current_user)
     categories = Act::Event::category_filter(current_user)
-    categories.unshift(['Všechny', 'ev'])
+    pp categories
+    categories.unshift({ text: 'Všechny', code: 'all'})
     return categories
   end
 
@@ -229,7 +242,7 @@ class Act::Event < ActiveRecord::Base
     common_enroll = "JOIN act_event_participants p ON (p.participant_id = ? AND p.event_id = e.id"
 
     case enroll_status
-    when "ev"
+    when "all"
       query_start += "WHERE "
     when "nvt"
       query_start += "LEFT " + common_enroll + ") WHERE "
@@ -237,12 +250,12 @@ class Act::Event < ActiveRecord::Base
       query_start += "INNER " + common_enroll + " AND p.status = ?) WHERE "
     end
 
-    if event_category != "ev"
+    if event_category != "all"
       query_start += "e.event_category = ? AND "
     end
 
     case enroll_status
-    when "ev"
+    when "all"
       query_end = ""
     when "nvt"
       query_end = "AND p.event_id IS NULL "
@@ -257,15 +270,15 @@ class Act::Event < ActiveRecord::Base
 
     args_common = []
 
-    if enroll_status != "ev"
+    if enroll_status != "all"
       args_common.append(participant.id)
     end
 
-    if not ["ev", "nvt"].member?(enroll_status)
+    if not ["all", "nvt"].member?(enroll_status)
       args_common.append(enroll_status)
     end
 
-    if event_category != "ev"
+    if event_category != "all"
       args_common.append(event_category)
     end
 

@@ -11,7 +11,7 @@
 <%= form_for :event, :url => url_dest, :method => method, :html => {:class=>'form-horizontal', id: "event_form"} do |f| %>
   <div class="<%= form_error_class @event, :name%>">
 
-    <%= render :partial => "f_select", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :event_category, text: "Typ akce", options: Act::Event::category_filter(current_user) } %>
+    <%= render :partial => "f_select", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :event_category, text: "Typ akce", options: Act::Event::categories_select } %>
 
     <span id="multi_day_categories" data-codes=<%= Act::EventCategory::all_multi_day().to_json %>></span>
     <span id="visibility_info_categories" data-ev=<%= Act::EventCategory::all_for_ev().to_json %> data-user=<%= Act::EventCategory::all_for_user().to_json %> data-org=<%= Act::EventCategory::all_for_org().to_json %>></span>

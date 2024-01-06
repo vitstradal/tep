@@ -65,10 +65,10 @@ class Act::ParticipantsController < ActController
       return render :not_allowed
     end
 
-    args_my_events, _ = Act::Event::generate_sql(Act::Participant.find(params[:participant_id]), "ev", "yes")
-    args_maybe_events, _ = Act::Event::generate_sql(Act::Participant.find(params[:participant_id]), "ev", "maybe")
-    args_no_events, _ = Act::Event::generate_sql(Act::Participant.find(params[:participant_id]), "ev", "no")
-    args_not_my_events, _ = Act::Event::generate_sql(Act::Participant.find(params[:participant_id]), "ev", "nvt")
+    args_my_events, _ = Act::Event::generate_sql(Act::Participant.find(params[:participant_id]), "all", "yes")
+    args_maybe_events, _ = Act::Event::generate_sql(Act::Participant.find(params[:participant_id]), "all", "maybe")
+    args_no_events, _ = Act::Event::generate_sql(Act::Participant.find(params[:participant_id]), "all", "no")
+    args_not_my_events, _ = Act::Event::generate_sql(Act::Participant.find(params[:participant_id]), "all", "nvt")
 
     @my_events = Act::Event.find_by_sql(args_my_events)
     @maybe_events = Act::Event.find_by_sql(args_maybe_events)
@@ -142,8 +142,8 @@ class Act::ParticipantsController < ActController
     @participant = Act::Participant.new(participant_params)
     @user_id = current_user.id
 
-    agree = params[:souhlasim]
-    @participant.errors.add(:souhlasim, 'Je nutno souhlasit s podmínkami') if ! agree
+    @agree = params[:souhlasim]
+    @participant.errors.add(:souhlasim, 'Je nutno souhlasit s podmínkami') if ! @agree
 
     if @participant.errors.count == 0 && @participant.save(participant_params)
       add_success "Účastnický účet úspěšně vytvořen"
@@ -173,9 +173,8 @@ class Act::ParticipantsController < ActController
 
     is_invalid = @participant.invalid?
 
-    agree = ! params[:souhlasim].nil?
-    @participant.errors.add(:souhlasim, 'Je nutno souhlasit s podmínkami') if ! agree
-
+    @agree = ! params[:souhlasim].nil?
+    @participant.errors.add(:souhlasim, 'Je nutno souhlasit s podmínkami') unless @agree
 
     if (@participant.errors.count == 0) && @participant.valid?
       send_first = true

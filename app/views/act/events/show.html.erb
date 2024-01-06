@@ -11,7 +11,7 @@
   <% end %>
 <% end %>
 <% if (can? :edit, Act::EventInvitation) && !@edit_participants && (@event.enable_only_specific_participants || @event.enable_only_specific_substitutes || @event.enable_only_specific_organisers) %>
-  <%= button_tag "Edituj pozvané", :href => act_event_edit_invitations_path(@event), :class=>'btn btn-purple', :ico => 'fa-envelope' %>
+  <%= button_tag "Edituj pozvané", :href => act_event_edit_invitations_path(@event), :class=>'btn btn-warning', :ico => 'fa-envelope' %>
 <% end %>
 </h1>
 
@@ -26,8 +26,6 @@
 <% if @event.event_info_url != "" %>
   <p>Více info najdeš <a href="<%= @event.event_info_url %>">tady</a>.</p>
 <% end %>
-
-<%= link_to "Ukaž výběr všech akcí!", act_events_path %>
 
 <% if ((! @already_happened) && (! @edit_participants)) %>
   <% if Act::Participant::has_participant?(current_user) && @event.fulfils_activation?(current_user.participant) %>

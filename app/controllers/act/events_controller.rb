@@ -22,12 +22,12 @@ class Act::EventsController < ActController
   def index
     @event_category = params[:event_category]
     if @event_category.nil?
-      @event_category = "ev"
+      @event_category = "all"
     end
 
     @enroll_status = params[:enroll_status]
     if @enroll_status.nil?
-      @enroll_status = "ev"
+      @enroll_status = "all"
     end
 
     args_future, args_past = Act::Event::generate_sql(Act::Participant::get_participant(current_user), @event_category, @enroll_status)
@@ -218,6 +218,8 @@ class Act::EventsController < ActController
 
     @breadcrumb.push [ _breadcrumb_event(@event) ]
     @breadcrumb.push [ _breadcrumb_event_edit_participants(@event) ]
+
+    @num_p_yes = @event.num_signed("yes", false, true, true)
 
     @edit_participants = true
     render :show

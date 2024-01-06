@@ -1,3 +1,4 @@
+<table class="table table-hover table-condensed table-bordered">
 <% if current_user.org? %>
     <%= render :partial => "display_doubleton", locals: { first: "ID", second: participant.id.to_s } %>
 <% end %>
@@ -31,3 +32,4 @@
 <%= render :partial => "display_doubleton", locals: { first: "Rodné číslo", second: participant.birth_number.to_s } %>
 
 <%= render :partial => "display_doubleton", locals: { first: "Zdravotní pojišťovna", second: participant.health_insurance.to_s } %>
+</table>

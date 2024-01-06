@@ -76,7 +76,7 @@
         <% if can? :delete, Act::EventParticipant %>
       <tr>
       <%= form_tag act_event_delete_participant_path(event_participant.event_id, event_participant.participant_id) do %>
-        <%= submit_tag  'Smazat', :class=>'btn btn-danger' %>
+        <%= submit_tag  'Odhlásit', :class=>'btn btn-danger' %>
       <% end %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
       </tr>
     <% end %>
