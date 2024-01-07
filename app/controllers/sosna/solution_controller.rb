@@ -123,11 +123,15 @@ class Sosna::SolutionController < SosnaController
 
 
   def _results_updated?(annual, level, round)
-    solvers = get_sorted_solvers(annual: annual).to_a
+    max_grade = Sosna::Solver::max_grade_for_level(level)
+    solvers = get_sorted_solvers(annual: annual, grade_num: ( 1 .. max_grade) )
+
     res_min = Sosna::Result.where(annual:annual, round: round, level: level, solver_id: solvers.map{ |s| s.id } ).minimum(:updated_at)
+    ress_min = Sosna::Result.where(updated_at: res_min).all.map {|r| r.id}
     sol_max = Sosna::Solution.joins(:problem).where('sosna_problems.annual'=>annual, 'sosna_problems.level'=>level, 'sosna_problems.round'=>round).maximum(:updated_at)
     pen_max = Sosna::Penalisation.where(annual:annual, level: level, round: round).maximum(:updated_at)
     rrr = Sosna::Result.where(annual: annual, round: round, level: level, updated_at: res_min).first
+    log("ress_min=#{ress_min}")
     log("res_min=#{res_min} sol_max=#{sol_max} pen_max=#{pen_max} annual=#{annual} round=#{round} rrr=#{rrr.inspect}")
     return false if sol_max.nil?
     log("_results_updated? A1");

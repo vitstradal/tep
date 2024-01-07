@@ -107,7 +107,7 @@ Tep::Application.routes.draw do
   get  '/sosna/solutions/lidi(/:roc(/:level(/:se(/:ul))))' => 'sosna/solution#lidi',           :as => :sosna_solutions_lidi
   get  '/sosna/solutions/rocnik(/:roc)'         => 'sosna/solution#rocnik',           :as => :sosna_solutions_rocnik
   get  '/sosna/solutions/vysl(/:roc(/:level(/:se(/:ul))))'     => 'sosna/solution#vysl_pik', :as => :sosna_solutions_vysl_pik
-  get  '/sosna/solutions/vyslwiki(/:roc(/:level(/:se(/:ul))))' => 'sosna/solution#vysl_wiki',:as => :sosna_solutions_vysl_wiki
+  get  '/sosna/solutions/vyslwiki(/:roc(/:level(/:se)))' => 'sosna/solution#vysl_wiki',:as => :sosna_solutions_vysl_wiki
 
   get  '/sosna/solutions/:roc/:level/:se/edit'      => 'sosna/solution#edit',          :as => :sosna_solutions_edit2
   get  '/sosna/solutions/:roc/:level/:se/:ul/edit'  => 'sosna/solution#edit',          :as => :sosna_solutions_edit
