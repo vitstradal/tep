@@ -26,7 +26,7 @@ class Act::EventsController < ActController
     end
 
     @enroll_status = params[:enroll_status]
-    if @enroll_status.nil?
+    unless @enroll_status && Act::Participant.has_participant?(current_user)
       @enroll_status = "all"
     end
 

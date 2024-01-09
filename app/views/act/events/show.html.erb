@@ -41,9 +41,9 @@
     <% end %>
   <% elsif Act::Participant::has_participant?(current_user) && ! @event.fulfils_activation?(current_user.participant) %>
     <div class="alert alert-warning">
-      Aby ses mohl/a přihlásit na tuto akci, musíš mít plně aktivovaný uživatelský účet (nejen částečně).
+      Aby ses mohl/a přihlásit na tuto akci, musíš mít plně aktivovaný účastnický účet (nejen částečně).
       Účet si aktivuješ tak, že do něj vyplníš všechny potřebné informace a klikneš na tlačítko <i>Uložit</i>.
-      Svůj uživatelský účet najdeš <%= link_to "zde", act_participant_path(current_user.participant) %>.
+      Svůj účastnický účet najdeš <%= link_to "zde", act_participant_path(current_user.participant) %>.
       </div>
   <% else %>
     <div class="alert alert-warning">
