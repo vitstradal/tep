@@ -24,7 +24,7 @@
 <% end %>
 
 <% if @event.event_info_url != "" %>
-  <p>Více info najdeš <a href="<%= @event.event_info_url %>">tady</a>.</p>
+  <p>Přečti si <a href="<%= @event.event_info_url %>">další informace!</a></p>
 <% end %>
 
 <% if ((! @already_happened) && (! @edit_participants)) %>
@@ -41,14 +41,13 @@
     <% end %>
   <% elsif Act::Participant::has_participant?(current_user) && ! @event.fulfils_activation?(current_user.participant) %>
     <div class="alert alert-warning">
-      Aby ses mohl/a přihlásit na tuto akci, musíš mít plně aktivovaný účastnický účet (nejen částečně).
+      Aby ses mohl/a přihlásit na tuto akci, musíš mít plně aktivovaný <%= link_to "účastnický účet", act_participant_path(current_user.participant) %> (částečně to nestačí).
       Účet si aktivuješ tak, že do něj vyplníš všechny potřebné informace a klikneš na tlačítko <i>Uložit</i>.
-      Svůj účastnický účet najdeš <%= link_to "zde", act_participant_path(current_user.participant) %>.
       </div>
   <% else %>
     <div class="alert alert-warning">
-      Abys ses mohl/a přihlásit na nějakou akci, musíš mít založený účastnický účet, a navíc ještě musíš být přihlášený/á. Účastnický účet si můžeš založit
-      <%= link_to "zde", act_participant_new_path %>.
+      Abys ses mohl/a přihlásit na nějakou akci, musíš mít založený účastnický účet, a navíc ještě musíš být přihlášený/á. Tak neváhej, a účastnický účet si
+      <%= link_to "založ!", act_participant_new_path %>
     </div>
   <% end %>
 <% end %>

@@ -9,10 +9,10 @@
         <%= button_tag "přihlašování", href: act_event_path(event), class: "btn btn-xs btn-purple", ico: "fa-user" %>
       <% else %>
         <a href=<%= act_event_path(event) %> class="btn btn-xs btn-purple" type="submit">
-          <span>&nbsp;&nbsp;</span>
+          <span class="hidden-xs">&nbsp;&nbsp;</span>
           <span class="ace-icon fa fa-user"></span>
           <span class="hidden-xs">info a přihlašování</span>
-          <span>&nbsp;&nbsp;&nbsp;</span>
+          <span class="hidden-xs">&nbsp;&nbsp;&nbsp;</span>
         </a>
       <% end %>
       </th>

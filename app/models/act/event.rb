@@ -127,7 +127,6 @@ class Act::Event < ActiveRecord::Base
   # *Returns* typy akcí, které daný uživatel vidí + typ "všechny akce"!"
   def self.category_filter_all(current_user)
     categories = Act::Event::category_filter(current_user)
-    pp categories
     categories.unshift({ text: 'Všechny', code: 'all'})
     return categories
   end

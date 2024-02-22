@@ -51,13 +51,13 @@ class Act::Participant < ActiveRecord::Base
     validates :grade, presence: true, numericality: { only_integer: true, message: "musí být číslo" }
     validates :email, presence: true, uniqueness: { case_sensitive: false, message: 'Tento email již někdo používá. Pokud vlastníš uživatelský účet s tímto emailem, tak se před výtvořením účtu přihlaš.' }
     validates :phone, presence: true
-    validates :parent_email, presence: true
-    validates :parent_phone, presence: true
+    validates :parent_email, presence: true, unless: :org?
+    validates :parent_phone, presence: true, unless: :org?
   end
 
   with_options if: :act_full? do
     validates :birth, presence: true
-    validates :address, presence: true
+    validates :address, presence: true, unless: :org?
     validates :birth_number, presence: true
     validates :health_insurance, presence: true
     validates :sex, presence: true

@@ -100,7 +100,7 @@ class Act::EventsController < ActController
       if @event_participant.update(event_participant_params)
         if Act::EventParticipant::mail_change?(participant_copy, @event_participant)
           _send_bonz_org(@event_participant.event.bonz_org, @event_participant, false)
-          _send_bonz_parent(@event_participant.participant.parent_email, @event_participant, false)
+          _send_bonz_parent(@event_participant.participant.parent_email, @event_participant, false) if @event_participant.event.bonz_parent?
         end
         add_success "Tvoje " + (@event_participant.org? ? "(orgovská) " : (@event_participant.participant? ? "(účastnická) " : "(náhradnická) ")) + "přihláška byla úspěšně změněna"
         return redirect_to @event_participant.event
@@ -112,7 +112,7 @@ class Act::EventsController < ActController
       @event_participant.update_chosen()
       if @event_participant.save
         _send_bonz_org(@event_participant.event.bonz_org, @event_participant, true)
-        _send_bonz_parent(@event_participant.participant.parent_email, @event_participant, true)
+        _send_bonz_parent(@event_participant.participant.parent_email, @event_participant, true) if @event_participant.event.bonz_parent?
         add_success "Byl jsi úspěšně přihlášen " + (@event_participant.org? ? "(jakožto org) " : (@event_participant.participant? ? "(jakožto účastník)" : "(jakožto náhradník)"))
         return redirect_to Act::Event.find(params[:event_id])
       else

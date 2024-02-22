@@ -1,7 +1,7 @@
 <p>
-<% if event_participant.participant.org? %>
+<% if event_participant.status == "yes" %>
   <b style="color:#196f3d;">
-<% elsif event_participant.chosen == "substitute" %>
+<% elsif event_participant.status == "maybe" %>
   <b style="color:#ba4a00;">
 <% else %>
   <b>
