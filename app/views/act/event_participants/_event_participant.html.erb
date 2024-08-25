@@ -10,9 +10,11 @@
     <div class="col-sm-offset-0 col-sm-2">
   <% end %>
   <% if can? :read_other, Act::Participant %>
-    <%= link_to event_participant.participant.participant_name(), act_participant_path(event_participant.participant_id) %>
-  <% else %>
+    <%= link_to event_participant.participant.full_name(), act_participant_path(event_participant.participant_id) %>
+  <% elsif current_user.org? %>
     <%= event_participant.participant.full_name() %>
+  <% else %>
+    <%= event_participant.participant.partial_name() %>
   <% end %>
   <% if @edit_participants %>
     </div>
