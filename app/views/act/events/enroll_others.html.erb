@@ -1,6 +1,17 @@
 <h1>Editace účastníků akce akce <%= @event.title %>
 <%= button_tag "Zpět", :href => act_event_path(@event), :class=>'btn', :ico =>'fa-reply' %>
 </h1>
+
+<% if @error_messages %>
+  <div id="error_explanation">
+    <% @error_messages.each do |msg| %>
+      <div class="alert alert-danger">
+        <%= msg %>
+      </div>
+    <% end %>
+  </div>
+<% end %>
+
 <div class="tabbable">
   <ul id="myTab" class="nav nav-tabs">
      <li <%= class_active_if "ev" == @chosen %>> <%= link_to 'Všichni', act_event_enroll_others_path(status: @status, chosen: "ev", role: @role) %></li>
@@ -42,18 +53,18 @@
            <td> <%= Act::EventParticipant::chosen_txt(@event, participant) %> </td>
            <td> <%= Act::EventParticipant::role_txt(@event, participant) %> </td>
            <td style="border-right-style: hidden; text-align: center">
-            <%= render partial: "form_enroll_other", locals: {
+            <%= render partial: "act/events/form_enroll_other", locals: {
               event: @event, participant: participant, chosen: "participant", delete: false, role: @role,
               text: "Přihlásit", status: @status, chosen_filter: @chosen, btn_class: "btn btn-success"
             } %> </td>
 
            <td style="border-right-style: hidden; text-align: center">
-            <%= render partial: "form_enroll_other", locals: {
+            <%= render partial: "act/events/form_enroll_other", locals: {
               event: @event, participant: participant, chosen: "substitute", delete: false, role: @role,
               text: "Náhradník", status: @status, chosen_filter: @chosen, btn_class: "btn btn-warning"
             } %> </td>
 
-           <td> <%= render partial: "form_enroll_other", locals: {
+           <td> <%= render partial: "act/events/form_enroll_other", locals: {
               event: @event, participant: participant, chosen: "none", delete: true, role: @role,
               text: "Odhlásit", status: @status, chosen_filter: @chosen, btn_class: "btn btn-danger"
             } %> </td>

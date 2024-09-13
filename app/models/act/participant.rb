@@ -56,10 +56,10 @@ class Act::Participant < ActiveRecord::Base
   end
 
   with_options if: :act_full? do
-    validates :birth, presence: true
+    validates :birth, presence: true, unless: :org?
     validates :address, presence: true, unless: :org?
-    validates :birth_number, presence: true
-    validates :health_insurance, presence: true
+    validates :birth_number, presence: true, unless: :org?
+    validates :health_insurance, presence: true, unless: :org?
     validates :sex, presence: true
   end
 

@@ -1,0 +1,48 @@
+<% if current_user.org? %>
+<tr>
+
+<% num_org_attributes = 2 + (current_user.morg? && (not @edit_participants) ? 1 : 0) - (@edit_participants ? 1 : 0) %>
+<td colspan="<%= num_org_attributes %>" style="text-align: center;">
+org only
+</td>
+<% num_user_attributes = 2  %>
+<td colspan="<%= num_user_attributes %>" style="text-align: center;">
+user only
+</td>
+<% num_electible_attributes = (@event.spec_place ? 1 : 0) + (@event.spec_participant ? 1 : 0) + (@event.spec_mass ? 1 : 0) %>
+<% if num_electible_attributes > 0 %>
+<td colspan="
+<%= num_electible_attributes %>
+" style="text-align: center;">
+org only
+</td>
+<% end %>
+</tr>
+<% end %>
+<tr>
+<% if current_user.morg? and (not @edit_participants) %>
+<th>
+ID
+</th>
+<% end %>
+<% if current_user.org? %>
+<% if @edit_participants %>
+<th>Jméno a příjmení</th>
+<% else %>
+<th>Jméno</th>
+<th>Příjmení</th>
+<% end %>
+<% end %>
+<% unless @edit_participants %><th>Přezdívka</th><% end %>
+<% if @edit_participants %><th>Účast</th><% end %>
+<th>Poznámka</th>
+<% if @event.spec_place %>
+<th>Nástup</th>
+<% end %>
+<% if @event.spec_participant %>
+<th>Info k účastníkovi</th>
+<% end %>
+<% if @event.spec_mass %>
+<th>Mše</th>
+<% end %>
+</tr>

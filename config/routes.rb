@@ -16,7 +16,7 @@ Tep::Application.routes.draw do
   post '/sosna/solver/create'                => 'sosna/solver#create',                  :as => :sosna_solver_anon_create
   get  '/sosna/solver/tnx'                   => 'sosna/solver#create_tnx',              :as => :sosna_solver_create_tnx
   post '/sosna/solver/confirm_none_to_next'  => 'sosna/solver#confirm_none_to_next',    :as => :sosna_solver_confirm_none_to_next
-  get  '/sosna/solver/spam'                  => 'sosna/solver#spam',                    :as => :sosna_solver_spam 
+  get  '/sosna/solver/spam'                  => 'sosna/solver#spam',                    :as => :sosna_solver_spam
   post '/sosna/solver/spam'                  => 'sosna/solver#do_spam',                 :as => :sosna_solver_do_spam
 #  post '/sosna/solver/delete_zero_solvers'   => 'sosna/solver#delete_zero_solvers',     :as => :sosna_solver_delete_zero_solvers
 
@@ -65,7 +65,7 @@ Tep::Application.routes.draw do
   get   '/act/participants/:participant_id'                        => 'act/participants#show',               :as => :act_participant
   get   '/act/participants/:participant_id/edit'                   => 'act/participants#edit',               :as => :act_participant_edit
   patch '/act/participants/:participant_id'                        => 'act/participants#update',             :as => :act_participant_update
-  get  '/act/participants/:participant_id/confirm_delete'         => 'act/participants#confirm_delete',     :as => :act_participant_confirm_delete
+  get  '/act/participants/:participant_id/confirm_delete'          => 'act/participants#confirm_delete',     :as => :act_participant_confirm_delete
   post  '/act/participants/:participant_id/delete'                 => 'act/participants#delete',             :as => :act_participant_delete
   get  '/act/participant/tnx'                                      => 'act/participants#create_tnx',         :as => :act_participant_create_tnx
 

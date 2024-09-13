@@ -1,125 +1,130 @@
-<p>
 <% if event_participant.status == "yes" %>
-  <b style="color:#196f3d;">
+  <tr style="background-color: #85ffc4;">
 <% elsif event_participant.status == "maybe" %>
-  <b style="color:#ba4a00;">
+  <tr style="background-color:#fdd979;">
 <% else %>
-  <b>
+  <tr style="background-color:#fe7171;">
 <% end %>
-  <% if @edit_participants %>
-    <div class="col-sm-offset-0 col-sm-2">
-  <% end %>
-  <% if can? :read_other, Act::Participant %>
-    <%= link_to event_participant.participant.full_name(), act_participant_path(event_participant.participant_id) %>
-  <% elsif current_user.org? %>
-    <%= event_participant.participant.full_name() %>
-  <% else %>
-    <%= event_participant.participant.partial_name() %>
-  <% end %>
-  <% if @edit_participants %>
-    </div>
-  <% else %>
-    <% if event_participant.participant.org? %>
-      (org)
-    <% end %>
-  <% end %>
 
+<% if current_user.morg? and (not @edit_participants) %>
+  <td>
+  <%= link_to event_participant.participant.id, act_participant_path(event_participant.participant_id) %>
+  </td>
+<% end %>
+
+<% if current_user.org? %>
   <% if @edit_participants %>
-    <div class="col-sm-offset-0 col-sm-2">
-      poznámka:
-    </div>
+    <td>
+    <%= event_participant.participant.name %>
+    <%= event_participant.participant.last_name %>
+    </td>
+  <% else %>
+    <td>
+    <%= event_participant.participant.name %>
+    </td>
+
+    <td>
+    <%= event_participant.participant.last_name %>
+    </td>
+
+    <td>
+    <%= event_participant.participant.nickname %>
+    </td>
+  <% end %>
+<% else %>
+  <td>
+  <%= event_participant.participant.partial_name %>
+  </td>
+<% end %>
+
+<% if @edit_participants %>
+  <%= form_for :event_participant, :url => act_event_update_participant_path(event_participant.event_id, event_participant.participant_id) do |f| %>
+    <% f.hidden_field :participant_id %>
+    <% f.hidden_field :event_id %>
+    <td>
+    <%= f.select :status, [["Ano", "yes"], ["Možná", "maybe"], ["Ne", "no"]], :selected => event_participant.status %>
+    </td>
+    <td>
+    <%= f.text_field :note, :size=>"15", :value => event_participant.note %>
+    </td>
     <% if event_participant.event.spec_place %>
-      <div class="col-sm-offset-0 col-sm-3">
-        nastupuje v:
-      </div>
+      <td>
+        <%= f.text_field :place, :size=>"7", :value => event_participant.place %>
+      </td>
     <% end %>
 
     <% if event_participant.event.spec_participant %>
-      <div class="col-sm-offset-0 col-sm-2">
-        specifika dítěte:
-      </div>
+      <td>
+        <%= f.text_field :participant_info, :size=>"15", :value => event_participant.participant_info %>
+      </td>
     <% end %>
 
     <% if event_participant.event.spec_mass %>
-      <div class="col-sm-offset-0 col-sm-1">
-        na mši:
-      </div>
+      <td>
+        <%= f.select :mass, [["Ano", true], ["Ne", false]], :selected => event_participant.mass %>
+      </td>
     <% end %>
-
-    <br>
-      <%= form_for :event_participant, :url => act_event_update_participant_path(event_participant.event_id, event_participant.participant_id) do |f| %>
-      <% f.hidden_field :participant_id %>
-      <% f.hidden_field :event_id %>
-
-      <%= f.select :status, [["půjdu", "yes"], ["možná", "maybe"], ["nezúčastním se", "no"]], :selected => event_participant.status %>
-      <%= f.text_field :note, :value => event_participant.note %>
-
-      <% if event_participant.event.spec_place %>
-        <%= f.text_field :place, :value => event_participant.place %>
-      <% end %>
-
-      <% if event_participant.event.spec_participant %>
-        <%= f.text_field :participant_info, :value => event_participant.participant_info %>
-      <% end %>
-
-      <% if event_participant.event.spec_mass %>
-        <%= f.select :mass, [["chce", true], ["nechce", false]], :selected => event_participant.mass %>
-      <% end %>
-
-      <%= f.submit "Uložit", :class => 'btn btn-primary' %>
-    <% end %>
-
-    <% if (can? :delete, Act::EventParticipant) || ((can? :update, Act::EventParticipant) && ! event_participant.event.open_for_everyone?) %>
-      <div style="margin-top:1mm;"></div>
-    <% end %>
-
-    <% if (can? :delete, Act::EventParticipant) || ((can? :update, Act::EventParticipant) && ! event_participant.event.open_for_everyone?) %>
-      <table>
-        <% if can? :delete, Act::EventParticipant %>
-      <tr>
-      <%= form_tag act_event_delete_participant_path(event_participant.event_id, event_participant.participant_id) do %>
-        <%= submit_tag  'Odhlásit', :class=>'btn btn-danger' %>
-      <% end %>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      </tr>
-    <% end %>
-    <% if (can? :update, Act::EventParticipant) && ! event_participant.event.open_for_everyone? %>
-      <tr>
-        <%= render :partial => "form_choose_participant", locals: { event: event_participant.event, participant: event_participant.participant,  chosen: "participant", text: "Účastník", btn_class: "btn btn-success" } %>
-        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
-      </tr>
-      <tr>
-        <%= render :partial => "form_choose_participant", locals: { event: event_participant.event, participant: event_participant.participant, chosen: "substitute", text: "Náhradník", btn_class: "btn btn-warning" } %>
-      </tr>
-    <% end %>
-      </table>
+    <td>
+    <%= f.submit "Uložit", :class => 'btn btn-primary' %>
+    </td>
   <% end %>
 
-  <% else %>
-    <% str = "- " + event_participant.show_status + " " %>
-
-    <% if event_participant.note != "" %>
-      <% str += "(" + event_participant.note + ")" %>
+  <% if can? :delete, Act::EventParticipant %>
+    <td>
+    <%= form_tag act_event_delete_participant_path(event_participant.event_id, event_participant.participant_id) do %>
+      <%= submit_tag 'Odhlásit', :class=>'btn btn-danger' %>
     <% end %>
+    </td>
+  <% end %>
 
+  <% if (can? :update, Act::EventParticipant) %>
+    <td>
+    <% if event_participant.substitute? %>
+      <%= render :partial => "act/events/form_choose_participant", locals: { event: event_participant.event, participant: event_participant.participant, chosen: "participant", text: "Účastník", btn_class: "btn btn-success" } %>
+    <% else %>
+      <%= render :partial => "act/events/form_choose_participant", locals: { event: event_participant.event, participant: event_participant.participant, chosen: "substitute", text: "Náhradník", btn_class: "btn btn-warning" } %>
+    <% end %>
+    </td>
+  <% end %>
+<% else %>
+  <td>
+  <%= event_participant.note %>
+  </td>
+
+  <% if event_participant.event.spec_place %>
     <% if current_user.org? || event_participant.participant.is_me?(current_user) %>
-      <% if event_participant.event.spec_place %>
-        <% str += "; Nástup: " + event_participant.place %>
-      <% end %>
-
-      <% if event_participant.event.spec_participant %>
-        <% str += "; Specifika dítěte: " + event_participant.participant_info %>
-      <% end %>
-
-      <% if event_participant.event.spec_mass %>
-        <% if event_participant.mass %>
-          <% str += "; Mši chce" %>
-        <% else %>
-          <% str += "; Mši nechce" %>
-        <% end %>
-      <% end %>
+      <td>
+      <%= event_participant.place %>
+      </td>
+    <% else %>
+      <td style="background-color:#dcdcdc;">
+      </td>
     <% end %>
-
-    <%= str %>
   <% end %>
-  </b>
-</p>
+
+  <% if event_participant.event.spec_participant %>
+    <% if current_user.org? || event_participant.participant.is_me?(current_user) %>
+      <td>
+      <%= event_participant.participant_info %>
+      </td>
+    <% else %>
+      <td style="background-color:#dcdcdc;">
+      </td>
+    <% end %>
+  <% end %>
+
+  <% if event_participant.event.spec_mass %>
+    <% if current_user.org? || event_participant.participant.is_me?(current_user) %>
+      <td>
+        <% if event_participant.mass %>
+          <span class="ace-icon fa fa-plus"></span>
+        <% end %>
+      </td>
+    <% else %>
+      <td style="background-color:#dcdcdc;">
+      </td>
+    <% end %>
+  <% end %>
+<% end %>
+
+</tr>

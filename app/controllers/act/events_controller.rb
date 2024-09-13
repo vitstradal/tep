@@ -93,6 +93,11 @@ class Act::EventsController < ActController
   # *Redirect* @event_participant.event
   #
   def enroll
+    return unless _find_event(params[:event_id])
+    _get_participants()
+    _filter_orgs()
+    _filter_parts()
+
     @event_participant = Act::EventParticipant.find_by(event_id: params[:event_id], participant_id: Act::Participant::participant_id(current_user))
     if @event_participant
       participant_copy = @event_participant.dup
@@ -106,6 +111,7 @@ class Act::EventsController < ActController
         add_success "Tvoje " + (@event_participant.org? ? "(orgovská) " : (@event_participant.participant? ? "(účastnická) " : "(náhradnická) ")) + "přihláška byla úspěšně změněna"
         return redirect_to @event_participant.event
       else
+        print "here5"
         return render :show, status: :unprocessable_entity
       end
     else
@@ -477,13 +483,15 @@ class Act::EventsController < ActController
     end
 
     def _get_participants()
-      @participants_yes = Act::EventParticipant.where(event_id: @event.id).where(status: "yes").where(chosen: "participant")
-      @participants_maybe = Act::EventParticipant.where(event_id: @event.id).where(status: "maybe").where(chosen: "participant")
-      @participants_no = Act::EventParticipant.where(event_id: @event.id).where(status: "no").where(chosen: "participant")
+      @participants_all = Act::EventParticipant.where(event_id: @event.id)
 
-      @substitutes_yes = Act::EventParticipant.where(event_id: @event.id).where(status: "yes").where(chosen: "substitute")
-      @substitutes_maybe = Act::EventParticipant.where(event_id: @event.id).where(status: "maybe").where(chosen: "substitute")
-      @substitutes_no = Act::EventParticipant.where(event_id: @event.id).where(status: "no").where(chosen: "substitute")
+      @participants_yes = Act::EventParticipant.where(event_id: @event.id).where(status: "yes").where(chosen: "participant").order(place: :asc, created_at: :asc)
+      @participants_maybe = Act::EventParticipant.where(event_id: @event.id).where(status: "maybe").where(chosen: "participant").order(place: :asc, created_at: :asc)
+      @participants_no = Act::EventParticipant.where(event_id: @event.id).where(status: "no").where(chosen: "participant").order(place: :asc, created_at: :asc)
+
+      @substitutes_yes = Act::EventParticipant.where(event_id: @event.id).where(status: "yes").where(chosen: "substitute").order(place: :asc, created_at: :asc)
+      @substitutes_maybe = Act::EventParticipant.where(event_id: @event.id).where(status: "maybe").where(chosen: "substitute").order(place: :asc, created_at: :asc)
+      @substitutes_no = Act::EventParticipant.where(event_id: @event.id).where(status: "no").where(chosen: "substitute").order(place: :asc, created_at: :asc)
     end
 
     def _filter_orgs()
