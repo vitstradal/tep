@@ -216,7 +216,7 @@ class Act::Event < ActiveRecord::Base
 
   ##
   # *Returns* kolik účastníků je na tuto akci zapsaných daným způsobem
-  def num_signed(status, orgs_only, children_only, chosen)
+  def num_signed(status, orgs_only, children_only, chosen="")
     participants = Act::EventParticipant.where(event_id: id).where(status: status)
     if orgs_only
       participants = participants.select { |p| p.org? }
@@ -226,7 +226,9 @@ class Act::Event < ActiveRecord::Base
       participants = participants.select { |p| !(p.org?) }
     end
 
-    participants = participants.select { |p| p.chosen == chosen }
+    if chosen != ""
+      participants = participants.select { |p| p.chosen == chosen }
+    end
 
     participants.length()
   end
