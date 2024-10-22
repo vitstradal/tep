@@ -43,6 +43,7 @@ MathJax.Ajax.Preloading(
 MathJax.Hub.Register.StartupHook("TeX Jax Ready",function () {
   var TEX = MathJax.InputJax.TeX;
   TEX.Macro("cm"," cm");
+  TEX.Macro("mm"," mm");
   TEX.Macro("km"," km");
   TEX.Macro("h"," h");
   TEX.Macro("exclaim", "");
@@ -50,6 +51,7 @@ MathJax.Hub.Register.StartupHook("TeX Jax Ready",function () {
   TEX.Macro("N", "N");
   TEX.Macro("meterm", "m");
   TEX.Macro("meterid", "''");
+  TEX.Macro("xbinom", "{#1 \\choose #2 .}");
 });
 
 MathJax.Hub.Config({
