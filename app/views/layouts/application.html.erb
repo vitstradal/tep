@@ -195,6 +195,9 @@
             <% end %>
             <% if is_bonus_active %>
               <%= menu_lii :sosna_solutions_user_bonus,   'Řešení bonusových příkladů' %>
+              <% if ! cur_sol.nil? && cur_sol.junior? %>
+                <%= menu_lii :sosna_solutions_user_bonus_jr,   'Řešení bonusových příkladů Junior' %>
+              <% end %>
             <% end %>
             <%= menu_lii :edit_user_registration, 'Změna hesla' %>
             <%= menu_lii wiki_main_path('faq'),   'Nápověda'   %>
