@@ -55,6 +55,7 @@ class Ability
       can :user_index, Sosna::Solution
       can :user_index_junior, Sosna::Solution
       can :user_bonus, Sosna::Solution
+      can :user_bonus_jr, Sosna::Solution
       can :upload, Sosna::Solution
       can :upload_confirm_file, Sosna::Solution
       can :get_confirm_file, Sosna::Solution

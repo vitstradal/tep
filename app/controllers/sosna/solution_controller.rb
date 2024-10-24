@@ -369,7 +369,7 @@ class Sosna::SolutionController < SosnaController
       # owner: check if it allowed to download
       round = solution.problem.round
       annual = solution.problem.annual
-      sol_in_this_round_allowed   = round <=  @config[:correct_round].to_i
+      sol_in_this_round_allowed   = round <=  @config[:corrected_round].to_i
       sol_in_this_round_allowed ||= annual < @config[:annual].to_i
       if ! sol_in_this_round_allowed
         add_alert "Chyba: soubor ještě neexistuje"
@@ -621,6 +621,24 @@ class Sosna::SolutionController < SosnaController
   # *Render* user_index
   def user_bonus
     params[:se] = Sosna::Problem::BONUS_ROUND_NUM.to_s
+    @hide_non_bonus_in_breadcrumb = true
+    user_index
+    render :user_index
+  end
+
+  ##
+  #  GET  /sosna/solutions/bonusjr
+  #
+  # Upload bonusové serie je trošku speciální, ale v postatě se využívá `user_index`
+  #
+  #
+  # *Provides*
+  # @hide_non_bonus_in_breadcrumb:: true
+  #
+  # *Render* user_index
+  def user_bonus_jr
+    params[:se] = Sosna::Problem::BONUS_ROUND_NUM.to_s
+    @level = Sosna::Solver::JUNIOR_LEVEL
     @hide_non_bonus_in_breadcrumb = true
     user_index
     render :user_index
