@@ -111,7 +111,6 @@ class Act::EventsController < ActController
         add_success "Tvoje " + (@event_participant.org? ? "(orgovská) " : (@event_participant.participant? ? "(účastnická) " : "(náhradnická) ")) + "přihláška byla úspěšně změněna"
         return redirect_to @event_participant.event
       else
-        print "here5"
         return render :show, status: :unprocessable_entity
       end
     else
@@ -463,13 +462,18 @@ class Act::EventsController < ActController
 
       if bonz_email != ""
         new_txt = is_new ? "Přihlášení " : "Změna přihlášky "
+
         if event_participant.org?
-          person_txt = event_participant.male? ? "orga " : "Orgyně "
+          person_txt = event_participant.male? ? "orga " : "orgyně "
         else
-          person_txt = event_participant.male? ? "účastníka " : "Účastnice "
+          person_txt = event_participant.male? ? "účastníka " : "účastnice "
         end
 
-        Act::Mailer.event_bonz_org(bonz_email, 'PIKOMAT: ' + new_txt + person_txt + " na akci", event_participant, is_new).deliver_later
+        name_txt = event_participant.participant.name + " " + event_participant.participant.last_name + " "
+
+        event_txt = "na akci " + event_participant.event.title + " "
+
+        Act::Mailer.event_bonz_org(bonz_email, 'PIKOMAT: ' + new_txt + person_txt + name_txt + event_txt, event_participant, is_new).deliver_later
       end
     end
 

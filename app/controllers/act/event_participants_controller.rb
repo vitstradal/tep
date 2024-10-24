@@ -107,7 +107,6 @@ class Act::EventParticipantsController < ActController
   #
   # *Redirect* act_event_edit_participants_path
   def delete
-    print "h1"
     @event_participant = Act::EventParticipant.find_by(event_id: params[:event_id], participant_id: params[:participant_id])
 
     unless (can? :delete_other, Act::EventParticipant) || @event_participant.participant.user.id == current_user.id
