@@ -1,5 +1,5 @@
 # encoding: utf-8
-require 'ffi-locale'
+#require 'ffi-locale'
 require 'trac-wiki'
 require 'pp'
 

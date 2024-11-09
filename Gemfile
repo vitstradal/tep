@@ -1,13 +1,16 @@
 source 'http://rubygems.org'
 
+gem 'net-protocol', '~> 0.1.2', require: false
 gem 'doorkeeper'
 gem 'posix-spawn'
 gem 'activerecord-session_store'
 gem 'combine_pdf', '~> 0.2.12'
-gem 'rails'
+#gem 'rails'
+gem 'rails', '>= 4', '< 5'
 gem 'faraday'
-gem 'rugged'
-gem 'filemagic'
+#gem 'grit'
+
+#gem 'filemagic'
 gem 'selene'
 
 gem 'devise'
@@ -18,24 +21,37 @@ gem 'rake'
 gem 'role_model'
 gem 'rubyzip'
 gem 'trac-wiki', '~> 0.3.45'
-gem 'prawn', '~> 0.15.0'
+gem 'prawn'
 gem 'prawn-templates'
-gem 'prawnto'
+#gem 'prawnto'
 gem 'iconv'
 gem 'sanitize'
 gem 'unicode_utils'
 gem 'magick_title', '>= 0.2.0' 
 
+#gem 'sqlite3', '<1.5'
+gem 'sqlite3', '~> 1.3.6'
+
+gem 'rack-attack'
+
+###########################
 #gem 'ffi-locale', github: 'k3rni/ffi-locale'
 gem 'ffi-locale', :git => 'https://github.com/k3rni/ffi-locale'
+
 # never use ffi-locale without gitgub!!!
+
 #gem "ffi-locale"
+#gem 'ffi', '~> 1.9'
+#gem "ffi", '=1.17.0'
 
-# Bundle edge Rails instead:
-# gem 'rails', :git => 'git://github.com/rails/rails.git'
 
-gem 'sqlite3'
+#gem 'ffi', '< 1.17.0'
+#gem 'ffi-locale', '~> 1.0.1'
 
-#FIXME jessie
-#gem 'devise', '~> 3.1.1'
-gem 'rack-attack'
+#gem 'rugged'
+#gem 'rugged', '~> 1.1'
+#gem 'rugged', '=1.6.5'
+#gem 'rugged', '=1.7.2'
+#gem 'rugged', git: 'https://github.com/libgit2/rugged.git', submodules: true
+
+

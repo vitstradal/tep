@@ -54,5 +54,6 @@ Tep::Application.configure do
 
   config.action_mailer.logger = nil
   ActionMailer::Base.logger = nil
-  ActionMailer::DeliveryJob.logger = nil
+  # XXX pb-crash
+  #ActionMailer::DeliveryJob.logger = nil
 end

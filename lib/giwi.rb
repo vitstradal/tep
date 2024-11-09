@@ -1,6 +1,6 @@
 # encoding: utf-8
 #require 'grit'
-require 'rugged'
+#require 'rugged'
 require 'pp'
 require 'diff3'
 

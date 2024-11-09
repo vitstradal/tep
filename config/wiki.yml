@@ -1,24 +1,26 @@
 ---
 
 defaults: &defaults
-  piki:
-    path: '/home/www/git/piki.git'
-    url: 'piki'
-    bare: true
-    templates: 'tepmac'
-    ext: '.wiki'
-    help_link: 'wiki/tep/doc/wiki#start'
-    read:   :org
-    update: :org
-    notify: 
-#       - path: 'vzoraky/'
-#         email: 'letak-l@pikomat.mff.cuni.cz'
-       - path: 'jakna/'
-         email: 'vitas@matfyz.cz'
-       - path: 'jakna/'
-         email: 'vit.stradal@gmail.com'
+#  piki:
+#    path: '/home/www/git/piki.git'
+#    url: 'piki'
+#    bare: true
+#    templates: 'tepmac'
+#    ext: '.wiki'
+#    help_link: 'wiki/tep/doc/wiki#start'
+#    read:   :org
+#    update: :org
+#    notify: 
+##       - path: 'vzoraky/'
+##         email: 'letak-l@pikomat.mff.cuni.cz'
+##       - path: 'jakna/'
+##         email: 'vitas@matfyz.cz'
+##       - path: 'jakna/'
+##         email: 'vit.stradal@gmail.com'
   tepmac:
-    path: '/home/www/git/tepmac.git'
+    path: '/home/www/git/tepmac'
+    # path: '/home/www/git/tepmac.git'
+    nogit: true
     url: 'tepmac'
     templates: 'tepmac'
     bare: true
@@ -27,27 +29,50 @@ defaults: &defaults
     read:   :org
     update: :morg
   main:
-    path: '/home/www/git/web.git'
-    bare: true
-    #url: 'web'
+    path: '/home/www/git/web'
+    #path: '/home/www/git/web.git'
+    nogit: true
+    #bare: true
     url: ''
-    branch: master
+    #branch: master
     ext: '.wiki'
     help_link: 'wiki/tep/doc/wiki#start'
     templates: 'tepmac'
     read:  :anon
     update: NULL
-  web_edit:
-    path: '/home/www/git/web.git'
-    templates: 'tepmac'
-    bare: true
-    url: 'webed'
-    branch: master
-    #nogit: true
+  piki:
+    path: '/home/www/git/piki'
+    nogit: true
+    #bare: true
+    url: 'piki'
+    #branch: master
     ext: '.wiki'
-    help_link: '/wiki/tep/doc/wiki#start'
-    read:   :org
+    help_link: 'wiki/tep/doc/wiki#start'
+    templates: 'tepmac'
+    read:  :org
+    update: :org
+  web_edit:
+    path: '/home/www/git/web'
+    nogit: true
+    #bare: true
+    url: 'webed'
+    #branch: master
+    ext: '.wiki'
+    help_link: 'wiki/tep/doc/wiki#start'
+    templates: 'tepmac'
+    read:  :org
     update: :morg
+#  web_edit:
+#    path: '/home/www/git/web.git'
+#    templates: 'tepmac'
+#    bare: true
+#    url: 'webed'
+#    branch: master
+#    #nogit: true
+#    ext: '.wiki'
+#    help_link: '/wiki/tep/doc/wiki#start'
+#    read:   :org
+#    update: :morg
   wikuk:
     url: 'wikuk'
     templates: 'tepmac'
@@ -75,56 +100,56 @@ void:
   web_edit: 
     <<: *voidmain
 
-local: &local
-#  <<: *defaults
-  piki:
-    path: '../piki'
-    url: 'piki'
-    read:  :org
-    templates: 'tepmac'
-    bare: false
-    help_link: 'wiki/tep/doc/wiki#start'
-    ext: '.wiki'
-    update: :org
-    update: :org
-  wikuk:
-    url: 'wikuk'
-    templates: 'tepmac'
-    path: '../wikuk'
-    nogit: true
-    ext: '.wiki'
-    read:   :org
-    update: :org
-  tepmac:
-    path: '../tepmac'
-    url: 'tepmac'
-    templates: 'tepmac'
-    bare: false
-    help_link: 'wiki/tep/doc/wiki#start'
-    ext: '.wiki'
-    read:   :org
-    update: :morg
-  main:
-    path: '../web'
-    bare: false
-    branch: master
-    templates: 'tepmac'
-    url: ''
-    ext: '.wiki'
-    read:   :anon
-    update: :org
-  web_edit:
-    path: '../web'
-    bare: true
-    templates: 'tepmac'
-    url: 'webed'
-    branch: master
-    read:    :org
-    update:  :morg
-    ext: '.wiki'
+#local: &local
+##  <<: *defaults
+#  piki:
+#    path: '../piki'
+#    url: 'piki'
+#    read:  :org
+#    templates: 'tepmac'
+#    bare: false
+#    help_link: 'wiki/tep/doc/wiki#start'
+#    ext: '.wiki'
+#    update: :org
+#    update: :org
+#  wikuk:
+#    url: 'wikuk'
+#    templates: 'tepmac'
+#    path: '../wikuk'
+#    nogit: true
+#    ext: '.wiki'
+#    read:   :org
+#    update: :org
+#  tepmac:
+#    path: '../tepmac'
+#    url: 'tepmac'
+#    templates: 'tepmac'
+#    bare: false
+#    help_link: 'wiki/tep/doc/wiki#start'
+#    ext: '.wiki'
+#    read:   :org
+#    update: :morg
+#  main:
+#    path: '../web'
+#    bare: false
+#    branch: master
+#    templates: 'tepmac'
+#    url: ''
+#    ext: '.wiki'
+#    read:   :anon
+#    update: :org
+#  web_edit:
+#    path: '../web'
+#    bare: true
+#    templates: 'tepmac'
+#    url: 'webed'
+#    branch: master
+#    read:    :org
+#    update:  :morg
+#    ext: '.wiki'
 
-test:
-  <<: *local
+#test:
+#  <<: *local
 
 development:
   <<: *defaults

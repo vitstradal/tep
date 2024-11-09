@@ -1,6 +1,7 @@
 require File.expand_path('../boot', __FILE__)
 
 require 'rails/all'
+# pbcradk:hack
 require 'pp'
 
 # If you have a Gemfile, require the gems listed there, including any gems
@@ -59,12 +60,13 @@ module Tep
     #config.cache_store = ActiveSupport::Cache::MemoryStore.new(:expires_in => 5.minutes)
     #config.cache_store.silence! 
 
-    config.middleware.use Rack::Attack
+    #config.middleware.use Rack::Attack
 
   end
 end
 
 require 'giwi'
 Giwi.setup do
+  #YAML.load_file("#{::Rails.root.to_s}/config/wiki.yml", aliases: true)[::Rails.env]
   YAML.load_file("#{::Rails.root.to_s}/config/wiki.yml")[::Rails.env]
 end
