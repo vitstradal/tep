@@ -4,7 +4,8 @@ gem 'net-protocol', '~> 0.1.2', require: false
 gem 'doorkeeper'
 gem 'posix-spawn'
 gem 'activerecord-session_store'
-gem 'combine_pdf', '~> 0.2.12'
+#gem 'combine_pdf', '~> 0.2.12'
+gem 'combine_pdf'
 #gem 'rails'
 gem 'rails', '>= 4', '< 5'
 gem 'faraday'
@@ -23,7 +24,7 @@ gem 'rubyzip'
 gem 'trac-wiki', '~> 0.3.45'
 gem 'prawn'
 gem 'prawn-templates'
-#gem 'prawnto'
+gem 'prawnto'
 gem 'iconv'
 gem 'sanitize'
 gem 'unicode_utils'
@@ -31,12 +32,12 @@ gem 'magick_title', '>= 0.2.0'
 
 #gem 'sqlite3', '<1.5'
 gem 'sqlite3', '~> 1.3.6'
-
+#gem 'sqlite3'
 gem 'rack-attack'
 
 ###########################
 #gem 'ffi-locale', github: 'k3rni/ffi-locale'
-gem 'ffi-locale', :git => 'https://github.com/k3rni/ffi-locale'
+#gem 'ffi-locale', :git => 'https://github.com/k3rni/ffi-locale'
 
 # never use ffi-locale without gitgub!!!
 

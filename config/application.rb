@@ -1,5 +1,6 @@
 require File.expand_path('../boot', __FILE__)
 
+#require 'rugged'
 require 'rails/all'
 # pbcradk:hack
 require 'pp'
