@@ -36,7 +36,16 @@ test:
   timeout: 5000
 
 production:
-  adapter: sqlite3
-  database: var/db/production.sqlite3
-  pool: 5
-  timeout: 5000
+  adapter: postgresql
+  encoding: unicode
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  username: 'tep_user'
+  password: <%= ENV['POSTGRES_PASSWORD']  %>
+  host: localhost
+  database: tep_db
+
+#  database: tep_dev_db
+#  adapter: sqlite3
+#  database: var/db/production.sqlite3
+#  pool: 5
+#  timeout: 5000
