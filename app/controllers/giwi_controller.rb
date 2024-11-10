@@ -451,20 +451,24 @@ class GiwiController < ApplicationController
       events = repo.report( now_f, pak_f)
 
       # prepare 'start' and sort
-      events.each do |event|
-            start = event['dtstart'][0]
-            start = Date.parse(start).strftime("%F") if ! start.nil?
-            event['start'] = start
-      end
-      events.sort! { |a,b| a['start'] <=> b['start'] }
+#      events.each do |event|
+#            start = event['dtstart'][0]
+#            start = Date.parse(start).strftime("%F") if ! start.nil?
+#            event['start'] = start
+#      end
+#      events.sort! { |a,b| a['start'] <=> b['start'] }
 
       # render
       ret = events.map do |event|
-            start = event['start']
-            summary = event['summary'].strip.gsub('\,', ',')
-            url = event['description'] || ''
-            if url =~ /(https?:\/\/\S*)/
-              "* **#{start}** [[#{$1} | #{summary}]]\n"
+            #start = event['start']
+            #summary = event['summary'].strip.gsub('\,', ',')
+            #url = event['description'] || ''
+            start = event.dtstart
+            summary = event.summary.strip.gsub('\,', ',')
+            url = event.description || ''
+
+            if m = /(https?:\/\/\S*)/.match(url)
+              "* **#{start}** [[#{m[1]} | #{summary}]]\n"
             else
               "* **#{start}** #{summary}\n"
             end
@@ -553,7 +557,10 @@ class GiwiController < ApplicationController
   end
   def _template_textimg(env, argv)
     text = argv['00']
-    url = MagickTitle.say(text).url
+
+    # XXXX pb-krash MagickTitle pouziva exists a ne exist :facepalm
+    #url = MagickTitle.say(text).url
+    url = 'xxx'
     return ActionController::Base.helpers.asset_path(url)
   end
 
@@ -626,14 +633,14 @@ class GiwiController < ApplicationController
     @part = nil
     if @edit != 'me' && @text
 
-      if @edit =~ /^(\d+)-(\d+)$/
+      if match =  /^(\d+)-(\d+)$/.match(@edit)
         # want to edit only specified lines
-        pos_beg, pos_end  = $1.to_i, $2.to_i
+        pos_beg, pos_end  = match[1].to_i, match[2].to_i
 
-      elsif @edit =~ /^(\d+)$/
+      elsif match = /^(\d+)$/.match(@edit)
         # want to edit only one chapter
         # po editu redirect na tuto kapitolu
-        @part = $1.to_i
+        @part = match[1].to_i
         heading = parser.headings[@part]
         pos_beg, pos_end = heading[:sline], heading[:eline] +1
       else

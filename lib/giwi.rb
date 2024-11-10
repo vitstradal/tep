@@ -237,7 +237,7 @@ class Giwi
     comment = comment.force_encoding('ASCII-8BIT')
 
     name = ''
-    name, email = [$1, $2] if email =~ /^(.*)\s*<(\S*@\S*)>$/
+    name, email = [match[1], match[2]] if match = /^(.*)\s*<(\S*@\S*)>$/.match(email)
 
     options = {
         :tree => index.write_tree(@repo),
@@ -280,7 +280,7 @@ class Giwi
     comment = comment.force_encoding('ASCII-8BIT')
 
     name = ''
-    name, email = [$1, $2] if email =~ /^(.*)\s*<(\S*@\S*)>$/
+    name, email = [match[1], match[2]] if match = /^(.*)\s*<(\S*@\S*)>$/.match(email)
 
     options = {
         :tree => index.write_tree(@repo),
@@ -465,10 +465,10 @@ class Giwi
   # 1-2 means first line  including '\n'
   def _patch_part(part, text_orig, pos)
 
-      if pos =~ /\A(\d+)(?:\.(\d+))?(?:-(\d+)(?:\.(\d+))?)?\Z/
+      if match = /\A(\d+)(?:\.(\d+))?(?:-(\d+)(?:\.(\d+))?)?\Z/.match(pos)
 
-        bline, eline = $1.to_i-1,  ($3||$1).to_i-1
-        boff, eoff = ($2||0).to_i, ($4||$2||0).to_i
+        bline, eline = match[1].to_i-1,  (match[3]||match[1]).to_i-1
+        boff, eoff = (match[2]||0).to_i, (match[4]||match[2]||0).to_i
 
         lines = text_orig.split("\n", -1)
 

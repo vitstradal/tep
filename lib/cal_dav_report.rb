@@ -4,7 +4,8 @@ require 'net/https'
 require 'uri'
 require 'rexml/document'
 require 'rexml/xpath'
-require 'selene'
+#require 'selene'
+require 'icalendar'
 require 'faraday'
 require 'pp'
 
@@ -67,7 +68,10 @@ class CalDavReport
         xml = REXML::Document.new( resp.body )
         begin 
           REXML::XPath.each( xml, '//c:calendar-data/', { "c"=>"urn:ietf:params:xml:ns:caldav"} ) { |c|
-              result <<   Selene.parse(c.text)['vcalendar'][0]['vevent'][0]
+              c_parsed = Icalendar::Calendar.parse(c.text)[0].events[0]
+              #c_parsed = Selene.parse(c.text)['vcalendar'][0]['vevent'][0]
+              #c_parsed['_orig'] = c.text
+              result <<  c_parsed
           }
         end
         return result

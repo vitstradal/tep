@@ -43,8 +43,8 @@ EOL
     res1 = Net::HTTP.post uri, _req1(rid, dom), 'Content-Type' =>  'text/xml; charset=utf-8'
     body = res1.body
   
-    return [nil, nil] if body !~ /sid=['"]([^'"]*)['"]/
-    sid = $1
+    return [nil, nil] unless match = /sid=['"]([^'"]*)['"]/.match(body)
+    sid = match[1]
   
     puts sid if Debug
     

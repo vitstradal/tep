@@ -62,12 +62,12 @@ class PrikladyController < ApplicationController
     #log "text #{text}"
     if ! text.nil?
       text.split(/\r?\n/).each do |line|
-        if line =~ /^\*\*([^*]*)\*\*(.*)/
-          _kat, _part = $1, $2
+        if match = /^\*\*([^*]*)\*\*(.*)/.match(line)
+          _kat, _part = match[1], match[2]
           item[kat] = part.strip if kat
           kat, part = _kat, _part
-        elsif line =~ /^=+\s*([^=]*)\s*=*/
-          item['title'] = $1.strip
+        elsif match = /^=+\s*([^=]*)\s*=*/.match(line)
+          item['title'] = match[1].strip
         else
           #log "part #{part} line #{line}"
           part = ( part.nil? ? '' :  part + "\n" ) + line

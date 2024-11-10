@@ -137,7 +137,9 @@ class Sosna::SolverController < SosnaController
          @opt = {}
          @envelope= params[:envelope]
          opt_param.split(/\s*;\s*|\s+/).each do |o|
-           @opt[$1.to_sym] = $2 if o =~ /^\s*(\w+)\s*:(\S*)/
+           if match = /^\s*(\w+)\s*:(\S*)/.match(o)
+              @opt[match[1].to_sym] = match[2]
+           end
          end
 
          @prawnto_options = { :prawn => {:page_size => @opt[:p] || 'C5', :page_layout => :landscape, }} if @envelope;
@@ -740,19 +742,19 @@ EOL
   def _grade_plus(grade, delta)
 
     cl =  %w(nila prima sekunda tercie kvarta kvinta sexta septima oktava)
-    return "#{$1}#{cl[delta+1]}#{$2}" if grade =~ /^(.*)prima(.*)$/i
-    return "#{$1}#{cl[delta+2]}#{$2}" if grade =~ /^(.*)sekunda(.*)$/i
-    return "#{$1}#{cl[delta+3]}#{$2}" if grade =~ /^(.*)terice(.*)$/i
-    return "#{$1}#{cl[delta+4]}#{$2}" if grade =~ /^(.*)kvarta(.*)$/i
-    return "#{$1}#{cl[delta+4]}#{$2}" if grade =~ /^(.*)qarta(.*)$/i
-    return "#{$1}#{cl[delta+5]}#{$2}" if grade =~ /^(.*)kvinta(.*)$/i
-    return "#{$1}#{cl[delta+6]}#{$2}" if grade =~ /^(.*)sexta(.*)$/i
-    return "#{$1}#{cl[delta+7]}#{$2}" if grade =~ /^(.*)septima(.*)$/i
-    return "#{$1}#{cl[delta+8]}#{$2}" if grade =~ /^(.*)okt.va(.*)$/i
+    return "#{match[1]}#{cl[delta+1]}#{match[2]}" if match = /^(.*)prima(.*)$/i.match(grade)
+    return "#{match[1]}#{cl[delta+2]}#{match[2]}" if match = /^(.*)sekunda(.*)$/i.match(grade)
+    return "#{match[1]}#{cl[delta+3]}#{match[2]}" if match = /^(.*)terice(.*)$/i.match(grade)
+    return "#{match[1]}#{cl[delta+4]}#{match[2]}" if match = /^(.*)kvarta(.*)$/i.match(grade)
+    return "#{match[1]}#{cl[delta+4]}#{match[2]}" if match = /^(.*)qarta(.*)$/i.match(grade)
+    return "#{match[1]}#{cl[delta+5]}#{match[2]}" if match = /^(.*)kvinta(.*)$/i.match(grade)
+    return "#{match[1]}#{cl[delta+6]}#{match[2]}" if match = /^(.*)sexta(.*)$/i.match(grade)
+    return "#{match[1]}#{cl[delta+7]}#{match[2]}" if match = /^(.*)septima(.*)$/i.match(grade)
+    return "#{match[1]}#{cl[delta+8]}#{match[2]}" if match = /^(.*)okt.va(.*)$/i.match(grade)
 
     ro = %w( i ii iii iv v vi vii viii ix )
-    if grade =~ /^([ixv]+)(.)/i
-      r, rest = $1, $2
+    if match = /^([ixv]+)(.)/i.match(grade)
+      r, rest = match[1], match[2]
       ri = ro.index(r.downcase)
       if ! ri.nil?
         r_plus = ro[ri+delta]
@@ -760,8 +762,8 @@ EOL
       end
     end
 
-    if grade =~ /^([^\d]*)(\d+)(.*)$/
-      prefix, id, rest = $1, $2, $3
+    if match = /^([^\d]*)(\d+)(.*)$/.match(grade)
+      prefix, id, rest = match[1], match[2], match[3]
       return "#{prefix}#{id.to_i + delta}#{rest}"
     end
     return grade

@@ -60,8 +60,8 @@
      o = line[:line_origin]
      if o == :addition || o == :deletion
       %><span class="diff-<%=o%>" title="<%=pp line%>"><%= diff_line line%></span><%
-     elsif o == :file_header  && line[:content] =~ /^diff --git a\/(\S*)/
-      path = $1
+     elsif( o == :file_header && (match = /^diff --git a\/(\S*)/.match(line[:content])) )
+        path = match[1]
       %><%= link_to url_for(wiki: @wiki, path: path) do  %><%= path%> <span class="fa fa-file-o"></span><% end %> <%= link_to  url_for(wiki:@wiki, path: path, edit: 'me') do %><span class="fa fa-edit"></span><% end %>:
   <%
      elsif o == :context

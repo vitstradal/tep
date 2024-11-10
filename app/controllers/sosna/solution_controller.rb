@@ -1112,11 +1112,11 @@ class Sosna::SolutionController < SosnaController
   def _upload_rev_one(roc, level, se, ul,  fname)
 
     fname.force_encoding('UTF-8')
-    if fname !~ /^(?:.*\/)?reseni-roc(\d+)([a-z\d]*)-se(\d+)-ul(\d+)-rel(\d+)-(ori|rev)-.*.pdf$/
+    unless m = /^(?:.*\/)?reseni-roc(\d+)([a-z\d]*)-se(\d+)-ul(\d+)-rel(\d+)-(ori|rev)-.*.pdf$/.match(fname)
       _add_msg(fname, "jmeno souboru neni ve spravnem formatu, ocekavany format: DIR/reseni-rocNN-seN-ulN-relN-(ori|rev)-.*.pdf")
       return nil
     end
-    oroc, olevel, ose, oul, relid = $1.to_i, Sosna::Solver::level_from_short($2), $3.to_i, $4.to_i, $5.to_i
+    oroc, olevel, ose, oul, relid = m[1].to_i, Sosna::Solver::level_from_short(m[2]), m[3].to_i, m[4].to_i, m[5].to_i
 
     if oroc.to_s != roc || ose.to_s != se || oul.to_s != ul || olevel != level
        log( "oroc=#{oroc} roc=#{roc} ose=#{ose} se=#{se} olevel=#{olevel} level=#{level} oul=#{oul} ul=#{ul}")

@@ -136,6 +136,9 @@ GEM
     hashery (2.1.2)
     i18n (1.14.6)
       concurrent-ruby (~> 1.0)
+    icalendar (2.10.3)
+      ice_cube (~> 0.16)
+      ostruct
     ice_cube (0.17.0)
     iconv (1.1.0)
     io-console (0.7.2)
@@ -186,6 +189,7 @@ GEM
     nokogiri (1.16.7-x86_64-linux)
       racc (~> 1.4)
     orm_adapter (0.5.0)
+    ostruct (0.6.1)
     pdf-core (0.10.0)
     pdf-reader (2.13.0)
       Ascii85 (>= 1.0, < 3.0, != 2.0.0)
@@ -326,9 +330,10 @@ DEPENDENCIES
   ffi
   ffi-locale
   i18n (~> 1.14.6)
+  icalendar
   iconv
   listen
-  magick_title (>= 0.2.0)
+  magick_title
   net-protocol (~> 0.1.2)
   pg
   prawn
