@@ -11,6 +11,7 @@ gem 'combine_pdf'
 #gem 'rails', '~> 5.2.8'
 gem 'rails', '~> 6.1.7'
 
+
 gem 'faraday'
 #gem 'grit'
 
@@ -20,9 +21,12 @@ gem 'rexml'
 
 gem 'listen'
 gem 'devise'
-gem 'devise-i18n'
+gem 'devise-i18n', '~> 1.12.0'
+gem 'i18n', '~> 1.14.6'
 gem 'devise-encryptable'
-gem 'cancancan', '~> 2.0'
+#gem 'cancancan', '~> 2.0'
+gem 'cancancan', '~> 3.5'
+
 gem 'rake'
 gem 'role_model'
 gem 'rubyzip'

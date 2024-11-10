@@ -5,6 +5,24 @@ require 'rails/all'
 # pbcradk:hack
 require 'pp'
 
+##############################################
+# rails5->6 migration hack
+require 'active_support/logger'
+require 'active_support/logger_silence'
+
+# Override ActiveSupport::Logger to avoid the conflict with Ruby's Logger
+module ActiveSupport
+  class Logger < ::Logger
+    # Avoid using class variable @@silencer
+    def silencer
+      # Return false or handle differently if needed, to avoid setting @@silencer
+      false
+    end
+  end
+end
+##############################################
+
+
 # If you have a Gemfile, require the gems listed there, including any gems
 # you've limited to :test, :development, or :production.
 Bundler.require(:default, Rails.env) if defined?(Bundler)
@@ -71,3 +89,4 @@ Giwi.setup do
   YAML.load_file("#{::Rails.root.to_s}/config/wiki.yml", aliases: true)[::Rails.env]
   #YAML.load_file("#{::Rails.root.to_s}/config/wiki.yml")[::Rails.env]
 end
+
