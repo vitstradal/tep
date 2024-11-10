@@ -109,6 +109,8 @@ GEM
     ffi (1.17.0-x86_64-darwin)
     ffi (1.17.0-x86_64-linux-gnu)
     ffi (1.17.0-x86_64-linux-musl)
+    ffi-locale (1.0.1)
+      ffi (>= 1.0.9)
     globalid (1.2.1)
       activesupport (>= 6.1)
     hashery (2.1.2)
@@ -282,6 +284,8 @@ DEPENDENCIES
   devise-i18n (~> 1.12.0)
   doorkeeper
   faraday
+  ffi
+  ffi-locale
   i18n (~> 1.14.6)
   iconv
   listen

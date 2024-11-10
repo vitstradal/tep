@@ -3,6 +3,7 @@
 require 'unicode_utils'
 require 'resolv'
 
+
 module ApplicationHelper
 
   ##
@@ -223,11 +224,16 @@ module ApplicationHelper
   end
 
   def strcoll(a,b)
-    return FFILocale::strcoll(a, b)
+    #return FFILocale::strcoll(a, b)
+    #ret = UnicodeUtils.composed_compare(a, b)
+    ret = a <=> b
+    return ret
   end
 
   def strcollf(a,b)
-    ret = FFILocale::strcoll(a, b)
+    #ret = FFILocale::strcoll(a, b)
+    #ret = UnicodeUtils.composed_compare(a, b)
+    ret = a <=> b
     return ret == 0 ? false : ret
   end
 

@@ -297,7 +297,7 @@ class Sosna::SolutionController < SosnaController
     Zip::File.open(zip_file_name, Zip::File::CREATE) do |zipfile|
       solvers.each do |solver|
         filename = _confirm_file_path solver
-        next if filename.nil? || ! File.exists?(filename)
+        next if filename.nil? || ! File.exist?(filename)
         zipfile.add(translit("navratky/confirm-file-#{solver.last_name}-#{solver.name}-#{solver.id}.pdf"),  filename)
       end
     end
@@ -594,7 +594,7 @@ class Sosna::SolutionController < SosnaController
 
     if @config[:confirmation_round] == @round
       @show_confirmation_upload = true
-      @confirmation_exists = File.exists? _confirm_file_path @solver
+      @confirmation_exists = File.exist? _confirm_file_path @solver
     end
 
     @problems = Sosna::Problem.where(annual: @annual, round:  @round, level:  @level )

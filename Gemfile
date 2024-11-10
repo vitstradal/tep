@@ -48,6 +48,8 @@ gem 'rack-attack'
 
 ###########################
 #gem 'ffi-locale', github: 'k3rni/ffi-locale'
+gem 'ffi-locale'
+gem 'ffi'
 #gem 'ffi-locale', :git => 'https://github.com/k3rni/ffi-locale'
 
 # never use ffi-locale without gitgub!!!
@@ -55,8 +57,6 @@ gem 'rack-attack'
 #gem "ffi-locale"
 #gem 'ffi', '~> 1.9'
 #gem "ffi", '=1.17.0'
-
-
 #gem 'ffi', '< 1.17.0'
 #gem 'ffi-locale', '~> 1.0.1'
 
