@@ -1,4 +1,5 @@
 .bundle
+.env
 /log
 public/js
 public/data
