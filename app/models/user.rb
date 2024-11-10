@@ -69,7 +69,9 @@ class User < ActiveRecord::Base
   before_create do
     roles << :user
   end
-  skip_callback :create, :after, :send_confirmation_instructions
+
+  # XXXX upgrade to rails5 hack: FIXME
+  #skip_callback :create, :after, :send_confirmation_instructions
 
   ##
   # *Returns* kominace sloupců "#{full_name} <#{email}>"

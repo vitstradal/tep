@@ -25,7 +25,7 @@ module Tep
 
     # Activate observers that should always be running.
     # config.active_record.observers = :cacher, :garbage_collector, :forum_observer
-    config.active_record.raise_in_transactional_callbacks = true
+    #config.active_record.raise_in_transactional_callbacks = true
 
 
     # Set Time.zone default to the specified zone and make Active Record auto-convert to this zone.

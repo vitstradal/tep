@@ -7,17 +7,20 @@ gem 'activerecord-session_store'
 #gem 'combine_pdf', '~> 0.2.12'
 gem 'combine_pdf'
 #gem 'rails'
-gem 'rails', '>= 4', '< 5'
+#gem 'rails', '>= 4', '< 5'
+gem 'rails', '~> 5.2.8'
+
 gem 'faraday'
 #gem 'grit'
 
 #gem 'filemagic'
 gem 'selene'
 
+gem 'listen'
 gem 'devise'
 gem 'devise-i18n'
 gem 'devise-encryptable'
-gem 'cancan'
+gem 'cancancan', '~> 2.0'
 gem 'rake'
 gem 'role_model'
 gem 'rubyzip'
@@ -30,9 +33,11 @@ gem 'sanitize'
 gem 'unicode_utils'
 gem 'magick_title', '>= 0.2.0' 
 
-#gem 'sqlite3', '<1.5'
-gem 'sqlite3', '~> 1.3.6'
 #gem 'sqlite3'
+#gem 'sqlite3', '<1.5'
+#gem 'sqlite3', '~> 1.3.6'
+gem 'sqlite3', '~> 1.4'
+
 gem 'rack-attack'
 
 ###########################

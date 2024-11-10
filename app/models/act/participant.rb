@@ -45,7 +45,7 @@ class Act::Participant < ActiveRecord::Base
   validates :name, presence: true
   validates :last_name, presence: true
 
-  validates :nickname, uniqueness: { case_sensitive: false, message: "tuhle přezdívku už někdo má" }, unless: "nickname == ''"
+  validates :nickname, uniqueness: { case_sensitive: false, message: "tuhle přezdívku už někdo má" }, unless: -> {  nickname == '' }
 
   with_options if: :act_light? do
     validates :grade, presence: true, numericality: { only_integer: true, message: "musí být číslo" }
