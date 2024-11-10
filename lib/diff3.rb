@@ -1,10 +1,8 @@
 # encoding: utf-8
-require 'posix-spawn'
+require 'open3'
 require 'tempfile'
 
 module Diff3
-  include POSIX::Spawn
-
   # r: [ merged, status]
   # status - 0 no confilicts
   # status - 1 confilict
@@ -21,7 +19,7 @@ module Diff3
           file.close
           file
         end
-        argv = [ 'diff3',
+        command = [ 'diff3',
                         '-m',
                         '-L', lmine.to_s,
                         '-L', lorig.to_s,
@@ -31,17 +29,19 @@ module Diff3
                         files[2].path, # your
                 ]
 
-        process = Child.new(*argv)
+        stdout, stderr, result = Open3.capture3(command)
+
         files.each { |file| file.unlink }
 
-        result = process.out.force_encoding('UTF-8').encode
-        exitstatus = case process.status.exitstatus
+        exitstatus = case result
                        when 0; MERGE_OK
                        when 1; MERGE_COLLISONS
                        else    MERGE_FAIL
                      end
 
-        [result, exitstatus]
+        [
+	  stdout.encode("UTF-8", invalid: :replace, undef: :replace, replace: "?"),
+	  exitstatus
+	]
   end
-
 end
