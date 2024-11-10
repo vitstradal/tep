@@ -68,6 +68,6 @@ end
 
 require 'giwi'
 Giwi.setup do
-  #YAML.load_file("#{::Rails.root.to_s}/config/wiki.yml", aliases: true)[::Rails.env]
-  YAML.load_file("#{::Rails.root.to_s}/config/wiki.yml")[::Rails.env]
+  YAML.load_file("#{::Rails.root.to_s}/config/wiki.yml", aliases: true)[::Rails.env]
+  #YAML.load_file("#{::Rails.root.to_s}/config/wiki.yml")[::Rails.env]
 end

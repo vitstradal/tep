@@ -8,13 +8,15 @@ gem 'activerecord-session_store'
 gem 'combine_pdf'
 #gem 'rails'
 #gem 'rails', '>= 4', '< 5'
-gem 'rails', '~> 5.2.8'
+#gem 'rails', '~> 5.2.8'
+gem 'rails', '~> 6.1.7'
 
 gem 'faraday'
 #gem 'grit'
 
 #gem 'filemagic'
 gem 'selene'
+gem 'rexml'
 
 gem 'listen'
 gem 'devise'

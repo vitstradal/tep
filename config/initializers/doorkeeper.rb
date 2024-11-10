@@ -229,4 +229,5 @@ Doorkeeper.configure do
   # WWW-Authenticate Realm (default "Doorkeeper").
   #
   # realm "Doorkeeper"
+  skip_client_authentication_for_password_grant = true
 end
