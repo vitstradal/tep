@@ -6,7 +6,7 @@ require 'faraday'
 require 'iconv'
 require 'json'
 require 'yaml'
-require 'caldavreport'
+require 'cal_dav_report'
 require 'magick_title'
 
 FAKECRYPT_FROM = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789@'

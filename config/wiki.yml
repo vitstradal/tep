@@ -18,12 +18,13 @@ defaults: &defaults
 ##       - path: 'jakna/'
 ##         email: 'vit.stradal@gmail.com'
   tepmac:
-    path: '/home/www/git/tepmac'
     # path: '/home/www/git/tepmac.git'
+    path: '/home/www/git/tepmac'
     nogit: true
+
+    bare: true
     url: 'tepmac'
     templates: 'tepmac'
-    bare: true
     ext: '.wiki'
     help_link: 'wiki/tep/doc/wiki#start'
     read:   :org
@@ -31,10 +32,9 @@ defaults: &defaults
   main:
     path: '/home/www/git/web'
     #path: '/home/www/git/web.git'
+    bare: true
     nogit: true
-    #bare: true
     url: ''
-    #branch: master
     ext: '.wiki'
     help_link: 'wiki/tep/doc/wiki#start'
     templates: 'tepmac'
@@ -42,8 +42,9 @@ defaults: &defaults
     update: NULL
   piki:
     path: '/home/www/git/piki'
+    #path: '/home/www/git/piki.git'
     nogit: true
-    #bare: true
+    bare: true
     url: 'piki'
     #branch: master
     ext: '.wiki'
@@ -52,9 +53,10 @@ defaults: &defaults
     read:  :org
     update: :org
   web_edit:
+    #path: '/home/www/git/web.git'
     path: '/home/www/git/web'
     nogit: true
-    #bare: true
+    bare: true
     url: 'webed'
     #branch: master
     ext: '.wiki'

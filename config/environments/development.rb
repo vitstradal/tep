@@ -20,11 +20,11 @@ Tep::Application.configure do
   # added 
   config.exceptions_app = self.routes
 
-  # Do not compress assets
-  config.assets.compress = false
+  # Do not compress assets XXX
+  #config.assets.compress = false
          
-  # Expands the lines which load the assets
-  config.assets.debug = true
+  # Expands the lines which load the assets XXXX
+  # config.assets.debug = true
 
   # Don't care if the mailer can't send
   config.action_mailer.raise_delivery_errors = false
