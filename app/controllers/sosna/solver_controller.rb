@@ -483,7 +483,7 @@ class Sosna::SolverController < SosnaController
     if sr[:id]
       solver = Sosna::Solver.find(sr[:id])
       solver.school = school
-      solver.update_attributes(sr)
+      solver.update(sr)
     else
       solver = Sosna::Solver.create(sr)
     end

@@ -34,4 +34,3 @@ gem 'ffi'
 gem 'rugged'
 ########################### rails7
 gem 'sprockets-rails'
-

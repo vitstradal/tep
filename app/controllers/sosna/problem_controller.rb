@@ -80,7 +80,7 @@ class Sosna::ProblemController < SosnaController
     commit = params[:commit]
     if p[:id]
       problem = Sosna::Problem.find p[:id]
-      problem.update_attributes p
+      problem.update p
     else
       problem = Sosna::Problem.create p
     end

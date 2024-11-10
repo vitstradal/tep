@@ -9,8 +9,8 @@ class JabberController < ApplicationController
   def update
     params.require(:jabber).permit!
     jabber = Jabber.find(params[:id])
-    jabber.update_attributes(params[:jabber])
-    redirect_to  user_show_path(jabber.user_id, 'jabber')
+    jabber.update(params[:jabber])
+    redirect_to user_show_path(jabber.user_id, 'jabber')
   end
 
   def new
