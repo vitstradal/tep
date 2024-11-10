@@ -3,7 +3,6 @@ source 'http://rubygems.org'
 gem 'rails', '~> 7.2'
 gem 'net-protocol', '~> 0.1.2', require: false
 gem 'doorkeeper'
-gem 'posix-spawn'
 gem 'activerecord-session_store'
 gem 'combine_pdf'
 gem 'faraday'
