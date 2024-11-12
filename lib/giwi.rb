@@ -237,7 +237,9 @@ class Giwi
     comment = comment.force_encoding('ASCII-8BIT')
 
     name = ''
-    name, email = [match[1], match[2]] if match = /^(.*)\s*<(\S*@\S*)>$/.match(email)
+    if match = /^(.*)\s*<(\S*@\S*)>$/.match(email)
+        name, email = [match[1], match[2]]
+    end
 
     options = {
         :tree => index.write_tree(@repo),
@@ -280,7 +282,10 @@ class Giwi
     comment = comment.force_encoding('ASCII-8BIT')
 
     name = ''
-    name, email = [match[1], match[2]] if match = /^(.*)\s*<(\S*@\S*)>$/.match(email)
+    if match = /^(.*)\s*<(\S*@\S*)>$/.match(email)
+        name, email = [match[1], match[2]]
+    end
+
 
     options = {
         :tree => index.write_tree(@repo),

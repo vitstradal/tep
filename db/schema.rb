@@ -2,215 +2,217 @@
 # of editing this file, please use the migrations feature of Active Record to
 # incrementally modify your database, and then regenerate this schema definition.
 #
-# Note that this schema.rb definition is the authoritative source for your
-# database schema. If you need to create the application database on another
-# system, you should be using db:schema:load, not running all the migrations
-# from scratch. The latter is a flawed and unsustainable approach (the more migrations
-# you'll amass, the slower it'll run and the greater likelihood for issues).
+# This file is the source Rails uses to define your schema when running `bin/rails
+# db:schema:load`. When creating a new database, `bin/rails db:schema:load` tends to
+# be faster and is potentially less error prone than running all of your
+# migrations from scratch. Old migrations may fail to apply correctly if those
+# migrations use external dependencies or application code.
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[6.1].define(version: 24) do
+ActiveRecord::Schema[7.2].define(version: 27) do
+  # These are extensions that must be enabled in order to support this database
+  enable_extension "plpgsql"
 
   create_table "act_event_categories", id: false, force: :cascade do |t|
-    t.string "code", limit: 2
-    t.string "name"
-    t.integer "idx", default: 0
+    t.text "code"
+    t.text "name"
+    t.bigint "idx", default: 0
     t.boolean "multi_day", default: true
     t.text "description", default: ""
-    t.string "visible", default: "ev"
+    t.text "visible", default: "ev"
     t.boolean "restrictions_electible", default: true
     t.boolean "mass_spec_electible", default: true
-    t.string "activation_needed_default", default: "full"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["code"], name: "index_act_event_categories_on_code", unique: true
+    t.text "activation_needed_default", default: "full"
+    t.timestamptz "created_at"
+    t.timestamptz "updated_at"
+    t.index ["code"], name: "idx_350967_index_act_event_categories_on_code", unique: true
   end
 
   create_table "act_event_invitations", force: :cascade do |t|
-    t.integer "event_id"
-    t.integer "participant_id"
-    t.string "chosen", default: "participant"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["event_id", "participant_id"], name: "index_act_event_invitations_on_event_id_and_participant_id", unique: true
-    t.index ["event_id"], name: "index_act_event_invitations_on_event_id"
-    t.index ["participant_id"], name: "index_act_event_invitations_on_participant_id"
+    t.bigint "event_id"
+    t.bigint "participant_id"
+    t.text "chosen", default: "participant"
+    t.timestamptz "created_at"
+    t.timestamptz "updated_at"
+    t.index ["event_id", "participant_id"], name: "idx_351019_index_act_event_invitations_on_event_id_and_particip", unique: true
+    t.index ["event_id"], name: "idx_351019_index_act_event_invitations_on_event_id"
+    t.index ["participant_id"], name: "idx_351019_index_act_event_invitations_on_participant_id"
   end
 
   create_table "act_event_participants", force: :cascade do |t|
-    t.integer "event_id"
-    t.integer "participant_id"
-    t.string "status", default: "yes"
-    t.string "note", default: ""
-    t.string "place", default: ""
-    t.string "participant_info", default: ""
+    t.bigint "event_id"
+    t.bigint "participant_id"
+    t.text "status", default: "yes"
+    t.text "note", default: ""
+    t.text "place", default: ""
+    t.text "participant_info", default: ""
     t.boolean "mass", default: false
-    t.string "chosen", default: "none"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["event_id", "participant_id"], name: "index_act_event_participants_on_event_id_and_participant_id", unique: true
-    t.index ["event_id"], name: "index_act_event_participants_on_event_id"
-    t.index ["participant_id"], name: "index_act_event_participants_on_participant_id"
+    t.text "chosen", default: "none"
+    t.timestamptz "created_at"
+    t.timestamptz "updated_at"
+    t.index ["event_id", "participant_id"], name: "idx_351006_index_act_event_participants_on_event_id_and_partici", unique: true
+    t.index ["event_id"], name: "idx_351006_index_act_event_participants_on_event_id"
+    t.index ["participant_id"], name: "idx_351006_index_act_event_participants_on_participant_id"
   end
 
   create_table "act_events", force: :cascade do |t|
     t.date "event_start"
     t.date "event_end"
-    t.string "title"
+    t.text "title"
     t.text "body"
-    t.string "event_category", default: "ot"
-    t.string "event_info_url", default: ""
-    t.string "event_photos_url", default: ""
-    t.string "visible", default: "ev"
+    t.text "event_category", default: "ot"
+    t.text "event_info_url", default: ""
+    t.text "event_photos_url", default: ""
+    t.text "visible", default: "ev"
     t.boolean "spec_place", default: false
-    t.string "spec_place_detail", default: ""
+    t.text "spec_place_detail", default: ""
     t.boolean "spec_participant", default: false
     t.boolean "spec_mass", default: false
-    t.string "bonz_org", default: ""
+    t.text "bonz_org", default: ""
     t.boolean "bonz_parent", default: false
     t.boolean "limit_num_participants", default: false
-    t.integer "max_participants", default: 0
+    t.bigint "max_participants", default: 0
     t.boolean "enable_only_specific_participants", default: false
     t.boolean "enable_only_specific_substitutes", default: false
     t.boolean "enable_only_specific_organisers", default: false
     t.boolean "uninvited_participants_dont_see", default: false
     t.boolean "uninvited_organisers_dont_see", default: false
-    t.string "activation_needed", default: "full"
+    t.text "activation_needed", default: "full"
     t.boolean "limit_maybe", default: false
     t.date "maybe_deadline"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.timestamptz "created_at"
+    t.timestamptz "updated_at"
   end
 
   create_table "act_participants", force: :cascade do |t|
-    t.integer "user_id"
-    t.string "name"
-    t.string "last_name"
-    t.string "nickname", default: ""
-    t.string "sex", default: "male"
-    t.datetime "birth"
-    t.integer "grade"
-    t.string "address"
-    t.string "email"
-    t.string "parent_email"
-    t.string "phone"
-    t.string "parent_phone"
+    t.bigint "user_id"
+    t.text "name"
+    t.text "last_name"
+    t.text "nickname", default: ""
+    t.text "sex", default: "male"
+    t.timestamptz "birth"
+    t.bigint "grade"
+    t.text "address"
+    t.text "email"
+    t.text "parent_email"
+    t.text "phone"
+    t.text "parent_phone"
     t.text "eating_habits", default: ""
     t.text "health_problems", default: ""
     t.text "birth_number"
-    t.string "health_insurance"
-    t.string "activated", default: "full"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.text "health_insurance"
+    t.text "activated", default: "full"
+    t.timestamptz "created_at"
+    t.timestamptz "updated_at"
   end
 
   create_table "informs", force: :cascade do |t|
-    t.string "form", limit: 255
-    t.string "data", limit: 255
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.text "form"
+    t.text "data"
+    t.timestamptz "created_at"
+    t.timestamptz "updated_at"
     t.text "user_agent", default: "unknown"
-    t.index ["form"], name: "index_informs_on_form"
+    t.index ["form"], name: "idx_350902_index_informs_on_form"
   end
 
   create_table "jabbers", force: :cascade do |t|
-    t.integer "user_id"
+    t.bigint "user_id"
     t.text "jid"
     t.text "nick"
-    t.index ["jid"], name: "index_jabbers_on_jid", unique: true
-    t.index ["user_id"], name: "index_jabbers_on_user_id", unique: true
+    t.index ["jid"], name: "idx_350910_index_jabbers_on_jid", unique: true
+    t.index ["user_id"], name: "idx_350910_index_jabbers_on_user_id", unique: true
   end
 
   create_table "oauth_access_grants", force: :cascade do |t|
-    t.integer "resource_owner_id", null: false
-    t.integer "application_id", null: false
-    t.string "token", null: false
-    t.integer "expires_in", null: false
-    t.text "redirect_uri", null: false
-    t.datetime "created_at", null: false
-    t.datetime "revoked_at"
-    t.string "scopes"
-    t.index ["token"], name: "index_oauth_access_grants_on_token", unique: true
+    t.bigint "resource_owner_id"
+    t.bigint "application_id"
+    t.text "token"
+    t.bigint "expires_in"
+    t.text "redirect_uri"
+    t.timestamptz "created_at"
+    t.timestamptz "revoked_at"
+    t.text "scopes"
+    t.index ["token"], name: "idx_350926_index_oauth_access_grants_on_token", unique: true
   end
 
   create_table "oauth_access_tokens", force: :cascade do |t|
-    t.integer "resource_owner_id"
-    t.integer "application_id"
-    t.string "token", null: false
-    t.string "refresh_token"
-    t.integer "expires_in"
-    t.datetime "revoked_at"
-    t.datetime "created_at", null: false
-    t.string "scopes"
-    t.string "previous_refresh_token", default: "", null: false
-    t.index ["refresh_token"], name: "index_oauth_access_tokens_on_refresh_token", unique: true
-    t.index ["resource_owner_id"], name: "index_oauth_access_tokens_on_resource_owner_id"
-    t.index ["token"], name: "index_oauth_access_tokens_on_token", unique: true
+    t.bigint "resource_owner_id"
+    t.bigint "application_id"
+    t.text "token"
+    t.text "refresh_token"
+    t.bigint "expires_in"
+    t.timestamptz "revoked_at"
+    t.timestamptz "created_at"
+    t.text "scopes"
+    t.text "previous_refresh_token", default: ""
+    t.index ["refresh_token"], name: "idx_350933_index_oauth_access_tokens_on_refresh_token", unique: true
+    t.index ["resource_owner_id"], name: "idx_350933_index_oauth_access_tokens_on_resource_owner_id"
+    t.index ["token"], name: "idx_350933_index_oauth_access_tokens_on_token", unique: true
   end
 
   create_table "oauth_applications", force: :cascade do |t|
-    t.string "name", null: false
-    t.string "uid", null: false
-    t.string "secret", null: false
-    t.text "redirect_uri", null: false
-    t.string "scopes", default: "", null: false
-    t.boolean "confidential", default: true, null: false
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["uid"], name: "index_oauth_applications_on_uid", unique: true
+    t.text "name"
+    t.text "uid"
+    t.text "secret"
+    t.text "redirect_uri"
+    t.text "scopes", default: ""
+    t.boolean "confidential", default: true
+    t.timestamptz "created_at"
+    t.timestamptz "updated_at"
+    t.index ["uid"], name: "idx_350917_index_oauth_applications_on_uid", unique: true
   end
 
   create_table "sessions", force: :cascade do |t|
-    t.string "session_id", limit: 255, null: false
+    t.text "session_id"
     t.text "data"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.index ["session_id"], name: "index_sessions_on_session_id", unique: true
-    t.index ["updated_at"], name: "index_sessions_on_updated_at"
+    t.timestamptz "created_at"
+    t.timestamptz "updated_at"
+    t.index ["session_id"], name: "idx_350870_index_sessions_on_session_id", unique: true
+    t.index ["updated_at"], name: "idx_350870_index_sessions_on_updated_at"
   end
 
   create_table "sosna_configs", force: :cascade do |t|
-    t.string "key", limit: 255
-    t.string "value", limit: 255
-    t.index ["key"], name: "index_sosna_configs_on_key", unique: true
+    t.text "key"
+    t.text "value"
+    t.index ["key"], name: "idx_350847_index_sosna_configs_on_key", unique: true
   end
 
   create_table "sosna_penalisations", force: :cascade do |t|
-    t.integer "annual"
-    t.integer "round"
-    t.integer "solver_id"
-    t.integer "score"
+    t.bigint "annual"
+    t.bigint "round"
+    t.bigint "solver_id"
+    t.bigint "score"
     t.text "title"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string "level", default: "pi", null: false
-    t.index ["solver_id", "annual", "level", "round"], name: "index_sosna_penalisations_on_solver_id_annual_level_round", unique: true
+    t.timestamptz "created_at"
+    t.timestamptz "updated_at"
+    t.text "level", default: "pi"
+    t.index ["solver_id", "annual", "level", "round"], name: "idx_350877_index_sosna_penalisations_on_solver_id_annual_level_", unique: true
   end
 
   create_table "sosna_problems", force: :cascade do |t|
-    t.string "title", limit: 255
-    t.integer "annual"
-    t.integer "round"
-    t.integer "problem_no"
-    t.string "level", default: "pi", null: false
+    t.text "title"
+    t.bigint "annual"
+    t.bigint "round"
+    t.bigint "problem_no"
+    t.text "level", default: "pi"
   end
 
   create_table "sosna_results", force: :cascade do |t|
-    t.integer "annual"
-    t.integer "round"
-    t.integer "solver_id"
+    t.bigint "annual"
+    t.bigint "round"
+    t.bigint "solver_id"
     t.text "comment"
-    t.integer "score"
-    t.integer "round_score"
-    t.integer "rank"
-    t.integer "rank_to"
-    t.integer "class_rank"
-    t.integer "class_rank_to"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string "level", default: "pi", null: false
-    t.index ["solver_id", "annual", "level", "round"], name: "index_sosna_results_on_solver_id_annual_level_round", unique: true
+    t.bigint "score"
+    t.bigint "round_score"
+    t.bigint "rank"
+    t.bigint "rank_to"
+    t.bigint "class_rank"
+    t.bigint "class_rank_to"
+    t.timestamptz "created_at"
+    t.timestamptz "updated_at"
+    t.text "level", default: "pi"
+    t.index ["solver_id", "annual", "level", "round"], name: "idx_350894_index_sosna_results_on_solver_id_annual_level_round", unique: true
   end
 
   create_table "sosna_schools", force: :cascade do |t|
@@ -222,22 +224,22 @@ ActiveRecord::Schema[6.1].define(version: 24) do
     t.text "psc"
     t.text "state"
     t.text "universal_id"
-    t.boolean "want_paper", default: false, null: false
+    t.boolean "want_paper", default: false
     t.text "country", default: "cz"
   end
 
   create_table "sosna_solutions", force: :cascade do |t|
-    t.string "filename", limit: 255
-    t.string "filename_orig", limit: 255
-    t.string "filename_corr", limit: 255
-    t.string "filename_corr_display", limit: 255
-    t.integer "score"
-    t.integer "problem_id"
-    t.integer "solver_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.boolean "has_paper_mail", default: false, null: false
-    t.index ["solver_id", "problem_id"], name: "index_sosna_solutions_on_solver_id_and_problem_id", unique: true
+    t.text "filename"
+    t.text "filename_orig"
+    t.text "filename_corr"
+    t.text "filename_corr_display"
+    t.bigint "score"
+    t.bigint "problem_id"
+    t.bigint "solver_id"
+    t.timestamptz "created_at"
+    t.timestamptz "updated_at"
+    t.boolean "has_paper_mail", default: false
+    t.index ["solver_id", "problem_id"], name: "idx_350862_index_sosna_solutions_on_solver_id_and_problem_id", unique: true
   end
 
   create_table "sosna_solvers", force: :cascade do |t|
@@ -256,43 +258,42 @@ ActiveRecord::Schema[6.1].define(version: 24) do
     t.text "city"
     t.text "psc"
     t.text "state"
-    t.integer "user_id"
-    t.integer "school_id"
-    t.datetime "created_at"
-    t.datetime "updated_at"
+    t.bigint "user_id"
+    t.bigint "school_id"
+    t.timestamptz "created_at"
+    t.timestamptz "updated_at"
     t.text "solution_form", default: "tep"
-    t.boolean "is_test_solver", default: false, null: false
+    t.boolean "is_test_solver", default: false
     t.text "country", default: "cz"
     t.text "confirm_state", default: "none"
-    t.string "how_i_met_pikomat", default: "", null: false
-    t.string "how_i_met_pikomat_detail", default: "", null: false
+    t.text "how_i_met_pikomat", default: ""
+    t.text "how_i_met_pikomat_detail", default: ""
   end
 
   create_table "users", force: :cascade do |t|
-    t.string "email", limit: 255, default: "", null: false
-    t.string "encrypted_password", limit: 255, default: "", null: false
-    t.string "reset_password_token", limit: 255
-    t.datetime "reset_password_sent_at"
-    t.datetime "remember_created_at"
-    t.integer "sign_in_count", default: 0
-    t.datetime "current_sign_in_at"
-    t.datetime "last_sign_in_at"
-    t.string "current_sign_in_ip", limit: 255
-    t.string "last_sign_in_ip", limit: 255
-    t.string "confirmation_token", limit: 255
-    t.datetime "confirmed_at"
-    t.datetime "confirmation_sent_at"
-    t.string "unconfirmed_email", limit: 255
-    t.integer "failed_attempts", default: 0
-    t.string "unlock_token", limit: 255
-    t.datetime "locked_at"
-    t.integer "roles_mask"
-    t.datetime "created_at"
-    t.datetime "updated_at"
-    t.string "name", limit: 255
-    t.string "last_name", limit: 255
-    t.index ["email"], name: "index_users_on_email", unique: true
-    t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
+    t.text "email", default: ""
+    t.text "encrypted_password", default: ""
+    t.text "reset_password_token"
+    t.timestamptz "reset_password_sent_at"
+    t.timestamptz "remember_created_at"
+    t.bigint "sign_in_count", default: 0
+    t.timestamptz "current_sign_in_at"
+    t.timestamptz "last_sign_in_at"
+    t.text "current_sign_in_ip"
+    t.text "last_sign_in_ip"
+    t.text "confirmation_token"
+    t.timestamptz "confirmed_at"
+    t.timestamptz "confirmation_sent_at"
+    t.text "unconfirmed_email"
+    t.bigint "failed_attempts", default: 0
+    t.text "unlock_token"
+    t.timestamptz "locked_at"
+    t.bigint "roles_mask"
+    t.timestamptz "created_at"
+    t.timestamptz "updated_at"
+    t.text "name"
+    t.text "last_name"
+    t.index ["email"], name: "idx_350836_index_users_on_email", unique: true
+    t.index ["reset_password_token"], name: "idx_350836_index_users_on_reset_password_token", unique: true
   end
-
 end

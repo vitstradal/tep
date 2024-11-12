@@ -449,14 +449,7 @@ class GiwiController < ApplicationController
       Rails.logger.info("calendar url=#{url}");
       repo = CalDavReport.new(url)
       events = repo.report( now_f, pak_f)
-
-      # prepare 'start' and sort
-#      events.each do |event|
-#            start = event['dtstart'][0]
-#            start = Date.parse(start).strftime("%F") if ! start.nil?
-#            event['start'] = start
-#      end
-#      events.sort! { |a,b| a['start'] <=> b['start'] }
+      events.sort_by! { |item| item.dtstart }
 
       # render
       ret = events.map do |event|
@@ -467,8 +460,8 @@ class GiwiController < ApplicationController
             summary = event.summary.strip.gsub('\,', ',')
             url = event.description || ''
 
-            if m = /(https?:\/\/\S*)/.match(url)
-              "* **#{start}** [[#{m[1]} | #{summary}]]\n"
+            if match = /(https?:\/\/\S*)/.match(url)
+              "* **#{start}** [[#{match[1]} | #{summary}]]\n"
             else
               "* **#{start}** #{summary}\n"
             end
@@ -558,7 +551,7 @@ class GiwiController < ApplicationController
   def _template_textimg(env, argv)
     text = argv['00']
 
-    # XXXX pb-krash MagickTitle pouziva exists a ne exist :facepalm
+    # XXXX pb-krash MagickTitle pouziva exists a ne exist :facepalm:
     #url = MagickTitle.say(text).url
     url = 'xxx'
     return ActionController::Base.helpers.asset_path(url)
@@ -633,7 +626,7 @@ class GiwiController < ApplicationController
     @part = nil
     if @edit != 'me' && @text
 
-      if match =  /^(\d+)-(\d+)$/.match(@edit)
+      if match = /^(\d+)-(\d+)$/.match(@edit)
         # want to edit only specified lines
         pos_beg, pos_end  = match[1].to_i, match[2].to_i
 
