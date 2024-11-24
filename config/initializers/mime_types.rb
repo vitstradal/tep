@@ -5,4 +5,5 @@
 # Mime::Type.register_alias "text/html", :iphone
 Mime::Type.register "text/plain; charset=UTF-8", :pik
 Mime::Type.register "image/svg+xml", :svg
+Mime::Type.register "application/pdf", :pdf unless Mime::Type.lookup_by_extension(:pdf)
 #Mime::Type.register "text/plain; charset=UTF-8", :wiki
