@@ -1,9 +1,11 @@
 module I18nHelper
-  def translate(key, options={})
-    super(key, options.merge(raise: true))
+  def translate(*args)
+    options = args.extract_options! || {}
+    key = args.first
+    super(key, **options.merge(raise: true))
   rescue I18n::MissingTranslationData
     begin
-      super(key, options.merge(raise: true, locale: :en))
+      super(key, **options.merge(raise: true, locale: :en))
     rescue I18n::MissingTranslationData
       key.split(/\./).last.capitalize
     end
