@@ -145,7 +145,7 @@ class Act::ParticipantsController < ActController
     @agree = params[:souhlasim]
     @participant.errors.add(:souhlasim, 'Je nutno souhlasit s podmínkami') if ! @agree
 
-    if @participant.errors.count == 0 && @participant.save(participant_params)
+    if @participant.errors.count == 0 && @participant.save
       add_success "Účastnický účet úspěšně vytvořen"
       redirect_to @participant
     else
@@ -206,7 +206,7 @@ class Act::ParticipantsController < ActController
       @new_complet = true
       return render :new, status: :unprocessable_entity
     end
-    @participant.save(participant_params)
+    @participant.save
     add_success "Účastnický účet úspěšně vytvořen. Současně s ním byl vytvořen i uživatelský účet, kterým je možno se do účastnického účtu dostat"
     redirect_to act_participant_create_tnx_path :send_first => send_first, email: @participant.email, created_for_other: "true"
   end
