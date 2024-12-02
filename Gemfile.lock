@@ -324,7 +324,7 @@ DEPENDENCIES
   devise
   devise-encryptable
   devise-i18n (~> 1.12.0)
-  doorkeeper
+  doorkeeper (~> 5.5)
   dotenv-rails
   faraday
   ffi

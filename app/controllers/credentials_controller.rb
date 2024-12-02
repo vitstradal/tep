@@ -1,7 +1,8 @@
 ##
 # Controller pro příhlášení oauth2
 class CredentialsController <  ApplicationController
-  before_action :doorkeeper_authorize!
+  before_action -> { doorkeeper_authorize! :tep }
+
   respond_to    :json
 
   ##
@@ -10,6 +11,7 @@ class CredentialsController <  ApplicationController
   # vratí json s informacemi přihlášeným uživatelem, pokud je přihlášen přes oauth2, souvisi s `doorkeeper`
   def me
     user = _current_resource_owner
+    Rails::logger.fatal("Current_resource_owner: #{user}")
     return render json: {} if user.nil?
     groups = []
     groups.push 'org' if user.org?
@@ -60,5 +62,14 @@ class CredentialsController <  ApplicationController
   # Find the user that owns the access token
   def _current_resource_owner
     User.find(doorkeeper_token.resource_owner_id) if doorkeeper_token
+  end
+
+  private
+
+  def doorkeeper_authorize!(token)
+    Rails.logger.info "Authorization headers: #{request.headers['Authorization']}"
+    Rails.logger.info "Access token: #{Doorkeeper::AccessToken.by_token(request.headers['Authorization']&.split(' ')&.last)}"
+    Rails.logger.info "Scopes= #{doorkeeper_token&.scopes}"
+    super(token)
   end
 end

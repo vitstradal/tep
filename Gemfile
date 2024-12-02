@@ -1,7 +1,6 @@
 source 'http://rubygems.org'
 gem 'rails', '~> 7.2'
 gem 'net-protocol', '~> 0.1.2', require: false
-gem 'doorkeeper'
 gem 'activerecord-session_store'
 gem 'pg'
 gem 'combine_pdf'
@@ -33,5 +32,7 @@ gem 'dotenv-rails'
 gem 'ffi-locale'
 gem 'ffi'
 gem 'rugged'
-########################### rails7
 gem 'sprockets-rails'
+########################### rails7
+#gem 'doorkeeper'
+gem 'doorkeeper', '~> 5.5'
