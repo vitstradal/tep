@@ -35,7 +35,7 @@ class TepController < ApplicationController
 
   ##
   #  GET /users
-  # 
+  #
   # seznam uživatelů
   # *Params*
   # role:: filtruj jen uživatelé s rolí
@@ -44,14 +44,14 @@ class TepController < ApplicationController
   # @role::
   # @users:: pole User
   def users
-    @role = params[:role] 
+    @role = params[:role]
     if @role
        mask = User.mask_for @role.to_sym
        @users = User.where('roles_mask & ? > 0', mask)
     else
       @users = User.all.load
     end
-    
+
   end
 
   ##
@@ -70,6 +70,7 @@ class TepController < ApplicationController
     @tab = params[:tab] || 'config'
     @user = User.find(user_id);
     @solvers = Sosna::Solver.where(user_id: user_id)
+    @use_password_dictionary = true
   end
 
   ##
@@ -108,6 +109,31 @@ class TepController < ApplicationController
        add_alert 'uživatel neexistuje'
      end
      redirect_to action: :users
+  end
+
+  ##
+  #  POST  /user/:id/password
+  #
+  # smaže uživatele
+  #
+  # *Params*
+  # id:: id uživatele
+  #
+  # *Redirect* /users
+  def user_set_password
+     id = params[:id]
+     password = params[:password_input]
+     user = User.find(id)
+     if user
+        if user.update(password: password, password_confirmation: password)
+           add_success 'Heslo změněno'
+        else
+           add_alert 'Při změně hesla nastala chyba'
+        end
+     else
+       add_alert 'uživatel neexistuje'
+     end
+     redirect_to action: :user , id: id
   end
 
   ##
@@ -153,7 +179,7 @@ class TepController < ApplicationController
     user_id = params[:id]
     user = User.find(user_id)
     if user
-      rv = user.update(params[:user]) 
+      rv = user.update(params[:user])
       if rv
         add_success 'Data aktualizovaná'
       else
@@ -183,7 +209,7 @@ class TepController < ApplicationController
   #  GET /die
   #
   # Pro ladící učely, vyvolá chybu dělení nulou.
-  def die 
+  def die
     0/0
   end
 

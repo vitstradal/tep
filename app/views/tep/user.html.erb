@@ -8,6 +8,7 @@
      <li <%=class_active_if(@tab=='solver')%>> <%= link_to 'Řešitel',      '#solver', 'data-toggle' => 'tab' %></li>
      <li <%=class_active_if(@tab=='participant')%>> <%= link_to 'Účastník',         '#participant', 'data-toggle' => 'tab' %></li>
      <li <%=class_active_if(@tab=='mail'  )%>> <%= link_to 'Maily',        '#mail',   'data-toggle' => 'tab' %></li>
+     <li <%=class_active_if(@tab=='password')%>> <%= link_to 'Heslo',        '#password',   'data-toggle' => 'tab' %></li>
      <li <%=class_active_if(@tab=='jabber')%>> <%= link_to 'Jabber',       '#jabber',  'data-toggle' => 'tab' %></li>
      <li <%=class_active_if(@tab=='remove')%>> <%= link_to 'Smazat',       '#remove', 'data-toggle' => 'tab' %></li>
   </ul>
@@ -88,6 +89,19 @@
     <div class="tab-pane <%=active_in_if(@tab=='remove')%>" id='remove'>
       <%= form_tag user_delete_path(id:@user.id) do %>
          <%= submit_tag  'Smazat uživatele (nebude žádné "jsi si jistý?")', :class=>'btn btn-danger' %>
+      <% end %>
+    </div> <%# tab-pane %>
+    <div class="tab-pane <%=active_in_if(@tab=='password')%>" id='password'>
+      <%= form_tag user_set_password_path(id:@user.id) do %>
+          <div class="control-group">
+            <label class="control-label" for="password">
+              Nové heslo uživatele, je třeba mu ho doručit třetí cestou.
+              <a id='password_copy' class='btn'>Kopíruj</a>
+              <a id='password_generate' class='btn'>Generuj náhodné heslo</a>
+              </label>
+            <div class="controls"> <%=text_field_tag(:password_input, '', size: 50) %> </div>
+          </div>
+          <%= submit_tag  'Nastav heslo', :class=>'btn btn-danger' %>
       <% end %>
     </div> <%# tab-pane %>
     <div class="tab-pane <%=active_in_if(@tab=='mail')%>" id='mail'>

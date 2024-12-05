@@ -224,6 +224,26 @@ var colorbox_params = {
       $('#cboxLoadingGraphic').append("<i class='ace-icon fa fa-spinner orange'></i>");
 
       $('#adventomat-modal').each(function() { init_adventomat() })
+      $('#password_generate').click(function(ev) {
+          ev.preventDefault()
+          ev.stopPropagation()
+          const pass = correct_horse_battery_stable()
+          console.log( "gen", pass)
+          $('#password_input').val(pass)
+      });
+      $('#password_copy').click(function(ev) {
+          ev.preventDefault()
+          ev.stopPropagation()
+          const pass = $('#password_input').val()
+          console.log( "copy", pass)
+          navigator.clipboard.writeText(pass).then(() => {
+               console.log("Text copied to clipboard!");
+               $('#password_copy').addClass('btn-yellow')
+               setTimeout(function () {
+                   $('#password_copy').removeClass('btn-yellow')
+               }, 2000)
+          })
+      });
 }); //main
      
 function init_adventomat() {

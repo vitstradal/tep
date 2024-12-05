@@ -174,6 +174,7 @@ class Ability
       can :user,             :tep
       can :user_new,         :tep
       can :user_update,      :tep
+      can :user_set_password,:tep
       can :user_delete,      :tep
       can :user_action,      :tep
       can :user_role_change, :tep

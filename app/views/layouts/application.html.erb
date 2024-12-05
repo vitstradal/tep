@@ -421,5 +421,8 @@
 <% if @special_page %>
   <%= javascript_include_tag "/javascripts/special.js"  %>
 <% end %>
+<% if @use_password_dictionary %>
+  <%= javascript_include_tag "/javascripts/correct-horse-battery-staple.js"  %>
+<% end %>
 </body>
 </html>
