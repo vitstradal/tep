@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 27) do
+ActiveRecord::Schema[7.2].define(version: 28) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -196,6 +196,7 @@ ActiveRecord::Schema[7.2].define(version: 27) do
     t.bigint "round"
     t.bigint "problem_no"
     t.text "level", default: "pi"
+    t.boolean "updated", default: false, null: false
   end
 
   create_table "sosna_results", force: :cascade do |t|
