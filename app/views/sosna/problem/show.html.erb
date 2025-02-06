@@ -40,6 +40,12 @@
       <div class="controls"> <%= f.text_field :title %> </div>
     </div>
 
+    <div class="control-group">
+      <label class="checkbox" for="skoly"> <%= f.check_box :updated  %> Úloha byla od zveřejněn změněna, bude na to upozorněnno v odevzdávacím formuláři.
+      <%= link_to 'Link na úlohu',  wiki_main_path( @problem.link_path ) %>.
+    </div>
+
+    <hr/>
 
     <div class="control-group">
        <div class="controls">

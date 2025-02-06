@@ -47,7 +47,17 @@
   <% @problems.each do |p| %>
     <% sol = @solutions_by_solver[@solver.id][p.problem_no]  %>
     <tr>
-      <td><%= p.title%> </td>
+      <td>
+        <%= p.title%>
+        <% if p.updated %>
+          <br/>
+          <i class="fa fa-warning red"></i>
+          <i>POZOR: zádání bylo od zveřejnění změměno!</i>
+          <br/>
+          <i class="fa fa-warning red"></i>
+          <i>Přečtěte si prosím <%= link_to wiki_main_path p.link_path do %>zadání<% end %> ještě jednou </i>
+        <% end %>
+       </td>
       <td>
         <% if p.junior_level? and not @solver.junior? %>
           <i class="fa fa-ban red"></i> <i>úloha pouze pro mladší řešitele</i>

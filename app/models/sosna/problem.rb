@@ -7,6 +7,8 @@
 #      t.integer "round"
 #      t.integer "problem_no"
 
+require 'unicode_utils/compatibility_decomposition'
+
 class Sosna::Problem < ActiveRecord::Base
   has_many :solutions
 
@@ -37,6 +39,13 @@ class Sosna::Problem < ActiveRecord::Base
     return level ==  Sosna::Solver::JUNIOR_LEVEL
   end
 
+  def link_path
+     {
+       path: "archiv/rocnik#{ sprintf('%02i', annual) }#{ junior_level? ? '/junior' : '' }/zad#{ round }",
+       anchor: "#{ _translit( title ) }"
+     }
+  end
+
   private
   def _rounds_roc(annual)
     return Sosna::Problem.select('round')
@@ -49,4 +58,14 @@ class Sosna::Problem < ActiveRecord::Base
                        end
 
   end
+  ### FIXME: patri do nejakych util
+  def _translit(text)
+   # iconv is obsolete, but translit funcionality was not replaced
+   # see http://stackoverflow.com/questions/20224915/iconv-will-be-deprecated-in-the-future-transliterate
+   # return Iconv.iconv('ascii//translit', 'utf-8', text).join
+
+   # http://unicode-utils.rubyforge.org/UnicodeUtils.html#method-c-compatibility_decomposition
+   return UnicodeUtils.compatibility_decomposition(text).chars.grep(/\p{^Mn}/).join('').gsub(/\s+/, '_')
+  end
+
 end

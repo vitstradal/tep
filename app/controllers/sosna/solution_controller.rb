@@ -568,7 +568,7 @@ class Sosna::SolutionController < SosnaController
     end
 
     if current_solver && current_solver.junior? && @level == Sosna::Solver::NORMAL_LEVEL
-      add_alert_now( "Pozor odevzdáváš řešení Pikomat Klasik (6.-9. třídy) i když jsi Junior. To není zakázané, ale ujisti se, že nejde o chybu!" )
+      add_alert_now( "Pozor, odevzdáváš řešení Pikomat Klasik (6.-9. třídy), přestože jsi junior. To není zakázané, ale ujisti se, že nejde o chybu!" )
     end
 
     @hide_level = false
