@@ -135,7 +135,7 @@ class Sosna::SolverController < SosnaController
       format.html
       format.pdf do
          @opt = {}
-         @envelope= params[:envelope]
+         @envelope= params[:envelope] == '1'
          opt_param.split(/\s*;\s*|\s+/).each do |o|
            if match = /^\s*(\w+)\s*:(\S*)/.match(o)
               @opt[match[1].to_sym] = match[2]
@@ -994,9 +994,19 @@ EOL
       pdf.fill_color '000000'
     end
 
-    pdf.font_families.update( 'andulka' => { :normal => '/home/www/rails/tep/public/stylesheets/andulka/andulkabook-webfont.ttf',
-                                             :bold   => '/home/www/rails/tep/public/stylesheets/andulka/andulkabook-bold-webfont.ttf',
+    pdf.font_families.update( 'dejavu' => {
+        normal: '/usr/share/texlive/texmf-dist/fonts/truetype/public/dejavu/DejaVuSans.ttf',
+        bold:  '/usr/share/texlive/texmf-dist/fonts/truetype/public/dejavu/DejaVuSans-Bold.ttf',
+    })
+    pdf.font_families.update( 'andulka' => {
+        normal: '/home/www/rails/tep/public/stylesheets/andulka/andulkabook-webfont.ttf',
+        bold:  '/home/www/rails/tep/public/stylesheets/andulka/andulkabook-bold-webfont.ttf',
                                            })
+    pdf.font_families.update( 'roboto' => {
+        normal: '/usr/share/texlive/texmf-dist/fonts/truetype/google/roboto/Roboto-Light.ttf',
+        bold: '/usr/share/texlive/texmf-dist/fonts/truetype/google/roboto/Roboto-Bold.ttf',
+    })
+
     pdf.font 'andulka'
 
     addrs = []
@@ -1030,7 +1040,8 @@ EOL
         psc_y = 0 
         name = nil
         pdf.bounding_box([o[:al], ph - o[:at]],:width => o[:w], :height => o[:h] ) do
-          pdf.text "<b>#{addr[:title]}</b>", :inline_format => true if addr[:title]
+          #pdf.text "<b>#{addr[:title]}</b>", :inline_format => true if addr[:title]
+          pdf.text "#{addr[:title]}" if addr[:title]
           pdf.text "#{addr[:full]}" if addr[:full]
           pdf.text  addr[:school_name] if addr[:school_name]
           pdf.text  addr[:street]
@@ -1039,13 +1050,14 @@ EOL
           pdf.text "#{country_txt}" if ! country_txt.nil?
           pdf.stroke_bounds if @dbg
         end
-        pdf.bounding_box([o[:al] - 20.mm, psc_y  - o[:h] + ph - o[:at]],:width => 20.mm - 1.mm, :height => o[:ps] ) do
+        pdf.bounding_box([o[:al] - 20.mm, psc_y  - o[:h] + ph - o[:at]],:width => 20.mm - 1.mm, :height => o[:ps] + 10.mm ) do
           pdf.text addr[:psc] , :align => :right
           pdf.stroke_bounds if @dbg
         end
 
         pdf.font_size = o[:as]
         pdf.bounding_box([o[:pl], ph - o[:pt]],:width => o[:w], :height => o[:h] ) do
+          #pdf.text "<b>Pikomat MFF UK</b>", :inline_format => true, :align => :center
           pdf.text "<b>Pikomat MFF UK</b>", :inline_format => true, :align => :center
           pdf.text "KPMS MFF UK", :align => :center
           pdf.text "Sokolovská 83, 186 75 Praha 8", :align => :center

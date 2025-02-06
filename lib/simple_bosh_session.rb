@@ -63,5 +63,3 @@ EOL
 end
 
 rid, sid = SimpleBoshSession.get_session('http://127.0.0.1:5280/bosh', 'vitas2@pikomat.mff.cuni.cz', 'vitas2vitas2')
-puts "rid=#{rid}"
-puts "sid=#{sid}"

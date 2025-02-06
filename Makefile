@@ -27,9 +27,9 @@ dev-migrate-down:
 	rake db:rollback RAILS_ENV=development STEP=1
 
 dev-convert-booleans:
-	rake db:convert_booleans RAILS_ENV=development 
+	rake db:convert_booleans RAILS_ENV=development
 prod-convert-booleans:
-	rake db:convert_booleans RAILS_ENV=production 
+	rake db:convert_booleans RAILS_ENV=production
 
 void-migrate:
 	rake db:migrate RAILS_ENV=void
@@ -74,7 +74,7 @@ loc-dirs: ../piki ../web ../wikuk ../tepmac
 	@false
 ../wikuk:
 	@echo missing ../wikuk
-	@echo TRY: mkdir ../wikuk 
+	@echo TRY: mkdir ../wikuk
 	@false
 
 void-server: void-dir
@@ -99,3 +99,6 @@ ctags:
 
 gen-secret-key-base:
 	script/gen_secret_key_base.rb
+adventomat:
+	rails runner -e production script/adventomat.rb
+

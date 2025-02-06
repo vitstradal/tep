@@ -150,12 +150,15 @@ module ApplicationHelper
         return url_for(wiki_piki_path(path: 'org'))
       elsif user.has_role? :user
         #Rails::logger.fatal("show100:"+ config_value('show100'))
+        solver = find_solver_for_user_id(user.id)
         if config_value('show100') == 'yes'
-          solver = find_solver_for_user_id(user.id)
           #Rails::logger.fatal("solver"+pp(solver))
           if !solver.nil? && solver.confirm_state == 'bonus'
             return url_for(:sosna_solutions_user_bonus)
           end
+        end
+        if solver && solver.junior?
+          return url_for(:sosna_solutions_user_junior)
         end
         return url_for(:sosna_solutions_user)
       end
