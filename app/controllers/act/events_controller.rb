@@ -479,7 +479,7 @@ class Act::EventsController < ActController
        parent_email: participant.parent_email,
        phone: participant.phone,
        rc: participant.birth_number,
-       sex:  participant.sex,
+       sex: participant.sex,
        a: participant.sex == 'male' ? '' : 'a',
      }
      stash[:stash] = JSON.pretty_generate(stash)
@@ -488,13 +488,11 @@ class Act::EventsController < ActController
      return render plain: "template file does not exist" unless File.exist?(template_path)
 
      Tempfile.create(['filled_pdf', '.pdf']) do |tempfile|
-       pdftk = PdfForms.new
-       pdftk.fill_form template_path, tempfile.path, stash
+       pdftk = PdfForms.new( data_format: 'XFdf')
+       pdftk.fill_form template_path, tempfile.path, stash, flatten:false, need_appearances: true
        pdf_data = File.binread(tempfile.path)
        send_data pdf_data, filename: "papers.pdf", type: "application/pdf", disposition: "inline"
      end
-
-     #render plain: "your papers are valid ev#{event.id} par#{participant.id} stash: #{stash.to_s}"
   end
 
   private
