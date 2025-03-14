@@ -6,6 +6,11 @@
 # 'user'
 # 'org'
 
+require 'pdf_forms'
+require 'json'
+
+PAPER_TEMPLATES_DIR = "var/act/paper-templates"
+
 class Act::EventsController < ActController
 
   ##
@@ -187,6 +192,7 @@ class Act::EventsController < ActController
 
     @breadcrumb.push [ _breadcrumb_event(@event) ]
     @breadcrumb.push [ _breadcrumb_event_edit(@event) ]
+    @paper_templates = _list_paper_templates
 
     return render 'permission_denied', :locals => { :desired => "editovat existující " } unless can? :update, Act::Event
   end
@@ -433,6 +439,64 @@ class Act::EventsController < ActController
     enable_only_specific_participants: true, enable_only_specific_substitutes: true, limit_num_participants: true, max_participants: 22)
   end
 
+  ##
+  #  GET /act/events/:event_id/papers_please/me
+  #
+  # pouze pro uzivatele, vraci pouze jeho papiry
+  #
+  #
+  def my_papers_please
+    papers_please
+  end
+
+  ##
+  #  GET /act/events/:event_id/papers_please/:participant_id
+  #
+  # Vratí pdf s předvyplněnýma hodnotama
+  #
+  #
+  def papers_please
+     event_id = params[:event_id]
+     participant_id = params[:participant_id]
+     participant = if participant_id.nil?
+        current_user.participant
+     else
+        Act::Participant.find_by(id: participant_id)
+     end
+
+     event = Act::Event.find_by(id: event_id)
+
+     if event.paper_template.empty?
+       return render plain: "tento event nema papiry (ev#{event.id} par#{participant.id})"
+     end
+
+     stash = {
+       event_name: event.title,
+       event_date: event.date_str,
+       name: participant.name,
+       last_name: participant.last_name,
+       email: participant.email,
+       parent_email: participant.parent_email,
+       phone: participant.phone,
+       rc: participant.birth_number,
+       sex:  participant.sex,
+       a: participant.sex == 'male' ? '' : 'a',
+     }
+     stash[:stash] = JSON.pretty_generate(stash)
+
+     template_path = "#{Rails.root.to_s}/#{PAPER_TEMPLATES_DIR}/#{event.paper_template}"
+     return render plain: "template file does not exist" unless File.exist?(template_path)
+
+     Tempfile.create(['filled_pdf', '.pdf']) do |tempfile|
+       pdftk = PdfForms.new
+       pdftk.fill_form template_path, tempfile.path, stash
+       pdf_data = File.binread(tempfile.path)
+       send_data pdf_data, filename: "papers.pdf", type: "application/pdf", disposition: "inline"
+     end
+
+     #render plain: "your papers are valid ev#{event.id} par#{participant.id} stash: #{stash.to_s}"
+  end
+
   private
     def event_params
       params.require(:event).permit!
@@ -571,5 +635,10 @@ class Act::EventsController < ActController
         name: "Jakna",
         url: act_events_jakna_path
       }
+    end
+    def _list_paper_templates
+      Dir.glob("#{Rails.root.to_s}/#{PAPER_TEMPLATES_DIR}/*.pdf").map do |file|
+        File.basename(file)
+      end.prepend(["None", ''])
     end
 end

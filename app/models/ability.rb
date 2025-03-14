@@ -69,6 +69,7 @@ class Ability
       can :read, Act::Participant
       can :update, Act::Participant
       can :delete, Act::Participant
+      can :my_papers_please, Act::Event
     end
 
     if user.org?
@@ -116,6 +117,7 @@ class Ability
       can :read, Act::EventCategory
       can :read, Act::EventParticipant
       can :read, Act::EventInvitation
+      can :papers_please, Act::Event
     end
 
     # master-org, or more-org, 

@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 28) do
+ActiveRecord::Schema[7.2].define(version: 29) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -83,6 +83,7 @@ ActiveRecord::Schema[7.2].define(version: 28) do
     t.date "maybe_deadline"
     t.timestamptz "created_at"
     t.timestamptz "updated_at"
+    t.text "paper_template", default: "", null: false
   end
 
   create_table "act_participants", force: :cascade do |t|

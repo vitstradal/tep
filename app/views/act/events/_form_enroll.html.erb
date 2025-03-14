@@ -1,3 +1,9 @@
+<% if @event.paper_template.present? %>
+  <h2>Potřebné dokumenty</h2>
+
+  Stáhni si potřebné dokumety <%= link_to "dokumenty k akci", act_event_my_papers_please_path(@event.id) %>.
+  Plus nějaké kecy o vyplnění a podepsání.
+<% end %>
 <% if chosen == "participant" %>
   <h2>Přihláška</h2>
 <% elsif chosen == "substitute" %>

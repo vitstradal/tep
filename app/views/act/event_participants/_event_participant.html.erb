@@ -27,6 +27,10 @@
     <%= event_participant.participant.last_name %>
     </td>
 
+    <% if event_participant.event.paper_template.present? %>
+      <td> <%= link_to "papiry", act_event_papers_please_path(@event.id, event_participant.participant.id) %></td>
+    <% end %>
+
     <td>
     <%= event_participant.participant.nickname %>
     </td>

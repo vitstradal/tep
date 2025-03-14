@@ -3,6 +3,7 @@ gem 'rails', '~> 7.2'
 gem 'net-protocol', '~> 0.1.2', require: false
 gem 'activerecord-session_store'
 gem 'pg'
+gem 'pdf-forms'
 gem 'combine_pdf'
 gem 'faraday'
 gem 'icalendar'

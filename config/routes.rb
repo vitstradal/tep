@@ -88,6 +88,8 @@ Tep::Application.routes.draw do
   get  '/act/event/jakna'                                          => 'act/events#jakna',                    :as => :act_events_jakna
   get '/act/events/filter/:event_category/:enroll_status'          => 'act/events#index',                    :as => :act_events_filter
   get '/act/events/:event_id'                                      => 'act/events#show',                     :as => :act_event
+  get '/act/events/:event_id/papers_please/my'                     => 'act/events#my_papers_please',         :as => :act_event_my_papers_please
+  get '/act/events/:event_id/papers_please/:participant_id'        => 'act/events#papers_please',            :as => :act_event_papers_please
   patch '/act/events/:event_id'                                    => 'act/events#update',                   :as => :act_event_update
   get '/act/events/:event_id/edit'                                 => 'act/events#edit',                     :as => :act_event_edit
   post '/act/events/:event_id/delete'                              => 'act/events#delete',                   :as => :act_event_delete
