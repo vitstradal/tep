@@ -470,14 +470,31 @@ class Act::EventsController < ActController
        return render plain: "tento event nema papiry (ev#{event.id} par#{participant.id})"
      end
 
+     date_today = Time.now.strftime('%-d. %-m. %-Y')
+     birth_date =  participant.birth.strftime('%-d. %-m. %-Y')
+
+     event_category = event.get_event_category
+
      stash = {
        event_name: event.title,
        event_date: event.date_str,
+       event_category_name: event_category.name,
+       event_category_short: event_category.name,
+       event_category_short_genitiv: event_category.genitiv,
+       event_category_name_genitiv: event_category.genitiv,
+       event_info_url: event.event_info_url,
+       date_today: date_today,
        name: participant.name,
        last_name: participant.last_name,
+       address: participant.address,
+       adress: participant.address,
+       birth_date: birth_date,
+       nickname: participant.nickname,
        email: participant.email,
        parent_email: participant.parent_email,
+       parent_phone: participant.parent_phone,
        phone: participant.phone,
+       health_insurance: participant.health_insurance,
        rc: participant.birth_number,
        sex: participant.sex,
        a: participant.sex == 'male' ? '' : 'a',

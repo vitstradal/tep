@@ -16,6 +16,9 @@
   #    t.string   "activation_needed_default", :default => "full"
 
 class Act::EventCategory < ActiveRecord::Base
+  VISIBLE_STATUSES = ['ev', 'user', 'org']
+  VISIBLE_STATUSES_TXT = { 'ev' => 'Každý', 'user' => 'Uživatel', 'org' => 'Org' }
+
   self.primary_key = :code
 
   has_many :events
@@ -37,8 +40,6 @@ class Act::EventCategory < ActiveRecord::Base
     end
   end
 
-  VISIBLE_STATUSES = ['ev', 'user', 'org']
-  VISIBLE_STATUSES_TXT = { 'ev' => 'Každý', 'user' => 'Uživatel', 'org' => 'Org' }
 
   ##
   # *Returns* Vidí daný uživatel daný typ akce?
@@ -123,5 +124,16 @@ class Act::EventCategory < ActiveRecord::Base
 
   def visible_txt()
     VISIBLE_STATUSES_TXT[visible]
+  end
+
+  def genitiv
+    return case code
+      when 'ta'; 'tábora'
+      when 'so'; 'soustředění'
+      when 'pb'; 'pikobraní'
+      when 'ps'; 'pikosoboty'
+      when 'vk'; 'výkendovky'
+      else name
+    end
   end
 end

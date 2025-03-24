@@ -142,13 +142,17 @@ class Act::Event < ActiveRecord::Base
   # *Returns* datum konání akce v nějakém čitelném formátu
   def date_str()
     if event_start == event_end
-      event_start.strftime('%-d.%-m.%-Y')
+      event_start.strftime('%-d. %-m. %-Y')
     else
       years_equal = event_start.strftime('%-Y') == event_end.strftime('%-Y')
       months_equal = years_equal && (event_start.strftime('%-m') == event_end.strftime('%-m'))
 
-      event_start.strftime('%-d.' + (months_equal ? "" : "%-m.") + (years_equal ? "" : ".%-Y")) + " – " + event_end.strftime('%-d.%-m.%-Y')
+      event_start.strftime('%-d. ' + (months_equal ? "" : "%-m. ") + (years_equal ? "" : " %-Y")) + " – " + event_end.strftime('%-d. %-m. %-Y')
     end
+  end
+
+  def get_event_category
+    Act::EventCategory.find_by(code: event_category)
   end
 
   ##
