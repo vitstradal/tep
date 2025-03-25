@@ -4,7 +4,8 @@
 public/js
 public/data
 *.swp
-/var/db/*.sqlite3
+/var/db/*.sqlite3*
+/var/act/*
 db/lidi29*.yml
 db/skoly29.yml
 log/*.log
