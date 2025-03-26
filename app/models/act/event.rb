@@ -238,7 +238,7 @@ class Act::Event < ActiveRecord::Base
   end
 
   ##
-  # *Returns* sql dotaz pro vyfiltrování těch akcí, které jsou daného typu a an které je účastník přihlášen daným způsobem
+  # *Returns* sql dotaz pro vyfiltrování těch akcí, které jsou daného typu a na které je účastník přihlášen daným způsobem
   def self.generate_sql(participant, event_category, enroll_status)
     query_start = "SELECT e.* FROM act_events e "
 
@@ -253,17 +253,17 @@ class Act::Event < ActiveRecord::Base
       query_start += "INNER " + common_enroll + " AND p.status = ?) WHERE "
     end
 
-    if event_category != "all"
-      query_start += "e.event_category = ? AND "
-    end
-
     case enroll_status
     when "all"
       query_end = ""
     when "nvt"
-      query_end = "AND p.event_id IS NULL "
+      query_start += "p.event_id IS NULL AND "
     else
-      query_end = "AND p.event_id IS NOT NULL "
+      query_start += "p.event_id IS NOT NULL AND "
+    end
+
+    if event_category != "all"
+      query_start += "e.event_category = ? AND "
     end
 
     future_query = query_start + "e.event_end >= ? " + "ORDER BY e.event_start ASC"
@@ -283,7 +283,7 @@ class Act::Event < ActiveRecord::Base
       args_common.append(event_category)
     end
 
-    args_common.append(Time.current.yesterday())
+    args_common.append(Time.current())
 
     args_future = [future_query] + args_common
     args_past = [past_query] + args_common

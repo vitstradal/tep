@@ -61,6 +61,10 @@
 
   <%= render :partial => "f_text_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :spec_place_detail, text: "Místa nástupu (jednotlivá místa odděl čárkami)" } %>
 
+  <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :spec_place_return, text: "Účastníci specifikují místo návratu" } %>
+
+  <%= render :partial => "f_text_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :spec_place_return_detail, text: "Místa návratu (jednotlivá místa odděl čárkami)" } %>
+
   <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :spec_participant, text: "Rodiče mají možnost sdělení k účastníkovi" } %>
 
   <%= render :partial => "f_checkbox", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :spec_mass, text: "Účastníci specifikují zájem o mši" } %>
@@ -71,6 +75,8 @@
 
 
   <%= render :partial => "f_text_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :bonz_org, text: "Bonz mail" } %>
+
+  <%= render :partial => "f_text_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :event_medic, text: "Zdravotník akce" } %>
 
   <%= render :partial => "f_text_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :event_info_url, text: "Odkaz na další informace" } %>
 

@@ -128,6 +128,8 @@ jQuery(function($) {
 	colorIf('participant_activated', ['participant_sex', 'participant_birth', 'participant_address', 'participant_eating_habits', 'participant_health_problems', 'participant_birth_number', 'participant_health_insurance'], false, "full", "participant");
 	}
 
+  showIf('event_spec_place_return', 'spec_place_return_detail');
+
   if (document.getElementById("act_display_participants")) {
     var url = "https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js";
     $.getScript( url, function() {

@@ -54,6 +54,15 @@
     <%= f.hidden_field :place %>
   <% end %>
 
+  <% if @event.spec_place_return %>
+    <p>
+      <%= f.label :place_return, "Akci ukončím v " %>
+      <%= f.select :place_return, @event.spec_place_return_detail.split(',') %>
+    </p>
+  <% else %>
+    <%= f.hidden_field :place_return %>
+  <% end %>
+
   <% if @event.spec_participant %>
     <p>
     <%= f.label :participant_info, "Na co chci u svého dítěte upozornit (neveřejné): " %><br>

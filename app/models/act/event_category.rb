@@ -132,7 +132,7 @@ class Act::EventCategory < ActiveRecord::Base
       when 'so'; 'soustředění'
       when 'pb'; 'pikobraní'
       when 'ps'; 'pikosoboty'
-      when 'vk'; 'výkendovky'
+      when 'vk'; 'víkendovky'
       else name
     end
   end
