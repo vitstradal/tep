@@ -458,20 +458,20 @@ class Act::EventsController < ActController
   def papers_please
      event_id = params[:event_id]
      participant_id = params[:participant_id]
-     participant = if participant_id.nil?
-        current_user.participant
-     else
+     participant = if ! participant_id.nil?
         Act::Participant.find_by(id: participant_id)
+     elsif ! current_user.nil?
+        current_user.participant
      end
 
      event = Act::Event.find_by(id: event_id)
 
      if event.paper_template.empty?
+       return render plain: "tento event nema papiry (ev#{event.id})" if participant.nil?
        return render plain: "tento event nema papiry (ev#{event.id} par#{participant.id})"
      end
 
      date_today = Time.now.strftime('%-d. %-m. %-Y')
-     birth_date =  participant.birth.strftime('%-d. %-m. %-Y')
 
      event_category = event.get_event_category
 
@@ -483,22 +483,33 @@ class Act::EventsController < ActController
        event_category_short_genitiv: event_category.genitiv,
        event_category_name_genitiv: event_category.genitiv,
        event_info_url: event.event_info_url,
+       event_medic: event.event_medic,
+       #event_spec_place_return: event.spec_place_return_detail,
+       exit_place: event.spec_place_return_detail,
        date_today: date_today,
-       name: participant.name,
-       last_name: participant.last_name,
-       address: participant.address,
-       adress: participant.address,
-       birth_date: birth_date,
-       nickname: participant.nickname,
-       email: participant.email,
-       parent_email: participant.parent_email,
-       parent_phone: participant.parent_phone,
-       phone: participant.phone,
-       health_insurance: participant.health_insurance,
-       rc: participant.birth_number,
-       sex: participant.sex,
-       a: participant.sex == 'male' ? '' : 'a',
      }
+     if ! participant.nil?
+       participiant_birth_date =  participant.birth.strftime('%-d. %-m. %-Y')
+       place = ''
+       place = 'Praze' if participant.address =~ /\bPraha\b/
+       stash.merge!( {
+         place: place,
+         name: participant.name,
+         last_name: participant.last_name,
+         address: participant.address,
+         adress: participant.address,
+         birth_date: participiant_birth_date,
+         nickname: participant.nickname,
+         email: participant.email,
+         parent_email: participant.parent_email,
+         parent_phone: participant.parent_phone,
+         phone: participant.phone,
+         health_insurance: participant.health_insurance,
+         rc: participant.birth_number,
+         sex: participant.sex,
+         a: participant.sex == 'male' ? '' : 'a',
+       })
+     end
      stash[:stash] = JSON.pretty_generate(stash)
 
      template_path = "#{Rails.root.to_s}/#{PAPER_TEMPLATES_DIR}/#{event.paper_template}"

@@ -542,5 +542,12 @@ module ApplicationHelper
     return html
 
   end
+  def act_count_participiants(participiants)
+    return 0 if participiants.nil?
+    male_count = participiants.count { |par| par.participant.male?  }
+    female_count = participiants.count { |par| par.participant.female? }
+    "#{participiants.size}<font size='-8'>(#{male_count},#{female_count})</font>".html_safe
+
+  end
 
 end

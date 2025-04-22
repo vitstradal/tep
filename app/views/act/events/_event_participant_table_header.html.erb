@@ -1,7 +1,7 @@
 <% if current_user.org? %>
 <tr>
 
-<% num_org_attributes = 2 + (current_user.morg? && (not @edit_participants) ? 1 : 0) - (@edit_participants ? 1 : 0) + (@event.paper_template.present? ? 1 : 0) %>
+<% num_org_attributes = 4 + (current_user.morg? && (not @edit_participants) ? 1 : 0) - (@edit_participants ? 1 : 0) + (@event.paper_template.present? ? 1 : 0) %>
 <td colspan="<%= num_org_attributes %>" style="text-align: center;">
 org only
 </td>
@@ -31,6 +31,8 @@ ID
 <% else %>
 <th>Jméno</th>
 <th>Příjmení</th>
+<th title="Ročník">R.</th>
+<th title="Pohlaví">P.</th>
 <% if @event.paper_template.present? %><th>Papíry</th> <% end %>
 <% end %>
 <% end %>

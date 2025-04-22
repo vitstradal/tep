@@ -27,8 +27,20 @@
     <%= event_participant.participant.last_name %>
     </td>
 
+    <td>
+    <%= event_participant.participant.grade %>
+    </td>
+
+    <td>
+      <% if event_participant.participant.male? %>
+        <i class="fa fa-male blue" title="muž"></i>
+      <% else %>
+        <i class="fa fa-female pink" title="žena"></i>
+      <% end %>
+    </td>
+
     <% if event_participant.event.paper_template.present? %>
-      <td> <%= link_to "papiry", act_event_papers_please_path(@event.id, event_participant.participant.id) %></td>
+      <td> <%= link_to "papíry", act_event_papers_please_path(@event.id, event_participant.participant.id) %></td>
     <% end %>
 
     <td>
