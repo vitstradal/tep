@@ -453,7 +453,7 @@ module ApplicationHelper
      { name: Sosna::Solver::LEVEL_MAP[@level] || @level || "Unk",
        url: {roc:@annual, se: 1, level: @level},
        sub: Sosna::Solver::LEVELS.map { |level|
-          {name: Sosna::Solver::LEVEL_MAP[level] || @level, url: {action: action, roc: @annual, level: level}}
+          {name: Sosna::Solver::LEVEL_MAP[level] || @level, url: {action: action, roc: @annual, level: level, se: @round, ul: @problem_no}}
        },
      }
   end

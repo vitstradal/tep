@@ -11,6 +11,7 @@ require 'json'
 
 PAPER_TEMPLATES_DIR = "var/act/paper-templates"
 
+
 class Act::EventsController < ActController
 
   ##
@@ -490,8 +491,7 @@ class Act::EventsController < ActController
      }
      if ! participant.nil?
        participiant_birth_date =  participant.birth.strftime('%-d. %-m. %-Y')
-       place = ''
-       place = 'Praze' if participant.address =~ /\bPraha\b/
+       place = participant.address_lokativ || "V Praze"
        stash.merge!( {
          place: place,
          name: participant.name,

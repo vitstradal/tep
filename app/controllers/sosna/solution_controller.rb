@@ -452,15 +452,29 @@ class Sosna::SolutionController < SosnaController
   end
 
   ##
-  #  POST /sosna/solution/upload_rev
+  #  POST /sosna/solution/:id/up
   #
-  # Upload jednotlive opravy
+  # Upload jedne opravy opravy
   #
   # *Params*
-  # roc, se, ul:: ročník, série, úloha, pokud není vezme se aktuální
+  # id: solution id
   # file_rev:: upload
   #
   # *Redirect* user_index
+  def upload_rev2
+    rev_file = params[:file_rev]
+    solution_id = params[:id]
+
+    rev_file_name = rev_file.original_filename
+
+    solution = Sosna::Solution.find(solution_id) or raise RuntimeError, "bad solution id: #{solution_id}"
+    path = _rev_filename_for_solution(rev_file_name, solution)
+    if path
+      File.open(UPLOAD_DIR + path, 'wb') {  |f| f.write(rev_file.read) }
+    end
+    head :no_content
+  end
+
   def upload_rev
     rfile = params[:file_rev]
     roc = params[:roc]
@@ -1136,13 +1150,14 @@ class Sosna::SolutionController < SosnaController
 
     problem = Sosna::Problem.where(annual: roc, level: level, round: se, problem_no: ul).take
     solution = Sosna::Solution.where( :problem_id => problem.id, :solver_id => solver.id).take
+    return _rev_filename_for_solution(fname, solution)
+  end
 
-    #filename_corr = _solution_filename(problem, solver, true)
+  def _rev_filename_for_solution(fname, solution)
     filename_rev = solution.get_filename_rev
     solution.filename_corr = filename_rev
     solution.filename_corr_display =  _filename_rev_display(solution.filename_orig||filename_rev)
     solution.save
-
     print "solution id: #{solution.id}, #{solution.filename_corr}\n"
     _add_msg(fname, "ok", true)
     return filename_rev

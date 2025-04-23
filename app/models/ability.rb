@@ -89,6 +89,7 @@ class Ability
       can :update, Sosna::Solution
       can :downall, Sosna::Solution
       can :upload_rev, Sosna::Solution
+      can :upload_rev2, Sosna::Solution
       can :user_index_org, Sosna::Solution
       can :rocnik, Sosna::Solution
 

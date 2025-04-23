@@ -1,0 +1,4 @@
+#downloadButton2::before{
+  -webkit-mask-image:url(web/images/toolbarButton-download.svg);
+          mask-image:url(web/images/toolbarButton-download.svg);
+}
