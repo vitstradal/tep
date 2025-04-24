@@ -61,6 +61,12 @@ function set_score(n) {
   document.getElementById('scoreButton4').classList.toggle('yellow', score == '4' )
   document.getElementById('scoreButton5').classList.toggle('yellow', score == '5' )
   document.getElementById('scoreButtonReset').classList.toggle('yellow', score == '-' )
+  update_score(score)
+}
+
+function update_score(score) {
+  const url_score =  window.PDFViewerApplication.url.replace(/\/down(_rev)?$/, "/update_scores")
+
 }
 
 if (document.readyState === "interactive" || document.readyState === "complete") {
