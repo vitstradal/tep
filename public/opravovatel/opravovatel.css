@@ -2,3 +2,7 @@
   -webkit-mask-image:url(web/images/toolbarButton-download.svg);
           mask-image:url(web/images/toolbarButton-download.svg);
 }
+.yellow {
+  background-color: yellow;
+}
+

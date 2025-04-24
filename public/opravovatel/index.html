@@ -11,7 +11,7 @@
     <link rel="stylesheet" href="web/viewer.css">
     <link rel="stylesheet" href="opravovatel.css">
     <script src="web/viewer.mjs" type="module"></script>
-    <script src="opravovatel.js" type="module"></script>
+    <script src="opravovatel.js"></script>
   </head>
 
   <body tabindex="0">
@@ -130,6 +130,14 @@
                   </span>
                   <span id="numPages" class="toolbarLabel"></span>
                 </div>
+                <div> <button id="scoreButtonReset" class='yellow' onclick='set_score("-")' >-</button></div>
+                <div> <button id="scoreButton0" onclick='set_score(0)'>0</button></div>
+                <div> <button id="scoreButton1" onclick='set_score(1)'>1</button></div>
+                <div> <button id="scoreButton2" onclick='set_score(2)'>2</button></div>
+                <div> <button id="scoreButton3" onclick='set_score(3)'>3</button></div>
+                <div> <button id="scoreButton4" onclick='set_score(4)'>4</button></div>
+                <div> <button id="scoreButton5" onclick='set_score(5)'>5</button></div>
+                <div id="fullNameText"> AHOJ </div>
               </div>
               <div id="toolbarViewerMiddle" class="toolbarHorizontalGroup">
                 <div class="toolbarHorizontalGroup">

@@ -451,6 +451,43 @@ class Sosna::SolutionController < SosnaController
     #File.delete zip_file_name
   end
 
+  def info
+    solution_id = params[:id]
+    solution = Sosna::Solution.find solution_id
+    problem = solution.problem
+
+    prev_solution_id = Sosna::Solution
+      .where('problem_id = ? AND id < ? AND filename IS NOT NULL',  problem.id, solution_id)
+      .order(id: :desc)
+      .limit(1)
+      .pluck(:id)
+      .first
+
+    next_solution_id = Sosna::Solution
+      .where('problem_id = ? AND id > ? AND filename IS NOT NULL ', problem.id, solution_id)
+      .order(id: :asc)
+      .limit(1)
+      .pluck(:id)
+      .first
+
+    render json: {
+      score: solution.score,
+      id: solution.id,
+      prev_solution_id: prev_solution_id,
+      next_solution_id: next_solution_id,
+      filename: solution.filename,
+      problem: {
+        title: problem.title,
+        round: problem.round,
+        annual: problem.annual,
+        problem_no: problem.problem_no,
+      },
+      solver: {
+        full_name: solution.solver.full_name,
+      }
+    }
+  end
+
   ##
   #  POST /sosna/solution/:id/up
   #
@@ -460,7 +497,7 @@ class Sosna::SolutionController < SosnaController
   # id: solution id
   # file_rev:: upload
   #
-  # *Redirect* user_index
+  # 203 ok empty
   def upload_rev2
     rev_file = params[:file_rev]
     solution_id = params[:id]

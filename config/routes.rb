@@ -38,7 +38,9 @@ Tep::Application.routes.draw do
   get  '/sosna/solutions/confirm_file'            => 'sosna/solution#get_confirm_file',    :as => :sosna_solutions_get_confirm_file
   get  '/sosna/solution/confirm_files'            => 'sosna/solution#get_confirm_files',    :as => :sosna_solutions_get_confirm_files
   get  '/sosna/solution/:id/down'                 => 'sosna/solution#download',      :as => :sosna_solution_download
-  post '/sosna/solution/:id/up'                    => 'sosna/solution#upload_rev2',      :as => :sosna_solution_upload_rev2
+  get  '/sosna/solution/:id/down_rev'             => 'sosna/solution#download_rev',  :as => :sosna_solution_download_rev
+  get  '/sosna/solution/:id/info'                 => 'sosna/solution#info',          :as => :sosna_solution_info
+  post '/sosna/solution/:id/up_rev'               => 'sosna/solution#upload_rev2',      :as => :sosna_solution_upload_rev2
 
   get  '/sosna/solver/aesop'                             => 'sosna/solver#aesop',            :as => :sosna_solver_aesop
   get  '/sosna/solver/aesop/index'                       => 'sosna/solver#aesop_index',      :as => :sosna_solver_aesop_index
@@ -47,7 +49,6 @@ Tep::Application.routes.draw do
   post '/sosna/solver/aesop/refres-index'                => 'sosna/solver#aesop_refresh_index',     :as => :sosna_solver_aesop_refres_index
 
 
-  get  '/sosna/solution/:id/down_rev'       => 'sosna/solution#download_rev', :as => :sosna_solution_download_rev
   #get  '/sosna/solution/:id/down(/:ori)'     => 'sosna/solution#download',      :as => :sosna_solution_download
   #get  '/sosna/solution/:id/down_rev(/:ori)'=> 'sosna/solution#download_rev', :as => :sosna_solution_download_rev
 

@@ -60,6 +60,7 @@ class Ability
       can :upload_confirm_file, Sosna::Solution
       can :get_confirm_file, Sosna::Solution
       can :download, Sosna::Solution
+      can :info, Sosna::Solution
       can :download_rev, Sosna::Solution
 
       can :user_solver_confirm, Sosna::Solver
