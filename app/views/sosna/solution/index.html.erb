@@ -171,10 +171,11 @@
                 <input type="checkbox" name="paper[<%= sol.id %>]" size="3" <%if sol.has_paper_mail %> checked="checked" <% end %> />
              <% else %>
                <% if sol.filename %>
-                 <%= link_to pr.problem_no, {:action => :download, :id => sol.id}, {:title => sol.filename_orig} %>
-                 <% if sol.filename_corr %>
-                   <%= link_to 'o', {:action => :download_rev, :id => sol.id}, {:title => sol.filename_corr_display} %>
-                 <% end %>
+<%= link_to pr.problem_no, {:action => :download, :id => sol.id}, {:title => sol.filename_orig} -%>
+<% if sol.filename_corr -%>
+<%= link_to 'o', {:action => :download_rev, :id => sol.id}, {:title => sol.filename_corr_display} -%>
+<% end -%>
+<%= link_to '.', "/opravovatel?file=/sosna/solution/#{sol.id}/down_rev"  -%>
                <% end %>
                <% if sol.has_paper_mail %> P <% end %>
              <% end %>

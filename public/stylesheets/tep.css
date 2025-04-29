@@ -109,8 +109,10 @@ input.input-minimini {
 .editheading:before { content: "["; }
 .editheading:after  { content: "]"; }
 
-.edittable:before { content: "["; }
-.edittable:after  { content: "]"; }
+/*
+ * .edittable:before { content: "["; }
+ * .edittable:after  { content: "]"; }
+ */
 
 /************************
  *  foto galerie

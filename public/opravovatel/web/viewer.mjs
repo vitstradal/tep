@@ -15750,10 +15750,12 @@ const PDFViewerApplication = {
       annotationStorage
     } = pdfDocument;
     annotationStorage.onSetModified = () => {
+      console.log("modified")
       window.addEventListener("beforeunload", beforeUnload);
       this._annotationStorageModified = true;
     };
     annotationStorage.onResetModified = () => {
+      console.log("modify reset")
       window.removeEventListener("beforeunload", beforeUnload);
       delete this._annotationStorageModified;
     };
@@ -16919,7 +16921,17 @@ function webViewerLoad() {
     console.error("webviewerloaded:", ex);
     document.dispatchEvent(event);
   }
-  PDFViewerApplication.run(config);
+  PDFViewerApplication.run(config).then(() => {
+    document.dispatchEvent(
+      new CustomEvent("appconfigured", {
+        bubbles: true,
+        cancelable: true,
+        detail: {
+          source: window
+        }
+      })
+    )
+  })
 }
 document.blockUnblockOnload?.(true);
 if (document.readyState === "interactive" || document.readyState === "complete") {

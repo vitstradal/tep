@@ -1,6 +1,6 @@
-#downloadButton2::before{
-  -webkit-mask-image:url(web/images/toolbarButton-download.svg);
-          mask-image:url(web/images/toolbarButton-download.svg);
+#saveButton::before{
+  -webkit-mask-image:url(web/images/save.svg);
+          mask-image:url(web/images/save.svg);
 }
 .yellow {
   background-color: yellow;

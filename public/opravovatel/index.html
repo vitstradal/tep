@@ -4,7 +4,7 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="google" content="notranslate">
-    <title>Opravovatel</title>
+    <title id="title">Opravovatel</title>
     <base href="/opravovatel/"/>
     <link rel="resource" type="application/l10n" href="web/locale/locale.json">
     <script src="build/pdf.mjs" type="module"></script>
@@ -130,15 +130,38 @@
                   </span>
                   <span id="numPages" class="toolbarLabel"></span>
                 </div>
-                <div> <button id="scoreButtonReset" class='yellow' onclick='set_score("-")' >-</button></div>
-                <div> <button id="scoreButton0" onclick='set_score(0)'>0</button></div>
-                <div> <button id="scoreButton1" onclick='set_score(1)'>1</button></div>
-                <div> <button id="scoreButton2" onclick='set_score(2)'>2</button></div>
-                <div> <button id="scoreButton3" onclick='set_score(3)'>3</button></div>
-                <div> <button id="scoreButton4" onclick='set_score(4)'>4</button></div>
-                <div> <button id="scoreButton5" onclick='set_score(5)'>5</button></div>
-                <div id="fullNameText"> AHOJ </div>
-                <div id="next"> <a href="https://seznam.cz">sem</a> </div>
+
+                <div class="toolbarHorizontalGroup">
+                  <div class="splitToolbarButtonSeparator"></div>
+
+                  <div> <a id='tepLink' href="/">TEP</a> </div>
+
+                  <button id="saveButton" class="toolbarButton" type="button" tabindex="0" data-l10n-id="pdfjs-save-button">
+                    <span data-l10n-id="pdfjs-save-button-label"></span>
+                  </button>
+
+                  <div class="splitToolbarButtonSeparator"></div>
+
+                  <div> <button id="prevButton" onclick='go_to_prev()'>&lt;</button></div>
+                  <div> <button id="nextButton" onclick='go_to_next()'>&gt;</button></div>
+
+                  <div> <button id="scoreButtonReset" class='yellow' onclick='set_score_and_update("-")' >-</button></div>
+                  <div> <button id="scoreButton0" onclick='set_score_and_update(0)'>0</button></div>
+                  <div> <button id="scoreButton1" onclick='set_score_and_update(1)'>1</button></div>
+                  <div> <button id="scoreButton2" onclick='set_score_and_update(2)'>2</button></div>
+                  <div> <button id="scoreButton3" onclick='set_score_and_update(3)'>3</button></div>
+                  <div> <button id="scoreButton4" onclick='set_score_and_update(4)'>4</button></div>
+                  <div> <button id="scoreButton5" onclick='set_score_and_update(5)'>5</button></div>
+                  <div class="splitToolbarButtonSeparator"></div>
+
+
+                  <div id="fullNameText"> AHOJ </div>
+
+                  <div class="splitToolbarButtonSeparator"></div>
+
+                  <div> <button id="resetButton" onclick='go_to_reset()'>Reset</button></div>
+
+                </div>
               </div>
               <div id="toolbarViewerMiddle" class="toolbarHorizontalGroup">
                 <div class="toolbarHorizontalGroup">
@@ -269,11 +292,6 @@
                   <button id="downloadButton" class="toolbarButton" type="button" tabindex="0" data-l10n-id="pdfjs-save-button">
                     <span data-l10n-id="pdfjs-save-button-label"></span>
                   </button>
-
-                  <button id="downloadButton2" class="toolbarButton" type="button" tabindex="0" data-l10n-id="pdfjs-save-button">
-                    <span data-l10n-id="pdfjs-save-button-label"></span>
-                  </button>
-                </div>
 
                 <div class="verticalToolbarSeparator hiddenMediumView"></div>
 

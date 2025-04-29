@@ -1192,7 +1192,7 @@ function _init_table_edit(div) {
         const href = `${window.location.pathname}?edit=${pos}&ckeditor=1`
         const a =  $('<a/>');
         a.attr('class', 'edittable');
-        a.text('edit')
+        a.append( $('<i class="fa fa-edit" title="edit table"></i>') )
         a.attr('href',  href )
         $(div).prepend( a );
 }

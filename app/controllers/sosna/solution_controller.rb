@@ -279,7 +279,7 @@ class Sosna::SolutionController < SosnaController
       end
     end
 
-    redirect_to action: :edit, level: level, roc: roc, se: se, ul: ul
+    redirect_to action: :edit, level: level, roc: roc, se: se, ul: ul  if roc
   end
 
   ##
@@ -355,7 +355,7 @@ class Sosna::SolutionController < SosnaController
   #  GET /sosna/solution/:id/down_rev
   #
   # Download opravy. Pokud aktuální uživatel neni `org`, může jen pokud svoje řešení.
-  #
+  # Pokud oprava neexistuje download original
   # *Params*
   # id:: id Sosna::Solution
   def download_rev
@@ -375,15 +375,15 @@ class Sosna::SolutionController < SosnaController
         add_alert "Chyba: soubor ještě neexistuje"
         return redirect_to :action =>  :user_index
       end
-      filename = solution.filename_corr_display
+      filename = solution.filename_corr
       filename_disp = solution.filename_corr_display
     else
       # may be org
       authorize! :download_org, Sosna::Solution
-      filename = solution.filename_corr
+      filename = solution.filename_corr || solution.filename
       filename_disp = solution.get_filename_rev
     end
-    send_file UPLOAD_DIR + solution.filename_corr, :filename => filename_disp, :type => 'application/pdf'
+    send_file UPLOAD_DIR + filename, :filename => filename_disp, :type => 'application/pdf'
   end
 
   ##
@@ -456,30 +456,41 @@ class Sosna::SolutionController < SosnaController
     solution = Sosna::Solution.find solution_id
     problem = solution.problem
 
-    prev_solution_id = Sosna::Solution
-      .where('problem_id = ? AND id < ? AND filename IS NOT NULL',  problem.id, solution_id)
-      .order(id: :desc)
-      .limit(1)
-      .pluck(:id)
-      .first
+#    prev_solution_id = Sosna::Solution
+#      .where('problem_id = ? AND id < ? AND filename IS NOT NULL',  problem.id, solution_id)
+#      .order(id: :desc)
+#      .limit(1)
+#      .pluck(:id)
+#      .first
+#
+#    next_solution_id = 
+#      .where('problem_id = ? AND id > ? AND filename IS NOT NULL ', problem.id, solution_id)
+#      .order(id: :asc)
+#      .limit(1)
+#      .pluck(:id)
+#      .first
+#      scope = MyTab.where(category: 'dog').order(:id)
 
-    next_solution_id = Sosna::Solution
-      .where('problem_id = ? AND id > ? AND filename IS NOT NULL ', problem.id, solution_id)
-      .order(id: :asc)
-      .limit(1)
-      .pluck(:id)
-      .first
+    scope = Sosna::Solution.where('problem_id = ? AND filename IS NOT NULL',  problem.id).order(:id)
+    position = scope.where('id <= ?', solution_id).count
+    total_count = scope.count
+    prev_solution_id = scope.where('id < ?', solution_id).pluck(:id).last
+    next_solution_id = scope.where('id > ?', solution_id).pluck(:id).first
+
 
     render json: {
       score: solution.score,
       id: solution.id,
       prev_solution_id: prev_solution_id,
       next_solution_id: next_solution_id,
+      total_count: total_count,
+      index: position,
       filename: solution.filename,
       problem: {
         title: problem.title,
         round: problem.round,
         annual: problem.annual,
+        level: problem.level,
         problem_no: problem.problem_no,
       },
       solver: {
