@@ -69,6 +69,7 @@ class Ability
 
       can :read, Act::Participant
       can :update, Act::Participant
+      can :enroll, Act::Event
       can :delete, Act::Participant
       can :my_papers_please, Act::Event
     end
