@@ -663,7 +663,7 @@ class Sosna::SolutionController < SosnaController
       @confirmation_exists = File.exist? _confirm_file_path @solver
     end
 
-    @problems = Sosna::Problem.where(annual: @annual, round:  @round, level:  @level )
+    @problems = Sosna::Problem.where(annual: @annual, round:  @round, level:  @level ).order(:problem_no)
     @solutions_by_solver = _solutions_by_solver [@solver], @problems
 
     if @solver.confirm_state == 'next' && !current_user.admin?
