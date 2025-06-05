@@ -45,7 +45,7 @@
       <td>
         <%= link_to "papíry", act_event_papers_please_path(@event.id, event_participant.participant.id) , title: event_participant.participant.address_lokativ%>
         <% if !event_participant.participant.correct_address_lokativ? -%>
-          <i title="V ... bude asi špatně '<%= event_participant.participant.address_strip_for_lokativ%>'" class="fa red fa-meh-o"></i>
+          <i title="'<%= event_participant.participant.address_strip_for_lokativ%>' chybí v 'config/initializers/town_locativ.csv'" class="fa red fa-meh-o"></i>
         <% end -%>
       </td>
     <% end %>

@@ -23,43 +23,6 @@
   #    t.string     "health_insurance"
   #    t.string     "activated",        :default => "full"           index: true
 
-LOKATIV= {
-  "Brno"		        =>"V Brně",
-  "Chotěboř"		=>"V Chotěboři",
-  "Dobrčice"		=>"V Dobrčicích",
-  "Svojanov"		=>"Ve Svojanově",
-  "Dvůr Králové n. L."	=>"Ve Dvoře Králové",
-  "Jablonec nad Nisou"	=>"V Jablonci nad Nisou",
-  "Jeseník"		=>"V Jeseníku",
-  "Kladno"		=>"V Kladně",
-  "Kostelec nad Labem"	=>"V Kostelci nad Labem",
-  "Kroměříž"		=>"V Kroměříži",
-  "Kunžak"		=>"V Kunžaku",
-  "Liberec"		=>"V Liberci",
-  "Libkovice pod Řípem"	=>"Libkovích pod Řípem",
-  "Moravská Ostrava a Přívoz"		=>"V Moravské Ostravě",
-  "Ohrobec"		=>"V Ohrobci",
-  "Ostrava"		=>"V Ostravě",
-  "Poděbrady"		=>"V Poděbradech",
-  "Praha"		=>"V Praze",
-  "Prostějov"		=>"V Prostějově",
-  "Tehov"		=>"V Těhově",
-  "V Pohodě"		=>"V Pohodě",
-  "Vavřinec"		=>"Ve Vavřinci",
-  "Velké Meziříčí"	=>"Ve Velkém Meziříčí",
-  "Votice"		=>"Ve Voticích",
-  "Výhledy"		=>"Ve Výhledech",
-  "Větřní"		=>"Ve Větřní",
-  "Úvaly"		=>"V Úvalech",
-  "Český Brod"		=>"V Českém Brodě",
-  "Český Krumlov"	=>"V Českém Krumlově",
-  "Říčany"		=>"V Říčanech",
-  "Šlapanice"           =>"Ve Šlapanici",
-  "Strmilov"            =>"Ve Strmilově",
-  "Benešov"             =>"V Benešově",
-  "Starý Plzenec"       =>"Ve Starém Plzenci",
-}
-
 class Act::Participant < ActiveRecord::Base
   belongs_to :user
   validates_associated :user
@@ -373,6 +336,6 @@ class Act::Participant < ActiveRecord::Base
       .strip 
   end
   def address_lokativ
-    LOKATIV[address_strip_for_lokativ]
+    TOWN_LOCATIV[address_strip_for_lokativ]
   end
 end
