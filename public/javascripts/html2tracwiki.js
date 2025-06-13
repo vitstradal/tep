@@ -1,5 +1,6 @@
 var html2wiki_handlers = {
         b: '**%s**',
+        br: "\\\\\n",
         strong: '**%s**',
         p: "%s\n\n" ,
         pre: "\n{{{\n%s\n}}}\n" ,
@@ -105,7 +106,7 @@ function _has_parent(node, tagName) {
 function _tracwiki_walk(node, opt) {
         var tag = node.localName
         if( tag == undefined ) {
-                return node.textContent
+                return _esc(node.textContent)
         }
         var ret = []
         if( tag == 'table' ) {
@@ -122,17 +123,20 @@ function _tracwiki_walk(node, opt) {
         //console.log("walk:", tag, content)
         var handler = html2wiki_handlers[tag]
         if( typeof handler == 'function' ) {
-                return handler(content, node, opt)
+                return _esc(handler(content, node, opt))
         }
         else if( typeof handler == 'string' ) {
                 // BEVARE replace has special character $
-                return handler.replace( '%s', function() { return content} )
+                return handler.replace( '%s', function() { return _esc(content)} )
         }
         return _esc(content);
 }
 
 function _esc(str) {
-        return str.replace( "\xa0", '')
+        if( ! str ) {
+                return ''
+        }
+        return str.replaceAll( "\xa0", '')
 }
 
 function html2tracwiki( html , opt) {
