@@ -6,3 +6,11 @@
   background-color: yellow;
 }
 
+.saveButtonEnabled {
+  background-color: #ff9090;
+}
+
+.saveButtonDisabled {
+  background-color: #90ff90;
+}
+

@@ -5,13 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
     <meta name="google" content="notranslate">
     <title id="title">Opravovatel</title>
-    <base href="/opravovatel/"/>
     <link rel="resource" type="application/l10n" href="web/locale/locale.json">
-    <script src="build/pdf.mjs" type="module"></script>
-    <link rel="stylesheet" href="web/viewer.css">
-    <link rel="stylesheet" href="opravovatel.css">
-    <script src="web/viewer.mjs" type="module"></script>
-    <script src="opravovatel.js"></script>
+    <script src="/opravovatel/build/pdf.mjs" type="module"></script>
+    <link rel="stylesheet" href="/opravovatel/web/viewer.css">
+    <link rel="stylesheet" href="/opravovatel/opravovatel.css">
+    <script src="/opravovatel/web/viewer.mjs" type="module"></script>
+    <script src="/opravovatel/opravovatel.js"></script>
   </head>
 
   <body tabindex="0">
@@ -136,9 +135,11 @@
 
                   <div> <a id='tepLink' href="/">TEP</a> </div>
 
-                  <button id="saveButton" class="toolbarButton" type="button" tabindex="0" data-l10n-id="pdfjs-save-button">
-                    <span data-l10n-id="pdfjs-save-button-label"></span>
+                  <button id="saveButton" title="save to TEP" class="toolbarButton" type="button" tabindex="0" data-l10n-id="pdfjs-save-button">
+                    <span data-l10n-id="pdfjs-save-button-label">Save</span>
+                    <span> foo</span>
                   </button>
+                  <div id="documentState">...init</div>
 
                   <div class="splitToolbarButtonSeparator"></div>
 
@@ -289,7 +290,7 @@
                     <span data-l10n-id="pdfjs-print-button-label"></span>
                   </button>
 
-                  <button id="downloadButton" class="toolbarButton" type="button" tabindex="0" data-l10n-id="pdfjs-save-button">
+                  <button id="downloadButton" title="Download" class="toolbarButton" type="button" tabindex="0" xdata-l10n-id="pdfjs-save-button">
                     <span data-l10n-id="pdfjs-save-button-label"></span>
                   </button>
 
@@ -310,7 +311,7 @@
                           <span data-l10n-id="pdfjs-print-button-label"></span>
                         </button>
 
-                        <button id="secondaryDownload" class="toolbarButton labeled" type="button" tabindex="0" data-l10n-id="pdfjs-save-button">
+                        <button id="secondaryDownload" title="Download" class="toolbarButton labeled" type="button" tabindex="0" data-l10n-id="pdfjs-save-button">
                           <span data-l10n-id="pdfjs-save-button-label"></span>
                         </button>
 

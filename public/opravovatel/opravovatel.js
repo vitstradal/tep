@@ -5,6 +5,9 @@ function  opravovatelLoaded() {
   var saveButton = document.getElementById('saveButton')
   saveButton.addEventListener("click", function () {
     const pdfApp = window.PDFViewerApplication
+    set_save_button_disabled(false)
+    set_document_state('Saving')
+    save_settings()
     fetch("/piki/index.csrf")
       .then(response => response.json() )
       .then(response_json => {
@@ -22,8 +25,17 @@ function  opravovatelLoaded() {
             body: formData,
             credentials: "same-origin"
           }).then(response => {
-            //set_save_button_disabled(true)
-            console.log(response.ok ? "PDF saved!" : "Failed to save PDF." + response.code);
+            if(response.ok ) {
+              console.log("PDF saved!")
+              pdfApp.pdfDocument.annotationStorage.resetModified()
+              set_save_button_disabled(true)
+              set_document_state('Saved')
+            }
+            else {
+              console.log("Failed to save PDF." + response.code);
+              set_save_button_disabled(false)
+              set_document_state('Error')
+            }
           });
         }).catch(err => {
           console.error("Save error:", err);
@@ -33,30 +45,47 @@ function  opravovatelLoaded() {
       });
   });
   window.PDFViewerApplication.eventBus.on("metadataloaded", () => {
-    //console.log("metadataloaded")
-    document.getElementById('title').innerHTML= "huuuu"
+    document.getElementById('title').innerHTML= "TEP opravovatel"
   })
   window.PDFViewerApplication.eventBus.on("documentinit", () => {
      console.log("EVENT: document init")
+     set_save_button_disabled(true)
+     set_document_state('Loaded')
      const onSetModified_orig = window.PDFViewerApplication.pdfDocument.annotationStorage.onSetModified
+     const onResetModified_orig = window.PDFViewerApplication.pdfDocument.annotationStorage.onSetResModified
      window.PDFViewerApplication.pdfDocument.annotationStorage.onSetModified = () => {
        console.log("onSetModified")
        set_save_button_disabled(false)
+       set_document_state('Modified')
        onSetModified_orig()
      }
-     window.PDFViewerApplication.pdfDocument.annotationStorage.onReetModified = () => {
-       console.log("onResetModified")
-       set_save_button_disabled(true)
-       onSetModified_orig()
-     }
+//     window.PDFViewerApplication.pdfDocument.annotationStorage.onResetModified = () => {
+//       console.log("onResetModified")
+//       set_save_button_disabled(true)
+//       onSetModified_orig()
+//     }
   })
   //set_save_button_disabled( ! window.PDFViewerApplication.pdfDocument.annotationStorage._annotationStorageModified )
   init_op_info()
 }
 
+function save_settings() {
+  const inkColor = window.PDFViewerApplication.annotationEditorParams.editorInkColor.value
+  const fontSize = window.PDFViewerApplication.annotationEditorParams.editorFreeTextFontSize.value
+  console.log("inkColor", inkColor, "fontSize", fontSize)
+}
+  
+function set_document_state(document_state) {
+  console.log('ducment state', document_state)
+  document.getElementById('documentState').innerHTML = document_state
+}
+
 function set_save_button_disabled(want_disabled) {
-  console.log("disableing save button", want_disabled)
-  document.getElementById('saveButton').disabled = want_disabled
+  console.log("disableing save button", want_disabled ? "DISABLE" : "ENABLE" )
+  var save_button = document.getElementById('saveButton')
+  save_button.disabled = want_disabled
+  document.getElementById('saveButton').classList.toggle( 'saveButtonDisabled',  want_disabled)
+  document.getElementById('saveButton').classList.toggle( 'saveButtonEnabled',  !want_disabled)
 }
 
 function init_op_info() {
