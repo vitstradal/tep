@@ -17,7 +17,7 @@ use warnings;
 use utf8;
 
 my $WIKUK_FILE = '/home/pikomat/wikuk/foto.wiki';
-my $HLUBINA_ROOT_DIR = '/home/www/sklep-hlubina';
+my $HLUBINA_ROOT_DIR = '/home/www/sklep-hlubina/fotky';
 my $HTML_DATA_DIR = '/home/www/html/data';
 
 my $webroot = '/home/www/html';
@@ -259,6 +259,7 @@ fun main() {
                 $do_readme = 1;
                 $do_wikuk = 1;
                 $do_thumnails =1;
+                $want_update =1;
         }
 
         $wiki_file = $WIKUK_FILE if $do_wikuk;
