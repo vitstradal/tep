@@ -1,7 +1,7 @@
 var op_score = 1
 var oprava_info = {}
 
-function  opravovatelLoaded() {
+function opravovatelLoaded() {
   var saveButton = document.getElementById('saveButton')
   saveButton.addEventListener("click", function () {
     const pdfApp = window.PDFViewerApplication
@@ -44,7 +44,12 @@ function  opravovatelLoaded() {
         console.log("url", window.PDFViewerApplication.url)
       });
   });
+  window.PDFViewerApplication.eventBus.on("annotationlayerrendered", () => {
+    console.log("EVENT: annotationlayerrendered")
+    load_settings()
+  })
   window.PDFViewerApplication.eventBus.on("metadataloaded", () => {
+     console.log("EVENT: metadataloaded")
     document.getElementById('title').innerHTML= "TEP opravovatel"
   })
   window.PDFViewerApplication.eventBus.on("documentinit", () => {
@@ -54,34 +59,74 @@ function  opravovatelLoaded() {
      const onSetModified_orig = window.PDFViewerApplication.pdfDocument.annotationStorage.onSetModified
      const onResetModified_orig = window.PDFViewerApplication.pdfDocument.annotationStorage.onSetResModified
      window.PDFViewerApplication.pdfDocument.annotationStorage.onSetModified = () => {
-       console.log("onSetModified")
        set_save_button_disabled(false)
        set_document_state('Modified')
        onSetModified_orig()
      }
-//     window.PDFViewerApplication.pdfDocument.annotationStorage.onResetModified = () => {
-//       console.log("onResetModified")
-//       set_save_button_disabled(true)
-//       onSetModified_orig()
-//     }
   })
   //set_save_button_disabled( ! window.PDFViewerApplication.pdfDocument.annotationStorage._annotationStorageModified )
   init_op_info()
 }
 
+const SETTINGS_TO_SAVE = {
+  editorFreeTextColor:          'FREETEXT_COLOR',
+  editorFreeTextFontSize:       'FREETEXT_SIZE',
+  editorFreeHighlightThickness: 'HIGHLIGHT_THICKNESS',
+  editorInkColor:               'INK_COLOR',
+  editorInkOpacity:             'INK_OPACITY',
+  editorInkThickness:           'INK_THICKNESS',
+  //see  globalThis.pdfjsLib.AnnotationEditorParamsType
+  // see 
+  //'CREATE',
+  //'DRAW_STEP',
+  //'FREETEXT_OPACITY',
+  //'HIGHLIGHT_COLOR',
+  //'HIGHLIGHT_DEFAULT_COLOR',
+  //'HIGHLIGHT_FREE',
+  //'HIGHLIGHT_SHOW_ALL',
+  //'RESIZE',
+};
+
 function save_settings() {
-  const inkColor = window.PDFViewerApplication.annotationEditorParams.editorInkColor.value
-  const fontSize = window.PDFViewerApplication.annotationEditorParams.editorFreeTextFontSize.value
-  console.log("inkColor", inkColor, "fontSize", fontSize)
+  var settings = {};
+  for (const [setting_name, setting_event_name] of Object.entries(SETTINGS_TO_SAVE)) {
+    settings[setting_name] = document.querySelector("#" + setting_name ).value;
+  }
+  localStorage.setItem("opravovatel-pdfjs-editor-defaults", JSON.stringify( settings ) )
+  console.log("settings saved", settings)
+}
+
+function load_settings() {
+  const settings = JSON.parse(localStorage.getItem("opravovatel-pdfjs-editor-defaults"));
+  if (!settings) return;
+
+  const AnnotationEditorParamsType = globalThis.pdfjsLib.AnnotationEditorParamsType
+  const pdfViewer = window.PDFViewerApplication.pdfViewer
+
+  for (const [setting_name, setting_event_name] of Object.entries(SETTINGS_TO_SAVE)) {
+    const setting_element = document.querySelector('#' + setting_name )
+    const setting_value = settings[setting_name]
+
+    if( setting_element && setting_value !== null ) {
+      setting_element.value = setting_value
+      pdfViewer.eventBus.dispatch('switchannotationeditorparams', {
+        source: this,
+        type: AnnotationEditorParamsType[ setting_event_name ],
+        value: setting_value,
+      })
+    }
+    else {
+         console.log("failed to load", setting_value, setting_element)
+    }
+  }
+  console.log("settings loaded", settings)
 }
   
 function set_document_state(document_state) {
-  console.log('ducment state', document_state)
   document.getElementById('documentState').innerHTML = document_state
 }
 
 function set_save_button_disabled(want_disabled) {
-  console.log("disableing save button", want_disabled ? "DISABLE" : "ENABLE" )
   var save_button = document.getElementById('saveButton')
   save_button.disabled = want_disabled
   document.getElementById('saveButton').classList.toggle( 'saveButtonDisabled',  want_disabled)
