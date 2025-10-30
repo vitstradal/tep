@@ -704,6 +704,8 @@ class GiwiController < ApplicationController
     parser = _get_parser
     parser.at_callback = Proc.new do |key,env|
       case key
+        when 'editable'
+          @editable ? '1' : '0'
         when 'csrf'
           env['nocache'] = '1'
           form_authenticity_token.to_s
