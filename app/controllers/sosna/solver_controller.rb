@@ -745,16 +745,35 @@ EOL
   end
   def _grade_plus(grade, delta)
 
-    cl =  %w(nila prima sekunda tercie kvarta kvinta sexta septima oktava)
-    return "#{match[1]}#{cl[delta+1]}#{match[2]}" if match = /^(.*)prima(.*)$/i.match(grade)
-    return "#{match[1]}#{cl[delta+2]}#{match[2]}" if match = /^(.*)sekunda(.*)$/i.match(grade)
-    return "#{match[1]}#{cl[delta+3]}#{match[2]}" if match = /^(.*)terice(.*)$/i.match(grade)
-    return "#{match[1]}#{cl[delta+4]}#{match[2]}" if match = /^(.*)kvarta(.*)$/i.match(grade)
-    return "#{match[1]}#{cl[delta+4]}#{match[2]}" if match = /^(.*)qarta(.*)$/i.match(grade)
-    return "#{match[1]}#{cl[delta+5]}#{match[2]}" if match = /^(.*)kvinta(.*)$/i.match(grade)
-    return "#{match[1]}#{cl[delta+6]}#{match[2]}" if match = /^(.*)sexta(.*)$/i.match(grade)
-    return "#{match[1]}#{cl[delta+7]}#{match[2]}" if match = /^(.*)septima(.*)$/i.match(grade)
-    return "#{match[1]}#{cl[delta+8]}#{match[2]}" if match = /^(.*)okt.va(.*)$/i.match(grade)
+    cl =  %w(nila prima sekunda tercie kvarta kvinta sexta septima oktáva)
+
+    if match = /^(.*)prima(.*)$/i.match(grade)
+      return "#{match[1]}#{cl[delta+1]}#{match[2]}"
+
+    elsif match = /^(.*)sekunda(.*)$/i.match(grade)
+      return "#{match[1]}#{cl[delta+2]}#{match[2]}"
+
+    elsif match = /^(.*)tercie(.*)$/i.match(grade)
+      return "#{match[1]}#{cl[delta+3]}#{match[2]}"
+
+    elsif match = /^(.*)kvarta(.*)$/i.match(grade)
+      return "#{match[1]}#{cl[delta+4]}#{match[2]}"
+
+    elsif match = /^(.*)qarta(.*)$/i.match(grade)
+      return "#{match[1]}#{cl[delta+4]}#{match[2]}"
+
+    elsif match = /^(.*)kvinta(.*)$/i.match(grade)
+      return "#{match[1]}#{cl[delta+5]}#{match[2]}"
+
+    elsif match = /^(.*)sexta(.*)$/i.match(grade)
+      return "#{match[1]}#{cl[delta+6]}#{match[2]}"
+
+    elsif match = /^(.*)septima(.*)$/i.match(grade)
+      return "#{match[1]}#{cl[delta+7]}#{match[2]}"
+
+    elsif match = /^(.*)okt.va(.*)$/i.match(grade)
+      return "#{match[1]}#{cl[delta+8]}#{match[2]}"
+    end
 
     ro = %w( i ii iii iv v vi vii viii ix )
     if match = /^([ixv]+)(.)/i.match(grade)
