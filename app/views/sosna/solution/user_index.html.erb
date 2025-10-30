@@ -95,7 +95,9 @@
            -
         <% elsif sol_in_this_round_allowed %>
           <% if sol.filename_corr_display %>
-            <%= link_to sol.filename_corr_display, :action => :download_rev, :id => sol.id %>
+            <%#= link_to sol.filename_corr_display, :action => :download_rev, :id => sol.id %>
+            <% url = '/opravovatel/web/viewer.html?file=' + url_for(action: :download_rev, id: sol.id, only_path: true) %>
+            <%= link_to sol.filename_corr_display, url %>
           <% elsif sol.has_paper_mail %>
             <i class="fa fa-envelope blue"></i> <i>opravené řešení bylo zasláno poštou</i>
           <% elsif sol.filename_orig %>
