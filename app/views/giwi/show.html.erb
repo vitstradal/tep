@@ -22,6 +22,9 @@
 <%end%>
 
 <% if @foto_gallery %>
+      <% if @editable %>
+         <button class="btn-danger">edit mode</button>
+      <% end %>
       <div class="modal fade" id="foto-modal" tabindex="-1" role="dialog" aria-labelledby="foto-modal-label" aria-hidden="true">
         <div class="modal-dialog modal-lg">
           <div class="modal-content">
