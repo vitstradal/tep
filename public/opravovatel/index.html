@@ -135,11 +135,10 @@
 
                   <div> <a id='tepLink' href="/">TEP</a> </div>
 
-                  <button id="saveButton" title="save to TEP" class="toolbarButton" type="button" tabindex="0" data-l10n-id="pdfjs-save-button">
-                    <span data-l10n-id="pdfjs-save-button-label">Save</span>
-                    <span> foo</span>
+                  <button id="saveButton" title="Save to TEP" class="saveButtonBetween" type="button" style="vertical-align:middle">
+                    <img src="/opravovatel/web/images/save.svg" width="15px"/>
+                    <span id="documentState">Loading</span>
                   </button>
-                  <div id="documentState">...init</div>
 
                   <div class="splitToolbarButtonSeparator"></div>
 
@@ -161,6 +160,8 @@
                   <div class="splitToolbarButtonSeparator"></div>
 
                   <div> <button id="resetButton" onclick='go_to_reset()'>Reset</button></div>
+                  <!-- <div> <button id="scoreButton5" onclick='load_settings()'>loadsettings</button></div> -->
+                  <!-- <div> <button id="scoreButton5" onclick='save_settings()'>savesettings</button></div> -->
 
                 </div>
               </div>

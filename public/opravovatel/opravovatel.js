@@ -5,7 +5,6 @@ function opravovatelLoaded() {
   var saveButton = document.getElementById('saveButton')
   saveButton.addEventListener("click", function () {
     const pdfApp = window.PDFViewerApplication
-    set_save_button_disabled(false)
     set_document_state('Saving')
     save_settings()
     fetch("/piki/index.csrf")
@@ -28,12 +27,10 @@ function opravovatelLoaded() {
             if(response.ok ) {
               console.log("PDF saved!")
               pdfApp.pdfDocument.annotationStorage.resetModified()
-              set_save_button_disabled(true)
               set_document_state('Saved')
             }
             else {
               console.log("Failed to save PDF." + response.code);
-              set_save_button_disabled(false)
               set_document_state('Error')
             }
           });
@@ -46,7 +43,7 @@ function opravovatelLoaded() {
   });
   window.PDFViewerApplication.eventBus.on("annotationlayerrendered", () => {
     console.log("EVENT: annotationlayerrendered")
-    load_settings()
+    setTimeout( load_settings, 300)
   })
   window.PDFViewerApplication.eventBus.on("metadataloaded", () => {
      console.log("EVENT: metadataloaded")
@@ -54,12 +51,10 @@ function opravovatelLoaded() {
   })
   window.PDFViewerApplication.eventBus.on("documentinit", () => {
      console.log("EVENT: document init")
-     set_save_button_disabled(true)
      set_document_state('Loaded')
      const onSetModified_orig = window.PDFViewerApplication.pdfDocument.annotationStorage.onSetModified
      const onResetModified_orig = window.PDFViewerApplication.pdfDocument.annotationStorage.onSetResModified
      window.PDFViewerApplication.pdfDocument.annotationStorage.onSetModified = () => {
-       set_save_button_disabled(false)
        set_document_state('Modified')
        onSetModified_orig()
      }
@@ -70,7 +65,7 @@ function opravovatelLoaded() {
 
 const SETTINGS_TO_SAVE = {
   editorFreeTextColor:          'FREETEXT_COLOR',
-  editorFreeTextFontSize:       'FREETEXT_SIZE',
+//  editorFreeTextFontSize:       'FREETEXT_SIZE',
   editorFreeHighlightThickness: 'HIGHLIGHT_THICKNESS',
   editorInkColor:               'INK_COLOR',
   editorInkOpacity:             'INK_OPACITY',
@@ -123,15 +118,44 @@ function load_settings() {
 }
   
 function set_document_state(document_state) {
+
+  var want_disabled = false
+  var want_enabled = false
+  var want_between = false
+
+  if( document_state == 'Saving' ) {
+    want_between = true
+  } 
+  else if( document_state == 'Saved' ) {
+    want_disabled = true
+  } 
+  else if( document_state == 'Loading' ) {
+    want_between = true
+  } 
+  else if( document_state == 'Loaded' ) {
+    want_disabled = true
+  } 
+  else if( document_state == 'Modified' ) {
+    want_enabled = true
+  }
+  else if( document_state == 'Error' ) {
+    want_enabled = true
+  } 
+  else {
+    want_enabled = true
+  }
+
   document.getElementById('documentState').innerHTML = document_state
+  var save_button_el = document.getElementById('saveButton')
+  save_button_el.disabled = want_disabled || want_between
+  save_button_el.classList.toggle( 'saveButtonDisabled', want_disabled)
+  save_button_el.classList.toggle( 'saveButtonEnabled',  want_enabled)
+  save_button_el.classList.toggle( 'saveButtonBetween',  want_between)
 }
 
-function set_save_button_disabled(want_disabled) {
-  var save_button = document.getElementById('saveButton')
-  save_button.disabled = want_disabled
-  document.getElementById('saveButton').classList.toggle( 'saveButtonDisabled',  want_disabled)
-  document.getElementById('saveButton').classList.toggle( 'saveButtonEnabled',  !want_disabled)
-}
+//function set_save_button_disabled(want_disabled) {
+//
+//}
 
 function init_op_info() {
   fetch( url_for('info') )

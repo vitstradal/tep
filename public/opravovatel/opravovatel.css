@@ -10,6 +10,10 @@
   background-color: #ff9090;
 }
 
+.saveButtonBetween {
+  background-color: #ffff90;
+}
+
 .saveButtonDisabled {
   background-color: #90ff90;
 }
