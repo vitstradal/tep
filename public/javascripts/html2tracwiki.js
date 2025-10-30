@@ -1,6 +1,6 @@
 var html2wiki_handlers = {
         b: '**%s**',
-        br: "\\\\\n",
+        br: " \\\\\n",
         strong: '**%s**',
         p: "%s\n\n" ,
         pre: "\n{{{\n%s\n}}}\n" ,
