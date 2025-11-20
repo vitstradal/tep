@@ -50,6 +50,7 @@ class Ability
     can :index, Act::Event
     can :show, Act::Event
     can :create, Act::Participant
+    can :my_papers_please, Act::Event
 
     if user.user?
       can :user_index, Sosna::Solution
@@ -71,7 +72,6 @@ class Ability
       can :update, Act::Participant
       can :enroll, Act::Event
       can :delete, Act::Participant
-      can :my_papers_please, Act::Event
     end
 
     if user.org?
