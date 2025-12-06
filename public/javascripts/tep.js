@@ -255,6 +255,7 @@ function init_adventomat() {
            $('#adventomat-date').text($(this).data('date'))
            $('input[name=date]').val($(this).data('date'))
            $('#adventomat-text').text($(this).data('text'))
+           $('#adventomat-img').attr('src', $(this).data('img'))
            $('#adventomat-text').data('sol', $(this).data('sol'))
 
            console.log("adventomat click", this)
