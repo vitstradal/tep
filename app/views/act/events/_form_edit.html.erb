@@ -88,7 +88,7 @@
        is_jakna: is_jakna,
        name: :paper_template,
        text: "Paper template aktivace",
-       extra: "link na papíry: [[#{act_event_my_papers_please_path} | potřebné papíry]]",
+       extra: @event_id.nil? ? '' : "link na papíry: [[#{act_event_my_papers_please_path} | potřebné papíry]]",
        options: @paper_templates || [['None', '']]
      }
   %>
