@@ -495,6 +495,7 @@ class Act::EventsController < ActController
        stash.merge!( {
          place: place,
          name: participant.name,
+         full_name: "#{participant.name} #{participant.last_name}",
          last_name: participant.last_name,
          address: participant.address,
          adress: participant.address,
@@ -510,6 +511,13 @@ class Act::EventsController < ActController
          a: participant.sex == 'male' ? '' : 'a',
        })
      end
+
+     stash.keys.each do |key|
+       (1..5).each do |i|
+         stash["#{key}+#{i}"] =  stash[key]
+       end
+     end
+
      stash[:stash] = JSON.pretty_generate(stash)
 
      template_path = "#{Rails.root.to_s}/#{PAPER_TEMPLATES_DIR}/#{event.paper_template}"
