@@ -311,6 +311,10 @@ class GiwiController < ApplicationController
   def _handle_redirect(redir)
     log "redir:#{redir}"
     return redirect_to url_for(redir) if redir =~ /^\//
+    if redir =~ /^\/.*#/
+      path, anchor = url.split('#', 2)
+      return url_for(path, anchor: anchor)
+    end
     return redirect_to wiki_main_path(redir) if @wiki.to_s == 'main'
     return redirect_to url_for(action: :show, wiki: @wiki, path: redir)
   end
