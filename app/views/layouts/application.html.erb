@@ -164,7 +164,7 @@
           <%#= menu_lii wiki_main_path('onas/faq'),                'Otázky a odpovědi'   %>
         </ul>
       <% end %>
-      <%= menu_li '/onas', 'Akce', ico: 'fa-bomb' do %>
+      <%= menu_li '/onas', 'Akce', ico: 'fa-bullhorn' do %>
         <ul class="submenu">
           <%= menu_lii act_events_path, 'Přehled akcí' %>
           <%= menu_lii act_events_filter_path('so','all'), 'Soustředění' %>
@@ -179,7 +179,7 @@
           <% end %>
         </ul>
       <% end %>
-      <%= menu_li '/onas', 'Přihláška', ico: 'fa-book' do %>
+      <%= menu_li '/onas', 'Přihláška', ico: 'fa-plus-square' do %>
         <ul class="submenu">
           <%= menu_lii :new_user_session,        'Přihlásit' %>
           <%= menu_lii :sosna_solver_new,        'Nový řešitel' %>
@@ -212,7 +212,7 @@
             <%= menu_lii :sosna_solutions_org, 'Řešení řešitelů' %>
             <%= menu_lii :wiki_piki,           'Piki'  %>
             <%#= menu_lii :wiki_web,            'Web' %>
-            <%= menu_lii wiki_web_edit_path('index', :ls => '.'),       'Web Edit'%>
+            <%= menu_lii wiki_web_edit_path('index', :ls => '.'),       'Web Edit (all)'%>
             <%= menu_lii wiki_piki_path('opravovatele'),                'Opravovatelé'%>
             <%= menu_lii wiki_piki_path('priklady'),                    'Příklady'%>
             <%= menu_lii 'https://pikomat.mff.cuni.cz/klep',            'Klep' %>
