@@ -171,7 +171,7 @@ class Act::Event < ActiveRecord::Base
       return true
     end
 
-    if limit_num_participants && num_signed("yes", false, true, true) >= max_participants
+    if limit_num_participants && num_signed("yes", false, true, "participant") >= max_participants
       return false
     end
 
