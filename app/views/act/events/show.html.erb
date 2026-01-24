@@ -8,6 +8,9 @@
      <% if @event.event_photos_url != "" %>
         <li> <%= link_to 'Fotky', @event.event_photos_url  %></li>
      <% end %>
+     <% if @event.event_piki_url != "" %>
+        <li> <%= link_to 'Piki', @event.event_piki_url  %></li>
+     <% end %>
   </ul>
   <div class="tab-content">
 
