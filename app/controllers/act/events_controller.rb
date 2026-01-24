@@ -65,7 +65,7 @@ class Act::EventsController < ActController
   #
   def show
     return unless _find_event(params[:event_id])
-
+    @event_tab = 'show' 
     @breadcrumb = []
     @breadcrumb.push [ _breadcrumb_events ]
     @breadcrumb.push [ _breadcrumb_event_category(@event.event_category) ]

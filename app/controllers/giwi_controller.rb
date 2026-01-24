@@ -147,6 +147,7 @@ class GiwiController < ApplicationController
     @wide_display      = page[:wide_display]
     @foto_gallery      = page[:foto_gallery]
     @event_id          = page[:event_id]
+    @event_tab         = page[:event_tab]
     @redirect_to       = page[:redirect_to]
     @background_image  = page[:background_image]
     @nocache           = page[:nocache]
@@ -739,6 +740,7 @@ class GiwiController < ApplicationController
       tep_index:        env.at('tep_index', false),
       wide_display:     env.at('wide_display', false),
       event_id:         env.at('event_id', nil),
+      event_tab:        env.at('event_tab', nil),
       foto_gallery:     env.at('foto_gallery', false),
       background_image: env.at('background_image', nil),
       special_page:     env.at('special_page', nil),

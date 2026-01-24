@@ -330,9 +330,33 @@
           <% end %>
         <% end %>
 <%################################################################################## %>
+<%# taby akci
+<%################################################################################## %>
+        <% @event = Act::Event.find_by(id: @event_id.to_i) if @event_id %>
+        <% if @event %>
+          <div class="tabbable">
+            <ul id="myTab" class="nav nav-tabs">
+               <li <%=class_active_if( @event_tab == 'show') %>> <%= link_to 'Přihlašování',  act_event_path(@event) %></li>
+               <% if @event.event_info_url != "" %>
+                  <li <%=class_active_if( @event_tab == 'info') %>> <%= link_to 'Informace',    @event.event_info_url  %></li>
+               <% end %>
+               <% if @event.event_photos_url != "" %>
+                  <li <%=class_active_if( @event_tab == 'foto') %>> <%= link_to 'Fotky', @event.event_photos_url  %></li>
+               <% end %>
+               <% if @event.event_piki_url != "" && !current_user.nil? && current_user.org? %>
+                  <li <%=class_active_if( @event_tab == 'piki') %>> <%= link_to 'Piki', @event.event_piki_url  %></li>
+               <% end %>
+            </ul>
+            <div class="tab-content">
+       <% end %>
+<%################################################################################## %>
 <%# obsah stranky %>
 <%################################################################################## %>
-        <%= yield %>
+              <%= yield %>
+        <% if @event %>
+             </div>
+           </div>
+        <% end %>
 
 
        </div><!-- /.col -->
