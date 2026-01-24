@@ -26,10 +26,13 @@ class Act::EventsController < ActController
   # @enroll_status::     jakým způsobem jsem na tu akci přihlášený? (yes, no, maybe) + (ev, nvt)
   #
   def index
+    @breadcrumb = [ [ _breadcrumb_events ] ]
     @event_category = params[:event_category]
     if @event_category.nil?
       @event_category = "all"
     end
+
+    @breadcrumb.push [ _breadcrumb_event_category(@event_category) ] unless @event_category == 'all'
 
     @enroll_status = params[:enroll_status]
     unless @enroll_status && Act::Participant.has_participant?(current_user)
@@ -65,6 +68,7 @@ class Act::EventsController < ActController
 
     @breadcrumb = []
     @breadcrumb.push [ _breadcrumb_events ]
+    @breadcrumb.push [ _breadcrumb_event_category(@event.event_category) ]
     @breadcrumb.push [ _breadcrumb_event(@event) ]
 
     if Act::Participant::has_participant?(current_user)
@@ -144,6 +148,7 @@ class Act::EventsController < ActController
   def new
     @breadcrumb = []
     @breadcrumb.push [ _breadcrumb_events ]
+    @breadcrumb.push [ _breadcrumb_event_category(@event.event_category) ]
     @breadcrumb.push [ _breadcrumb_event_new ]
 
     return render 'permission_denied', :locals => { :desired => "vytvářet nové " } unless can? :create, Act::Event
@@ -229,6 +234,7 @@ class Act::EventsController < ActController
     _filter_orgs()
     _filter_parts()
 
+    @breadcrumb.push [ _breadcrumb_event_category(@event.event_category) ]
     @breadcrumb.push [ _breadcrumb_event(@event) ]
     @breadcrumb.push [ _breadcrumb_event_edit_participants(@event) ]
 
@@ -611,7 +617,17 @@ class Act::EventsController < ActController
     def _breadcrumb_events()
       return {
         name: "Akce",
+        ico: "fa-bullhorn",
         url: act_events_path
+      }
+    end
+
+    def _breadcrumb_event_category(event_category)
+      category = Act::EventCategory.find_by(code: event_category)
+      category_name = category.nil? ? '?' : category.name
+      return {
+        name: category_name,
+        url: act_events_filter_path(event_category, :all),
       }
     end
 
