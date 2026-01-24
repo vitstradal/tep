@@ -1,3 +1,16 @@
+
+<div class="tabbable">
+  <ul id="myTab" class="nav nav-tabs">
+     <li class="active" > <%= link_to 'Přihlašování',   "#"   %></li>
+     <% if @event.event_info_url != "" %>
+        <li> <%= link_to 'Informace',    @event.event_info_url  %></li>
+     <% end %>
+     <% if @event.event_photos_url != "" %>
+        <li> <%= link_to 'Fotky', @event.event_photos_url  %></li>
+     <% end %>
+  </ul>
+  <div class="tab-content">
+
 <h1><%= @event.title %>
 <% if (can? :edit, Act::Event) && !@edit_participants %>
   <%= button_tag "Edituj akci", :href => act_event_edit_path(@event), :class=>'btn btn-warning', :ico => 'fa-wrench' %>
@@ -124,3 +137,6 @@
 <% else %>
   Pro zobrazení účastníků je potřeba se přihlásit.
 <% end %>
+
+</div>
+</div>
