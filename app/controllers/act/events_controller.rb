@@ -407,6 +407,8 @@ class Act::EventsController < ActController
   #
   def display_participants
     @breadcrumb = []
+    @event_tab = 'list'
+    @wide_display = true
     @breadcrumb.push [ _breadcrumb_events ]
 
     return unless _find_event(params[:event_id])

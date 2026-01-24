@@ -702,3 +702,9 @@ mark.marker-green:after
 .grey  {
   color: #888;
 }
+
+.bold {
+  font-weight: bold;
+  color : black;
+}
+

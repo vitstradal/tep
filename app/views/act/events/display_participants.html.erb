@@ -1,6 +1,5 @@
 <h1>Účastníci akce
   <%= @event.title %>
-  <%= button_tag "Zpět", :href => act_event_path(@event), :class=>'btn', :ico =>'fa-reply' %>
 </h1>
 
 <br>
@@ -9,10 +8,21 @@
   <div class="tab-content">
     <div>
       <% @attr_table.each_with_index do |attr, index| %>
-        <a class="toggle-vis" data-column="<%= index %>"><%= attr[1] %></a>
+        <span class="bold toggle-vis" data-column="<%= index %>"><%= attr[1] %></span>
         <%= "-" if index < @attr_table.length() - 1 %>
       <% end %>
-      <br><br>
+      <br/>
+      <span class='bold toggle-par-vis'>účastníci</span> --
+      <span class='bold toggle-sub-vis'>náhradníci</span>
+      <span class='bold toggle-org-vis'>org</span>
+      <span class='bold toggle-yes-vis'>jede</span>
+      <span class='bold toggle-no-vis'>nejede</span>
+      <span class='bold toggle-maybe-vis'>možná</span> --
+      <span class='clear-vis'>empty</span>
+      <br/>
+      <%= link_to 'download CSV(not yet)', :class=>'download-csv btn btn-primary', :href => "?", ico: 'fa-excel' %>
+      <%#= button_tag 'PDF', :class=>'download-csv btn btn-primary', :href => "?", ico: 'fa-pdf' %>
+      <br/><br/>
     </div>
 
     <div class="table-div">
@@ -37,9 +47,9 @@
           <% end %>
         </tr>
 
-        <%= render :partial => "display_participants_single_type", locals: { event_participants: @orgs_yes } %>
+        <%= render :partial => "display_participants_single_type", locals: { event_participants: @orgs_yes   } %>
         <%= render :partial => "display_participants_single_type", locals: { event_participants: @orgs_maybe } %>
-        <%= render :partial => "display_participants_single_type", locals: { event_participants: @orgs_no } %>
+        <%= render :partial => "display_participants_single_type", locals: { event_participants: @orgs_no    } %>
 
         <tr>
           <% for attr in @attr_table do %>
@@ -47,9 +57,9 @@
           <% end %>
         </tr>
 
-        <%= render :partial => "display_participants_single_type", locals: { event_participants: @parts_yes } %>
+        <%= render :partial => "display_participants_single_type", locals: { event_participants: @parts_yes   } %>
         <%= render :partial => "display_participants_single_type", locals: { event_participants: @parts_maybe } %>
-        <%= render :partial => "display_participants_single_type", locals: { event_participants: @parts_no } %>
+        <%= render :partial => "display_participants_single_type", locals: { event_participants: @parts_no    } %>
 
         <tr>
           <% for attr in @attr_table do %>
@@ -57,9 +67,9 @@
           <% end %>
         </tr>
 
-        <%= render :partial => "display_participants_single_type", locals: { event_participants: @substitutes_yes } %>
+        <%= render :partial => "display_participants_single_type", locals: { event_participants: @substitutes_yes  } %>
         <%= render :partial => "display_participants_single_type", locals: { event_participants: @substitutes_maybe } %>
-        <%= render :partial => "display_participants_single_type", locals: { event_participants: @substitutes_no } %>
+        <%= render :partial => "display_participants_single_type", locals: { event_participants: @substitutes_no   } %>
           </tbody>
       </table>
     </div>

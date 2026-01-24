@@ -43,6 +43,19 @@ class Act::EventParticipant < ActiveRecord::Base
     end
   end
 
+  def status_color
+    case status
+    when "yes"
+      "#58d68d"
+    when "maybe"
+      "#f5b041"
+    when "no"
+      "#ec7063"
+    else
+      "#e0e0e0"
+    end
+  end
+
   ##
   # *Returns* čitelná hodnota stavu přihlášenosti v delší podobě
   def self.status_txt_long(event, participant)

@@ -133,6 +133,13 @@ jQuery(function($) {
   if (document.getElementById("act_display_participants")) {
     var url = "https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js";
     $.getScript( url, function() {
+      var show_org = true
+      var show_sub = true
+      var show_par = true
+      var show_yes = true
+      var show_no = true
+      var show_maybe = true
+      var show_columns = []
       const table = new DataTable('#act_display_participants', {
           paging: false,
           ordering: false,
@@ -142,17 +149,115 @@ jQuery(function($) {
           scrollX: true
       });
 
-      document.querySelectorAll('a.toggle-vis').forEach((el) => {
-          el.addEventListener('click', function (e) {
-              e.preventDefault();
-
-              let columnIdx = e.target.getAttribute('data-column');
-              let column = table.column(columnIdx);
-
-              // Toggle the visibility
-              column.visible(!column.visible());
-          });
+      $('span.toggle-vis').click( function (ev) {
+          let element =  $(this)
+          let columnIdx = element.data('column')
+          let column = table.column(columnIdx)
+          let column_visible = column.visible()
+          element.toggleClass('bold', !column_visible)
+          column.visible(!column_visible)
+          update_url()
       });
+      $('span.clear-vis').click( function (ev) {
+         let count = table.columns().every( function(columnIdx) {
+                console.log("columns index", columnIdx);
+                let show = [0,2,3].includes(columnIdx)
+                $('span.toggle-vis[data-column="' + columnIdx +'"]').toggleClass('bold', show)
+                table.column(columnIdx).visible(show)
+         });
+         update_url()
+      });
+
+      $('span.toggle-org-vis').click( function (ev) {
+         show_org = ! $(this).hasClass('bold');
+         $(this).toggleClass('bold', show_org);
+         redraw_table();
+      });
+
+      $('span.toggle-sub-vis').click( function (ev) {
+         show_sub = ! $(this).hasClass('bold');
+         $(this).toggleClass('bold', show_sub);
+         redraw_table();
+      });
+
+      $('span.toggle-par-vis').click( function (ev) {
+         show_par = ! $(this).hasClass('bold');
+         $(this).toggleClass('bold', show_par);
+         redraw_table();
+      });
+
+      $('span.toggle-yes-vis').click( function (ev) {
+         show_yes = ! $(this).hasClass('bold');
+         $(this).toggleClass('bold', show_yes);
+         redraw_table();
+      });
+
+      $('span.toggle-no-vis').click( function (ev) {
+         show_no = ! $(this).hasClass('bold');
+         $(this).toggleClass('bold', show_no);
+         redraw_table();
+      });
+
+      $('span.toggle-maybe-vis').click( function (ev) {
+         show_maybe = ! $(this).hasClass('bold');
+         $(this).toggleClass('bold', show_maybe);
+         redraw_table();
+      });
+
+      function visible_columns() {
+         return table.columns().indexes().toArray().map(idx => table.column(idx).visible() ? 1 : 0)
+      }
+      function redraw_table() {
+         table.rows().every( function() {
+             const tr = $(this.node());
+             const is_org = tr.data('org');
+             const is_sub = is_org ? false : tr.data('chosen') == 'substitute';
+             const is_par = is_org ? false : tr.data('chosen') == 'participant';
+             const status = tr.data('status')
+             show = true
+                
+             if( status == 'maybe' && ! show_maybe ) {
+                show = false
+             }
+             if( status == 'no' && ! show_no ) {
+                show = false
+             }
+             if( status == 'yes' && ! show_yes ) {
+                show = false
+             }
+             if( is_org && ! show_org ) {
+                show = false
+             }
+             if( is_par && ! show_par ) {
+                show = false
+             }
+             if( is_sub && ! show_sub ) {
+                show = false
+             }
+
+             console.log("row", show, "chosen", tr.data('chosen'), "status", status, "show", show );
+             tr.toggle(show);
+         });
+         update_url()
+      }
+      function update_url() {
+        var params = {
+          "col": visible_columns().join(''),
+          "org": show_org ? 1 : 0,
+          "par": show_par ? 1 : 0,
+          "sub": show_sub ? 1 : 0,
+          "yes": show_yes ? 1 : 0,
+          "no" : show_no  ? 1 : 0,
+          "maybe": show_maybe ? 1 : 0,
+          "fmt": 'pdf',
+        }
+        const url_pdf = '?' + Object.entries(params).map(([k, v]) => `${k}=${v}`).join('&')
+        params["fmt"] = 'csv';
+        const url_csv = '?' + Object.entries(params).map(([k, v]) => `${k}=${v}`).join('&')
+        $('.download-csv').attr('href', url_csv)
+        $('.download-pdf').attr('href', url_pdf)
+      }
+
     });
   }
 });

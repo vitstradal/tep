@@ -24,7 +24,7 @@
   <%= stylesheet_link_tag '/ace/css/ui.jqgrid.css' %>
   <%# stylesheet_link_tag '/ace/css/ace-part2.css' %>
   <%= stylesheet_link_tag '/stylesheets/andulka/stylesheet.css' %>
-  <%= stylesheet_link_tag '/stylesheets/tep.css' %>
+  <%= stylesheet_link_tag '/stylesheets/tep.css?v=3' %>
   <%= stylesheet_link_tag '/stylesheets/act.css?v=2' %>
   <% if @special_page %>
     <%= stylesheet_link_tag '/stylesheets/special.css' %>
@@ -337,15 +337,18 @@
           <div class="tabbable">
             <ul id="myTab" class="nav nav-tabs">
                <li <%=class_active_if( @event_tab == 'show') %>> <%= link_to 'Přihlašování',  act_event_path(@event) %></li>
-               <% if @event.event_info_url != "" %>
+               <% if @event.event_info_url != "" -%>
                   <li <%=class_active_if( @event_tab == 'info') %>> <%= link_to 'Informace',    @event.event_info_url  %></li>
-               <% end %>
-               <% if @event.event_photos_url != "" %>
+               <% end -%>
+               <% if @event.event_photos_url != "" -%>
                   <li <%=class_active_if( @event_tab == 'foto') %>> <%= link_to 'Fotky', @event.event_photos_url  %></li>
-               <% end %>
-               <% if @event.event_piki_url != "" && !current_user.nil? && current_user.org? %>
-                  <li <%=class_active_if( @event_tab == 'piki') %>> <%= link_to 'Piki', @event.event_piki_url  %></li>
-               <% end %>
+               <% end -%>
+               <% if !current_user.nil? && current_user.org? -%>
+                 <% if @event.event_piki_url != ""  -%>
+                    <li <%=class_active_if( @event_tab == 'piki') %>> <%= link_to 'Piki', @event.event_piki_url  %></li>
+                 <% end -%>
+                 <li <%=class_active_if( @event_tab == 'list') %>> <%= link_to 'Seznam', act_event_display_participants_path(@event) %></li>
+               <% end -%>
             </ul>
             <div class="tab-content">
        <% end %>
@@ -439,9 +442,9 @@
   <%= javascript_include_tag '/javascripts/html2tracwiki.js?v=0.2' %>
   <%= javascript_include_tag '/javascripts/diff.js?v=0.2' %>
 <% end %>
-<%= javascript_include_tag '/javascripts/act.js?v=2' %>
+<%= javascript_include_tag '/javascripts/act.js?v=2.1' %>
 <%= javascript_include_tag '/ace/js/uncompressed/ace.js' %>
-<%= javascript_include_tag '/javascripts/tep.js?v=7' %>
+<%= javascript_include_tag '/javascripts/tep.js?v=1.2' %>
 <% if @special_page %>
   <%= javascript_include_tag "/javascripts/special.js"  %>
 <% end %>
