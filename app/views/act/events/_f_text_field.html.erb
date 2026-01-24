@@ -3,6 +3,7 @@
   <div class="col-sm-<%= is_jakna ? '5' : '10' %> <%= form_error_class obj, name %>">
     <%= f.text_field name %>
    <%= form_error obj, name %>
+   <% if local_assigns.key?(:extra) %><%= extra %><% end %>
   </div>
 </div>
 
