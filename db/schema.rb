@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 30) do
+ActiveRecord::Schema[7.2].define(version: 31) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -88,6 +88,7 @@ ActiveRecord::Schema[7.2].define(version: 30) do
     t.string "event_medic", default: ""
     t.boolean "spec_place_return", default: false
     t.string "spec_place_return_detail", default: ""
+    t.string "event_piki_url", default: ""
   end
 
   create_table "act_participants", force: :cascade do |t|
