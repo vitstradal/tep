@@ -16,7 +16,7 @@ module ApplicationHelper
   #       ico:: class z font-awesome jaká icona se má použít (třeba `fa-user`).
   # block:: materiál textu linku
   def ilink_to(text = nil , url = nil, opt = nil, &block)
-    url, opt, text = opt, text, capture(&block) if block_given?
+    url, opt, text = text, url, capture(&block) if block_given?
     opt ||= {}
     ico = opt.delete(:ico)
     text = content_tag(:span, text, :class=>'hidden-xs')

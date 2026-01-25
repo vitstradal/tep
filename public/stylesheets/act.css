@@ -19,6 +19,6 @@ table.act_table_50 { width: 50%; }
 .act_pad_left_20 { padding-left: 25px;}
 
 li.act_no_left_margin { margin-left: 00px; }
-li.act_margin_enroll_others { margin-left: 81px; }
+li.act_margin_enroll_others { margin-left: 3em; }
 
 tr.act_bck_grey { background-color:  #e8e8e8   }

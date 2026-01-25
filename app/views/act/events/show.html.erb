@@ -3,9 +3,7 @@
 <% if (can? :edit, Act::Event) && !@edit_participants %>
   <%= button_tag "Edituj akci", :href => act_event_edit_path(@event), :class=>'btn btn-warning', :ico => 'fa-wrench' %>
 <% end %>
-<% if @edit_participants %>
-    <%= button_tag "Zpět", :href => act_event_path(@event), :class=>'btn', :ico =>'fa-reply' %>
-<% else %>
+<% if !@edit_participants %>
   <% if can? :update_other, Act::EventParticipant %>
     <%= button_tag "Edituj účastníky", :href => act_event_edit_participants_path(@event), :class=>'btn btn-danger', :ico => 'fa-pencil-square-o ' %>
     <%= button_tag "Přihlaš nové účastníky", :href => act_event_enroll_others_path(@event, "ev", "ev"), :class=>'btn btn-success', :ico => 'fa-users' %>

@@ -196,9 +196,11 @@ class Act::EventsController < ActController
   def edit
     @breadcrumb = []
     @breadcrumb.push [ _breadcrumb_events ]
+    @event_tab = 'edit'
 
     return unless _find_event(params[:event_id])
 
+    @breadcrumb.push [ _breadcrumb_event_category(@event.event_category) ]
     @breadcrumb.push [ _breadcrumb_event(@event) ]
     @breadcrumb.push [ _breadcrumb_event_edit(@event) ]
     @paper_templates = _list_paper_templates
@@ -228,6 +230,7 @@ class Act::EventsController < ActController
   def edit_participants
     @breadcrumb = []
     @breadcrumb.push [ _breadcrumb_events ]
+    @event_tab = 'edit-par'
 
     return unless _find_event(params[:event_id])
 
@@ -266,6 +269,7 @@ class Act::EventsController < ActController
   def edit_invitations
     @breadcrumb = []
     @breadcrumb.push [ _breadcrumb_events ]
+    @event_tab = 'edit-inv'
 
     return unless _find_event(params[:event_id])
 
@@ -310,6 +314,7 @@ class Act::EventsController < ActController
   def enroll_others
     @breadcrumb = []
     @breadcrumb.push [ _breadcrumb_events ]
+    @event_tab = 'enroll'
     return unless _find_event(params[:event_id])
 
     @breadcrumb.push [ _breadcrumb_event(@event) ]

@@ -24,8 +24,8 @@
   <%= stylesheet_link_tag '/ace/css/ui.jqgrid.css' %>
   <%# stylesheet_link_tag '/ace/css/ace-part2.css' %>
   <%= stylesheet_link_tag '/stylesheets/andulka/stylesheet.css' %>
-  <%= stylesheet_link_tag '/stylesheets/tep.css?v=3' %>
-  <%= stylesheet_link_tag '/stylesheets/act.css?v=2' %>
+  <%= stylesheet_link_tag '/stylesheets/tep.css?v=3.1' %>
+  <%= stylesheet_link_tag '/stylesheets/act.css?v=2.1' %>
   <% if @special_page %>
     <%= stylesheet_link_tag '/stylesheets/special.css' %>
   <% end %>
@@ -336,18 +336,49 @@
         <% if @event && !@event.id.nil? %>
           <div class="tabbable">
             <ul id="myTab" class="nav nav-tabs">
-               <li <%=class_active_if( @event_tab == 'show') %>> <%= link_to 'Přihlašování',  act_event_path(@event) %></li>
+               <%######################### tab Přihlašování -%>
+               <li <%=class_active_if( @event_tab == 'show') %>> <%=ilink_to 'Přihlašování', act_event_path(@event), ico: 'fa-book' %></li>
+
+               <%######################### tab Infromace -%>
                <% if @event.event_info_url != "" -%>
-                  <li <%=class_active_if( @event_tab == 'info') %>> <%= link_to 'Informace',    @event.event_info_url  %></li>
+                  <li <%=class_active_if( @event_tab == 'info') %>> <%=ilink_to 'Informace', @event.event_info_url, ico: 'fa-user' %></li>
                <% end -%>
+
+               <%######################### tab Fotky %>
                <% if @event.event_photos_url != "" -%>
-                  <li <%=class_active_if( @event_tab == 'foto') %>> <%= link_to 'Fotky', @event.event_photos_url  %></li>
+                  <li <%=class_active_if( @event_tab == 'foto') %>> <%=ilink_to 'Fotky', @event.event_photos_url, ico: 'fa-photo'  %></li>
                <% end -%>
+
+               <%######################### tab Orgove -%>
                <% if !current_user.nil? && current_user.org? -%>
+
+                 <%######################### tab Edituj akci -%>
+                 <li class="act_margin_enroll_others<%=active( @event_tab == 'edit') %>">
+                   <%=ilink_to act_event_edit_path(@event), ico:'fa-wrench' do  %>Edituj akci<%end%>
+                 </li>
+                 <%######################### tab Edituj pozvané -%>
+                 <% if (can? :edit, Act::EventInvitation) && (@event.enable_only_specific_participants || @event.enable_only_specific_substitutes || @event.enable_only_specific_organisers)%>
+                   <li <%=class_active_if( @event_tab == 'edit-inv') %>>
+                     <%=ilink_to act_event_edit_invitations_path(@event), ico:'fa-envelope' do  %>Edituj pozvané<%end%>
+                   </li>
+                 <% end %>
+                 <%######################### tab Edituj účastníky -%>
+                 <li <%=class_active_if( @event_tab == 'edit-par') %>>
+                   <%=ilink_to act_event_edit_participants_path(@event), ico:'fa-pencil-square-o' do  %>Edituj účastníky<%end%>
+                 </li>
+
+                 <%######################### tab Registrace-%>
+                 <li <%=class_active_if( @event_tab == 'enroll') %>>
+                   <%=ilink_to act_event_enroll_others_path(@event, "ev", "ev"), ico:'fa-users' do  %>Registrace<%end%>
+                 </li>
+
+                 <%######################### tab Seznam -%>
+                 <li <%=class_active_if( @event_tab == 'list') %>><%= ilink_to act_event_display_participants_path(@event), ico: 'fa-list'  do%>Seznam<%end%> </li>
+
+                 <%######################### tab Piki -%>
                  <% if @event.event_piki_url != ""  -%>
-                    <li <%=class_active_if( @event_tab == 'piki') %>> <%= link_to @event.event_piki_url do %>Piki <%=orgonly%><%end%></li>
+                    <li <%=class_active_if( @event_tab == 'piki') %>> <%=ilink_to @event.event_piki_url, ico: 'fa-cutlery' do %>Piki<%end%></li>
                  <% end -%>
-                 <li <%=class_active_if( @event_tab == 'list') %>><%= link_to act_event_display_participants_path(@event) do%>Seznam <%=orgonly%><%end%> </li>
                <% end -%>
             </ul>
             <div class="tab-content">
