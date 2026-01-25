@@ -207,5 +207,4 @@ class Act::EventCategoriesController < ActController
         url: act_events_path
       }
     end
-
 end

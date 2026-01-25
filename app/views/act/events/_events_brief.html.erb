@@ -1,8 +1,8 @@
 <% events.each do |event| %>
   <tr class="<%= "act_bck_grey" if old %>">
     <% if event.event_visible?(current_user) %>
-      <th class="col-md-4 col-sm-4 col-xs-4"><b><%= event.title %></th>
-      <th class="col-md-4 col-sm-3 col-xs-4"> <%= event.date_str() %></b></th>
+      <th class="col-md-4 col-sm-4 col-xs-4"><%=link_to act_event_path(event) do%><%= event.title %><%end%></th>
+      <th class="col-md-4 col-sm-3 col-xs-4"><%=link_to act_event_path(event) do%><%= event.date_str()%><%end%></th>
       <th class="act_center col-md-3 col-sm-5 col-xs-4">
       <% if event.event_info_url != "" %>
         <%= button_tag "info", href: event.event_info_url, class: "btn btn-xs btn-primary", ico: "fa-book" %>

@@ -250,7 +250,7 @@ jQuery(function($) {
           "no" : show_no  ? 1 : 0,
           "maybe": show_maybe ? 1 : 0,
         }
-        const url = Object.entries(params).map(([k, v]) => `${k}=${v}`).join('&')
+        const url = '?' + Object.entries(params).map(([k, v]) => `${k}=${v}`).join('&')
         const url_pdf = url + '&fmt=pdf'
         const url_pdfl = url + '&fmt=pdfl'
         const url_csv = url + '&fmt=csv'
