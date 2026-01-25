@@ -465,7 +465,6 @@ function editor_show_icons(editor)
 }
 
 function init_icons(editor) {
-       //console.log("init_icoshow");
        if( editor ) { 
                $('.icoshow').click(function () {
                  var c = $(this).find('span').text();
@@ -476,8 +475,13 @@ function init_icons(editor) {
        else {
 
                $('.icoshow').click(function () {
-                 //console.log("icoshow");
                  $(this).find('span').removeClass('hide');
+               });
+               $('.icoshow-all').click(function () {
+                 console.log("icoshow-all")
+                 $('.icoshow').each(function (i, el) {
+                   $(el).find('span').removeClass('hide')
+                 })
                });
        }
 }

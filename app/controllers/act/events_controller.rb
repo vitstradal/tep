@@ -151,7 +151,7 @@ class Act::EventsController < ActController
   def new
     @breadcrumb = []
     @breadcrumb.push [ _breadcrumb_events ]
-    @breadcrumb.push [ _breadcrumb_event_category(@event.event_category) ]
+    #@breadcrumb.push [ _breadcrumb_event_category(@event.event_category) ]
     @breadcrumb.push [ _breadcrumb_event_new ]
 
     return render 'permission_denied', :locals => { :desired => "vytvářet nové " } unless can? :create, Act::Event

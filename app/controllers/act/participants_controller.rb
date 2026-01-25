@@ -16,6 +16,8 @@ class Act::ParticipantsController < ActController
   # @participants:: účastnické účty, které budou zobrazeny
   #
   def index
+    @breadcrumb = [ [ _breadcrumb_events ] ]
+    @breadcrumb.push [ _breadcrumb_participants ] if can? :read_other, Act::Participant
     @grade = params[:grade].nil? ? "ev" : params[:grade]
     @role = params[:role].nil? ? "p" : params[:role]
 
@@ -52,7 +54,7 @@ class Act::ParticipantsController < ActController
   # @not_my_events:: akce, na které zatím nejsem vůbec přihlášený
   #
   def show
-    @breadcrumb = []
+    @breadcrumb = [ [ _breadcrumb_events ] ]
     @breadcrumb.push [ _breadcrumb_participants ] if can? :read_other, Act::Participant
 
     @participant = Act::Participant.find_by(id: params[:participant_id])
@@ -90,7 +92,7 @@ class Act::ParticipantsController < ActController
 
     return redirect_to act_participant_path(current_user.participant) if Act::Participant::has_participant?(current_user)
 
-    @breadcrumb = []
+    @breadcrumb = [ [ _breadcrumb_events ] ]
     @breadcrumb.push [ _breadcrumb_participants ] if can? :read_other, Act::Participant
     @breadcrumb.push [ _breadcrumb_participant_new ]
 
@@ -109,7 +111,7 @@ class Act::ParticipantsController < ActController
   def new_complet
     return redirect_to act_participant_path(current_user.participant) if Act::Participant::has_participant?(current_user)
 
-    @breadcrumb = []
+    @breadcrumb = [ [ _breadcrumb_events ] ]
     @breadcrumb.push [ _breadcrumb_participants ] if can? :read_other, Act::Participant
     @breadcrumb.push [ _breadcrumb_participant_general ]
     @breadcrumb.push [ _breadcrumb_participant_new_complet ]
@@ -232,7 +234,7 @@ class Act::ParticipantsController < ActController
   # @participant:: účastnický účet, který upravujeme
   #
   def edit
-    @breadcrumb = []
+    @breadcrumb = [ [ _breadcrumb_events ] ]
     @breadcrumb.push [ _breadcrumb_participants ] if can? :read_other, Act::Participant
 
     if current_user.nil? || ((! Act::Participant::has_participant?(current_user) || (Act::Participant::has_participant?(current_user) && params[:participant_id] != current_user.participant.id.to_s)) && (! can? :update_other, Act::Participant))
@@ -287,7 +289,7 @@ class Act::ParticipantsController < ActController
   # @participant:: akce, účastnický účet, který mažeme
   #
   def confirm_delete
-    @breadcrumb = []
+    @breadcrumb = [ [ _breadcrumb_events ] ]
     @breadcrumb.push [ _breadcrumb_participants ] if can? :read_other, Act::Participant
 
     @participant = Act::Participant.find_by(id: params[:participant_id])
@@ -385,7 +387,7 @@ class Act::ParticipantsController < ActController
   #
   # Zeptá se, jestli si je uživatel svojí touhou zvýšit ročník každému uživateli jistý
   def confirm_new_year
-    @breadcrumb = []
+    @breadcrumb = [ [ _breadcrumb_events ] ]
     @breadcrumb.push [ _breadcrumb_participants ] if can? :read_other, Act::Participant
 
     unless can? :new_year, Act::Participant
@@ -425,7 +427,7 @@ class Act::ParticipantsController < ActController
   #
   # Zeptá se, jestli si je uživatel svojí touhou snížit ročník každému uživateli jistý
   def confirm_previous_year
-    @breadcrumb = []
+    @breadcrumb = [ [ _breadcrumb_events ] ]
     @breadcrumb.push [ _breadcrumb_participants ] if can? :read_other, Act::Participant
 
     unless can? :previous_year, Act::Participant
@@ -520,6 +522,13 @@ class Act::ParticipantsController < ActController
       return {
         name: "Vrátit ročník",
         url: act_participants_confirm_previous_year_path
+      }
+    end
+    def _breadcrumb_events()
+      return {
+        name: "Akce",
+        ico: "fa-bullhorn",
+        url: act_events_path
       }
     end
 end

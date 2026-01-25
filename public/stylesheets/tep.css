@@ -708,3 +708,12 @@ mark.marker-green:after
   color : black;
 }
 
+.nav-tabs > li.active > a.orgnoly,
+.nav-tabs > li > a.orgonly,
+.orgonly {
+  background-color: #ffe5e5;
+}
+
+.icon-xs { font-size: 0.6em; }
+.icon-sm { font-size: 0.8em; }
+.icon-lg { font-size: 1.2em; }

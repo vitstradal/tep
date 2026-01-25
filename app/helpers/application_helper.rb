@@ -80,6 +80,10 @@ module ApplicationHelper
     return ''
   end
 
+  def orgonly
+    content_tag(:i, '', :class => "fa fa-lock icon-xs", title:"org only")
+  end
+
   def checked(cond, checked = 'cheked="checked"')
     return " #{checked}" if cond
     return ''

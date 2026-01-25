@@ -9,6 +9,8 @@ class Act::EventCategoriesController < ActController
   #
   # Zobrazí všechny typy akcí
   def index
+    @breadcrumb = [ [ _breadcrumb_events ] ]
+    @breadcrumb.push [ _breadcrumb_event_categories ]
     return render 'not_allowed', locals: { :desired => "read" } if ! can? :read, Act::EventCategory
   end
 
@@ -21,7 +23,7 @@ class Act::EventCategoriesController < ActController
   # code:: kód typu akce
   #
   def show
-    @breadcrumb = []
+    @breadcrumb = [ [ _breadcrumb_events ] ]
     @breadcrumb.push [ _breadcrumb_event_categories ]
 
     return unless _find_event_category(params[:code])
@@ -40,7 +42,7 @@ class Act::EventCategoriesController < ActController
   # @event_category:: typ akce
   #
   def new
-    @breadcrumb = []
+    @breadcrumb = [ [ _breadcrumb_events ] ]
     @breadcrumb.push [ _breadcrumb_event_categories ]
     @breadcrumb.push [ _breadcrumb_event_category_new ]
 
@@ -85,7 +87,7 @@ class Act::EventCategoriesController < ActController
   def edit
     return unless _find_event_category(params[:code])
 
-    @breadcrumb = []
+    @breadcrumb = [ [ _breadcrumb_events ] ]
     @breadcrumb.push [ _breadcrumb_event_categories ]
     @breadcrumb.push [ _breadcrumb_event_category(@event_category) ]
 
@@ -147,7 +149,7 @@ class Act::EventCategoriesController < ActController
   #
   #
   def jakna
-    @breadcrumb = []
+    @breadcrumb = [ [ _breadcrumb_events ] ]
     @breadcrumb.push [ _breadcrumb_event_categories ]
     @breadcrumb.push [ _breadcrumb_event_categories_jakna ]
 
@@ -197,4 +199,13 @@ class Act::EventCategoriesController < ActController
         url: act_event_categories_jakna_path
       }
     end
+
+    def _breadcrumb_events()
+      return {
+        name: "Akce",
+        ico: "fa-bullhorn",
+        url: act_events_path
+      }
+    end
+
 end

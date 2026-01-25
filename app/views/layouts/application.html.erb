@@ -333,7 +333,7 @@
 <%# taby akci
 <%################################################################################## %>
         <% @event = Act::Event.find_by(id: @event_id.to_i) if @event_id %>
-        <% if @event %>
+        <% if @event && !@event.id.nil? %>
           <div class="tabbable">
             <ul id="myTab" class="nav nav-tabs">
                <li <%=class_active_if( @event_tab == 'show') %>> <%= link_to 'Přihlašování',  act_event_path(@event) %></li>
@@ -345,9 +345,9 @@
                <% end -%>
                <% if !current_user.nil? && current_user.org? -%>
                  <% if @event.event_piki_url != ""  -%>
-                    <li <%=class_active_if( @event_tab == 'piki') %>> <%= link_to 'Piki', @event.event_piki_url  %></li>
+                    <li <%=class_active_if( @event_tab == 'piki') %>> <%= link_to @event.event_piki_url do %>Piki <%=orgonly%><%end%></li>
                  <% end -%>
-                 <li <%=class_active_if( @event_tab == 'list') %>> <%= link_to 'Seznam', act_event_display_participants_path(@event) %></li>
+                 <li <%=class_active_if( @event_tab == 'list') %>><%= link_to act_event_display_participants_path(@event) do%>Seznam <%=orgonly%><%end%> </li>
                <% end -%>
             </ul>
             <div class="tab-content">
@@ -444,7 +444,7 @@
 <% end %>
 <%= javascript_include_tag '/javascripts/act.js?v=2.1' %>
 <%= javascript_include_tag '/ace/js/uncompressed/ace.js' %>
-<%= javascript_include_tag '/javascripts/tep.js?v=1.2' %>
+<%= javascript_include_tag '/javascripts/tep.js?v=1.6' %>
 <% if @special_page %>
   <%= javascript_include_tag "/javascripts/special.js"  %>
 <% end %>
