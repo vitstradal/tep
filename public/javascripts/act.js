@@ -215,7 +215,7 @@ jQuery(function($) {
              const is_par = is_org ? false : tr.data('chosen') == 'participant';
              const status = tr.data('status')
              show = true
-                
+
              if( status == 'maybe' && ! show_maybe ) {
                 show = false
              }

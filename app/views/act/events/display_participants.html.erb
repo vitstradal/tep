@@ -12,16 +12,16 @@
         <%= "-" if index < @attr_table.length() - 1 %>
       <% end %>
       <br/>
-      <span class='bold toggle-par-vis'>účastníci</span> --
+      <span class='bold toggle-par-vis'>účastníci</span>
       <span class='bold toggle-sub-vis'>náhradníci</span>
-      <span class='bold toggle-org-vis'>org</span>
+      <span class='bold toggle-org-vis'>org</span> --
       <span class='bold toggle-yes-vis'>jede</span>
       <span class='bold toggle-no-vis'>nejede</span>
       <span class='bold toggle-maybe-vis'>možná</span> --
       <span class='clear-vis'>empty</span>
       <br/>
-      <%= link_to 'download CSV(not yet)', :class=>'download-csv btn btn-primary', :href => "?", ico: 'fa-excel' %>
-      <%#= button_tag 'PDF', :class=>'download-csv btn btn-primary', :href => "?", ico: 'fa-pdf' %>
+      <%= button_tag 'download CSV', :class=>'download-csv btn btn-primary', :href => "?fmt=csv", ico: 'fa-excel' %>
+      <%= button_tag 'download PDF(not yet)', :class=>'download-pdf btn btn-primary', :href => "?fmt=pdf", ico: 'fa-pdf' %>
       <br/><br/>
     </div>
 

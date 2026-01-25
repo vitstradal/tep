@@ -27,6 +27,18 @@ class Act::EventParticipant < ActiveRecord::Base
   validates :status, inclusion: { in: STATUSES_OPTIONS, message: "Účstník musí být buťo přihlášený, nebo neví, anebo nepřihlášený (yes, maybe, no)" }
 
   validates :chosen, inclusion: { in: CHOSEN_OPTIONS, message: "Účastník musí být buťo pozvaný, nebo náhradník, anebo none" }
+  def go
+    case status
+    when "yes"
+      "Y"
+    when "maybe"
+      "M"
+    when "no"
+      "N"
+    else
+      "-"
+    end
+  end
 
   ##
   # *Returns* čitelná hodnota stavu přihlášenosti
@@ -139,5 +151,19 @@ class Act::EventParticipant < ActiveRecord::Base
     end
 
     return false
+  end
+
+  def par
+     return 'org' if org?
+     case chose
+     when "participant"
+       "par"
+     when "substitute"
+       "sub"
+     when "none"
+       "non"
+     else
+       "unk"
+     end
   end
 end

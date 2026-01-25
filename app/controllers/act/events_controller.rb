@@ -8,6 +8,9 @@
 
 require 'pdf_forms'
 require 'json'
+require 'csv'
+require 'prawn'
+require 'prawn/table'
 
 PAPER_TEMPLATES_DIR = "var/act/paper-templates"
 
@@ -65,7 +68,7 @@ class Act::EventsController < ActController
   #
   def show
     return unless _find_event(params[:event_id])
-    @event_tab = 'show' 
+    @event_tab = 'show'
     @breadcrumb = []
     @breadcrumb.push [ _breadcrumb_events ]
     @breadcrumb.push [ _breadcrumb_event_category(@event.event_category) ]
@@ -407,6 +410,7 @@ class Act::EventsController < ActController
   #
   def display_participants
     @breadcrumb = []
+    format = params[:fmt]
     @event_tab = 'list'
     @wide_display = true
     @breadcrumb.push [ _breadcrumb_events ]
@@ -424,8 +428,80 @@ class Act::EventsController < ActController
     _filter_parts()
 
     @attr_table = Act::Participant::ATTR_TABLE
+    return _display_participants_render_table(format) if format == 'csv' || format == 'pdf'
+
+
   end
 
+  # vyfiltruje jen ty prvky pole arr, kde je v mask true
+  def _mask(arr, mask)
+    arr.each_with_index.select do |_,idx|
+      mask[idx]
+    end.map(&:first)
+  end
+
+  def _display_participants_render_table(format)
+    col = params[:col] || '1111111111111111111111111111111111111111'
+    mask = col.split(//).map { |x| x == '1' ? true : false }
+
+    header = _mask(Act::Participant::ATTR_TABLE.keys.map(&:to_s), mask)
+    parts = []
+    if params[:org] != '0'
+      parts.push(@orgs_yes)   if params['yes'] != '0'
+      parts.push(@orgs_maybe) if params['maybe'] != '0'
+      parts.push(@orgs_no)    if params['no'] != '0'
+    end
+    if params[:par] != '0'
+      parts.push(@parts_yes)   if params['yes'] != '0'
+      parts.push(@parts_maybe) if params['maybe'] != '0'
+      parts.push(@parts_no)    if params['no'] != '0'
+    end
+    if params[:sub] != '0'
+      parts.push(@substitutes_yes)   if params['yes'] != '0'
+      parts.push(@substitutes_maybe) if params['maybe'] != '0'
+      parts.push(@substitutes_no)    if params['no'] != '0'
+    end
+
+    rows = []
+    rows << header
+    parts.each do |part|
+      part.each do |event_participant|
+        arr = Act::Participant::ATTR_TABLE.keys.map do |attr|
+          event_participant.participant.send(attr)
+        end
+        rows << _mask(arr, mask)
+      end
+    end
+
+    if format == 'csv'
+      csv_data = CSV.generate(col_sep: ",") do |csv|
+        rows.each { |r| csv << r }
+      end
+
+      return send_data csv_data,
+        filename: "list.csv",
+        type: "text/csv; charset=utf-8",
+        #type: "text/plain; charset=utf-8",
+        disposition: "attachment"
+    end
+
+    if format == 'pdf'
+      Prawn::Document.generate("tabulka.pdf") do |pdf|
+        #Rails.logger.info("rows=#{rows}")
+        pdf.font_families.update(
+          'andulka' => {
+            normal: '/home/www/rails/tep/public/stylesheets/andulka/andulkabook-webfont.ttf',
+          }
+        )
+        pdf.font('andulka')
+        pdf.table(rows)
+        send_data pdf.render,
+          filename: "list.pdf",
+          type: "application/pdf",
+          disposition: "inline" # nebo "attachment"
+      end
+    end
+  end
   ##
   #  POST /act/events/jakna
   #

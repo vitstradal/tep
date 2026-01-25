@@ -220,6 +220,8 @@ class Act::Participant < ActiveRecord::Base
     {
       id: "Id",
       user_id: "User id",
+      #go: "Jede",
+      #par: "Typ",
       name: "Jméno",
       last_name: "Příjmení",
       nickname: "Přezdívka",
