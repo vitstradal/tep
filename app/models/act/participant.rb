@@ -226,7 +226,7 @@ class Act::Participant < ActiveRecord::Base
       last_name: "Příjmení",
       nickname: "Přezdívka",
       sex: "Pohlaví",
-      birth: "Datum narození",
+      birth_str: "Datum narození",
       grade: "Ročník",
       address: "Adresa",
       email: "Email",

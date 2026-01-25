@@ -428,7 +428,7 @@ class Act::EventsController < ActController
     _filter_parts()
 
     @attr_table = Act::Participant::ATTR_TABLE
-    return _display_participants_render_table(format) if format == 'csv' || format == 'pdf'
+    return _display_participants_render_table(format) if format =~ /^(csv|pdf|pdfl)$/
 
 
   end
@@ -485,8 +485,10 @@ class Act::EventsController < ActController
         disposition: "attachment"
     end
 
-    if format == 'pdf'
-      Prawn::Document.generate("tabulka.pdf") do |pdf|
+    if format == 'pdf' || format == 'pdfl'
+      page_layout =  format == 'pdf'  ? :portrait :  :landscape
+      Prawn::Document.generate("tabulka.pdf", page_layout: page_layout) do |pdf|
+        #pdf.font_size 4
         #Rails.logger.info("rows=#{rows}")
         pdf.font_families.update(
           'andulka' => {

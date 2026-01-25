@@ -249,13 +249,14 @@ jQuery(function($) {
           "yes": show_yes ? 1 : 0,
           "no" : show_no  ? 1 : 0,
           "maybe": show_maybe ? 1 : 0,
-          "fmt": 'pdf',
         }
-        const url_pdf = '?' + Object.entries(params).map(([k, v]) => `${k}=${v}`).join('&')
-        params["fmt"] = 'csv';
-        const url_csv = '?' + Object.entries(params).map(([k, v]) => `${k}=${v}`).join('&')
+        const url = Object.entries(params).map(([k, v]) => `${k}=${v}`).join('&')
+        const url_pdf = url + '&fmt=pdf'
+        const url_pdfl = url + '&fmt=pdfl'
+        const url_csv = url + '&fmt=csv'
         $('.download-csv').attr('href', url_csv)
         $('.download-pdf').attr('href', url_pdf)
+        $('.download-pdfl').attr('href', url_pdfl)
       }
 
     });
