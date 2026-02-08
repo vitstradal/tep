@@ -2,77 +2,72 @@
   <%= @event.title %>
 </h1>
 
-<br>
 
-<div class="tabbable">
-  <div class="tab-content">
-    <div>
-      <% @attr_table.each_with_index do |attr, index| %>
-        <span class="bold toggle-vis" data-column="<%= index %>"><%= attr[1] %></span>
-        <%= "-" if index < @attr_table.length() - 1 %>
+<div>
+  <% @attr_table.each_with_index do |attr, index| %>
+    <span class="bold toggle-vis" data-column="<%= index %>"><%= attr[1] %></span>
+    <%= "-" if index < @attr_table.length() - 1 %>
+  <% end %>
+  <br/>
+  <span class='bold toggle-par-vis'>účastníci</span> -
+  <span class='bold toggle-sub-vis'>náhradníci</span> -
+  <span class='bold toggle-org-vis'>org</span> --
+  <span class='bold toggle-yes-vis'>jede</span> -
+  <span class='bold toggle-no-vis'>nejede</span> -
+  <span class='bold toggle-maybe-vis'>možná</span> --
+  <span class='clear-vis'>name-only</span>
+  <br/>
+  <%= button_tag 'download CSV', :class=>'download-csv btn btn-primary', :href => "?fmt=csv", ico: 'fa-excel' %>
+  <%= button_tag 'download PDF', :class=>'download-pdf btn btn-primary', :href => "?fmt=pdf", ico: 'fa-pdf' %>
+  <%= button_tag 'download PDF landscape', :class=>'download-pdfl btn btn-primary', :href => "?fmt=pdfl", ico: 'fa-pdf' %>
+  <br/><br/>
+</div>
+
+<div class="table-div">
+  <table id="act_display_participants">
+    <thead>
+    <tr>
+      <% for attr in @attr_table do %>
+        <td>
+          <b>
+            <%= attr[1] %>
+          </b>
+        </td>
       <% end %>
-      <br/>
-      <span class='bold toggle-par-vis'>účastníci</span>
-      <span class='bold toggle-sub-vis'>náhradníci</span>
-      <span class='bold toggle-org-vis'>org</span> --
-      <span class='bold toggle-yes-vis'>jede</span>
-      <span class='bold toggle-no-vis'>nejede</span>
-      <span class='bold toggle-maybe-vis'>možná</span> --
-      <span class='clear-vis'>empty</span>
-      <br/>
-      <%= button_tag 'download CSV', :class=>'download-csv btn btn-primary', :href => "?fmt=csv", ico: 'fa-excel' %>
-      <%= button_tag 'download PDF', :class=>'download-pdf btn btn-primary', :href => "?fmt=pdf", ico: 'fa-pdf' %>
-      <%= button_tag 'download PDF landscape', :class=>'download-pdfl btn btn-primary', :href => "?fmt=pdfl", ico: 'fa-pdf' %>
-      <br/><br/>
-    </div>
+    </tr>
 
-    <div class="table-div">
-      <table id="act_display_participants">
-        <thead>
-        <tr>
-          <% for attr in @attr_table do %>
-            <td>
-              <b>
-                <%= attr[1] %>
-              </b>
-            </td>
-          <% end %>
-        </tr>
+    </thead>
+    <tbody>
 
-        </thead>
-        <tbody>
+    <tr>
+      <% for attr in @attr_table do %>
+        <td>Organizátoři</td>
+      <% end %>
+    </tr>
 
-        <tr>
-          <% for attr in @attr_table do %>
-            <td>Organizátoři</td>
-          <% end %>
-        </tr>
+    <%= render :partial => "display_participants_single_type", locals: { event_participants: @orgs_yes   } %>
+    <%= render :partial => "display_participants_single_type", locals: { event_participants: @orgs_maybe } %>
+    <%= render :partial => "display_participants_single_type", locals: { event_participants: @orgs_no    } %>
 
-        <%= render :partial => "display_participants_single_type", locals: { event_participants: @orgs_yes   } %>
-        <%= render :partial => "display_participants_single_type", locals: { event_participants: @orgs_maybe } %>
-        <%= render :partial => "display_participants_single_type", locals: { event_participants: @orgs_no    } %>
+    <tr>
+      <% for attr in @attr_table do %>
+        <td>Účastníci</td>
+      <% end %>
+    </tr>
 
-        <tr>
-          <% for attr in @attr_table do %>
-            <td>Účastníci</td>
-          <% end %>
-        </tr>
+    <%= render :partial => "display_participants_single_type", locals: { event_participants: @parts_yes   } %>
+    <%= render :partial => "display_participants_single_type", locals: { event_participants: @parts_maybe } %>
+    <%= render :partial => "display_participants_single_type", locals: { event_participants: @parts_no    } %>
 
-        <%= render :partial => "display_participants_single_type", locals: { event_participants: @parts_yes   } %>
-        <%= render :partial => "display_participants_single_type", locals: { event_participants: @parts_maybe } %>
-        <%= render :partial => "display_participants_single_type", locals: { event_participants: @parts_no    } %>
+    <tr>
+      <% for attr in @attr_table do %>
+        <td>Náhradníci</td>
+      <% end %>
+    </tr>
 
-        <tr>
-          <% for attr in @attr_table do %>
-            <td>Náhradníci</td>
-          <% end %>
-        </tr>
-
-        <%= render :partial => "display_participants_single_type", locals: { event_participants: @substitutes_yes  } %>
-        <%= render :partial => "display_participants_single_type", locals: { event_participants: @substitutes_maybe } %>
-        <%= render :partial => "display_participants_single_type", locals: { event_participants: @substitutes_no   } %>
-          </tbody>
-      </table>
-    </div>
-  </div>
+    <%= render :partial => "display_participants_single_type", locals: { event_participants: @substitutes_yes  } %>
+    <%= render :partial => "display_participants_single_type", locals: { event_participants: @substitutes_maybe } %>
+    <%= render :partial => "display_participants_single_type", locals: { event_participants: @substitutes_no   } %>
+      </tbody>
+  </table>
 </div>
