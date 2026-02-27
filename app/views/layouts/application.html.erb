@@ -354,17 +354,17 @@
 
                  <%######################### tab Edituj akci -%>
                  <li class="act_margin_enroll_others<%=active( @event_tab == 'edit') %>">
-                   <%=ilink_to act_event_edit_path(@event), ico:'fa-wrench' do  %>Edituj akci<%end%>
+                   <%=ilink_to act_event_edit_path(@event), ico:'fa-wrench' do  %>Nastavení<%end%>
                  </li>
                  <%######################### tab Edituj pozvané -%>
                  <% if (can? :edit, Act::EventInvitation) && (@event.enable_only_specific_participants || @event.enable_only_specific_substitutes || @event.enable_only_specific_organisers)%>
                    <li <%=class_active_if( @event_tab == 'edit-inv') %>>
-                     <%=ilink_to act_event_edit_invitations_path(@event), ico:'fa-envelope' do  %>Edituj pozvané<%end%>
+                     <%=ilink_to act_event_edit_invitations_path(@event), ico:'fa-envelope' do  %>Pozvaní<%end%>
                    </li>
                  <% end %>
                  <%######################### tab Edituj účastníky -%>
                  <li <%=class_active_if( @event_tab == 'edit-par') %>>
-                   <%=ilink_to act_event_edit_participants_path(@event), ico:'fa-pencil-square-o' do  %>Edituj účastníky<%end%>
+                   <%=ilink_to act_event_edit_participants_path(@event), ico:'fa-pencil-square-o' do  %>Účastníci<%end%>
                  </li>
 
                  <%######################### tab Registrace-%>
@@ -378,6 +378,10 @@
                  <%######################### tab Piki -%>
                  <% if @event.event_piki_url != ""  -%>
                     <li <%=class_active_if( @event_tab == 'piki') %>> <%=ilink_to @event.event_piki_url, ico: 'fa-cutlery' do %>Piki<%end%></li>
+                 <% end -%>
+                 <%######################### tab Sklep -%>
+                 <% if @event.event_sklep_url != ""  -%>
+                    <li <%=class_active_if( @event_tab == 'sklep') %>> <%=ilink_to @event.event_sklep_url, ico: 'fa-download' do %>Slep<%end%></li>
                  <% end -%>
                <% end -%>
             </ul>
