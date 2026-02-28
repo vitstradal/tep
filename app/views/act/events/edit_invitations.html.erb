@@ -1,3 +1,4 @@
+<%= render 'tabs_edit' do %>
 <h1>Editace pozvaných na akci <%= @event.title %>
 <%= button_tag "Zpět", :href => act_event_path(@event), :class=>'btn', :ico =>'fa-reply' %>
 </h1>
@@ -46,3 +47,4 @@
     </div>
    </div>
 </div>
+<% end %>

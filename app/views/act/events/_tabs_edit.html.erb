@@ -1,0 +1,29 @@
+<div class="tabbable">
+
+    <ul class="nav nav-tabs">
+        <%######################### tab Edituj akci -%>
+        <li class="<%=active( @event_tab == 'edit') %>">
+            <%=ilink_to act_event_edit_path(@event), ico:'fa-wrench' do  %>Edituj akci<%end%>
+        </li>
+
+        <%######################### tab Edituj pozvané -%>
+        <% if (can? :edit, Act::EventInvitation) && (@event.enable_only_specific_participants || @event.enable_only_specific_substitutes || @event.enable_only_specific_organisers)%>
+            <li <%=class_active_if( @event_tab == 'edit-inv') %>>
+                <%=ilink_to act_event_edit_invitations_path(@event), ico:'fa-envelope' do  %>Edituj pozvané<%end%>
+            </li>
+        <% end %>
+
+        <%######################### tab Edituj účastníky -%>
+        <li <%=class_active_if( @event_tab == 'edit-par') %>>
+            <%=ilink_to act_event_edit_participants_path(@event), ico:'fa-pencil-square-o' do  %>Edituj účastníky<%end%>
+        </li>
+
+        <%######################### tab Registrace-%>
+        <li <%=class_active_if( @event_tab == 'enroll') %>>
+            <%=ilink_to act_event_enroll_others_path(@event, "ev", "ev"), ico:'fa-users' do  %>Přihlaš nové účastníky<%end%>
+        </li>
+    </ul>
+    <div class="tab-content">
+      <%= yield -%>
+    </div>
+</div>

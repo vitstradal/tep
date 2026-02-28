@@ -353,23 +353,8 @@
                <% if !current_user.nil? && current_user.org? -%>
 
                  <%######################### tab Edituj akci -%>
-                 <li class="act_margin_enroll_others<%=active( @event_tab == 'edit') %>">
-                   <%=ilink_to act_event_edit_path(@event), ico:'fa-wrench' do  %>Nastavení<%end%>
-                 </li>
-                 <%######################### tab Edituj pozvané -%>
-                 <% if (can? :edit, Act::EventInvitation) && (@event.enable_only_specific_participants || @event.enable_only_specific_substitutes || @event.enable_only_specific_organisers)%>
-                   <li <%=class_active_if( @event_tab == 'edit-inv') %>>
-                     <%=ilink_to act_event_edit_invitations_path(@event), ico:'fa-envelope' do  %>Pozvaní<%end%>
-                   </li>
-                 <% end %>
-                 <%######################### tab Edituj účastníky -%>
-                 <li <%=class_active_if( @event_tab == 'edit-par') %>>
-                   <%=ilink_to act_event_edit_participants_path(@event), ico:'fa-pencil-square-o' do  %>Účastníci<%end%>
-                 </li>
-
-                 <%######################### tab Registrace-%>
-                 <li <%=class_active_if( @event_tab == 'enroll') %>>
-                   <%=ilink_to act_event_enroll_others_path(@event, "ev", "ev"), ico:'fa-users' do  %>Registrace<%end%>
+                 <li class="act_margin_enroll_others <%=active %w(edit edit-inv edit-par enroll).include?(@event_tab)%>">
+                     <%=ilink_to act_event_edit_path(@event), ico:'fa-wrench' do  %>Nastavení akce<%end%>
                  </li>
 
                  <%######################### tab Seznam -%>

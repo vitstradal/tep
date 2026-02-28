@@ -247,7 +247,7 @@ class Act::EventsController < ActController
     @num_p_yes = @event.num_signed("yes", false, true, true)
 
     @edit_participants = true
-    render :show
+    #render :show
   end
 
   ##
