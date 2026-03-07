@@ -78,12 +78,12 @@
 
   <%= render :partial => "f_text_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :event_medic, text: "Zdravotník akce" } %>
 
-  <%= render :partial => "f_text_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :event_info_url, text: "Odkaz na další informace", extra: "do wiki přidej: {{akce #{@event.id}|info}}"  } %>
+  <%= render :partial => "f_text_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :event_info_url, text: "Odkaz na další informace", extra: "do wiki přidej: {{akce}}"  } %>
 
-  <%= render :partial => "f_text_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :event_piki_url, text: "Odkaz na piki pro organizátory", extra: "do wiki přidej: {{akce #{@event.id}|piki}}"  } %>
+  <%= render :partial => "f_text_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :event_piki_url, text: "Odkaz na piki pro organizátory", extra: "do piki přidej: {{akce}}"  } %>
 
   <%= render :partial => "f_text_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :event_sklep_url, text: "Odkaz na sklep pro organizátory", extra: "př: /sklep/index.php/apps/files/files/1428553?dir=/pikomat/Soustredeni/2020"  } %>
-  <%= render :partial => "f_text_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :event_photos_url, text: "Odkaz na fotky", extra: "do wiki přidej: {{akce #{@event.id}|foto}}"  } %>
+  <%= render :partial => "f_text_field", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :event_photos_url, text: "Odkaz na fotky", extra: "do foto.wiki přidej: {{akce}}"  } %>
 
 
   <%= render :partial => "f_select", locals: {
