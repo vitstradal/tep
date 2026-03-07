@@ -554,4 +554,27 @@ module ApplicationHelper
 
   end
 
+  def maybe_get_act_event
+    return @event if @event
+    if @event_id
+      return Act::Event.find_by(id: @event_id.to_i)
+    end
+
+    if @is_event
+      if !(event = Act::Event .where(event_piki_url: request.path) .order(event_piki_url: :desc) .first).nil?
+        @event_tab = 'piki'
+        return event
+      end
+      if !(event = Act::Event .where(event_info_url: request.path) .order(event_info_url: :desc) .first).nil?
+        @event_tab = 'info'
+        return event
+      end
+      if !(event = Act::Event .where(event_photos_url: request.path) .order(event_photos_url: :desc) .first).nil?
+        @event_tab = 'foto'
+        return event
+      end
+    end
+    return nil
+  end
+
 end

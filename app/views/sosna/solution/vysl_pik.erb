@@ -1,3 +1,4 @@
+want emails=<%=@want_emails%>
 <% 
    ulohy_head = '';
    @problems.each_with_index do |pr,i|
@@ -7,7 +8,7 @@
      ulohy_head += "#{pr.short_name.to_s};" 
    end
 %>% <%= @level_long %>
-%       nr;       nrr;flg;  id;                pr;             jm;   roc; rroc;skola;<%=ulohy_head%> pen;sumser;sumall;bdz
+%       nr;       nrr;flg;  id;                pr;             jm;   roc; rroc;skola;<%=ulohy_head%> pen;sumser;sumall;bdz<% if @want_emails%>;email;emailzz<% end %>
 <%
    rank_all_last  = ''
    rank_cls_last  = ''
@@ -54,7 +55,7 @@
                 end
    end
 
-   [ '%10s' % rank_all,
+   ret = [ '%10s' % rank_all,
      '%10s' % rank_cls,
      '%3s'  % flagy,
      '%4s'  % solver.id,
@@ -67,7 +68,12 @@
      '%4s'  % pen_txt,
      '%2s'  % result.round_score,
      '%3s'  % result.score,
-     '(%s)'   % result.comment,
-   ].join(';')
+     '(%s)' % result.comment,
+   ]
+   if @want_emails 
+     ret.push('%30s' % solver.user&.email)
+     ret.push('%s'   % solver.user&.participant&.parent_email)
+   end
+   ret.join(';')
   %>;
 <% end %>

@@ -109,6 +109,7 @@ class Sosna::SolutionController < SosnaController
   # *Template* app/views/sosna/solution/vysl_pik.erb
   def vysl_pik
     roc, level, se, ul = _params_roc_level_se_ul
+    @want_emails = params[:emails]
     level_ext = Sosna::Solver::level_extension(level)
     if ! _results_updated?(roc, level, se)
       add_alert 'Výsledky nejsou aktuální, použij "Generuj výsledky"'

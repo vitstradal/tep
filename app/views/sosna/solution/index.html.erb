@@ -17,6 +17,9 @@
         <%= button_tag "#{vysl_file}.pik", :class  => 'btn btn-primary',
                                            :ico    => 'fa-filter',
                                            :href   =>  sosna_solutions_vysl_pik_url(roc:@annual, level: @level, se:@round) %>
+        <%= button_tag "#{vysl_file}.email.pik", :class  => 'btn btn-primary',
+                                           :ico    => 'fa-envelope',
+                                           :href   =>  sosna_solutions_vysl_pik_url(roc:@annual, level: @level, se:@round, emails:1) %>
       </div>
       <div class="btn-group">
         <%= button_tag "Filtruj soustredeni", :class=> 'btn btn-primary', ico: 'fa-filter', href: sosna_solutions_org_url(roc:@annual, se:@round, sous: 1) %>
