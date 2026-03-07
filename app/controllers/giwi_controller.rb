@@ -153,6 +153,9 @@ class GiwiController < ApplicationController
     @background_image  = page[:background_image]
     @nocache           = page[:nocache]
     @special_page      = page[:special_page]
+    if !@headings.nil? && @headings.size > 1
+      @title = @headings[1][:title]
+    end
 
     return _handle_redirect(@redirect_to) if @redirect_to
 

@@ -8,7 +8,7 @@
   <%= csrf_meta_tag %>
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 
-  <title>Pikomat MFF UK</title>
+  <title><%= @title || "Pikomat MFF UK" %></title>
   <meta name="description" content="Pikomat matematická korespondenční soutěž, matematické soustředění, matematické tábory." />
   <%= stylesheet_link_tag '/ace/css/bootstrap.min.css' %>
   <%= stylesheet_link_tag '/ace/css/colorbox.css' %>
@@ -332,7 +332,7 @@
 <%################################################################################## %>
 <%# taby akci
 <%################################################################################## %>
-        <% @event = Act::Event.find_by(id: @event_id.to_i) if @event_id %>
+        <% @event = maybe_get_act_event %>
         <% if @event && !@event.id.nil? %>
           <div class="tabbable">
             <ul id="myTab" class="nav nav-tabs">
