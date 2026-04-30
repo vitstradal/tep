@@ -374,22 +374,26 @@ function editor_tool_button_switch($el, editor)
   var action = $el.data('edit');
   switch(action) {
   case 'vi':
-     var kb = on ? 'ace/keyboard/vim' : '';
-     editor.setKeyboardHandler(kb);
-     editor.focus();
      ace.data.set('vi', on ? 'on' : 'off' );
+     if ( on ) {
+       ace.require(['ace/keyboard/vim'], function() {
+         editor.setKeyboardHandler('ace/keyboard/vim');
+         editor.focus();
+       });
+     } else {
+       editor.setKeyboardHandler('');
+       editor.focus();
+     }
      break;
   case 'wide':
      ace.data.set('wide', on ? 'on' : 'off' );
      if ( on ) {
-       console.log("wide on");
        $('#editor-container').removeClass('col-xs-6').addClass('col-xs-12');
      }
      else {
-       console.log("wide off");
        $('#editor-container').removeClass('col-xs-12').addClass('col-xs-6');
      }
-     editor.resize(true);
+     setTimeout(function() { editor.resize(true); }, 0);
      break;
   case 'prev':
      console.log("auto preview", on);
