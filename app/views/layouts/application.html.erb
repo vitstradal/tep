@@ -24,7 +24,7 @@
   <%= stylesheet_link_tag '/ace/css/ui.jqgrid.css' %>
   <%# stylesheet_link_tag '/ace/css/ace-part2.css' %>
   <%= stylesheet_link_tag '/stylesheets/andulka/stylesheet.css' %>
-  <%= stylesheet_link_tag '/stylesheets/tep.css?v=3.1' %>
+  <%= stylesheet_link_tag '/stylesheets/tep.css?v=3.2' %>
   <%= stylesheet_link_tag '/stylesheets/act.css?v=2.1' %>
   <% if @special_page %>
     <%= stylesheet_link_tag '/stylesheets/special.css' %>
@@ -337,11 +337,11 @@
           <div class="tabbable">
             <ul id="myTab" class="nav nav-tabs">
                <%######################### tab Přihlašování -%>
-               <li <%=class_active_if( @event_tab == 'show') %>> <%=ilink_to 'Přihlašování', act_event_path(@event), ico: 'fa-book' %></li>
+               <li <%=class_active_if( @event_tab == 'show') %>> <%=ilink_to 'Přihlašování', act_event_path(@event), ico: 'fa-users' %></li>
 
                <%######################### tab Infromace -%>
                <% if @event.event_info_url != "" -%>
-                  <li <%=class_active_if( @event_tab == 'info') %>> <%=ilink_to 'Informace', @event.event_info_url, ico: 'fa-user' %></li>
+                  <li <%=class_active_if( @event_tab == 'info') %>> <%=ilink_to 'Informace', @event.event_info_url, ico: 'fa-book' %></li>
                <% end -%>
 
                <%######################### tab Fotky %>
@@ -354,7 +354,7 @@
 
                  <%######################### tab Edituj akci -%>
                  <li class="act_margin_enroll_others <%=active %w(edit edit-inv edit-par enroll).include?(@event_tab)%>">
-                     <%=ilink_to act_event_edit_path(@event), ico:'fa-wrench' do  %>Nastavení akce<%end%>
+                     <%=ilink_to act_event_edit_path(@event), ico:'fa-cogs' do  %>Nastavení akce<%end%>
                  </li>
 
                  <%######################### tab Seznam -%>
@@ -362,11 +362,11 @@
 
                  <%######################### tab Piki -%>
                  <% if @event.event_piki_url != ""  -%>
-                    <li <%=class_active_if( @event_tab == 'piki') %>> <%=ilink_to @event.event_piki_url, ico: 'fa-cutlery' do %>Piki<%end%></li>
+                    <li <%=class_active_if( @event_tab == 'piki') %>> <%=ilink_to @event.event_piki_url, ico: 'fa-flask' do %>Piki<%end%></li>
                  <% end -%>
                  <%######################### tab Sklep -%>
                  <% if @event.event_sklep_url != ""  -%>
-                    <li <%=class_active_if( @event_tab == 'sklep') %>> <%=ilink_to @event.event_sklep_url, ico: 'fa-download' do %>Slep<%end%></li>
+                    <li <%=class_active_if( @event_tab == 'sklep') %>> <%=ilink_to @event.event_sklep_url, ico: 'fa-cube' do %>Slep<%end%></li>
                  <% end -%>
                <% end -%>
             </ul>
@@ -464,7 +464,7 @@
 <% end %>
 <%= javascript_include_tag '/javascripts/act.js?v=2.2' %>
 <%= javascript_include_tag '/ace/js/uncompressed/ace.js' %>
-<%= javascript_include_tag '/javascripts/tep.js?v=1.6' %>
+<%= javascript_include_tag '/javascripts/tep.js?v=1.7' %>
 <% if @special_page %>
   <%= javascript_include_tag "/javascripts/special.js"  %>
 <% end %>

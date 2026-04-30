@@ -6,8 +6,8 @@
 <% end %>
 <% if !@edit_participants %>
   <% if can? :update_other, Act::EventParticipant %>
-    <%= button_tag "Edituj účastníky", :href => act_event_edit_participants_path(@event), :class=>'btn btn-danger', :ico => 'fa-pencil-square-o ' %>
-    <%= button_tag "Přihlaš nové účastníky", :href => act_event_enroll_others_path(@event, "ev", "ev"), :class=>'btn btn-success', :ico => 'fa-users' %>
+    <%= button_tag "Edituj účastníky", :href => act_event_edit_participants_path(@event), :class=>'btn btn-danger', :ico => 'fa-users' %>
+    <%= button_tag "Přihlaš nové účastníky", :href => act_event_enroll_others_path(@event, "ev", "ev"), :class=>'btn btn-success', :ico => 'fa-pencil-square-o' %>
   <% end %>
 <% end %>
 <% if (can? :edit, Act::EventInvitation) && !@edit_participants && (@event.enable_only_specific_participants || @event.enable_only_specific_substitutes || @event.enable_only_specific_organisers) %>

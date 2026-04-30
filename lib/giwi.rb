@@ -597,7 +597,8 @@ class GiwiNoGit < Giwi
         return SETPAGE_ERROR
       end
     end
-    File.write(path_fs, text)
+    #File.write(path_fs, text)
+    File.binwrite(path_fs, text)
     return SETPAGE_OK
   end
 

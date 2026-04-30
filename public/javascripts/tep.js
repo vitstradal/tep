@@ -60,6 +60,15 @@ jQuery(document).ready(function($) {
             "numstr-desc": function ( a, b ) { return b - a; },
 	} );
 
+        // orgove klikaci
+        $('.org').click( (el_clicked) => {
+                on_org_clicked(el_clicked)
+        });
+        $('.org').on('touched', (el_clicked) => {
+                on_org_clicked(el_clicked)
+        });
+
+
         // trizeni datatabli
         $('.datatable').dataTable({
                 "bPaginate": false,
@@ -1200,4 +1209,28 @@ function _init_table_edit(div) {
         a.append( $('<i class="fa fa-edit" title="edit table"></i>') )
         a.attr('href',  href )
         $(div).prepend( a );
+}
+
+function on_org_clicked(el_clicked) {
+        const who = $(el_clicked.target).text()
+        console.log("who", who)
+
+        if( $(el_clicked.target).hasClass('org-selected')  ) {
+                $('.org').each( (idx, el) => {
+                        $(el).removeClass('org-selected')
+                        $(el).removeClass('org-unselected')
+                });
+                return
+        }
+
+        $('.org').each( (idx, el) => {
+                if( $(el).text() == who ) {
+                        $(el).addClass('org-selected')
+                        $(el).removeClass('org-unselected')
+                }
+                else {
+                        $(el).addClass('org-unselected')
+                        $(el).removeClass('org-selected')
+                }
+        });
 }

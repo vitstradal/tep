@@ -70,6 +70,7 @@ class GiwiController < ApplicationController
     @giwi = Giwi.get_giwi(@wiki)
     @cursor = params[:cursor]
     @version = params[:version]
+    want_raw = params[:raw] || '0'
     @use_ckeditor = params[:ckeditor].nil? ? false : true
     auth_name = @giwi.auth_name
 
@@ -117,6 +118,11 @@ class GiwiController < ApplicationController
     # jde se vyzaduje help.json
     #return _handle_raw_file("#{@path}.#{fmt}", fmt) if %w(json pdf png jpg jpeg gif svg pik).include? fmt
     return _handle_raw_file("#{@path}.#{fmt}", fmt) if %w(pdf png jpg jpeg gif svg pik).include? fmt
+
+    if want_raw == '1' 
+      return _not_found unless @editable
+      return _handle_raw_wiki("#{@path}.wiki")
+    end
 
     return redirect_to action: :show, path: @path + 'index',  wiki: @wiki if @path =~ /\/$/
     return redirect_to action: :show, path: 'index',  wiki: @wiki if ! @path
@@ -343,6 +349,11 @@ class GiwiController < ApplicationController
   def _handle_raw_file(path, fmt)
     @raw, @version = Giwi.get_giwi(@wiki).get_page(path)
     send_data @raw, :type => fmt.to_sym, :disposition => 'inline'
+  end
+
+  def _handle_raw_wiki(path)
+    @raw, @version = Giwi.get_giwi(@wiki).get_page(path)
+    send_data @raw, :type => 'text/plain; charset=utf-8', :disposition => 'inline', filename: "#{@version}"
   end
 
   def _get_parser
@@ -599,7 +610,7 @@ class GiwiController < ApplicationController
     status = Giwi.get_giwi(@wiki).set_page(filename, data, '', email)
 
     return redirect_to url_for(action: :show, wiki: @wiki, path: @path, ls: '.') if redirect
-    render text: 'tnx'
+    head :ok
   end
 
   def _to_ascii(txt)

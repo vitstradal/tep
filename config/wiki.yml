@@ -36,6 +36,14 @@ defaults: &defaults
     templates: 'tepmac'
     read:  :org
     update: :morg
+  data_edit:
+    path: '/home/www/html/data'
+    url: 'dataed'
+    templates: 'tepmac'
+    nogit: true
+    ext: '.wiki'
+    read:   :org
+    update: :morg
   wikuk:
     url: 'wikuk'
     templates: 'tepmac'

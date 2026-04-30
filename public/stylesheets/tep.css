@@ -718,3 +718,8 @@ mark.marker-green:after
 .icon-sm { font-size: 0.8em; }
 .icon-lg { font-size: 1.2em; }
 .tabskip { margin-left: 2em; }
+
+span.org-unselected {
+  background: none !important;
+  color: black !important;
+}
