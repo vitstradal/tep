@@ -336,13 +336,13 @@
         <% if @event && !@event.id.nil? %>
           <div class="tabbable">
             <ul id="myTab" class="nav nav-tabs">
-               <%######################### tab Přihlašování -%>
-               <li <%=class_active_if( @event_tab == 'show') %>> <%=ilink_to 'Přihlašování', act_event_path(@event), ico: 'fa-users' %></li>
-
                <%######################### tab Infromace -%>
                <% if @event.event_info_url != "" -%>
                   <li <%=class_active_if( @event_tab == 'info') %>> <%=ilink_to 'Informace', @event.event_info_url, ico: 'fa-book' %></li>
                <% end -%>
+
+               <%######################### tab Přihlašování -%>
+               <li <%=class_active_if( @event_tab == 'show') %>> <%=ilink_to 'Přihlašování', act_event_path(@event), ico: 'fa-users' %></li>
 
                <%######################### tab Fotky %>
                <% if @event.event_photos_url != "" -%>

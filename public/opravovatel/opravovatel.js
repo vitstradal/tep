@@ -167,7 +167,8 @@ function init_op_info() {
 }
 
 function update_info(info) {
-  set_score(info.score || '-')
+  const score = ( info.score === undefined ) ? '-' : info.score
+  set_score(score)
   const problem = info.problem
   const title  = `| ${info.index}/${info.total_count} | r${problem.annual} s${problem.round} ul${problem.problem_no} | ${info.solver.full_name}`
   document.getElementById('fullNameText').innerHTML =  title
