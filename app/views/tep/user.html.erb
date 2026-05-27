@@ -9,6 +9,7 @@
      <li <%=class_active_if(@tab=='participant')%>> <%= link_to 'Účastník',         '#participant', 'data-toggle' => 'tab' %></li>
      <li <%=class_active_if(@tab=='mail'  )%>> <%= link_to 'Maily',        '#mail',   'data-toggle' => 'tab' %></li>
      <li <%=class_active_if(@tab=='password')%>> <%= link_to 'Heslo',        '#password',   'data-toggle' => 'tab' %></li>
+     <li <%=class_active_if(@tab=='email' )%>> <%= link_to 'Změna emailu', '#email',  'data-toggle' => 'tab' %></li>
      <li <%=class_active_if(@tab=='jabber')%>> <%= link_to 'Jabber',       '#jabber',  'data-toggle' => 'tab' %></li>
      <li <%=class_active_if(@tab=='remove')%>> <%= link_to 'Smazat',       '#remove', 'data-toggle' => 'tab' %></li>
   </ul>
@@ -131,6 +132,79 @@
       <div class="well"> <%= render file: Rails.root.join('app/views/tep/mailer/confirmation_instructions.html.erb') %></div>
 
 
+    </div> <%# tab-pane %>
+    <div class="tab-pane <%=active_in_if(@tab=='email')%>" id='email'>
+      <div class="alert alert-danger">
+        <strong>Pozor:</strong> tato změna je <strong>nevratná</strong> a obejde
+        e-mailovou konfirmaci (Devise). Email se přepíše napřímo na zaškrtnutých
+        místech. Pokud je nový email použit někde jinde, změna se neprovede.
+      </div>
+
+      <%= form_tag user_change_email_path(@user.id), html: {:class=>'form-horizontal'} do %>
+          <div class="control-group">
+            <label class="control-label" for="email">Nový email</label>
+            <div class="controls"> <%= text_field_tag :email, @user.email, size: 50 %> </div>
+          </div>
+
+          <p>Místa, kde se má email přepsat:</p>
+          <ul style="list-style:none">
+            <li>
+              <label class="checkbox">
+                <%= check_box_tag 'user_account', '1', true, disabled: true %>
+                Uživatelský účet (přihlášení) — <code><%= @user.email %></code>
+                <i>(mění se vždy)</i>
+              </label>
+            </li>
+            <% @solvers.each do |solver| %>
+              <li>
+                <label class="checkbox">
+                  <%= check_box_tag 'solver_ids[]', solver.id, solver.email.to_s.casecmp(@user.email.to_s) == 0 %>
+                  Řešitel ročníku <%= solver.annual %> (<%= solver.full_name %>) — <code><%= solver.email %></code>
+                </label>
+              </li>
+            <% end %>
+            <% if @user.participant %>
+              <li>
+                <label class="checkbox">
+                  <%= check_box_tag :change_participant, '1', @user.participant.email.to_s.casecmp(@user.email.to_s) == 0 %>
+                  Účastník akcí — <code><%= @user.participant.email %></code>
+                </label>
+              </li>
+            <% end %>
+          </ul>
+
+          <div class="control-group">
+             <div class="controls">
+               <%= submit_tag 'Změnit email (nevratné)', :class=>'btn btn-danger', data: { confirm: 'Opravdu nevratně změnit email tohoto uživatele?' } %>
+             </div>
+          </div>
+      <% end %>
+
+      <hr/>
+      <h4>Mattermost</h4>
+      <p>
+        Tato změna v tepu <strong>nemění</strong> email v Mattermostu – ten má
+        vlastní databázi. Tam je potřeba ho přepsat <strong>ručně</strong> na
+        produkčním serveru (jako root, přes <code>psql</code>). Tep to sám nespouští,
+        tohle je jen ukázka příkazu:
+      </p>
+      <pre>tools/mattermost-change-email.sh <%= @user.email %> <span id="mm_new_email">&lt;NOVÝ_EMAIL&gt;</span></pre>
+      <p class="muted">
+        Skript je v repozitáři: <code>tools/mattermost-change-email.sh</code>.
+        Po změně je vhodné Mattermost restartovat (kvůli cache), případně použít
+        <code>mmctl user edit&nbsp;…</code>.
+      </p>
+      <script>
+        (function(){
+          var inp = document.getElementById('email');
+          var out = document.getElementById('mm_new_email');
+          if (inp && out) {
+            inp.addEventListener('input', function(){
+              out.textContent = inp.value || '<NOVÝ_EMAIL>';
+            });
+          }
+        })();
+      </script>
     </div> <%# tab-pane %>
     <div class="tab-pane <%=active_in_if(@tab=='jabber')%>" id='jabber'>
         <% if @user.jabber? %>

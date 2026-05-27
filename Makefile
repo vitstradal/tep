@@ -47,6 +47,14 @@ t:
 	rake test
 r: restart
 
+# Spuštění testů. Pozor: projekt běží na rvm Ruby 3.2.1 (ne na systémovém ruby).
+# Celá suite:            make test
+# Jeden soubor:          make test T=test/functional/tep_controller_test.rb
+# Jeden test (řádek):    make test T=test/functional/tep_controller_test.rb:35
+.PHONY: test
+test:
+	RAILS_ENV=test bundle exec rails test $(T)
+
 
 prod:
 	rails c -e production

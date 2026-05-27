@@ -137,6 +137,74 @@ class TepController < ApplicationController
   end
 
   ##
+  #  POST  /user/:id/email
+  #
+  # Nevratná přímá změna emailu uživatele. Obejde Devise konfirmaci.
+  # Email je zároveň přihlašovací jméno; navíc se duplicitně drží u řešitelů
+  # (Sosna::Solver) a u účastnického účtu (Act::Participant), proto se dá změna
+  # volitelně propsat i tam.
+  #
+  # Nejdřív se ověří, že nový email nepoužívá nikdo *jiný* (jiný User, řešitel
+  # jiného/žádného uživatele, participant jiného uživatele). Pokud ano, nic se
+  # nezmění a vypíše se kde.
+  #
+  # *Params*
+  # id:: id uživatele
+  # email:: nový email
+  # solver_ids[]:: pole id řešitelů, kterým se má email taky přepsat
+  # change_participant:: '1' pokud se má přepsat i u participanta
+  #
+  # *Redirect* /user/:id/show/email
+  def user_change_email
+    user = User.find(params[:id])
+    new_email = params[:email].to_s.strip
+
+    redirect_back_to_email = lambda { redirect_to action: :user, id: user.id, tab: 'email' }
+
+    if new_email.empty? || !(new_email =~ /\A[-_a-z\d\.\+]+@[a-z\d\.\-]+\Z/i)
+      add_alert 'Neplatný email'
+      return redirect_back_to_email.call
+    end
+
+    needle = new_email.downcase
+    conflicts = []
+
+    User.where('lower(email) = ?', needle).where.not(id: user.id).each do |u|
+      conflicts << "uživatel ##{u.id} (#{u.email})"
+    end
+    Sosna::Solver.where('lower(email) = ?', needle).where('user_id IS NULL OR user_id != ?', user.id).each do |s|
+      conflicts << "řešitel ##{s.id} ročník #{s.annual} (#{s.email})"
+    end
+    Act::Participant.where('lower(email) = ?', needle).where('user_id IS NULL OR user_id != ?', user.id).each do |p|
+      conflicts << "účastník ##{p.id} (#{p.email})"
+    end
+
+    unless conflicts.empty?
+      add_alert "Email #{new_email} je již použit, změna neprovedena: #{conflicts.join(', ')}"
+      return redirect_back_to_email.call
+    end
+
+    changed = ['uživatelský účet']
+    user.skip_reconfirmation! if user.respond_to?(:skip_reconfirmation!)
+    user.email = new_email
+    user.save(validate: false)
+
+    solver_ids = Array(params[:solver_ids]).map(&:to_i)
+    Sosna::Solver.where(user_id: user.id, id: solver_ids).each do |solver|
+      solver.update_column(:email, new_email)
+      changed << "řešitel ##{solver.id} (roč #{solver.annual})"
+    end
+
+    if params[:change_participant] == '1' && user.participant
+      user.participant.update_column(:email, new_email)
+      changed << 'účastník akcí'
+    end
+
+    add_success "Email změněn na #{new_email}. Místa: #{changed.join(', ')}"
+    redirect_back_to_email.call
+  end
+
+  ##
   #  POST /user/:id/action/:what
   #
   # *Params*

@@ -165,6 +165,7 @@ Tep::Application.routes.draw do
   patch '/user/:id/update'                   => 'tep#user_update',              :as => :user_update
   post  '/user/:id/delete'                   => 'tep#user_delete',              :as => :user_delete
   post  '/user/:id/password'                 => 'tep#user_set_password',        :as => :user_set_password
+  post  '/user/:id/email'                    => 'tep#user_change_email',        :as => :user_change_email
   patch '/user/:id/role'                     => 'tep#user_role_change',         :as => :user_role_change
   post  '/user/:id/action/:what'             => 'tep#user_action',              :as => :user_action
   get  '/reg/:token'                         => 'tep#user_finish_registration', :as => :user_finish_registration
