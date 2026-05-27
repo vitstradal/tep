@@ -191,8 +191,9 @@
       <pre>tools/mattermost-change-email.sh <%= @user.email %> <span id="mm_new_email">&lt;NOVÝ_EMAIL&gt;</span></pre>
       <p class="muted">
         Skript je v repozitáři: <code>tools/mattermost-change-email.sh</code>.
-        Po změně je vhodné Mattermost restartovat (kvůli cache), případně použít
-        <code>mmctl user edit&nbsp;…</code>.
+        Přepíše i <code>@username</code> (odvozený z emailu) a je idempotentní –
+        když ho pustíš podruhé, jen dopřejmenuje. Po změně je vhodné Mattermost
+        restartovat (kvůli cache), případně použít <code>mmctl user edit&nbsp;…</code>.
       </p>
       <script>
         (function(){
