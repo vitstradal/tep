@@ -166,4 +166,5 @@ if [ "$CHANGE_USERNAME" = "1" ]; then
 fi
 run_sql "UPDATE users SET $SET WHERE id = '$(sql_escape "$U_ID")'"
 
-echo "Hotovo. Doporučuju restartovat Mattermost (kvůli cache)."
+echo "Hotovo. Kvůli cache je potřeba restartovat Mattermost – spusť:"
+echo "    systemctl restart mattermost"
