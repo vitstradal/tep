@@ -23,11 +23,13 @@
 #   -y, --yes        neptat se (lze i MM_YES=1)
 #   --no-username    nech username být, měň jen email
 #
-# Připojení k databázi se bere z proměnné PSQL. Výchozí předpoklad je, že root
-# pustí psql pod uživatelem postgres do databáze "mattermost_db":
+# Připojení k databázi se bere z proměnné PSQL (dělí se na mezerách – žádné
+# uvozované argumenty). Výchozí předpoklad je, že root pustí psql pod uživatelem
+# postgres do databáze "mattermost_db":
 #   PSQL="sudo -u postgres psql mattermost_db"   (výchozí)
-# Dá se přebít, např.:
-#   PSQL="psql 'postgres://mmuser:heslo@localhost/mattermost_db'" tools/mattermost-change-email.sh a@b c@d
+# Pro připojení přes DSN/heslo radši použij standardní PG proměnné a PSQL=psql:
+#   PGHOST=localhost PGUSER=mmuser PGPASSWORD=heslo PGDATABASE=mattermost_db \
+#     PSQL=psql tools/mattermost-change-email.sh a@b c@d
 #
 # POZOR: Mattermost si uživatele cachuje. Po změně je vhodné Mattermost
 # restartovat, aby se projevila (případně použít `mmctl user edit ...`).
@@ -82,9 +84,12 @@ sql_escape() { printf "%s" "$1" | sed "s/'/''/g"; }
 OLD_SQL="$(sql_escape "$OLD_LC")"
 NEW_SQL="$(sql_escape "$NEW_LC")"
 
+# $PSQL se schválně needuje (necitujeme), aby se rozdělil na slova
+# (např. "sudo -u postgres psql mattermost_db").
+run_psql() { $PSQL -v ON_ERROR_STOP=1 -X -q "$@"; }
 # jeden řádek, pole oddělená '|'
-psql_row() { eval "$PSQL" -v ON_ERROR_STOP=1 -X -q -t -A -F'|' -c "\"$1\""; }
-run_sql()  { eval "$PSQL" -v ON_ERROR_STOP=1 -X -q -c "\"$1\""; }
+psql_row() { run_psql -t -A -F '|' -c "$1"; }
+run_sql()  { run_psql -c "$1"; }
 
 echo "Připojení: $PSQL"
 echo
