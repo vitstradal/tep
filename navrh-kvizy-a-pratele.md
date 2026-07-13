@@ -182,12 +182,10 @@ Kolize emailů (oba směry):
 
 ## 9. Politika přihlášení (cookies)
 
-Cíl: běžný člověk je přihlášený „skoro napořád".
+Cíl: každý je přihlášený „skoro napořád" — platí pro všechny účty včetně
+org/morg/admin, žádné výjimky.
 
-- Odebrat plošné `:timeoutable` (dnes `timeout_in 60.minutes`). Devise umí
-  timeout per-user: `User#timeout_in` vrátí `60.minutes` pro
-  org/morg/admin/sklep, `nil` (bez timeoutu) pro ostatní — privilegované účty
-  si krátkou session nechají.
+- Odebrat `:timeoutable` úplně (dnes `timeout_in 60.minutes`).
 - `:rememberable`: `remember_for 1.year`, `extend_remember_period = true`
   (klouzavé prodlužování), checkbox „pamatuj si mě" defaultně zaškrtnutý
   (nebo rovnou vynechat a pamatovat vždy).
