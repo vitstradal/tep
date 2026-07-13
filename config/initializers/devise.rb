@@ -80,7 +80,8 @@ Devise.setup do |config|
   # access will be blocked just in the third day. Default is 0.days, meaning
   # the user cannot access the website without confirming his account.
   # config.confirm_within = 2.days
-  config.confirm_within = 2.days
+  # dokončovací link přítele Pikomatu platí týden (viz navrh-kvizy-a-pratele.md)
+  config.confirm_within = 7.days
 
   # Defines which key will be used when confirming an account
   config.confirmation_keys = [ :email ]
@@ -88,12 +89,15 @@ Devise.setup do |config|
   # ==> Configuration for :rememberable
   # The time the user will be remembered without asking for credentials again.
   # config.remember_for = 2.weeks
+  # přihlášení má vydržet „skoro napořád" (viz navrh-kvizy-a-pratele.md)
+  config.remember_for = 1.year
 
   # If true, a valid remember token can be re-used between multiple browsers.
   # config.remember_across_browsers = true
 
   # If true, extends the user's remember period when remembered via cookie.
   # config.extend_remember_period = false
+  config.extend_remember_period = true
 
   # If true, uses the password salt as remember token. This should be turned
   # to false if you are not using database authenticatable.
@@ -115,7 +119,8 @@ Devise.setup do |config|
   # ==> Configuration for :timeoutable
   # The time you want to timeout the user session without activity. After this
   # time the user will be asked for credentials again. Default is 30 minutes.
-  config.timeout_in = 30.minutes
+  # timeoutable se už nepoužívá — session bez expirace (viz navrh-kvizy-a-pratele.md)
+  # config.timeout_in = 30.minutes
 
   # ==> Configuration for :lockable
   # Defines which strategy will be used to lock an account.

@@ -42,9 +42,8 @@ class User < ActiveRecord::Base
   # :token_authenticatable, :encryptable, :confirmable, :lockable, :timeoutable and :omniauthable
   devise :database_authenticatable, :registerable,
          #:token_authenticatable,
-         :confirmable, :lockable, :timeoutable,
-         :recoverable, :rememberable, :trackable, :validatable,
-         :timeout_in => 60.minutes
+         :confirmable, :lockable,
+         :recoverable, :rememberable, :trackable, :validatable
 
 
   # Setup accessible (or protected) attributes for your model
@@ -67,9 +66,8 @@ class User < ActiveRecord::Base
   # roles later, always append them at the end!
   roles :admin, :org, :user, :guest, :sklep, :morg, :jabber
 
-  before_create do
-    roles << :user
-  end
+  # roli :user přiděluje explicitně registrace řešitele a admin
+  # (viz navrh-kvizy-a-pratele.md) — přítel Pikomatu vzniká bez role
 
   # XXXX upgrade to rails5 hack: FIXME
   #skip_callback :create, :after, :send_confirmation_instructions
