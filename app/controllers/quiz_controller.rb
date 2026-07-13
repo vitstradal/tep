@@ -41,6 +41,18 @@ class QuizController < ApplicationController
   end
 
   ##
+  # GET /quiz/:name — stránka kvízu/anketky s formulářem
+  #
+  # Jednoduchá obecná stránka: nick + jedno textové pole (question_no 1).
+  # Otázku bere z quiz.data['question'], je-li.
+  #
+  # *Provides* @quiz
+  def show
+    @quiz = Quiz.find_by(name: params[:name])
+    return head :not_found unless @quiz
+  end
+
+  ##
   # GET /quiz/:name/vysledky — pseudo-výsledkovka
   #
   # *Provides*

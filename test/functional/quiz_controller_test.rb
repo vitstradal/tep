@@ -69,4 +69,26 @@ class QuizControllerTest < ActionController::TestCase
     post :answer, params: { name: 'neni', question_no: 1, answer: 'x' }
     assert_response :not_found
   end
+
+  test "show renders poll page with form" do
+    Quiz.create!(name: 'testquiz', quiz_type: 'poll', title: 'Testovací anketka',
+                 data: { 'question' => 'Napiš, co tě napadne' })
+    get :show, params: { name: 'testquiz' }
+    assert_response :success
+    assert_match 'Testovací anketka', response.body
+    assert_match 'Napiš, co tě napadne', response.body
+    assert_match 'quiz-form', response.body
+  end
+
+  test "show of unknown quiz 404" do
+    get :show, params: { name: 'neni' }
+    assert_response :not_found
+  end
+
+  test "show of closed quiz says closed" do
+    Quiz.create!(name: 'zavreny', quiz_type: 'poll', closes_on: Date.yesterday)
+    get :show, params: { name: 'zavreny' }
+    assert_response :success
+    assert_match 'uzavřen', response.body
+  end
 end

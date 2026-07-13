@@ -38,6 +38,7 @@ class Ability
     can :do_finish,     :friend
     can :answer,   :quiz
     can :vysledky, :quiz
+    can :show,     :quiz
 
     # tep
     can :index, :tep

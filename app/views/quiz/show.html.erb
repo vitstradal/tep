@@ -1,0 +1,72 @@
+<div class="page-header"><h1><%= @quiz.title || @quiz.name %></h1></div>
+
+<% if !@quiz.open? %>
+  <p class="alert alert-warning">Kvíz je uzavřen.
+    <%= link_to 'Mrkni na výsledky.', quiz_vysledky_path(name: @quiz.name) %></p>
+<% else %>
+  <p><%= (@quiz.data && @quiz.data['question']) || 'Tvoje odpověď:' %></p>
+
+  <form id="quiz-form" class="form-horizontal">
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Přezdívka</label>
+      <div class="col-sm-4">
+        <input type="text" id="quiz-nick" class="form-control" maxlength="40" placeholder="objeví se ve výsledkovce">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="col-sm-2 control-label">Odpověď</label>
+      <div class="col-sm-6">
+        <input type="text" id="quiz-answer" class="form-control">
+      </div>
+    </div>
+    <%# honeypot — skutečný člověk ho nevyplní %>
+    <input type="text" name="website" id="quiz-website" style="display:none" tabindex="-1" autocomplete="off">
+    <div class="form-group">
+      <div class="col-sm-offset-2 col-sm-6">
+        <button type="submit" class="btn btn-primary">Odeslat</button>
+        <%= link_to 'Výsledky', quiz_vysledky_path(name: @quiz.name), class: 'btn' %>
+      </div>
+    </div>
+  </form>
+  <div id="quiz-thanks" class="alert alert-success hide">Díky za odpověď!
+    <%= link_to 'Koukni na výsledky.', quiz_vysledky_path(name: @quiz.name) %></div>
+
+  <script>
+    jQuery(function ($) {
+      // předvyplň nick z localStorage identity (viz tep.js)
+      var f = friend_get()
+      if (f.nick) $('#quiz-nick').val(f.nick)
+
+      $('#quiz-form').submit(function (ev) {
+        ev.preventDefault()
+        var nick = $('#quiz-nick').val().trim()
+        var answer = $('#quiz-answer').val().trim()
+        if (!answer) { alert('Napiš odpověď.'); return }
+        if (!nick && !window.tep_signed_in) { alert('Zadej přezdívku.'); return }
+
+        var send_answer = function (uuid) {
+          $.post('<%= quiz_answer_path(name: @quiz.name) %>',
+                 {uuid: uuid || '', nick: nick, question_no: 1, answer: answer,
+                  website: $('#quiz-website').val(), authenticity_token: friend_csrf()},
+                 function (json) {
+                   if (json.uuid) friend_set({uuid: json.uuid, nick: nick || friend_get().nick})
+                   $('#quiz-form').addClass('hide')
+                   $('#quiz-thanks').removeClass('hide')
+                 }).fail(function (xhr) {
+                   var err = (xhr.responseJSON && xhr.responseJSON.error) || 'Něco se pokazilo.'
+                   alert(err)
+                 })
+        }
+
+        var f = friend_get()
+        if (f.uuid && nick && nick !== f.nick) {
+          // nick se změnil — nejdřív ho aktualizuj
+          $.post('/friend/hello', {uuid: f.uuid, nick: nick, authenticity_token: friend_csrf()},
+                 function (json) { friend_set(json); send_answer(json.uuid) })
+        } else {
+          send_answer(f.uuid)
+        }
+      })
+    })
+  </script>
+<% end %>
