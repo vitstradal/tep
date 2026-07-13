@@ -70,6 +70,103 @@ class FriendController < ApplicationController
     render json: friend_json(friend)
   end
 
+  ##
+  # GET /pritel — registrační formulář přítele Pikomatu
+  def register_form
+    @nick = params[:nick]
+  end
+
+  ##
+  # POST /friend/register — zaregistruj přítele (jen email)
+  #
+  # Neprozrazuje, zda email existuje (anti-enumeration): odpověď je
+  # vždy stejná, jen se pošle jiný mail.
+  #
+  # *Params*
+  # uuid:: friend z localStorage (volitelný, jinak se založí z nick)
+  # nick:: přezdívka pro lazy založení
+  # email:: adresa pro registraci
+  def register
+    friend = Friend.find_by(uuid: params[:uuid].to_s)
+    email = params[:email].to_s.downcase.strip
+    unless email =~ Devise.email_regexp
+      add_alert 'Zadej platnou emailovou adresu.'
+      return redirect_to friend_register_form_path
+    end
+    if friend.nil?
+      friend = Friend.new(nick: params[:nick])
+      unless friend.save
+        add_alert 'Zadej přezdívku.'
+        return redirect_to friend_register_form_path
+      end
+    end
+
+    existing = User.find_by_email(email)
+    if existing
+      # účet už je — pošli návod na přihlášení/reset, web mlčí
+      existing.send_reset_password_instructions
+    else
+      user = User.new(email: email, password: SecureRandom.hex(16))
+      user.skip_confirmation_notification!
+      user.save!
+      friend.update!(user: user) if friend.user_id.nil?
+      user.send_confirmation_instructions
+    end
+    add_success 'Koukni do mailu a dokonči registraci (link platí 7 dní).'
+    redirect_to root_path
+  end
+
+  ##
+  # GET /friend/finish/:token — dokončení registrace: potvrzení mailu + heslo
+  def finish
+    @user = User.find_by(confirmation_token: params[:token])
+    if @user.nil? || @user.confirmed_at
+      add_alert 'Odkaz je neplatný nebo už použitý.'
+      return redirect_to root_path
+    end
+    if @user.send(:confirmation_period_expired?)  # v Devise protected
+      add_alert 'Odkaz už vypršel — nech si poslat nový.'
+      return redirect_to root_path
+    end
+    @token = params[:token]
+  end
+
+  ##
+  # POST /friend/finish/:token — nastav heslo, potvrď, přihlas
+  def do_finish
+    user = User.find_by(confirmation_token: params[:token])
+    if user.nil? || user.confirmed_at || user.send(:confirmation_period_expired?)
+      add_alert 'Odkaz je neplatný nebo už použitý.'
+      return redirect_to root_path
+    end
+    user.password = params[:password]
+    user.password_confirmation = params[:password_confirmation]
+    if user.save
+      user.confirm
+      sign_in(user)
+      add_success 'Registrace dokončena, vítej!'
+      redirect_to root_path
+    else
+      add_alert user.errors.full_messages.join(', ')
+      redirect_to friend_finish_path(token: params[:token])
+    end
+  end
+
+  ##
+  # POST /friend/resend — znovu pošli dokončovací link
+  #
+  # *Params*
+  # uuid:: friend z localStorage
+  def resend
+    friend = Friend.find_by(uuid: params[:uuid].to_s)
+    user = friend && friend.user
+    if user && user.confirmed_at.nil?
+      user.send_confirmation_instructions
+      add_success 'Dokončovací mail poslán znovu.'
+    end
+    redirect_to root_path
+  end
+
   private
 
   ##

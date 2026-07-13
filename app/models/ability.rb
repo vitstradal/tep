@@ -31,6 +31,11 @@ class Ability
     can :hello,  :friend
     can :status, :friend
     can :claim,  :friend
+    can :register_form, :friend
+    can :register,      :friend
+    can :resend,        :friend
+    can :finish,        :friend
+    can :do_finish,     :friend
 
     # tep
     can :index, :tep

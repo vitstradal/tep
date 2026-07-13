@@ -174,6 +174,11 @@ Tep::Application.routes.draw do
   post '/friend/hello'          => 'friend#hello',         :as => :friend_hello
   get  '/friend/status'         => 'friend#status',        :as => :friend_status
   post '/friend/claim'          => 'friend#claim',         :as => :friend_claim
+  get  '/pritel'                => 'friend#register_form', :as => :friend_register_form
+  post '/friend/register'       => 'friend#register',      :as => :friend_register
+  post '/friend/resend'         => 'friend#resend',        :as => :friend_resend
+  get  '/friend/finish/:token'  => 'friend#finish',        :as => :friend_finish
+  post '/friend/finish/:token'  => 'friend#do_finish',     :as => :friend_do_finish
 
   # post
   get    '/jabber/prebind'                   => 'jabber#prebind',               :as => :jabber_prebind

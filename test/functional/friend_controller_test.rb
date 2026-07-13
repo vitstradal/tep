@@ -94,4 +94,61 @@ class FriendControllerTest < ActionController::TestCase
     post :claim, params: { uuid: f.uuid }
     assert_response :redirect
   end
+
+  test "register creates unverified user without roles and sends mail" do
+    f = Friend.create!(nick: 'Petr')
+    assert_difference 'ActionMailer::Base.deliveries.size', 1 do
+      post :register, params: { uuid: f.uuid, email: 'novy@x.cz' }
+    end
+    u = User.find_by(email: 'novy@x.cz')
+    assert u
+    assert_nil u.confirmed_at
+    assert_equal [], u.roles.to_a
+    assert_equal u.id, f.reload.user_id
+    assert_equal 'unverified', f.status
+  end
+
+  test "register with taken email does not create user, responds identically" do
+    make_user('mam@x.cz')
+    f = Friend.create!(nick: 'Petr')
+    assert_no_difference 'User.count' do
+      post :register, params: { uuid: f.uuid, email: 'mam@x.cz' }
+    end
+    assert_response :redirect  # stejná odpověď jako úspěch
+    assert_nil f.reload.user_id
+  end
+
+  test "register with invalid email shows error" do
+    f = Friend.create!(nick: 'Petr')
+    post :register, params: { uuid: f.uuid, email: 'blbost' }
+    assert flash[:alerts].present?
+  end
+
+  test "finish sets password confirms and signs in" do
+    f = Friend.create!(nick: 'Petr')
+    post :register, params: { uuid: f.uuid, email: 'fin@x.cz' }
+    u = User.find_by(email: 'fin@x.cz')
+    token = u.confirmation_token
+    get :finish, params: { token: token }
+    assert_response :success
+    post :do_finish, params: { token: token, password: 'tajneheslo1', password_confirmation: 'tajneheslo1' }
+    u.reload
+    assert u.confirmed_at.present?
+    assert u.valid_password?('tajneheslo1')
+    assert_equal 'verified', f.reload.status
+  end
+
+  test "finish with bad token fails" do
+    get :finish, params: { token: 'spatny' }
+    assert_response :redirect
+    assert flash[:alerts].present?
+  end
+
+  test "resend sends confirmation again" do
+    f = Friend.create!(nick: 'Petr')
+    post :register, params: { uuid: f.uuid, email: 're@x.cz' }
+    assert_difference 'ActionMailer::Base.deliveries.size', 1 do
+      post :resend, params: { uuid: f.uuid }
+    end
+  end
 end

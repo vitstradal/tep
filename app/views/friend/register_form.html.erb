@@ -1,0 +1,24 @@
+<div class="page-header"><h1>Přítel Pikomatu</h1></div>
+<p>Stačí email — pošleme ti odkaz, kterým registraci dokončíš (platí 7 dní).</p>
+<%= form_tag friend_register_path, method: :post do %>
+  <input type="hidden" name="uuid" id="friend-form-uuid">
+  <div class="form-group">
+    <label>Přezdívka</label>
+    <input type="text" name="nick" id="friend-form-nick" class="form-control" value="<%= @nick %>">
+  </div>
+  <div class="form-group">
+    <label>Email</label>
+    <input type="email" name="email" class="form-control" required>
+  </div>
+  <button type="submit" class="btn btn-primary">Zaregistrovat</button>
+<% end %>
+<script>
+  // předvyplň z localStorage
+  (function() {
+    var f = {};
+    try { f = JSON.parse(localStorage.getItem('friend')) || {}; } catch (e) {}
+    if (f.uuid) document.getElementById('friend-form-uuid').value = f.uuid;
+    var nickEl = document.getElementById('friend-form-nick');
+    if (f.nick && !nickEl.value) nickEl.value = f.nick;
+  })();
+</script>

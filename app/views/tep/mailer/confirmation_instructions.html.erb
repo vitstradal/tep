@@ -1,7 +1,9 @@
-<p>Vítej <%= @resource.email %>!</p>
+<p>Ahoj<%= @resource.friend ? " #{@resource.friend.nick}" : '' %>,</p>
 
+<p>vítej mezi přáteli Pikomatu! Registraci dokončíš (a heslo si nastavíš) tímto odkazem:</p>
 
-<p>Nyní můžeš potvrdit svůj účet pomocí následujícího linku:</p>
+<p><%= link_to 'Dokončit registraci', friend_finish_url(token: @token) %></p>
 
-<p><%= link_to 'Potvrdit účet', confirmation_url(@resource, :confirmation_token => @token ) %>.</p>
+<p>Odkaz platí 7 dní. Pokud sis registraci nevyžádal(a), tento mail ignoruj.</p>
 
+<p>Pikomat</p>

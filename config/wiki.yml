@@ -68,11 +68,13 @@ void:
     <<: *voidmain
   web:  
     <<: *voidmain
-  web_edit: 
+  web_edit:
     <<: *voidmain
 
-#test:
-#  <<: *local
+# testy renderují layout, který potřebuje wiki 'main' (wiki_main_path)
+test:
+  main:
+    <<: *voidmain
 
 development:
   <<: *defaults
