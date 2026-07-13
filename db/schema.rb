@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 32) do
+ActiveRecord::Schema[7.2].define(version: 33) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -114,6 +114,18 @@ ActiveRecord::Schema[7.2].define(version: 32) do
     t.timestamptz "updated_at"
   end
 
+  create_table "friends", force: :cascade do |t|
+    t.text "uuid", null: false
+    t.text "nick", null: false
+    t.bigint "user_id"
+    t.boolean "hidden", default: false
+    t.timestamptz "last_seen_at"
+    t.timestamptz "created_at", null: false
+    t.timestamptz "updated_at", null: false
+    t.index ["user_id"], name: "index_friends_on_user_id", unique: true
+    t.index ["uuid"], name: "index_friends_on_uuid", unique: true
+  end
+
   create_table "informs", force: :cascade do |t|
     t.text "form"
     t.text "data"
@@ -168,6 +180,30 @@ ActiveRecord::Schema[7.2].define(version: 32) do
     t.timestamptz "created_at"
     t.timestamptz "updated_at"
     t.index ["uid"], name: "idx_350917_index_oauth_applications_on_uid", unique: true
+  end
+
+  create_table "quiz_answers", force: :cascade do |t|
+    t.bigint "quiz_id", null: false
+    t.bigint "friend_id", null: false
+    t.integer "question_no"
+    t.text "answer"
+    t.jsonb "data"
+    t.timestamptz "created_at", null: false
+    t.timestamptz "updated_at", null: false
+    t.index ["quiz_id", "question_no", "friend_id"], name: "index_quiz_answers_on_quiz_id_and_question_no_and_friend_id", unique: true
+  end
+
+  create_table "quizzes", force: :cascade do |t|
+    t.text "name", null: false
+    t.text "quiz_type"
+    t.text "subtype"
+    t.text "title"
+    t.date "opens_on"
+    t.date "closes_on"
+    t.jsonb "data"
+    t.timestamptz "created_at", null: false
+    t.timestamptz "updated_at", null: false
+    t.index ["name"], name: "index_quizzes_on_name", unique: true
   end
 
   create_table "sessions", force: :cascade do |t|

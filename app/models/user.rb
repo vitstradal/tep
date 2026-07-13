@@ -61,6 +61,7 @@ class User < ActiveRecord::Base
 
   has_one :jabber, inverse_of: :user
   has_one :participant, inverse_of: :user, dependent: :destroy, class_name: 'Act::Participant'
+  has_one :friend, inverse_of: :user
 
   # declare the valid roles -- do not change the order if you add more
   # roles later, always append them at the end!
