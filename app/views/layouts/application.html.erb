@@ -96,8 +96,25 @@
             <% end %>
             <li><%= ilink_to  current_user.email, '#', :ico => 'fa-user', :class=> 'label-user btn btn-primary tep-transparent' %> </li>
             <li><%= ilink_to  'Logout', :destroy_user_session , :ico => 'fa-sign-out', :class => 'btn tep-transparent' %></li>
+            <script>window.tep_signed_in = true;</script>
           <% else %>
-            <li><%= ilink_to 'Přihlášení', :new_user_session , :ico => 'fa-user', :class=> 'btn tep-transparent' %> </li>
+            <%# widget přítele Pikomatu — 4 stavy, řídí init_friend_widget() v tep.js
+                (viz navrh-kvizy-a-pratele.md) %>
+            <li id="friend-widget" class="hide dropdown">
+              <a href="#" class="dropdown-toggle btn tep-transparent" data-toggle="dropdown">
+                <i class="ace-icon fa fa-user"></i>
+                <span id="friend-widget-nick"></span>
+                <span id="friend-widget-bang" class="badge badge-warning hide">!</span>
+                <i id="friend-widget-warn" class="ace-icon fa fa-warning orange hide"></i>
+              </a>
+              <ul class="dropdown-menu dropdown-menu-right">
+                <li class="friend-anonymous"><a href="/pritel">Zaregistruj se jako přítel Pikomatu (stačí email)</a></li>
+                <li class="friend-anonymous"><a href="/prihlaska">Staň se řešitelem Pikomatu</a></li>
+                <li class="friend-anonymous"><%= link_to 'Přihlásit se', :new_user_session %></li>
+                <li class="friend-unverified hide"><a href="#" id="friend-widget-resend">Dokonči registraci — poslat mail znovu</a></li>
+              </ul>
+            </li>
+            <li id="friend-login-link"><%= ilink_to 'Přihlášení', :new_user_session , :ico => 'fa-user', :class=> 'btn tep-transparent' %> </li>
           <% end %>
         </ul>
         </span>

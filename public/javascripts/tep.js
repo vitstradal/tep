@@ -233,6 +233,12 @@ var colorbox_params = {
       $('#cboxLoadingGraphic').append("<i class='ace-icon fa fa-spinner orange'></i>");
 
       $('#adventomat-modal').each(function() { init_adventomat() })
+      init_friend_widget()
+      $('#friend-widget-resend').click(function (ev) {
+          ev.preventDefault()
+          $.post('/friend/resend', {uuid: friend_get().uuid, authenticity_token: friend_csrf()},
+                 function () { alert('Mail poslán znovu. Koukni do schránky.') })
+      })
       $('#password_generate').click(function(ev) {
           ev.preventDefault()
           ev.stopPropagation()
@@ -287,6 +293,17 @@ function init_adventomat() {
           if( is_solved ) {
               adventomat_set_solved(date)
               adventomat_set_button_solved(date)
+              /* pošli vyřešený den na server, když je adventomat napojený
+                 na kvíz (data-quiz na modalu) — viz navrh-kvizy-a-pratele.md */
+              var quiz_name = $('#adventomat-modal').data('quiz')
+              if (quiz_name) {
+                  friend_ensure(function (f) {
+                      if (!f) return   // bez přezdívky jen localStorage jako dřív
+                      $.post('/quiz/' + quiz_name + '/answer',
+                             {uuid: f.uuid, question_no: parseInt(date, 10),
+                              answer: her_solution, authenticity_token: friend_csrf()})
+                  })
+              }
           }
           console.log("thanks", thanks)
           $('input[name=tnx]').val(thanks)
@@ -1237,4 +1254,68 @@ function on_org_clicked(el_clicked) {
                         $(el).removeClass('org-selected')
                 }
         });
+}
+
+/* ---- friend: kvízová identita (viz navrh-kvizy-a-pratele.md) ---- */
+
+function friend_get() {
+    try { return JSON.parse(localStorage.getItem('friend')) || {} }
+    catch (e) { return {} }
+}
+
+function friend_set(f) {
+    localStorage.setItem('friend', JSON.stringify({uuid: f.uuid, nick: f.nick}))
+}
+
+function friend_csrf() {
+    return $('meta[name="csrf-token"]').attr('content')
+}
+
+/* Zavolej /friend/status a nastav hlavičkový widget. Přihlášený vyhrává:
+   server vrátí kanonického frienda a localStorage se přepíše. */
+function init_friend_widget() {
+    var f = friend_get()
+    if (window.tep_signed_in) {
+        $.get('/friend/status', {uuid: f.uuid || ''}, function (json) {
+            if (json.merge_candidate &&
+                confirm('Na tomto zařízení jsou kvízové odpovědi pod přezdívkou z dřívějška. Připojit k tvému účtu?')) {
+                $.post('/friend/claim', {uuid: f.uuid, authenticity_token: friend_csrf()},
+                       function (j2) { friend_set(j2) })
+            } else {
+                friend_set(json)
+            }
+        })
+        return
+    }
+    if (!f.uuid && !f.nick) return   // stav 1: nic — zůstává jen Přihlášení
+    $.get('/friend/status', {uuid: f.uuid || ''}, function (json) {
+        if (json.status === 'unknown') return
+        friend_set(json)
+        $('#friend-widget-nick').text(json.nick)
+        $('#friend-widget').removeClass('hide')
+        $('#friend-login-link').addClass('hide')
+        if (json.status === 'unverified') {          // stav 3: trojúhelníček + resend
+            $('#friend-widget-warn').removeClass('hide')
+            $('.friend-anonymous').addClass('hide')
+            $('.friend-unverified').removeClass('hide')
+        } else {                                     // stav 2: vykřičník
+            $('#friend-widget-bang').removeClass('hide')
+        }
+    })
+}
+
+/* Zajisti frienda (lazy) a předej ho callbacku. Ptá se na nick, když chybí. */
+function friend_ensure(cb) {
+    var f = friend_get()
+    if (f.uuid) return cb(f)
+    if (window.tep_signed_in) {
+        $.get('/friend/status', function (json) { friend_set(json); cb(json) })
+        return
+    }
+    var nick = f.nick || prompt('Zadej přezdívku do výsledkovky (nepovinné):')
+    if (!nick) return cb(null)
+    $.post('/friend/hello', {nick: nick, authenticity_token: friend_csrf()}, function (json) {
+        friend_set(json)
+        cb(json)
+    })
 }
