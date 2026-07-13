@@ -170,6 +170,11 @@ Tep::Application.routes.draw do
   post  '/user/:id/action/:what'             => 'tep#user_action',              :as => :user_action
   get  '/reg/:token'                         => 'tep#user_finish_registration', :as => :user_finish_registration
 
+  # friend + quiz (kvízy, adventomat — viz navrh-kvizy-a-pratele.md)
+  post '/friend/hello'          => 'friend#hello',         :as => :friend_hello
+  get  '/friend/status'         => 'friend#status',        :as => :friend_status
+  post '/friend/claim'          => 'friend#claim',         :as => :friend_claim
+
   # post
   get    '/jabber/prebind'                   => 'jabber#prebind',               :as => :jabber_prebind
   patch  '/jabber/:id/update'                => 'jabber#update',                :as => :jabber_update

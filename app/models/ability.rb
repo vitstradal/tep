@@ -27,6 +27,11 @@ class Ability
     can :user_finish_registration, :tep
     can :access,           :tep
 
+    # friend — kvízová identita (viz navrh-kvizy-a-pratele.md)
+    can :hello,  :friend
+    can :status, :friend
+    can :claim,  :friend
+
     # tep
     can :index, :tep
     can :faq, :tep
