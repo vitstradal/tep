@@ -49,7 +49,7 @@ class TepControllerTest < ActionController::TestCase
     make_user('taken@x.cz')
     post :user_change_email, params: { id: @user.id, email: 'taken@x.cz' }
     assert_equal 'old@x.cz', @user.reload.email
-    assert flash[:alert].present?
+    assert flash[:alerts].present?
   end
 
   test "collision with another user's solver blocks the change" do
@@ -57,7 +57,7 @@ class TepControllerTest < ActionController::TestCase
     make_solver('solvertaken@x.cz', other.id, '33')
     post :user_change_email, params: { id: @user.id, email: 'solvertaken@x.cz' }
     assert_equal 'old@x.cz', @user.reload.email
-    assert flash[:alert].present?
+    assert flash[:alerts].present?
   end
 
   test "collision with another user's participant blocks the change" do
@@ -65,7 +65,7 @@ class TepControllerTest < ActionController::TestCase
     make_participant('parttaken@x.cz', other.id)
     post :user_change_email, params: { id: @user.id, email: 'parttaken@x.cz' }
     assert_equal 'old@x.cz', @user.reload.email
-    assert flash[:alert].present?
+    assert flash[:alerts].present?
   end
 
   test "own records are not treated as a collision" do
@@ -87,6 +87,6 @@ class TepControllerTest < ActionController::TestCase
   test "invalid email is rejected" do
     post :user_change_email, params: { id: @user.id, email: 'not-an-email' }
     assert_equal 'old@x.cz', @user.reload.email
-    assert flash[:alert].present?
+    assert flash[:alerts].present?
   end
 end
