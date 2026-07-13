@@ -8,6 +8,32 @@ Hlavní moduly:
 * Devise -- správa uživatelů, registrace, znovu zasílání hesel, skupiny a atd.
 * Giwi -- stránky pikomatu pomocí wiki s git backendem
 * Sosna -- upload elektonických řešení, evidnce bodů, vysledkové listiny.
+* Kvízy a přátelé Pikomatu -- sranda kvízy, adventomat, anonymní identity
+  s nickem a registrace „přítel Pikomatu" (návrh: `navrh-kvizy-a-pratele.md`)
+
+## Kvízy a přátelé Pikomatu
+
+Detaily v `navrh-kvizy-a-pratele.md`. Rychlý přehled pro provoz:
+
+* Nový kvíz se zakládá v konzoli (`make prod`):
+
+  ```ruby
+  Quiz.create!(name: 'advent-2026', quiz_type: 'advent', title: 'Adventní kalendář 2026',
+               opens_on: Date.new(2026,12,1), closes_on: Date.new(2026,12,31),
+               data: { 'correct' => { '1' => '42', '2' => 'sob' } })
+  ```
+
+  `quiz_type` je `quiz` | `advent` | `poll`; advent odemyká otázku (den) č. N
+  až od `opens_on + N - 1`. `data['correct']` je nepovinné (anketa ho nemá).
+
+* Adventomat na wiki stránce se napojí atributem `data-quiz="advent-2026"`
+  na `#adventomat-modal`; bez atributu funguje postaru (jen localStorage).
+* Odpovědi: `POST /quiz/<name>/answer`, výsledkovka: `GET /quiz/<name>/vysledky`.
+* Registrace přítele: `/pritel`, dokončení mailovým linkem (platí 7 dní),
+  neověřený účet je bez role a bez `confirmed_at`; admin je vidí ve filtru
+  „bez role" na `/users/none`.
+* Úklid (cron ~1× denně): `RAILS_ENV=production bundle exec rake friends:cleanup`
+  -- maže anonymní friendy neaktivní >1 rok a neověřené účty >1 měsíc.
 
 ## Makefile
 
