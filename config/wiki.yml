@@ -71,9 +71,17 @@ void:
   web_edit:
     <<: *voidmain
 
-# testy renderují layout, který potřebuje wiki 'main' (wiki_main_path)
+# testy renderují layout, který potřebuje wiki routes (wiki_main_path atd.)
 test:
   main:
+    <<: *voidmain
+  tepmac:
+    <<: *voidmain
+  piki:
+    <<: *voidmain
+  web:
+    <<: *voidmain
+  web_edit:
     <<: *voidmain
 
 development:

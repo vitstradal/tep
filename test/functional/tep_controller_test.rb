@@ -75,6 +75,15 @@ class TepControllerTest < ActionController::TestCase
     assert flash[:success].present?
   end
 
+  test "users filter none lists roleless users" do
+    make_user('norole@x.cz')          # bez role — přítel Pikomatu
+    make_user('srole@x.cz', [:user])  # s rolí — nesmí být ve výpisu
+    get :users, params: { role: 'none' }
+    assert_response :success
+    assert_match 'norole@x.cz', response.body
+    assert_no_match(/srole@x.cz/, response.body)
+  end
+
   test "invalid email is rejected" do
     post :user_change_email, params: { id: @user.id, email: 'not-an-email' }
     assert_equal 'old@x.cz', @user.reload.email

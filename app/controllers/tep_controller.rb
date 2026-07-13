@@ -45,7 +45,10 @@ class TepController < ApplicationController
   # @users:: pole User
   def users
     @role = params[:role]
-    if @role
+    if @role == 'none'
+      # přátelé Pikomatu bez role — viz navrh-kvizy-a-pratele.md
+      @users = User.where('roles_mask IS NULL OR roles_mask = 0')
+    elsif @role
        mask = User.mask_for @role.to_sym
        @users = User.where('roles_mask & ? > 0', mask)
     else

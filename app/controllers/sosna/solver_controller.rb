@@ -326,7 +326,15 @@ class Sosna::SolverController < SosnaController
       end
     else
       solver.user_id = user.id
-      send_first = false
+      # přítel Pikomatu (i neověřený) se stává řešitelem — viz navrh-kvizy-a-pratele.md
+      user.roles << :user unless user.user?
+      if user.confirmed_at.nil?
+        user.confirm
+        user.send_first_login_instructions(is_bonus) if send_first
+      else
+        send_first = false
+      end
+      user.save
     end
 
     # some test
