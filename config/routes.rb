@@ -179,6 +179,8 @@ Tep::Application.routes.draw do
   post '/friend/resend'         => 'friend#resend',        :as => :friend_resend
   get  '/friend/finish/:token'  => 'friend#finish',        :as => :friend_finish
   post '/friend/finish/:token'  => 'friend#do_finish',     :as => :friend_do_finish
+  post '/quiz/:name/answer'     => 'quiz#answer',          :as => :quiz_answer
+  get  '/quiz/:name/vysledky'   => 'quiz#vysledky',        :as => :quiz_vysledky
 
   # post
   get    '/jabber/prebind'                   => 'jabber#prebind',               :as => :jabber_prebind

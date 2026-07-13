@@ -36,6 +36,8 @@ class Ability
     can :resend,        :friend
     can :finish,        :friend
     can :do_finish,     :friend
+    can :answer,   :quiz
+    can :vysledky, :quiz
 
     # tep
     can :index, :tep
