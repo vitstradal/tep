@@ -35,6 +35,16 @@
     // jQuery se načítá až na konci layoutu — proto DOMContentLoaded, ne jQuery(...)
     document.addEventListener('DOMContentLoaded', function () {
       var $ = jQuery
+      // fallback, kdyby prohlížeč držel v cache starý tep.js bez friend_* funkcí
+      if (typeof friend_get !== 'function') {
+        window.friend_get = function () {
+          try { return JSON.parse(localStorage.getItem('friend')) || {} } catch (e) { return {} }
+        }
+        window.friend_set = function (f) {
+          localStorage.setItem('friend', JSON.stringify({uuid: f.uuid, nick: f.nick}))
+        }
+        window.friend_csrf = function () { return $('meta[name="csrf-token"]').attr('content') }
+      }
       // předvyplň nick z localStorage identity (viz tep.js)
       var f = friend_get()
       if (f.nick) $('#quiz-nick').val(f.nick)
