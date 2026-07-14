@@ -32,7 +32,9 @@
     <%= link_to 'Koukni na výsledky.', quiz_vysledky_path(name: @quiz.name) %></div>
 
   <script>
-    jQuery(function ($) {
+    // jQuery se načítá až na konci layoutu — proto DOMContentLoaded, ne jQuery(...)
+    document.addEventListener('DOMContentLoaded', function () {
+      var $ = jQuery
       // předvyplň nick z localStorage identity (viz tep.js)
       var f = friend_get()
       if (f.nick) $('#quiz-nick').val(f.nick)
