@@ -170,6 +170,8 @@ Tep::Application.routes.draw do
   post  '/user/:id/action/:what'             => 'tep#user_action',              :as => :user_action
   get  '/reg/:token'                         => 'tep#user_finish_registration', :as => :user_finish_registration
 
+  get  '/csrf'                               => 'tep#csrf',                     :as => :csrf
+
   # friend + quiz (kvízy, adventomat — viz navrh-kvizy-a-pratele.md)
   post '/friend/hello'          => 'friend#hello',         :as => :friend_hello
   get  '/friend/status'         => 'friend#status',        :as => :friend_status
@@ -181,6 +183,7 @@ Tep::Application.routes.draw do
   post '/friend/finish/:token'  => 'friend#do_finish',     :as => :friend_do_finish
   post '/quiz/:name/answer'     => 'quiz#answer',          :as => :quiz_answer
   get  '/quiz/:name/vysledky'   => 'quiz#vysledky',        :as => :quiz_vysledky
+  get  '/quiz/:name/answers'    => 'quiz#answers',         :as => :quiz_answers
   get  '/quiz/:name'            => 'quiz#show',            :as => :quiz_show
 
   # post

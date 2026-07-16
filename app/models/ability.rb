@@ -88,6 +88,9 @@ class Ability
     end
 
     if user.org?
+      # kvízy: surové odpovědi pro kontrolu (vysledky řeší quiz#vysledky sám)
+      can :answers, :quiz
+
       can :index, Inform
       can :pokusy, :tep
       can :view_error, :tep

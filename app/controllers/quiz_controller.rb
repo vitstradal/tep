@@ -74,6 +74,26 @@ class QuizController < ApplicationController
     end.sort_by { |r| [-r[:correct], -r[:count]] }
   end
 
+  ##
+  # GET /quiz/:name/answers — surové odpovědi pro orga (JSON)
+  #
+  # Podklad pro kontrolu řešení (přednáškové kvízy: kontrola.html si
+  # odpovědi-schémata přehraje lokálně simulátorem).
+  def answers
+    quiz = Quiz.find_by(name: params[:name])
+    return head :not_found unless quiz
+    rows = quiz.quiz_answers.includes(friend: :user).map do |a|
+      { nick: a.friend.nick,
+        discriminator: a.friend.discriminator,
+        status: a.friend.status,
+        question_no: a.question_no,
+        answer: a.answer,
+        data: a.data,
+        updated_at: a.updated_at }
+    end
+    render json: rows
+  end
+
   private
 
   ##

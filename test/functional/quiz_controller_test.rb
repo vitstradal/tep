@@ -117,6 +117,54 @@ class QuizControllerTest < ActionController::TestCase
     assert_response :not_found
   end
 
+  test "answers is forbidden for anonymous and plain user" do
+    f = Friend.create!(nick: 'Tajny')
+    QuizAnswer.create!(quiz: @quiz, friend: f, question_no: 1, answer: 'soukrome')
+
+    get :answers, params: { name: 'kviz-pi' }
+    assert_response :redirect   # anonym -> login
+    assert_no_match(/soukrome/, response.body)
+
+    u = User.new(email: 'plain2@x.cz', password: 'password123')
+    u.skip_confirmation!
+    u.save!
+    sign_in u
+    get :answers, params: { name: 'kviz-pi' }   # bez org role -> chybová stránka
+    assert_no_match(/soukrome/, response.body)
+    assert_match(/ERR-/, response.body)
+  end
+
+  test "answers returns raw answers for org" do
+    org = User.new(email: 'org2@x.cz', password: 'password123', roles: [:org])
+    org.skip_confirmation!
+    org.save!
+    f = Friend.create!(nick: 'Kid')
+    QuizAnswer.create!(quiz: @quiz, friend: f, question_no: 7,
+                       answer: '{"components":[]}', data: { 'gates' => 5 })
+    sign_in org
+    get :answers, params: { name: 'kviz-pi' }
+    assert_response :success
+    json = JSON.parse(response.body)
+    assert_equal 1, json.length
+    row = json.first
+    assert_equal 'Kid', row['nick']
+    assert_equal 7, row['question_no']
+    assert_equal '{"components":[]}', row['answer']
+    assert_equal 5, row['data']['gates']
+    assert_equal 'anonymous', row['status']
+    assert row['discriminator'].present?
+    assert row['updated_at'].present?
+  end
+
+  test "answers of unknown quiz 404 for org" do
+    org = User.new(email: 'org3@x.cz', password: 'password123', roles: [:org])
+    org.skip_confirmation!
+    org.save!
+    sign_in org
+    get :answers, params: { name: 'neni' }
+    assert_response :not_found
+  end
+
   test "show of closed quiz says closed" do
     Quiz.create!(name: 'zavreny', quiz_type: 'poll', closes_on: Date.yesterday)
     get :show, params: { name: 'zavreny' }

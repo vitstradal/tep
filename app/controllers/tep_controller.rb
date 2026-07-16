@@ -34,6 +34,17 @@ class TepController < ApplicationController
   def faq; end
 
   ##
+  #  GET /csrf
+  #
+  # CSRF token pro statické stránky (přednášky), které POSTují na tep —
+  # viz prednasky/docs quiz-sync. Založí session, proti které Rails
+  # token validuje; volající ho přiloží jako authenticity_token.
+  def csrf
+    render json: { param: request_forgery_protection_token,
+                   token: form_authenticity_token }
+  end
+
+  ##
   #  GET /users
   #
   # seznam uživatelů

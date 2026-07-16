@@ -14,4 +14,14 @@ namespace :quiz do
     end
     puts "quiz:testquiz: #{quiz.name} (id #{quiz.id}) — /quiz/testquiz"
   end
+
+  desc 'Založ kvíz přednášky logické obvody (idempotentní; sběr řešení z pub/prednasky)'
+  task logicke_obvody: :environment do
+    quiz = Quiz.find_or_create_by!(name: 'logicke-obvody') do |q|
+      q.quiz_type = 'quiz'
+      q.title = 'Logické obvody — kvízy'
+      # správnost vyhodnocuje org lokálně (kontrola.html), server jen sbírá
+    end
+    puts "quiz:logicke_obvody: #{quiz.name} (id #{quiz.id})"
+  end
 end

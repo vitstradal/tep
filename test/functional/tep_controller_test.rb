@@ -84,6 +84,15 @@ class TepControllerTest < ActionController::TestCase
     assert_no_match(/srole@x.cz/, response.body)
   end
 
+  test "csrf returns token json for anonymous" do
+    sign_out @admin
+    get :csrf
+    assert_response :success
+    json = JSON.parse(response.body)
+    assert_equal 'authenticity_token', json['param']
+    assert json['token'].present?
+  end
+
   test "invalid email is rejected" do
     post :user_change_email, params: { id: @user.id, email: 'not-an-email' }
     assert_equal 'old@x.cz', @user.reload.email
