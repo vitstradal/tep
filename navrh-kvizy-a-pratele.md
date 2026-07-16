@@ -171,10 +171,13 @@ Kolize emailů (oba směry):
    (`:user` už mají).
 2. `Ability` doplnit:
    - anonym (`User.new`): `create` na `QuizAnswer` (přes uuid), čtení
-     otevřených `quizzes` a výsledkovek;
+     otevřených `quizzes`; výsledkovku jen u kvízů, kde ji org zveřejnil
+     (`data['public_results']` — zveřejnění je na organizátorovi, default
+     soukromé);
    - přihlášený kdokoli (`user.persisted?`, bez ohledu na role): totéž pod
      účtem + správa vlastního `friends` řádku (změna nicku);
-   - org: čtení odpovědí, moderace nicků (skrýt/přejmenovat ve výsledkovce);
+   - org: výsledkovky všech kvízů (i nezveřejněné), čtení odpovědí, moderace
+     nicků (skrýt/přejmenovat ve výsledkovce);
    - morg: CRUD `quizzes`.
 3. Admin výpis uživatelů (`TepController#users`) filtruje bitmaskou
    (`roles_mask & ? > 0`) — uživatel bez role by nebyl vidět v žádném filtru.
