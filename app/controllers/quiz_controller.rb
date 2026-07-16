@@ -62,6 +62,10 @@ class QuizController < ApplicationController
   def vysledky
     @quiz = Quiz.find_by(name: params[:name])
     return head :not_found unless @quiz
+    # zveřejnění výsledků je na organizátorovi (public_results); org vidí vždy
+    unless @quiz.results_public? || (current_user && current_user.org?)
+      return head :forbidden
+    end
     answers = @quiz.quiz_answers.includes(friend: :user)
     @rows = answers.group_by(&:friend).map do |friend, list|
       correct = list.count { |a| correct?(@quiz, a.question_no, a.answer) == true }

@@ -2,7 +2,10 @@
 
 <% if !@quiz.open? %>
   <p class="alert alert-warning">Kvíz je uzavřen.
-    <%= link_to 'Mrkni na výsledky.', quiz_vysledky_path(name: @quiz.name) %></p>
+    <% if @quiz.results_public? %>
+      <%= link_to 'Mrkni na výsledky.', quiz_vysledky_path(name: @quiz.name) %>
+    <% end %>
+  </p>
 <% else %>
   <p><%= (@quiz.data && @quiz.data['question']) || 'Tvoje odpověď:' %></p>
 
@@ -24,12 +27,17 @@
     <div class="form-group">
       <div class="col-sm-offset-2 col-sm-6">
         <button type="submit" class="btn btn-primary">Odeslat</button>
-        <%= link_to 'Výsledky', quiz_vysledky_path(name: @quiz.name), class: 'btn' %>
+        <% if @quiz.results_public? %>
+          <%= link_to 'Výsledky', quiz_vysledky_path(name: @quiz.name), class: 'btn' %>
+        <% end %>
       </div>
     </div>
   </form>
   <div id="quiz-thanks" class="alert alert-success hide">Díky za odpověď!
-    <%= link_to 'Koukni na výsledky.', quiz_vysledky_path(name: @quiz.name) %></div>
+    <% if @quiz.results_public? %>
+      <%= link_to 'Koukni na výsledky.', quiz_vysledky_path(name: @quiz.name) %>
+    <% end %>
+  </div>
 
   <script>
     // jQuery se načítá až na konci layoutu — proto DOMContentLoaded, ne jQuery(...)

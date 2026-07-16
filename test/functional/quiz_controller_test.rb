@@ -54,7 +54,8 @@ class QuizControllerTest < ActionController::TestCase
     assert_equal u.reload.friend.id, QuizAnswer.last.friend_id
   end
 
-  test "vysledky renders scoreboard" do
+  test "vysledky renders scoreboard when public" do
+    @quiz.update!(data: @quiz.data.merge('public_results' => true))
     f1 = Friend.create!(nick: 'Petr')
     f2 = Friend.create!(nick: 'Petr')
     QuizAnswer.create!(quiz: @quiz, friend: f1, question_no: 1, answer: '42')
@@ -65,6 +66,29 @@ class QuizControllerTest < ActionController::TestCase
     assert_match f1.discriminator, response.body
   end
 
+  test "vysledky of private quiz is forbidden for anonymous" do
+    get :vysledky, params: { name: 'kviz-pi' }
+    assert_response :forbidden
+  end
+
+  test "vysledky of private quiz is forbidden for plain user" do
+    u = User.new(email: 'plain@x.cz', password: 'password123')
+    u.skip_confirmation!
+    u.save!
+    sign_in u
+    get :vysledky, params: { name: 'kviz-pi' }
+    assert_response :forbidden
+  end
+
+  test "vysledky of private quiz works for org" do
+    u = User.new(email: 'org@x.cz', password: 'password123', roles: [:org])
+    u.skip_confirmation!
+    u.save!
+    sign_in u
+    get :vysledky, params: { name: 'kviz-pi' }
+    assert_response :success
+  end
+
   test "unknown quiz 404" do
     post :answer, params: { name: 'neni', question_no: 1, answer: 'x' }
     assert_response :not_found
@@ -72,12 +96,20 @@ class QuizControllerTest < ActionController::TestCase
 
   test "show renders poll page with form" do
     Quiz.create!(name: 'testquiz', quiz_type: 'poll', title: 'Testovací anketka',
-                 data: { 'question' => 'Napiš, co tě napadne' })
+                 data: { 'question' => 'Napiš, co tě napadne', 'public_results' => true })
     get :show, params: { name: 'testquiz' }
     assert_response :success
     assert_match 'Testovací anketka', response.body
     assert_match 'Napiš, co tě napadne', response.body
     assert_match 'quiz-form', response.body
+    assert_match 'vysledky', response.body   # veřejné výsledky → odkaz je
+  end
+
+  test "show of quiz with private results has no results link" do
+    Quiz.create!(name: 'tajny', quiz_type: 'quiz', title: 'Tajný kvíz')
+    get :show, params: { name: 'tajny' }
+    assert_response :success
+    assert_no_match(/vysledky/, response.body)
   end
 
   test "show of unknown quiz 404" do
