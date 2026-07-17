@@ -36,7 +36,8 @@ class FriendController < ApplicationController
       friend = canonical_friend(current_user)
       merge_candidate = params[:uuid].present? && params[:uuid] != friend.uuid &&
                         Friend.where(uuid: params[:uuid], user_id: nil).exists?
-      render json: friend_json(friend).merge(signed_in: true, merge_candidate: merge_candidate)
+      render json: friend_json(friend).merge(signed_in: true, org: current_user.org?,
+                                             merge_candidate: merge_candidate)
     else
       friend = Friend.find_by(uuid: params[:uuid].to_s)
       if friend

@@ -54,6 +54,23 @@ class FriendControllerTest < ActionController::TestCase
     assert_equal mine.uuid, json['uuid']
     assert json['signed_in']
     assert json['merge_candidate']
+    assert_equal false, json['org']
+  end
+
+  test "status signed in as org reports org flag" do
+    u = User.new(email: 'org@x.cz', password: 'password123', roles: [:org])
+    u.skip_confirmation!
+    u.save!
+    sign_in u
+    get :status
+    json = JSON.parse(response.body)
+    assert_equal true, json['org']
+  end
+
+  test "status for anonymous has no org flag" do
+    f = Friend.create!(nick: 'Petr')
+    get :status, params: { uuid: f.uuid }
+    assert_not JSON.parse(response.body).key?('org')
   end
 
   test "status signed in creates canonical friend when missing" do
