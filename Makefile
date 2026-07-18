@@ -36,6 +36,13 @@ void-migrate:
 
 prod-seed:
 	rake db:seed RAILS_ENV=production
+
+# Založ/uprav kvíz v produkci. Použití:
+#   make prod-quiz-create NAME=tabor2026 TITLE='Tábor 2026 A'
+#   make prod-quiz-create NAME=advent2026 TYPE=advent TITLE='Adventní kalendář 2026'
+#   make prod-quiz-create NAME=sranda PUBLIC=1 TITLE='Sranda anketa'
+prod-quiz-create:
+	rake quiz:create RAILS_ENV=production NAME='$(NAME)' TITLE='$(TITLE)' TYPE='$(TYPE)' PUBLIC='$(PUBLIC)'
 dev-seed:
 	rake db:seed RAILS_ENV=development
 loc-seed:

@@ -38,7 +38,8 @@ namespace :quiz do
   task create: :environment do
     name = ENV['NAME'].to_s.strip
     abort 'Chybí NAME (např. NAME=tabor2026)' if name.empty?
-    type = (ENV['TYPE'] || 'poll').strip
+    type = ENV['TYPE'].to_s.strip
+    type = 'poll' if type.empty?
     unless %w[quiz advent poll].include?(type)
       abort "Neplatný TYPE=#{type} (povolené: quiz, advent, poll)"
     end
