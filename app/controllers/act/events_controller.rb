@@ -452,7 +452,7 @@ class Act::EventsController < ActController
     others = Act::EventParticipant.where(participant_id: @history_people.map(&:id),
                                          status: 'yes', chosen: 'participant')
                                   .where.not(event_id: @event.id)
-                                  .includes(:event)
+                                  .includes(:event, participant: :user)
     @history_all = params[:all] == '1'
     @history_events = others.map(&:event).compact.uniq
                             .sort_by { |e| [e.event_start || Date.new(1970), e.id] }

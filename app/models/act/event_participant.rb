@@ -27,6 +27,33 @@ class Act::EventParticipant < ActiveRecord::Base
   validates :status, inclusion: { in: STATUSES_OPTIONS, message: "Účstník musí být buťo přihlášený, nebo neví, anebo nepřihlášený (yes, maybe, no)" }
 
   validates :chosen, inclusion: { in: CHOSEN_OPTIONS, message: "Účastník musí být buťo pozvaný, nebo náhradník, anebo none" }
+
+  # Role účasti V DOBĚ AKCE ('org' | 'participant'); NULL = nezjištěno.
+  # U starých akcí historická data nejsou — viz rake act:backfill_roles
+  # a odhad z ročníku níže.
+  ROLE_OPTIONS = ["org", "participant"]
+  validates :role, inclusion: { in: ROLE_OPTIONS, message: "Role účasti je org, nebo participant" }, allow_nil: true
+
+  ##
+  # Odhad role z ročníku účastnického účtu (<= 9. ročník = účastník,
+  # vyšší = org). *Returns* 'org' | 'participant' | nil (bez ročníku).
+  def self.guess_role_from_grade(participant)
+    return nil if participant.nil? || participant.grade.nil?
+    participant.grade.to_i <= 9 ? "participant" : "org"
+  end
+
+  ##
+  # Role k zobrazení: uložená, jinak odhad z ročníku (viz role_guessed?).
+  def role_display
+    role || Act::EventParticipant.guess_role_from_grade(participant)
+  end
+
+  ##
+  # *Returns* true, když je zobrazovaná role jen odhad z ročníku
+  # (uložená role chybí) — UI to má naznačit.
+  def role_guessed?
+    role.nil? && !Act::EventParticipant.guess_role_from_grade(participant).nil?
+  end
   def go
     case status
     when "yes"

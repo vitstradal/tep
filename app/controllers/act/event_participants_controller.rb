@@ -146,6 +146,26 @@ class Act::EventParticipantsController < ActController
     redirect_to act_event_edit_participants_path(params[:event_id])
   end
 
+  ##
+  #  POST /act/events/:event_id/participants/:participant_id/role
+  #
+  # Přepne roli účasti (org <-> účastník). Vychází ze zobrazované role
+  # (uložená, nebo odhad z ročníku) a uloží opak.
+  #
+  # *Redirect* act_event_edit_participants_path
+  def set_role
+    @event_participant = Act::EventParticipant.find_by(event_id: params[:event_id], participant_id: params[:participant_id])
+    unless can? :update_other, Act::EventParticipant
+      return render :not_allowed, locals: { desired: "upravovati " }
+    end
+
+    @event_participant.role = @event_participant.role_display == "org" ? "participant" : "org"
+    @event_participant.save
+
+    add_success "Role účasti změněna na #{@event_participant.role == 'org' ? 'org' : 'účastník'}"
+    redirect_to act_event_edit_participants_path(params[:event_id])
+  end
+
   private
     def event_participant_params
       params.require(:event_participant).permit(:status, :note, :place, :mass, :participant_info)

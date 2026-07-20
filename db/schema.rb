@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 33) do
+ActiveRecord::Schema[7.2].define(version: 34) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -52,6 +52,7 @@ ActiveRecord::Schema[7.2].define(version: 33) do
     t.timestamptz "created_at"
     t.timestamptz "updated_at"
     t.string "place_return", default: ""
+    t.text "role"
     t.index ["event_id", "participant_id"], name: "idx_351006_index_act_event_participants_on_event_id_and_partici", unique: true
     t.index ["event_id"], name: "idx_351006_index_act_event_participants_on_event_id"
     t.index ["participant_id"], name: "idx_351006_index_act_event_participants_on_participant_id"

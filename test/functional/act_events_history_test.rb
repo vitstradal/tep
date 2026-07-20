@@ -56,8 +56,27 @@ class ActEventsHistoryTest < ActionController::TestCase
     assert_match 'Soustředění 2025', response.body    # stejná skupina (dlouhodobá)
     assert_no_match(/Vylet 2025/, response.body)      # krátkodobá — defaultně skryta
     assert_no_match(/Cizi akce/, response.body)       # akce bez průniku účastníků
-    assert_match '<strong title="byl na akci">*</strong>', response.body
+    # kid má ročník 7 a žádnou uloženou roli -> odhad účastník s otazníkem
+    assert_match 'fa-user blue" title="účastník (odhad podle ročníku)"', response.body
     assert_match 'Jen dlouhodobé', response.body      # checkbox dle skupiny akce
+  end
+
+  test "history cell shows stored role without guess marker" do
+    Act::EventParticipant.find_by(event_id: @old.id, participant_id: @kid.id).update!(role: 'org')
+    sign_in @org
+    get :history, params: { event_id: @event.id }
+    assert_match 'fa-flag green" title="org"', response.body
+  end
+
+  test "history cell shows * when no role and no grade" do
+    bezrocniku = Act::Participant.create!(name: 'Jan', last_name: 'Bezrocniku', nickname: '',
+                                          email: 'bez@x.cz', user_id: make_user('bez@x.cz').id,
+                                          activated: 'desact')
+    enroll(@event, bezrocniku)
+    enroll(@old, bezrocniku)
+    sign_in @org
+    get :history, params: { event_id: @event.id }
+    assert_match '<strong title="byl na akci (role nezjištěna)">*</strong>', response.body
   end
 
   test "history sorts participants by grade then birth" do

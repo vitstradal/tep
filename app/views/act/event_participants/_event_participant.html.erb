@@ -114,6 +114,23 @@
     <% end %>
     </td>
   <% end %>
+
+  <% if (can? :update_other, Act::EventParticipant) %>
+    <td>
+    <%# role účasti: uložená, nebo odhad z ročníku (s otazníkem); klik přepne %>
+    <% role_label = case event_participant.role_display
+                    when 'org' then 'Org'
+                    when 'participant' then 'Účastník'
+                    else 'Role?'
+                    end %>
+    <% role_label += ' (odhad)' if event_participant.role_guessed? %>
+    <%= form_tag act_event_set_participant_role_path(event_participant.event_id, event_participant.participant_id) do %>
+      <%= submit_tag role_label,
+                     class: "btn #{event_participant.role_display == 'org' ? 'btn-inverse' : ''}",
+                     title: event_participant.role_guessed? ? 'Odhad podle ročníku — klik uloží opak' : 'Přepnout roli org/účastník' %>
+    <% end %>
+    </td>
+  <% end %>
 <% else %>
   <td>
   <%= event_participant.note %>
