@@ -137,6 +137,7 @@ class Ability
       can :read, Act::EventParticipant
       can :read, Act::EventInvitation
       can :papers_please, Act::Event
+      can :history, Act::Event
     end
 
     # master-org, or more-org, 

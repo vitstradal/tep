@@ -104,6 +104,7 @@ Tep::Application.routes.draw do
   post '/act/events/:event_id/participants/:participant_id/delete' => 'act/event_participants#delete',       :as => :act_event_delete_participant
   post '/act/events/:event_id/participants/:participant_id/choose' => 'act/event_participants#choose',       :as => :act_event_participant_choose
   get '/act/events/:event_id/display_participants'                 => 'act/events#display_participants',     :as => :act_event_display_participants
+  get '/act/events/:event_id/history'                              => 'act/events#history',                  :as => :act_event_history
 
   # event_invitations
   post '/act/event_invitations/:event_id/:participant_id/save'     => 'act/event_invitations#save',          :as => :act_event_save_invitation

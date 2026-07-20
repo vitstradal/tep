@@ -1,0 +1,53 @@
+<%= render 'tabs_edit' do %>
+
+<h1>Historie účastníků <%= @event.title %></h1>
+
+<% if @history_people.empty? %>
+  <p>Na akci zatím není nikdo přihlášený.</p>
+<% elsif @history_events.empty? %>
+  <p>Nikdo z přihlášených zatím nebyl na žádné jiné akci.</p>
+<% else %>
+  <p class="text-muted" style="margin-bottom:.5rem">
+    <i class="ace-icon fa fa-flag green"></i> byl jako org &nbsp;
+    <i class="ace-icon fa fa-user blue"></i> byl jako účastník &nbsp;
+    prázdné = nebyl
+  </p>
+  <table class="table table-striped table-bordered" style="width:auto">
+    <thead>
+      <tr>
+        <th>Jméno</th>
+        <th>Příjmení</th>
+        <th>Ročník</th>
+        <% @history_events.each do |e| %>
+          <th style="vertical-align:bottom;padding:8px 4px" title="<%= e.title %><%= e.event_start ? " (#{e.event_start})" : '' %>">
+            <span style="writing-mode:vertical-rl;transform:rotate(180deg);white-space:nowrap;font-weight:normal">
+              <%= link_to e.title, act_event_path(e) %>
+            </span>
+          </th>
+        <% end %>
+      </tr>
+    </thead>
+    <tbody>
+      <% @history_people.each do |p| %>
+        <tr>
+          <td><%= p.name %></td>
+          <td><%= p.last_name %></td>
+          <td><%= p.grade %></td>
+          <% @history_events.each do |e| %>
+            <td style="text-align:center">
+              <% if @history_att[[p.id, e.id]] %>
+                <% if p.org? %>
+                  <i class="ace-icon fa fa-flag green" title="org"></i>
+                <% else %>
+                  <i class="ace-icon fa fa-user blue" title="účastník"></i>
+                <% end %>
+              <% end %>
+            </td>
+          <% end %>
+        </tr>
+      <% end %>
+    </tbody>
+  </table>
+<% end %>
+
+<% end %>

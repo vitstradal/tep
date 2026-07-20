@@ -22,6 +22,11 @@
         <li <%=class_active_if( @event_tab == 'enroll') %>>
             <%=ilink_to act_event_enroll_others_path(@event, "ev", "ev"), ico:'fa-pencil-square-o' do  %>Přihlaš nové účastníky<%end%>
         </li>
+
+        <%######################### tab Historie účastníků -%>
+        <li <%=class_active_if( @event_tab == 'history') %>>
+            <%=ilink_to act_event_history_path(@event), ico:'fa-history' do  %>Historie účastníků<%end%>
+        </li>
     </ul>
     <div class="tab-content">
       <%= yield -%>

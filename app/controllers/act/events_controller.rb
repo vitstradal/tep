@@ -414,6 +414,43 @@ class Act::EventsController < ActController
   # @orgs_no:: orgové, kteří nejedou
   # @filter_hasehs[]:: které informace chceme uživateli zobrazit
   #
+  ##
+  # GET /act/events/:event_id/history
+  #
+  # Historie účastníků: tabulka lidí přihlášených na tuto akci (účastníci
+  # i orgové/vedoucí) × ostatní akce, na kterých kdo z nich byl.
+  #
+  # *Provides*
+  # @history_people:: pole Act::Participant (orgové první, pak dle příjmení)
+  # @history_events:: pole Act::Event, na kterých byl aspoň jeden z nich
+  #                   (bez této akce), řazeno dle data
+  # @history_att:: { [participant_id, event_id] => Act::EventParticipant }
+  def history
+    @breadcrumb = []
+    @breadcrumb.push [ _breadcrumb_events ]
+    @event_tab = 'history'
+
+    return unless _find_event(params[:event_id])
+    return render 'permission_denied', :locals => { :desired => "vidět historii účastníků na " } unless can? :read, Act::EventParticipant
+
+    here = Act::EventParticipant.where(event_id: @event.id, status: 'yes', chosen: 'participant')
+                                .includes(participant: :user)
+    @history_people = here.map(&:participant).compact.uniq
+                          .sort_by { |p| [p.org? ? 0 : 1, p.last_name.to_s.downcase, p.name.to_s.downcase] }
+
+    others = Act::EventParticipant.where(participant_id: @history_people.map(&:id),
+                                         status: 'yes', chosen: 'participant')
+                                  .where.not(event_id: @event.id)
+                                  .includes(:event)
+    @history_events = others.map(&:event).compact.uniq
+                            .sort_by { |e| [e.event_start || Date.new(1970), e.id] }
+    @history_att = {}
+    others.each { |ep| @history_att[[ep.participant_id, ep.event_id]] = ep }
+
+    @breadcrumb.push [ _breadcrumb_event_category(@event.event_category) ]
+    @breadcrumb.push [ _breadcrumb_event(@event) ]
+  end
+
   def display_participants
     @breadcrumb = []
     format = params[:fmt]
