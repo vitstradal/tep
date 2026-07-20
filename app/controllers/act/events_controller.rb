@@ -426,7 +426,8 @@ class Act::EventsController < ActController
   #       (dlouhodobé/krátkodobé, viz Act::Event#long_term?)
   #
   # *Provides*
-  # @history_people:: pole Act::Participant (orgové první, pak dle příjmení)
+  # @history_people:: pole Act::Participant (orgové první, pak dle ročníku,
+  #                   data narození a příjmení)
   # @history_events:: pole Act::Event, na kterých byl aspoň jeden z nich
   #                   (bez této akce), řazeno dle data
   # @history_att:: { [participant_id, event_id] => Act::EventParticipant }
@@ -442,7 +443,10 @@ class Act::EventsController < ActController
     here = Act::EventParticipant.where(event_id: @event.id, status: 'yes', chosen: 'participant')
                                 .includes(participant: :user)
     @history_people = here.map(&:participant).compact.uniq
-                          .sort_by { |p| [p.org? ? 0 : 1, p.last_name.to_s.downcase, p.name.to_s.downcase] }
+                          .sort_by { |p| [p.org? ? 0 : 1,
+                                          p.grade || 999,
+                                          p.birth || Time.utc(9999),
+                                          p.last_name.to_s.downcase, p.name.to_s.downcase] }
 
     others = Act::EventParticipant.where(participant_id: @history_people.map(&:id),
                                          status: 'yes', chosen: 'participant')

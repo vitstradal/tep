@@ -60,6 +60,23 @@ class ActEventsHistoryTest < ActionController::TestCase
     assert_match 'Jen dlouhodobé', response.body      # checkbox dle skupiny akce
   end
 
+  test "history sorts participants by grade then birth" do
+    starsi  = make_participant('starsi@x.cz', make_user('starsi@x.cz').id)
+    starsi.update!(grade: 9)
+    mladsi  = make_participant('mladsi@x.cz', make_user('mladsi@x.cz').id)
+    mladsi.update!(grade: 7, birth: Time.utc(2013, 1, 1))
+    @kid.update!(grade: 7, birth: Time.utc(2012, 6, 1))   # stejný ročník, starší
+    enroll(@event, starsi)
+    enroll(@event, mladsi)
+
+    sign_in @org
+    get :history, params: { event_id: @event.id }
+    body = response.body
+    assert body.index('Kid') < body.index('Mladsi'),  'v ročníku řadí dle narození'
+    assert body.index('Mladsi') < body.index('Starsi'), 'nižší ročník první'
+    assert body.index('Vedouci') < body.index('Kid'),  'orgové zůstávají první'
+  end
+
   test "history with all=1 shows both groups" do
     sign_in @org
     get :history, params: { event_id: @event.id, all: '1' }
