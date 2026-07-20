@@ -85,7 +85,7 @@ class Act::EventParticipantsController < ActController
     @event_participant.update_chosen()
     if @event_participant.update(event_participant_params)
       add_success "Přihláška na akci byla úspěšně změněna"
-      redirect_to act_event_edit_participants_path(params[:event_id])
+      redirect_to act_event_edit_participants_path(params[:event_id], anchor: "ep-#{params[:participant_id]}")
     else
       _find_event(params[:event_id])
       _get_participants()
@@ -116,7 +116,7 @@ class Act::EventParticipantsController < ActController
     @event_participant.destroy
 
     add_success "Přihláška na akci byla úspěšně smazána"
-    redirect_to act_event_edit_participants_path(params[:event_id])
+    redirect_to act_event_edit_participants_path(params[:event_id], anchor: "ep-#{params[:participant_id]}")
   end
 
   ##
@@ -143,7 +143,7 @@ class Act::EventParticipantsController < ActController
     @event_participant.save
 
     add_success "Přihláška na akci byla úspěšně změněna"
-    redirect_to act_event_edit_participants_path(params[:event_id])
+    redirect_to act_event_edit_participants_path(params[:event_id], anchor: "ep-#{params[:participant_id]}")
   end
 
   ##
@@ -163,7 +163,7 @@ class Act::EventParticipantsController < ActController
     @event_participant.save
 
     add_success "Role účasti změněna na #{@event_participant.role == 'org' ? 'org' : 'účastník'}"
-    redirect_to act_event_edit_participants_path(params[:event_id])
+    redirect_to act_event_edit_participants_path(params[:event_id], anchor: "ep-#{params[:participant_id]}")
   end
 
   private

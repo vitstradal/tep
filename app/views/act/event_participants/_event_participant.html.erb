@@ -1,9 +1,10 @@
+<%# id řádku = kotva pro návrat po uložení (redirect s anchor) %>
 <% if event_participant.status == "yes" %>
-  <tr style="background-color: #85ffc4;">
+  <tr id="ep-<%= event_participant.participant_id %>" style="background-color: #85ffc4;">
 <% elsif event_participant.status == "maybe" %>
-  <tr style="background-color:#fdd979;">
+  <tr id="ep-<%= event_participant.participant_id %>" style="background-color:#fdd979;">
 <% else %>
-  <tr style="background-color:#fe7171;">
+  <tr id="ep-<%= event_participant.participant_id %>" style="background-color:#fe7171;">
 <% end %>
 
 <% if current_user.morg? and (not @edit_participants) %>

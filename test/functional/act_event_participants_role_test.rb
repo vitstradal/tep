@@ -27,6 +27,8 @@ class ActEventParticipantsRoleTest < ActionController::TestCase
 
     sign_in @morg
     post :set_role, params: { event_id: @event.id, participant_id: @kid.id }
+    # redirect s kotvou na řádek, ať stránka neskočí na začátek
+    assert_redirected_to act_event_edit_participants_path(@event.id, anchor: "ep-#{@kid.id}")
     @ep.reload
     assert_equal 'org', @ep.role                    # opak odhadu, uloženo
     assert_not @ep.role_guessed?
