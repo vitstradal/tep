@@ -58,6 +58,8 @@ class ActEventsHistoryTest < ActionController::TestCase
     assert_no_match(/Cizi akce/, response.body)       # akce bez průniku účastníků
     # kid má ročník 7 a žádnou uloženou roli -> odhad účastník s otazníkem
     assert_match 'fa-user blue" title="účastník (odhad podle ročníku)"', response.body
+    # data-hint pro stavový řádek v rohu
+    assert_match 'data-hint="Jan Kid · Soustředění 2025 (2025-07-01) — účastník (odhad podle ročníku)"', response.body
     assert_match 'Jen dlouhodobé', response.body      # checkbox dle skupiny akce
   end
 

@@ -52,8 +52,16 @@
           <td><%= p.last_name %></td>
           <td><%= p.grade %></td>
           <% @history_events.each do |e| %>
-            <td style="text-align:center">
-              <% if (ep = @history_att[[p.id, e.id]]) %>
+            <% ep = @history_att[[p.id, e.id]] %>
+            <% hint = "#{p.name} #{p.last_name} · #{e.title}#{e.event_start ? " (#{e.event_start})" : ''} — " %>
+            <% hint += if ep.nil? then 'nebyl'
+                       elsif ep.role_display == 'org' then 'org'
+                       elsif ep.role_display == 'participant' then 'účastník'
+                       else 'byl (role nezjištěna)'
+                       end %>
+            <% hint += ' (odhad podle ročníku)' if ep && ep.role_guessed? %>
+            <td style="text-align:center" data-hint="<%= hint %>">
+              <% if ep %>
                 <% guessed = ep.role_guessed? %>
                 <% if ep.role_display == 'org' %>
                   <i class="ace-icon fa fa-flag green" title="org<%= ' (odhad podle ročníku)' if guessed %>"></i>
@@ -69,10 +77,18 @@
       <% end %>
     </tbody>
   </table>
+  <%# falešný stavový řádek prohlížeče (do window.status už JS psát nesmí) %>
+  <div id="history-statusbar"
+       style="display:none;position:fixed;left:0;bottom:0;z-index:99;max-width:85%;
+              background:#f5f5f5;border:1px solid #bbb;border-left:0;border-bottom:0;
+              border-radius:0 4px 0 0;padding:2px 10px;font-size:.85em;color:#333;
+              white-space:nowrap;overflow:hidden;text-overflow:ellipsis"></div>
   <script>
     // zvýrazni celý sloupec, nad kterým je myš (řádek řeší CSS :hover)
+    // + ukaž info o buňce ve „stavovém řádku" v rohu
     document.addEventListener('DOMContentLoaded', function () {
       var table = document.getElementById('history-table');
+      var bar = document.getElementById('history-statusbar');
       if (!table) return;
       function colCells(idx) {
         return table.querySelectorAll('tr > *:nth-child(' + (idx + 1) + ')');
@@ -82,9 +98,13 @@
         if (!cell || !table.contains(cell)) return;
         table.querySelectorAll('.col-hl').forEach(function (c) { c.classList.remove('col-hl'); });
         colCells(cell.cellIndex).forEach(function (c) { c.classList.add('col-hl'); });
+        var hint = cell.getAttribute('data-hint');
+        if (hint) { bar.textContent = hint; bar.style.display = 'block'; }
+        else { bar.style.display = 'none'; }
       });
       table.addEventListener('mouseleave', function () {
         table.querySelectorAll('.col-hl').forEach(function (c) { c.classList.remove('col-hl'); });
+        bar.style.display = 'none';
       });
     });
   </script>
