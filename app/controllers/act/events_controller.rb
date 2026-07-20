@@ -429,7 +429,8 @@ class Act::EventsController < ActController
   # @history_people:: pole Act::Participant (orgové první, pak dle ročníku,
   #                   data narození a příjmení)
   # @history_events:: pole Act::Event, na kterých byl aspoň jeden z nich
-  #                   (bez této akce), řazeno dle data
+  #                   (bez této akce), nejnovější vlevo (řazeno dle data
+  #                   sestupně)
   # @history_att:: { [participant_id, event_id] => Act::EventParticipant }
   # @history_all:: bool — filtr na skupinu vypnut
   def history
@@ -455,6 +456,7 @@ class Act::EventsController < ActController
     @history_all = params[:all] == '1'
     @history_events = others.map(&:event).compact.uniq
                             .sort_by { |e| [e.event_start || Date.new(1970), e.id] }
+                            .reverse
     unless @history_all
       # default: jen akce ze stejné skupiny (dlouhodobé/krátkodobé)
       @history_events = @history_events.select { |e| e.long_term? == @event.long_term? }

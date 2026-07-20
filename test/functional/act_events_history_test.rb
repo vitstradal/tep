@@ -77,13 +77,15 @@ class ActEventsHistoryTest < ActionController::TestCase
     assert body.index('Vedouci') < body.index('Kid'),  'orgové zůstávají první'
   end
 
-  test "history with all=1 shows both groups" do
+  test "history with all=1 shows both groups, newest event first" do
     sign_in @org
     get :history, params: { event_id: @event.id, all: '1' }
     assert_response :success
     assert_match 'Soustředění 2025', response.body
     assert_match 'Vylet 2025', response.body
     assert_no_match(/Cizi akce/, response.body)
+    # nejnovější akce vlevo (Soustředění 7/2025 před Výletem 5/2025)
+    assert response.body.index('Soustředění 2025') < response.body.index('Vylet 2025')
   end
 
   test "history is not for plain users" do
