@@ -56,7 +56,7 @@ class ActEventsHistoryTest < ActionController::TestCase
     assert_match 'Soustředění 2025', response.body    # stejná skupina (dlouhodobá)
     assert_no_match(/Vylet 2025/, response.body)      # krátkodobá — defaultně skryta
     assert_no_match(/Cizi akce/, response.body)       # akce bez průniku účastníků
-    assert_match 'fa-user', response.body             # účastnická ikonka
+    assert_match '<strong title="byl na akci">*</strong>', response.body
     assert_match 'Jen dlouhodobé', response.body      # checkbox dle skupiny akce
   end
 

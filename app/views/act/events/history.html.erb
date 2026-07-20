@@ -19,11 +19,6 @@
   <p>Nikdo z přihlášených zatím nebyl na žádné jiné
      <%= @history_all ? '' : (@event.long_term? ? 'dlouhodobé ' : 'krátkodobé ') %>akci.</p>
 <% else %>
-  <p class="text-muted" style="margin-bottom:.5rem">
-    <i class="ace-icon fa fa-flag green"></i> byl jako org &nbsp;
-    <i class="ace-icon fa fa-user blue"></i> byl jako účastník &nbsp;
-    prázdné = nebyl
-  </p>
   <style>
     /* zvýraznění řádku a sloupce pod myší (sloupec přes .col-hl z JS) */
     #history-table tbody tr:hover td { background: #d9edf7; }
@@ -52,13 +47,7 @@
           <td><%= p.grade %></td>
           <% @history_events.each do |e| %>
             <td style="text-align:center">
-              <% if @history_att[[p.id, e.id]] %>
-                <% if p.org? %>
-                  <i class="ace-icon fa fa-flag green" title="org"></i>
-                <% else %>
-                  <i class="ace-icon fa fa-user blue" title="účastník"></i>
-                <% end %>
-              <% end %>
+              <% if @history_att[[p.id, e.id]] %><strong title="byl na akci">*</strong><% end %>
             </td>
           <% end %>
         </tr>
