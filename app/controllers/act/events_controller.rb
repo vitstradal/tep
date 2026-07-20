@@ -421,10 +421,16 @@ class Act::EventsController < ActController
   # i orgové/vedoucí) × ostatní akce, na kterých kdo z nich byl.
   #
   # *Provides*
+  # *Params*
+  # all:: '1' = všechny akce; jinak jen akce ze stejné skupiny
+  #       (dlouhodobé/krátkodobé, viz Act::Event#long_term?)
+  #
+  # *Provides*
   # @history_people:: pole Act::Participant (orgové první, pak dle příjmení)
   # @history_events:: pole Act::Event, na kterých byl aspoň jeden z nich
   #                   (bez této akce), řazeno dle data
   # @history_att:: { [participant_id, event_id] => Act::EventParticipant }
+  # @history_all:: bool — filtr na skupinu vypnut
   def history
     @breadcrumb = []
     @breadcrumb.push [ _breadcrumb_events ]
@@ -442,8 +448,13 @@ class Act::EventsController < ActController
                                          status: 'yes', chosen: 'participant')
                                   .where.not(event_id: @event.id)
                                   .includes(:event)
+    @history_all = params[:all] == '1'
     @history_events = others.map(&:event).compact.uniq
                             .sort_by { |e| [e.event_start || Date.new(1970), e.id] }
+    unless @history_all
+      # default: jen akce ze stejné skupiny (dlouhodobé/krátkodobé)
+      @history_events = @history_events.select { |e| e.long_term? == @event.long_term? }
+    end
     @history_att = {}
     others.each { |ep| @history_att[[ep.participant_id, ep.event_id]] = ep }
 

@@ -131,6 +131,17 @@ class Act::Event < ActiveRecord::Base
     return categories
   end
 
+  # Kolik dní (včetně) musí akce trvat, aby byla „dlouhodobá"
+  LONG_TERM_MIN_DAYS = 5
+
+  ##
+  # Dlouhodobá akce (tábor, soustředění) vs. krátkodobá (víkendovka,
+  # výlet, pikoutery) — podle délky trvání (viz LONG_TERM_MIN_DAYS).
+  def long_term?
+    return false if event_start.nil? || event_end.nil?
+    (event_end - event_start).to_i + 1 >= LONG_TERM_MIN_DAYS
+  end
+
     # helper method for deciding whether the target event should be visible for the current user
   def event_visible?(user)
     return (user && user.admin?) || ((visible == 'ev' || (user && (user.org? || visible=='user'))) &&
