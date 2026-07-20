@@ -22,7 +22,6 @@
   <p class="text-muted" style="margin-bottom:.5rem">
     <i class="ace-icon fa fa-flag green"></i> org &nbsp;
     <i class="ace-icon fa fa-user blue"></i> účastník &nbsp;
-    <sup>?</sup> = odhad podle ročníku &nbsp;
     <strong>*</strong> = byl (role nezjištěna) &nbsp;
     prázdné = nebyl
   </p>
@@ -57,9 +56,9 @@
               <% if (ep = @history_att[[p.id, e.id]]) %>
                 <% guessed = ep.role_guessed? %>
                 <% if ep.role_display == 'org' %>
-                  <i class="ace-icon fa fa-flag green" title="org<%= ' (odhad podle ročníku)' if guessed %>"></i><% if guessed %><sup title="odhad podle ročníku">?</sup><% end %>
+                  <i class="ace-icon fa fa-flag green" title="org<%= ' (odhad podle ročníku)' if guessed %>"></i>
                 <% elsif ep.role_display == 'participant' %>
-                  <i class="ace-icon fa fa-user blue" title="účastník<%= ' (odhad podle ročníku)' if guessed %>"></i><% if guessed %><sup title="odhad podle ročníku">?</sup><% end %>
+                  <i class="ace-icon fa fa-user blue" title="účastník<%= ' (odhad podle ročníku)' if guessed %>"></i>
                 <% else %>
                   <strong title="byl na akci (role nezjištěna)">*</strong>
                 <% end %>
