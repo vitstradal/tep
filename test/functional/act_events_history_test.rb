@@ -96,6 +96,18 @@ class ActEventsHistoryTest < ActionController::TestCase
     assert body.index('Vedouci') < body.index('Kid'),  'orgové zůstávají první'
   end
 
+  test "soustredeni counts as long term even when weekend length" do
+    Act::EventCategory.create!(code: 'so', name: 'Soustředění', visible: 'ev', multi_day: true)
+    junior = Act::Event.create!(title: 'Sous junior', event_category: 'so',
+                                event_start: Date.new(2025, 10, 3), event_end: Date.new(2025, 10, 5))
+    assert junior.long_term?, 'soustředění (i víkendové) je dlouhodobé'
+    enroll(junior, @kid)
+
+    sign_in @org
+    get :history, params: { event_id: @event.id }   # dlouhodobý tábor
+    assert_match 'Sous junior', response.body        # v default filtru dlouhodobých
+  end
+
   test "history with all=1 shows both groups, newest event first" do
     sign_in @org
     get :history, params: { event_id: @event.id, all: '1' }

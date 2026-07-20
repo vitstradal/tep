@@ -134,10 +134,17 @@ class Act::Event < ActiveRecord::Base
   # Kolik dní (včetně) musí akce trvat, aby byla „dlouhodobá"
   LONG_TERM_MIN_DAYS = 5
 
+  # Kategorie, které jsou dlouhodobé vždy — soustředění (kód 'so') je
+  # dlouhodobé i jako víkendové (junior); kategorie má navíc multi_day
+  # false, takže by podle délky nikdy nevyšlo.
+  LONG_TERM_CATEGORIES = ["so"]
+
   ##
   # Dlouhodobá akce (tábor, soustředění) vs. krátkodobá (víkendovka,
-  # výlet, pikoutery) — podle délky trvání (viz LONG_TERM_MIN_DAYS).
+  # výlet, pikoutery) — podle kategorie (LONG_TERM_CATEGORIES), jinak
+  # podle délky trvání (viz LONG_TERM_MIN_DAYS).
   def long_term?
+    return true if LONG_TERM_CATEGORIES.include?(event_category)
     return false if event_start.nil? || event_end.nil?
     (event_end - event_start).to_i + 1 >= LONG_TERM_MIN_DAYS
   end
