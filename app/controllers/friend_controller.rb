@@ -88,6 +88,11 @@ class FriendController < ApplicationController
   # nick:: přezdívka pro lazy založení
   # email:: adresa pro registraci
   def register
+    # KILL SWITCH: endpoint zneužívali boti k mail-bombingu cizích adres
+    # (7/2026) — registrace přátel je vypnutá, vrací 500. Pro opětovné
+    # zapnutí smaž následující řádek (a zvaž honeypot + rack-attack).
+    return head :internal_server_error
+
     friend = Friend.find_by(uuid: params[:uuid].to_s)
     email = params[:email].to_s.downcase.strip
     unless email =~ Devise.email_regexp

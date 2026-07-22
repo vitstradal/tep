@@ -112,40 +112,29 @@ class FriendControllerTest < ActionController::TestCase
     assert_response :redirect
   end
 
-  test "register creates unverified user without roles and sends mail" do
-    f = Friend.create!(nick: 'Petr')
-    assert_difference 'ActionMailer::Base.deliveries.size', 1 do
-      post :register, params: { uuid: f.uuid, email: 'novy@x.cz' }
-    end
-    u = User.find_by(email: 'novy@x.cz')
-    assert u
-    assert_nil u.confirmed_at
-    assert_equal [], u.roles.to_a
-    assert_equal u.id, f.reload.user_id
-    assert_equal 'unverified', f.status
+  # založí neověřeného přítele stejně, jako to dělávala akce register
+  # (ta je vypnutá — kill switch proti mail-bombingu)
+  def make_unverified_friend(nick, email)
+    u = User.new(email: email, password: SecureRandom.hex(16))
+    u.skip_confirmation_notification!
+    u.save!
+    f = Friend.create!(nick: nick, user: u)
+    u.send_confirmation_instructions
+    [f, u]
   end
 
-  test "register with taken email does not create user, responds identically" do
-    make_user('mam@x.cz')
+  test "register is killed and sends nothing" do
     f = Friend.create!(nick: 'Petr')
-    assert_no_difference 'User.count' do
-      post :register, params: { uuid: f.uuid, email: 'mam@x.cz' }
+    assert_no_difference ['User.count', 'ActionMailer::Base.deliveries.size'] do
+      post :register, params: { uuid: f.uuid, email: 'obet@x.cz' }
     end
-    assert_response :redirect  # stejná odpověď jako úspěch
+    assert_response :internal_server_error
     assert_nil f.reload.user_id
   end
 
-  test "register with invalid email shows error" do
-    f = Friend.create!(nick: 'Petr')
-    post :register, params: { uuid: f.uuid, email: 'blbost' }
-    assert flash[:alerts].present?
-  end
-
   test "finish sets password confirms and signs in" do
-    f = Friend.create!(nick: 'Petr')
-    post :register, params: { uuid: f.uuid, email: 'fin@x.cz' }
-    u = User.find_by(email: 'fin@x.cz')
-    token = u.confirmation_token
+    f, u = make_unverified_friend('Petr', 'fin@x.cz')
+    token = u.reload.confirmation_token
     get :finish, params: { token: token }
     assert_response :success
     post :do_finish, params: { token: token, password: 'tajneheslo1', password_confirmation: 'tajneheslo1' }
@@ -162,8 +151,7 @@ class FriendControllerTest < ActionController::TestCase
   end
 
   test "resend sends confirmation again" do
-    f = Friend.create!(nick: 'Petr')
-    post :register, params: { uuid: f.uuid, email: 're@x.cz' }
+    f, _u = make_unverified_friend('Petr', 're@x.cz')
     assert_difference 'ActionMailer::Base.deliveries.size', 1 do
       post :resend, params: { uuid: f.uuid }
     end
