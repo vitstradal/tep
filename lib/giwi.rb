@@ -2,6 +2,7 @@
 #require 'grit'
 #require 'rugged'
 require 'pp'
+require 'fileutils'
 require 'diff3'
 
 class Giwi
@@ -560,6 +561,7 @@ class GiwiNoGit < Giwi
   end
 
   def get_ls(path)
+    path = path.nil? ? '' : path.dup
     while !path.empty?
       break if File.directory?(File.join(@path, path))
       path.sub! /(^|\/)[^\/]*$/, ''
@@ -598,6 +600,7 @@ class GiwiNoGit < Giwi
       end
     end
     #File.write(path_fs, text)
+    FileUtils.mkdir_p(File.dirname(path_fs))
     File.binwrite(path_fs, text)
     return SETPAGE_OK
   end
