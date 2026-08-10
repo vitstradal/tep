@@ -62,6 +62,9 @@
       <%= button_tag 'Poslení změna', :class=>'btn btn-primary', :href => url_for(path: @path, :diff => 'LAST'), ico: 'fa-columns' %>
       <%= button_tag 'Historie', :class=>'btn btn-primary', :href => url_for(path: @path, :history => @path), ico: 'fa-university' %>
       <%= button_tag 'Seznam stránek', :class=>'btn btn-primary', :href => url_for(path: @path, :ls => '.'), ico: 'fa-list' %>
+      <% if @foto_gallery || @text =~ /\{\{foto/ || File.basename(@path.to_s) =~ /\A(foto|fotky)\./ %>
+        <%= button_tag 'Edit with tep-foto', :class=>'btn btn-danger', :href => "/pub/tep-foto/?u=#{url_for(path: @path)}?raw=1", ico: 'fa-camera' %>
+      <% end %>
       <%= button_tag 'Edit', :accesskey => 'e', :class=>'btn btn-danger', :href => url_for(path: @path, :edit => 'me'), ico: 'fa-edit' %>
     </div>
   <% end %>
