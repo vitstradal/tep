@@ -23,7 +23,8 @@
 
 <% if @foto_gallery %>
       <% if @editable %>
-         <button class="btn-danger">edit mode</button>
+         <a class="btn btn-danger"
+            href="/pub/tep-foto/?u=<%= url_for(action: :show, wiki: @wiki, path: @path, only_path: true) %>?raw=1">edit mode</a>
       <% end %>
       <div class="modal fade" id="foto-modal" tabindex="-1" role="dialog" aria-labelledby="foto-modal-label" aria-hidden="true">
         <div class="modal-dialog modal-lg">
