@@ -624,6 +624,7 @@ class GiwiController < ApplicationController
   def _handle_ls
     authorize! :update, @giwi.auth_name
     @files, @dirs, @path_dir = Giwi.get_giwi(@wiki).get_ls(@path)
+    return render json: { files: @files, dirs: @dirs, path: @path_dir } if params[:format] == 'json'
     render :ls
   end
 

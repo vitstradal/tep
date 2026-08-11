@@ -587,7 +587,7 @@ class GiwiNoGit < Giwi
     return SETPAGE_ERROR if path =~ /\\\.\.\\/
 
     if text.nil?
-      File.delete path_fs
+      File.delete(path_fs) if File.exist?(path_fs)
       return SETPAGE_OK
     end
 
