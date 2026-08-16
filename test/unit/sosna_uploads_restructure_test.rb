@@ -83,6 +83,97 @@ class SosnaUploadsRestructureTest < ActiveSupport::TestCase
     assert_match 'chybí 1', out
   end
 
+  ### oprava sirotku (problem smazan a znovu zalozen)
+
+  # vyrobi reseni, jehoz uloha byla smazana; roc/se/ul zustavaji ve jmene souboru
+  def make_orphan(problem_no: 3, with_file: true)
+    p_old = Sosna::Problem.create!(annual: 99, level: 'pi', round: 2, problem_no: problem_no)
+    sol = Sosna::Solution.create!(problem: p_old, solver: @solver)
+    fname = sol.get_filename_ori
+    File.write(UPLOADS + fname, '%PDF-orphan') if with_file
+    sol.update!(filename: fname)
+    p_old.delete
+    [sol, fname]
+  end
+
+  test "sirotek bez dvojnika se prepoji na znovuzalozenou ulohu" do
+    sol, fname = make_orphan
+    p_new = Sosna::Problem.create!(annual: 99, level: 'pi', round: 2, problem_no: 3)
+
+    out = run_task
+
+    assert_equal p_new.id, sol.reload.problem_id
+    assert_equal "rocnik99/serie02/#{fname}", sol.filename, 'soubor se presune v temze behu'
+    assert File.exist?(UPLOADS + sol.filename)
+    assert_match 'repoint 1', out
+  end
+
+  test "sirotkuv soubor prevezme dvojnik bez souboru, sirotek se smaze" do
+    sol, fname = make_orphan
+    p_new = Sosna::Problem.create!(annual: 99, level: 'pi', round: 2, problem_no: 3)
+    twin = Sosna::Solution.create!(problem: p_new, solver: @solver)
+
+    out = run_task
+
+    assert_nil Sosna::Solution.find_by(id: sol.id), 'sirotek smazan'
+    assert_equal "rocnik99/serie02/#{fname}", twin.reload.filename
+    assert File.exist?(UPLOADS + twin.filename)
+    assert_match 'adopt 1', out
+  end
+
+  test "sirotek-duplikat se smaze, dvojnikuv soubor zustava" do
+    sol, fname = make_orphan(with_file: false)
+    p_new = Sosna::Problem.create!(annual: 99, level: 'pi', round: 2, problem_no: 3)
+    File.write(UPLOADS + fname, '%PDF-twin')
+    twin = Sosna::Solution.create!(problem: p_new, solver: @solver)
+    twin.update!(filename: fname)
+
+    out = run_task
+
+    assert_nil Sosna::Solution.find_by(id: sol.id)
+    assert_equal '%PDF-twin', File.read(UPLOADS + twin.reload.filename)
+    assert_match 'dup 1', out
+  end
+
+  ### CLEAN=1 uklid korene
+
+  test "CLEAN smaze stare nereferencovane, necha mlade a navratky" do
+    old_junk = UPLOADS + 'reseni-roc98pi-se01-ul1-rel999-ori-Mrtvy-Soubor.pdf'
+    File.write(old_junk, 'x')
+    File.utime(Time.now - 60 * 86400, Time.now - 60 * 86400, old_junk)
+    young_junk = UPLOADS + 'reseni-roc98pi-se01-ul2-rel999-ori-Cerstvy-Soubor.pdf'
+    File.write(young_junk, 'x')
+    confirm = UPLOADS + 'confirm-file-12345.pdf'
+    File.write(confirm, 'x')
+    File.utime(Time.now - 60 * 86400, Time.now - 60 * 86400, confirm)
+
+    ENV['CLEAN'] = '1'
+    begin
+      out = run_task
+    ensure
+      ENV.delete 'CLEAN'
+    end
+
+    assert !File.exist?(old_junk), 'stary nereferencovany smazan'
+    assert File.exist?(young_junk), 'mladsi nez 30 dni zustava'
+    assert File.exist?(confirm), 'navratky se nemazou'
+    assert_match 'smazáno 1', out
+  ensure
+    [young_junk, confirm, old_junk].each { |f| File.delete(f) if f && File.exist?(f) }
+  end
+
+  test "bez CLEAN se nereferencovane soubory nemazou" do
+    junk = UPLOADS + 'reseni-roc98pi-se01-ul3-rel999-ori-Stary-Soubor.pdf'
+    File.write(junk, 'x')
+    File.utime(Time.now - 60 * 86400, Time.now - 60 * 86400, junk)
+
+    run_task
+
+    assert File.exist?(junk)
+  ensure
+    File.delete(junk) if File.exist?(junk)
+  end
+
   test "DRY=1 nic nepresune ani neupdatne" do
     fname = @solution.get_filename_ori
     File.write(UPLOADS + fname, '%PDF-ori')
