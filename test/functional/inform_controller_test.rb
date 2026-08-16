@@ -71,11 +71,18 @@ class InformControllerTest < ActionController::TestCase
     assert_redirected_to '/inform/index'
   end
 
-  test "admin: archivovana anketa je pristupna" do
+  test "admin: archivovana anketa je pristupna a oznacena jako archiv" do
     sign_in @admin
     get :index, params: { form: 'stara' }
     assert_response :success
     assert_match 'Karel', response.body
+    assert_select 'h1 span.label', text: /archiv/
+  end
+
+  test "admin: cerstva anketa znacku archiv nema" do
+    sign_in @admin
+    get :index, params: { form: 'nova' }
+    assert_select 'h1 span.label', count: 0
   end
 
   test "anketa presne na hranici 1.5 roku je jeste pristupna" do

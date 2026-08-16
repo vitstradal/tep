@@ -1,6 +1,10 @@
 <% style = params[:style] %>
 
-<h1>Inform <%= @form %> </h1>
+<h1>Inform <%= @form %>
+<% if !@form.nil? && @archived_forms.include?(@form) %>
+  <span class="label label-warning" title="archivovaný inform — starší než 1,5 roku, vidí jen admin">🗄️ archiv</span>
+<% end %>
+</h1>
 
 [<%= link_to 'tab', inform_index_path(@form, style: 'tab')  %>,
  <%= link_to 'list',  inform_index_path(@form, style: 'list') %>,
@@ -117,7 +121,7 @@
   <% if current_user.admin? %>
     <ul>
     <% @archived_forms.each do |form| %>
-      <li><%=link_to form||'-', inform_index_path(form) %></li>
+      <li>🗄️ <%=link_to form||'-', inform_index_path(form) %></li>
     <% end %>
     </ul>
   <% else %>
