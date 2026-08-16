@@ -30,6 +30,7 @@ class SosnaSolutionFilesTest < ActionController::TestCase
   teardown do
     FileUtils.rm_rf UPLOADS + 'rocnik99'
     FileUtils.rm_rf UPLOADS + 'rocnik99-jr'
+    FileUtils.rm_rf UPLOADS + 'tmp'
     Dir.glob(UPLOADS + 'reseni-roc99*').each { |f| File.delete f }
   end
 
@@ -114,6 +115,19 @@ class SosnaSolutionFilesTest < ActionController::TestCase
       Zip::File.open(t.path) { |z| entries = z.map(&:name) }
       assert_includes entries, 'reseni/' + @solution.get_filename_ori
     end
+  end
+
+  test "downall tvori zip v uploads/tmp a uklizi stare zipy" do
+    FileUtils.mkdir_p UPLOADS + 'tmp'
+    old_zip = UPLOADS + 'tmp/solution-stary.zip'
+    File.write(old_zip, 'x')
+    File.utime(Time.now - 2 * 86400, Time.now - 2 * 86400, old_zip)
+
+    get :downall, params: { roc: '99', level: 'pi', se: '1' }
+    assert_response :success
+    assert !File.exist?(old_zip), 'zip z minula uklizen'
+    assert_empty Dir.glob(UPLOADS + '*.zip'), 'v koreni uploads zadny zip'
+    assert !Dir.glob(UPLOADS + 'tmp/solution*.zip').empty?, 'novy zip vznikl v tmp/'
   end
 
   ### upload opravy

@@ -286,9 +286,7 @@ class Sosna::SolutionController < SosnaController
   ##
   #  GET  '/sosna/solution/confirm_files'            => 'sosna/solution#get_confirm_files',    :as => :sosna_solutions_get_confirm_files
   def get_confirm_files
-    zip_file = Tempfile.new(['confirmations', '.zip'], UPLOAD_DIR)
-    zip_file_name = zip_file.path
-    zip_file.unlink
+    zip_file_name = _zip_temp_path 'confirmations'
     annual = params[:annual] || @config[:annual]
     solvers = Sosna::Solver.where(annual: annual)
 
@@ -427,13 +425,8 @@ class Sosna::SolutionController < SosnaController
     problems = _problems_from_roc_level_se_ul
     solutions = _solutions_from_problems problems
 
-    zip_file = Tempfile.new(['solution', '.zip'], UPLOAD_DIR)
-    zip_file_name = zip_file.path
-    zip_file.unlink
+    zip_file_name = _zip_temp_path 'solution'
 
-    # Zip::File.open potrebuej aby zip_file_naem (neexistovalo
-    # jinak si zacne myslet, ze zip chci otevrit a ne prepsat
-    # naopak Tempfile nedokaze jen vymyslet jmeno a neotevirat
     Zip::File.open(zip_file_name, Zip::File::CREATE) do |zipfile|
       solutions.each do |solution|
         if want_rev
@@ -545,7 +538,8 @@ class Sosna::SolutionController < SosnaController
            File.open(UPLOAD_DIR + path, 'wb') {  |f| f.write(rfile.read) }
          end
       elsif rfile.original_filename =~ /\.zip$/
-         zip_file = Tempfile.new(['corr', '.zip'], UPLOAD_DIR)
+         FileUtils::mkdir_p UPLOAD_DIR + 'tmp'
+         zip_file = Tempfile.new(['corr', '.zip'], UPLOAD_DIR + 'tmp')
          File.open(zip_file, 'wb') {  |f| f.write(rfile.read) }
          zip_file.close
          Zip::File.open(zip_file.path) do |zipfile|
@@ -1421,6 +1415,28 @@ class Sosna::SolutionController < SosnaController
                        .where(Sosna::Problem.arel_table[:round].lt(Sosna::Problem::BONUS_ROUND_NUM))
                        .maximum('round')
      max.to_s
+  end
+
+  ##
+  # Vymyslí jméno pro dočasný zip v uploads/tmp/ a při té příležitosti
+  # smaže zipy z dřívějška (send_file soubor potřebuje ještě po requestu,
+  # proto se nemažou hned — viz zakomentované File.delete v historii).
+  #
+  # Zip::File.open potřebuje, aby jméno neexistovalo (jinak si začne
+  # myslet, že zip chci otevřít a ne přepsat), naopak Tempfile nedokáže
+  # jen vymyslet jméno a neotevírat — proto create + unlink.
+  def _zip_temp_path(prefix)
+    dir = UPLOAD_DIR + 'tmp/'
+    FileUtils::mkdir_p dir
+    Dir.glob(dir + '*.zip').each do |f|
+      File.delete(f) if File.mtime(f) < 1.day.ago
+    rescue Errno::ENOENT
+      # souperici request ho smazal driv, nevadi
+    end
+    zip_file = Tempfile.new([prefix, '.zip'], dir)
+    path = zip_file.path
+    zip_file.unlink
+    path
   end
 
   def _confirm_file_path(solver)
