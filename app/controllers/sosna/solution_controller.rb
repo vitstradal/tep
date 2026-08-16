@@ -1424,6 +1424,8 @@ class Sosna::SolutionController < SosnaController
   end
 
   def _confirm_file_path(solver)
-         UPLOAD_DIR + "confirm-file-#{solver.id}.pdf"
+         dir = UPLOAD_DIR + 'navratky/'
+         FileUtils::mkdir_p dir
+         dir + "confirm-file-#{solver.id}.pdf"
   end
 end

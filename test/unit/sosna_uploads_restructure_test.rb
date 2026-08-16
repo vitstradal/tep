@@ -137,15 +137,12 @@ class SosnaUploadsRestructureTest < ActiveSupport::TestCase
 
   ### CLEAN=1 uklid korene
 
-  test "CLEAN smaze stare nereferencovane, necha mlade a navratky" do
+  test "CLEAN smaze stare nereferencovane a necha mlade" do
     old_junk = UPLOADS + 'reseni-roc98pi-se01-ul1-rel999-ori-Mrtvy-Soubor.pdf'
     File.write(old_junk, 'x')
     File.utime(Time.now - 60 * 86400, Time.now - 60 * 86400, old_junk)
     young_junk = UPLOADS + 'reseni-roc98pi-se01-ul2-rel999-ori-Cerstvy-Soubor.pdf'
     File.write(young_junk, 'x')
-    confirm = UPLOADS + 'confirm-file-12345.pdf'
-    File.write(confirm, 'x')
-    File.utime(Time.now - 60 * 86400, Time.now - 60 * 86400, confirm)
 
     ENV['CLEAN'] = '1'
     begin
@@ -156,10 +153,24 @@ class SosnaUploadsRestructureTest < ActiveSupport::TestCase
 
     assert !File.exist?(old_junk), 'stary nereferencovany smazan'
     assert File.exist?(young_junk), 'mladsi nez 30 dni zustava'
-    assert File.exist?(confirm), 'navratky se nemazou'
     assert_match 'smazáno 1', out
   ensure
-    [young_junk, confirm, old_junk].each { |f| File.delete(f) if f && File.exist?(f) }
+    [young_junk, old_junk].each { |f| File.delete(f) if f && File.exist?(f) }
+  end
+
+  test "navratky se presunou z korene do navratky/" do
+    confirm = UPLOADS + 'confirm-file-12345.pdf'
+    File.write(confirm, '%PDF-navratka')
+
+    out = run_task
+
+    assert !File.exist?(confirm), 'v koreni uz neni'
+    assert_equal '%PDF-navratka', File.read(UPLOADS + 'navratky/confirm-file-12345.pdf')
+    assert_match 'navratek 1', out
+  ensure
+    f = UPLOADS + 'navratky/confirm-file-12345.pdf'
+    File.delete(f) if File.exist?(f)
+    File.delete(confirm) if confirm && File.exist?(confirm)
   end
 
   test "bez CLEAN se nereferencovane soubory nemazou" do

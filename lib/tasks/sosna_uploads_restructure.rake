@@ -10,9 +10,10 @@
 #  2. přesun souborů z plochého kořene do rocnikNN[-jr]/serieMM/
 #     a úprava cest v DB (filename/filename_corr relativně k uploads).
 #     Přesouvá i .tmpl sidecary (záloha pdf před vepsáním hlavičky).
-#  3. jen s CLEAN=1: smazání nereferencovaných souborů v kořeni starších
+#  3. přesun návratek confirm-file-*.pdf z kořene do navratky/
+#     (aplikace je tam nově i ukládá, viz _confirm_file_path)
+#  4. jen s CLEAN=1: smazání nereferencovaných souborů v kořeni starších
 #     30 dní (mrtvá řešení po smazání/přejmenování, .bad, staré zipy).
-#     Návratky confirm-file-*.pdf se nemažou nikdy (aplikace je čeká v kořeni).
 #
 #   rake sosna:uploads_restructure DRY=1 [CLEAN=1]  # jen vypíše, co by udělal
 #   rake sosna:uploads_restructure [CLEAN=1]
@@ -105,7 +106,18 @@ namespace :sosna do
       end
     end
 
-    ## --- 3) CLEAN=1: smazani mrtvych souboru v koreni ---------------------
+    ## --- 3) presun navratek z korene do navratky/ --------------------------
+    Dir.glob(base + 'confirm-file-*.pdf').sort.each do |src|
+      f = File.basename(src)
+      puts "navratka: #{f} -> navratky/#{f}"
+      unless dry
+        FileUtils.mkdir_p base + 'navratky'
+        FileUtils.mv src, base + 'navratky/' + f
+      end
+      stats[:confirm] += 1
+    end
+
+    ## --- 4) CLEAN=1: smazani mrtvych souboru v koreni ---------------------
     if clean
       refs = Set.new
       Sosna::Solution.where('filename IS NOT NULL OR filename_corr IS NOT NULL')
@@ -135,7 +147,8 @@ namespace :sosna do
          "sirotci: repoint #{stats[:repoint]}, adopt #{stats[:adopt]}, dup #{stats[:dup]}, " \
          "vadných #{stats[:bad]}; " \
          "přesunuto #{stats[:moved]}, jen-db #{stats[:dbonly]}, " \
-         "už převedeno #{stats[:already]}, chybí #{stats[:missing]}" +
+         "už převedeno #{stats[:already]}, chybí #{stats[:missing]}, " \
+         "navratek #{stats[:confirm]}" +
          (clean ? "; smazáno #{stats[:deleted]}, mladých #{stats[:keep_young]}" : '')
   end
 end
