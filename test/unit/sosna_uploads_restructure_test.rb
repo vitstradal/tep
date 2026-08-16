@@ -6,6 +6,7 @@ require 'rake'
 # var/uploads/ souborů do rocnikNN[-jr]/serieMM/ + update cest v DB.
 class SosnaUploadsRestructureTest < ActiveSupport::TestCase
   UPLOADS = Sosna::SolutionController::UPLOAD_DIR
+  raise 'testy musi bezet nad izolovanym uploads adresarem!' if UPLOADS == 'var/uploads/'
 
   setup do
     FileUtils.mkdir_p UPLOADS

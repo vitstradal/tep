@@ -11,7 +11,9 @@ class Sosna::SolutionController < SosnaController
   include ApplicationHelper
   include ActionView::Helpers::NumberHelper
 
-  UPLOAD_DIR = "var/uploads/"
+  # v testech oddeleny adresar -- testy mazou/presouvaji soubory a NESMI
+  # sahat na ostra data (na produkci sdili checkout s test prostredim)
+  UPLOAD_DIR = Rails.env.test? ? "var/uploads-test/" : "var/uploads/"
 
   ##
   #  GET  /sosna/solutions(/:roc(/:level(/:se(/:ul))))
