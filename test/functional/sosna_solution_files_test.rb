@@ -13,7 +13,9 @@ class SosnaSolutionFilesTest < ActionController::TestCase
 
   setup do
     FileUtils.mkdir_p UPLOADS
-    @admin = User.new(email: 'admin@x.cz', password: 'password123', roles: [:org, :admin])
+    # download_rev je v ability.rb povolen jen roli :user (resitel),
+    # org ma download/download_org -- proto admin potrebuje i :user
+    @admin = User.new(email: 'admin@x.cz', password: 'password123', roles: [:user, :org, :admin])
     @admin.skip_confirmation!
     @admin.save!
     sign_in @admin
