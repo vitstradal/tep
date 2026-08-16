@@ -39,7 +39,7 @@ class ActBackfillRolesTest < ActiveSupport::TestCase
     ep_solo = enroll(@new_event, solo_p)
     ep_old  = enroll(@old_event, kid_p)
 
-    Rake::Task['act:backfill_roles'].invoke
+    capture_io { Rake::Task['act:backfill_roles'].invoke }
 
     assert_equal 'org',         ep_org.reload.role
     assert_equal 'participant', ep_kid.reload.role
