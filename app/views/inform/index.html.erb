@@ -2,9 +2,10 @@
 
 <h1>Inform <%= @form %> </h1>
 
-[<%= link_to 'tab', inform_index_path(@form, style: 'tab')  %>, 
+[<%= link_to 'tab', inform_index_path(@form, style: 'tab')  %>,
  <%= link_to 'list',  inform_index_path(@form, style: 'list') %>,
- <%= link_to 'list2',  inform_index_path(@form, style: 'list2') -%>
+ <%= link_to 'list2',  inform_index_path(@form, style: 'list2') %>,
+ <%= link_to 'csv',  inform_index_path(@form, style: 'csv') -%>
 <% if !@form.nil? and current_user.admin? %>,
    <%= link_to 'del',  inform_index_path(@form, style: 'del') %>
 <% end %>
@@ -107,6 +108,24 @@
 
 <ul>
 <% @forms.each do |form| %>
-  <li><%=link_to form[:form]||'-', inform_index_path(form[:form]) %></li>
+  <li><%=link_to form||'-', inform_index_path(form) %></li>
 <% end %>
 </ul>
+
+<% if !@archived_forms.empty? %>
+  <h3>Archivované informy</h3>
+  <% if current_user.admin? %>
+    <ul>
+    <% @archived_forms.each do |form| %>
+      <li><%=link_to form||'-', inform_index_path(form) %></li>
+    <% end %>
+    </ul>
+  <% else %>
+    <p>Starší než 1,5 roku — přístup má jen admin, pokud něco potřebuješ, požádej ho.</p>
+    <ul>
+    <% @archived_forms.each do |form| %>
+      <li><%= form||'-' %></li>
+    <% end %>
+    </ul>
+  <% end %>
+<% end %>

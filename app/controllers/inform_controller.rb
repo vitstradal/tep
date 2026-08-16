@@ -12,6 +12,10 @@ class InformController < ApplicationController
   authorize_resource
   include ApplicationHelper
 
+  # anketa starší než tohle (podle data PRVNÍHO submitu, aby si ji org
+  # nemohl novým postem "oživit") je archivovaná — vidí ji jen admin
+  ARCHIVE_AFTER = 18.months
+
   ##
   #   GET  /inform/index/(:form)
   #
@@ -21,18 +25,32 @@ class InformController < ApplicationController
   #         tab:: jedna velká tabulka
   #         list:: položky jako odrážky
   #         list2:: tabulky po položkách
+  #         csv:: stáhne CSV se stejnými sloupci jako +tab+
   #
   # *Provides*
-  # @informs::       vsechny zaslane data (Inform) pro dany formular dany `form`
-  # @form::          id form (`form`)
-  # @forms::         všechny ankety
-  # @keys::          sloupce formuráře v preferovaném pořadí
-  # @wide_display::  is set to `true`
+  # @informs::         vsechny zaslane data (Inform) pro dany formular dany `form`
+  # @form::            id form (`form`)
+  # @forms::           přístupné ankety (jména), archivované jen pro admina
+  # @archived_forms::  archivované ankety (jména) — první submit starší než ARCHIVE_AFTER
+  # @keys::            sloupce formuráře v preferovaném pořadí
+  # @wide_display::    is set to `true`
   #
   def index
     @form = params[:form]
+
+    first_submits = Inform.group(:form).minimum(:created_at)
+    cutoff = ARCHIVE_AFTER.ago
+    # bez data neumíme stáří určit -> radši archivovat (citlivá data)
+    @archived_forms = first_submits.select { |_, t| t.nil? || t < cutoff }
+                                   .keys.sort_by(&:to_s)
+    @forms = (first_submits.keys - @archived_forms).sort_by(&:to_s)
+
+    if !@form.nil? && @archived_forms.include?(@form) && !current_user.admin?
+      add_alert "inform '#{@form}' je archivovaný, přístup má jen admin — požádej ho"
+      return redirect_to inform_index_url
+    end
+
     @informs = Inform.where({ form: @form})
-    @forms = Inform.select(:form).group(:form)
     hkeys = {}
     order = nil
     @informs.each do |inform|
@@ -58,6 +76,12 @@ class InformController < ApplicationController
       end
     else
       @keys = hkeys.keys.sort
+    end
+
+    if params[:style] == 'csv'
+      return send_data _csv(@keys, @informs),
+                       filename: "inform-#{@form}.csv",
+                       type: 'text/csv; charset=utf-8'
     end
 
     @wide_display = true
@@ -154,6 +178,21 @@ class InformController < ApplicationController
   end
 
   private
+
+  ##
+  # CSV se stejnými sloupci jako style=tab: #, ua, klíče formuláře.
+  # BOM na začátku kvůli Excelu (jinak rozbije diakritiku).
+  def _csv(keys, informs)
+    require 'csv'
+    csv = CSV.generate do |c|
+      c << ['#', 'ua'] + keys.map(&:titleize)
+      informs.each_with_index do |inform, i|
+        c << [i + 1, inform.user_agent] + keys.map { |k| inform.jdata[k] || '-' }
+      end
+    end
+    "\uFEFF" + csv
+  end
+
   def _send_bonz_email(data, ordered_data, form)
     # bonzovaci email (vlastnikovi ankety)
     bonz_email = sign_verified(data.delete('bonz_email'), 'giwi-sign')
