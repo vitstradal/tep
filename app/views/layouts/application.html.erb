@@ -383,7 +383,7 @@
                  <% end -%>
                  <%######################### tab Sklep -%>
                  <% if @event.event_sklep_url != ""  -%>
-                    <li <%=class_active_if( @event_tab == 'sklep') %>> <%=ilink_to @event.event_sklep_url, ico: 'fa-cube' do %>Slep<%end%></li>
+                    <li <%=class_active_if( @event_tab == 'sklep') %>> <%=ilink_to @event.event_sklep_url, ico: 'fa-cube' do %>Sklep<%end%></li>
                  <% end -%>
                <% end -%>
             </ul>

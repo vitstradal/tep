@@ -37,7 +37,8 @@ defaults: &defaults
     read:  :org
     update: :morg
   data_edit:
-    path: '/home/www/html/data'
+    #path: '/home/www/html/data'
+    path: '/home/www/html/fotky'
     url: 'dataed'
     templates: 'tepmac'
     nogit: true
