@@ -2,7 +2,7 @@
 <html>
 <head>
   <meta charset="utf-8" />
-  <link id='ikona' rel="shortcut icon" type="image/x-icon" href="<%= asset_path 'images/ikonka32.ico' %>" />
+  <link id='ikona' rel="shortcut icon" type="image/x-icon" href="<%= asset_path 'images/ikonka32.ico', skip_pipeline: true %>" />
   <!-- use the following meta to force IE use its most up to date rendering engine -->
   <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
   <%= csrf_meta_tag %>
@@ -38,7 +38,7 @@
 <body class="<%= cookies['ace.skin'.to_sym] || 'no-skin fail'%>"<%if @background_image%> data-background-image="<%=@background_image%>"<%end%><%if @special_page%> data-special-page="<%=@special_page%>"<%end%>>
 
 <% if ENV['RAILS_ENV'] != 'production'  %>
-<img src="<%= asset_path 'images/devel-version.png'%>" style='pointer-events:none;z-index:99;position:fixed;bottom:0;right:0;border:0;'>
+<img src="<%= asset_path 'images/devel-version.png', skip_pipeline: true %>" style='pointer-events:none;z-index:99;position:fixed;bottom:0;right:0;border:0;'>
 <% end %>
 
 <%################################################################################## %>
