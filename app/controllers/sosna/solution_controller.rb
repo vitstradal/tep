@@ -774,8 +774,9 @@ class Sosna::SolutionController < SosnaController
       return redirect_to sosna_solutions_user_url(roc, level, se, solver.id)
     end
 
-    filename = solution.get_filename_ori
+    filename = solution.path_ori
     destination_pdf = UPLOAD_DIR + filename
+    FileUtils::mkdir_p File.dirname(destination_pdf)
 
     solution_files = [ solution_files ] if ! solution_files.is_a? Array
 
@@ -872,7 +873,7 @@ class Sosna::SolutionController < SosnaController
       return redirect_to sosna_solutions_user_url(roc, level, se)
     end
 
-    _sign_pdf(solution, UPLOAD_DIR + solution.get_filename_ori, false)
+    _sign_pdf(solution, UPLOAD_DIR + (solution.filename || solution.path_ori), false)
     add_success("file resigned")
     problem = solution.problem
     se = problem.round
@@ -898,7 +899,7 @@ class Sosna::SolutionController < SosnaController
       return redirect_to sosna_solutions_user_url(roc, level, se)
     end
 
-    dest = UPLOAD_DIR + solution.get_filename_ori
+    dest = UPLOAD_DIR + (solution.filename || solution.path_ori)
     template =  dest + '.tmpl'
     FileUtils::cp  template, dest
     add_success("file unsigned")
@@ -1203,11 +1204,12 @@ class Sosna::SolutionController < SosnaController
   end
 
   def _rev_filename_for_solution(fname, solution)
-    filename_rev = solution.get_filename_rev
+    filename_rev = solution.path_rev
+    FileUtils::mkdir_p File.dirname(UPLOAD_DIR + filename_rev)
     solution.filename_corr = filename_rev
-    solution.filename_corr_display =  _filename_rev_display(solution.filename_orig||filename_rev)
+    solution.filename_corr_display =  _filename_rev_display(solution.filename_orig||solution.get_filename_rev)
     solution.save
-    print "solution id: #{solution.id}, #{solution.filename_corr}\n"
+    log "solution id: #{solution.id}, #{solution.filename_corr}"
     _add_msg(fname, "ok", true)
     return filename_rev
   end

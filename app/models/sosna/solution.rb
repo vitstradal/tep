@@ -37,6 +37,32 @@ class Sosna::Solution < ActiveRecord::Base
     _get_filename(false)
   end
 
+  ##
+  # *Returns* podadresář v uploads pro daný ročník/level/sérii,
+  # např. "rocnik40/serie01", pro juniory "rocnik40-jr/serie01"
+  def self.subdir_for(annual, level, round)
+    suffix = (level.nil? || level.empty? || level == Sosna::Solver::NORMAL_LEVEL) ? '' : "-#{level}"
+    'rocnik%02i%s/serie%02i' % [annual.to_i, suffix, round.to_i]
+  end
+
+  ##
+  # *Returns* podadresář v uploads pro toto řešení (viz subdir_for)
+  def subdir
+    self.class.subdir_for(problem.annual, problem.level, problem.round)
+  end
+
+  ##
+  # *Returns* cesta k souboru řešení (originál) relativní k uploads adresáři
+  def path_ori
+    "#{subdir}/#{get_filename_ori}"
+  end
+
+  ##
+  # *Returns* cesta k souboru opraveného řešení relativní k uploads adresáři
+  def path_rev
+    "#{subdir}/#{get_filename_rev}"
+  end
+
   private
 
   def _get_filename(is_ori)
