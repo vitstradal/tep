@@ -127,6 +127,11 @@ jQuery(document).ready(function($) {
 
         $('#sosna_solver_how_i_met_pikomat').change();
 
+        // které letáky posílat (papíroví; junior jen do 6. ročníku)
+        $('select[name="sosna_solver[where_to_send]"], #sosna_solver_grade_num')
+          .change(update_paper_level_div);
+        update_paper_level_div();
+
         // ctrl-enter submit formu in textarea
         $('.ctrl-enter-submit').keydown(function (e) {
                 if (e.ctrlKey && e.keyCode == 13) {
@@ -1318,4 +1323,20 @@ function friend_ensure(cb) {
         friend_set(json)
         cb(json)
     })
+}
+
+/* registrace řešitele: které letáky posílat — blok jen při papírovém
+   zasílání (home/school), junior checkbox jen do 6. ročníku */
+function update_paper_level_div() {
+    if ($('#paper_level_div').length === 0) return
+    var wts = $('select[name="sosna_solver[where_to_send]"]').val()
+    _show('#paper_level_div', wts === 'home' || wts === 'school')
+    var grade = parseInt($('#sosna_solver_grade_num').val(), 10)
+    var jr = $('#paper_jr_label')
+    if (grade > 6) {
+        jr.hide()
+        jr.find('input[type=checkbox]').prop('checked', false)
+    } else {
+        jr.show()
+    }
 }

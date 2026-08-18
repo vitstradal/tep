@@ -111,6 +111,18 @@ class Sosna::Solver < ActiveRecord::Base
   end
 
   ##
+  # *Returns* true/false Dostává papírový leták (domů, nebo do školy)?
+  def paper?
+     ['home', 'school'].include?(self.where_to_send)
+  end
+
+  # Junior leták je jen do 6. ročníku — starším se volba tiše zahodí
+  # (typicky po postupu do vyššího ročníku).
+  before_validation do
+    self.paper_jr = false unless junior?
+  end
+
+  ##
   # *Returns* kombinace sloupců: "#{last_name.strip} #{name.strip}"
   def full_name
      "#{last_name.strip} #{name.strip}"

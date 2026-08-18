@@ -159,6 +159,21 @@
         </div>
       </div>
 
+      <%# které letáky posílat — jen při papírovém zasílání; junior jen do
+          6. ročníku (viditelnost řídí update_paper_level_div v tep.js) %>
+      <div class="form-group" id="paper_level_div">
+        <%= f.label :paper_level, "Které letáky (zadání) posílat", :class => 'col-sm-3 control-label no-padding-right' %>
+        <div class="col-sm-9 <%= form_error_class @solver, :paper_level %>">
+          <label class="checkbox-inline" id="paper_jr_label">
+            <%= f.check_box :paper_jr %> Pikomat junior (do 6. ročníku)
+          </label>
+          <label class="checkbox-inline">
+            <%= f.check_box :paper_pi %> Pikomat
+          </label>
+          <%= form_error @solver, :paper_level %>
+        </div>
+      </div>
+
       <div class="form-group">
         <%= f.label :solver_name, "Můj preferovaný způsob zasílání řešení", :class =>  'col-sm-3 control-label no-padding-right'%>
         <div class="col-sm-9 <%= form_error_class @solver, :solution_form %>">

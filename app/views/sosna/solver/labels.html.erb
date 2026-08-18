@@ -64,6 +64,11 @@
            <label class="checkbox" for="confirmed_only"> <%= check_box_tag 'confirmed_only', '1', false %> Pouze potvrzení řešitelé
                  (mají <code>confirm_state</code> mají nastavený na <code>conf</code>).
            </label>
+           <label for="level"> Který leták:
+             <%= select_tag 'level', options_for_select([['všichni papíroví', ''],
+                                                         ['jen kdo chce junior (paper_jr)', 'jr'],
+                                                         ['jen kdo chce senior (paper_pi)', 'pi']], '') %>
+           </label>
            <label class="checkbox" for="ignore_where_to_send"> <%= check_box_tag 'ignore_where_to_send', '1', false %>
                   Ignorovat <code>where_to_send</code> a posli to <code>homedomu</code>
            </label>

@@ -159,6 +159,9 @@ class Sosna::SolverController < SosnaController
            where = {annual: @annual, is_test_solver: false}
            where.merge!({ where_to_send: ['home', 'school'] }) if params[:obalkovani]
            where.merge!({ confirm_state: 'conf'}) if params[:confirmed_only]
+           # filtr podle chtěného letáku (viz paper_jr/paper_pi na solverovi)
+           where.merge!({ paper_jr: true }) if params[:level] == 'jr'
+           where.merge!({ paper_pi: true }) if params[:level] == 'pi'
            @solvers = get_sorted_solvers(where);
          end
          @schools = []
@@ -277,6 +280,9 @@ class Sosna::SolverController < SosnaController
     _handle_solver_psc( solver )
 
     solver.errors.add(:email, 'neexistující adresa') if !solver.email.empty? && !email_valid_mx_record?(solver.email)
+    # papíroví si musí vybrat aspoň jeden leták (junior se nad 6. ročník
+    # tiše zahazuje v modelu, viz Sosna::Solver before_validation)
+    solver.errors.add(:paper_level, 'Vyber aspoň jeden leták (Pikomat junior / Pikomat)') if solver.paper? && !solver.paper_jr && !solver.paper_pi
     solver.errors.add(:birth, 'jsi příliš stár') if solver.errors[:birth].blank? && !solver.birth.empty? && (Date.parse(solver.birth) + 17.years) < Date.today
     solver.errors.add(:email, 'adresa nemůže být prázdná') if !is_admin && solver.email.empty?
 
