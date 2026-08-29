@@ -9,8 +9,9 @@ před přestavbou — silný rychlý server s jednotnou autentizací.
 
 Schválené, čeká na provedení (stav k 2026-08-29; detaily v sekcích 5 a 6):
 
-- [ ] **pikusy: commitnout afterleaf** (rename tex-server→afterleaf + ~3 dny
-      práce jsou jen v pracovním stromu — riziko ztráty)
+- [x] **pikusy: commitnout afterleaf** — hotovo 2026-08-29 (commit `a80ba89`,
+      125 souborů, rename detekován, `cargo check` OK; README status opraven,
+      `.gitignore` doplněn o `*.tgz`)
 - [ ] **revokovat sklepress tokeny** (deSEC + Nextcloud app password
       „sklepress" — jsou commitnuté v gitu) a nové dát mimo git; zvážit
       vypnutí dynDNS, dokud sklepress nemá auth
