@@ -18,12 +18,23 @@ Datum: 2026-08-29. Předchází instalaci OxiCloudu (rozhodnuto: nejdřív OS).
 
 ## Fáze 0 — předpoklady (bez nich nezačínat)
 
-1. **Zálohy** (dnes nezdokumentované!): minimálně
-   - `pg_dumpall` z clusterů 15 i 17 mimo stroj,
-   - sklep data (`/home/www/sklep-data/data-18.0.3` — 100+ GB, rsync jinam
-     nebo aspoň na druhé pole),
-   - `/etc`, `/opt/mattermost/config`, `/home/www/overleaf/config`,
-     maily (`/home/*/Maildir` dle potřeby), crontaby.
+1. **Zálohy** — hotový skript `script/pikomat-zaloha.sh` (v tep repu;
+   nahraný i na serveru v `~vitas/pikomat-zaloha.sh`). Instalace (root):
+   ```sh
+   install -m 755 ~vitas/pikomat-zaloha.sh /usr/local/sbin/pikomat-zaloha.sh
+   /usr/local/sbin/pikomat-zaloha.sh --dry-run   # zkouška
+   /usr/local/sbin/pikomat-zaloha.sh             # první běh (~370 GB, dlouho)
+   echo "30 3 * * * root /usr/local/sbin/pikomat-zaloha.sh >/dev/null 2>&1" \
+     > /etc/cron.d/pikomat-zaloha
+   ```
+   Zálohuje: všechny PG databáze z :5432 i :5435 (tep, klep/mattermost_db,
+   sklep NC, per-DB `pg_dump -Fc` + globals, retence 14 dní) a rsync
+   hardlink snapshoty `/home/www` + `/home/pikomat` do `/backup/pikomat`
+   (jiný fyzický disk než /home; retence 5 snapshotů). POZOR: není to
+   offsite; a overleaf mongo (docker) file-kopie nemusí být konzistentní
+   — viz hlavička skriptu. K tomu ještě ručně: `/etc`,
+   `/opt/mattermost/config`, crontaby, případně maily ostatních účtů
+   v `/home` (skript bere jen /home/pikomat).
 2. **Reboot test na současném systému**: `apt upgrade` (16 balíků) →
    reboot do `6.12.57+deb12` → ověřit checklist služeb (níže). Teprve
    když stroj umí nabootovat bookworm, má smysl trixie.
