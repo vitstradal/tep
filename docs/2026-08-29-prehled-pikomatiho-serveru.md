@@ -26,14 +26,20 @@ Schválené, čeká na provedení (stav k 2026-08-29; detaily v sekcích 5 a 6):
       nextcloud-18.0.3, owncloud-10.3.1, mailman3; zabít cizí VS Code
       server na :33233, pokud nikomu neslouží
 - [ ] naplánovat **reboot** (uptime 380+ dní) a ověřit, že vše nastartuje
+- [ ] **dist-upgrade bookworm → trixie** dle
+      `2026-08-29-upgrade-debianu.md` (rozhodnuto: PŘED instalací
+      OxiCloudu; předpoklad: zálohy + reboot test)
 - [ ] smazat mrtvé PG datové adresáře (9.4/9.6/11/13) po záloze
 - [ ] roadmap kroky 1–4 (OIDC v tepu → afterleaf místo preklepu → sklep →
       strangler tepu), viz sekce 7
 
 ## 1. Železo a systém
 
-- Debian **trixie/sid**, kernel 6.12 (bpo), 4 CPU, **7,7 GB RAM**, disky:
-  `/` 886 GB (19 %), `/home` RAID `md0` 1,8 TB (55 %, z toho sklep data).
+- **Debian 12 bookworm** (apt zdroje bookworm; `/etc/debian_version` lživě
+  hlásí 13.1 — anomálie balíku base-files, viz
+  `2026-08-29-upgrade-debianu.md`), kernel 6.12 (bookworm-bpo), 4 CPU,
+  **7,7 GB RAM**, disky: `/` 886 GB (19 %), `/home` RAID `md0` 1,8 TB
+  (55 %, z toho sklep data).
 - **Uptime 382 dní** — běží stabilně, ale znamená to rok bez rebootu/kernelu.
 - PostgreSQL: **15 (:5432, tep)** a **17 (:5435)** online; clustery 9.4, 9.6,
   11, 13 mrtvé (binárky pryč, datové adresáře zůstaly).
