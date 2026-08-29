@@ -5,6 +5,30 @@ sklepu `~/sklep/pikomat`, a živý server `pikomat.mff.cuni.cz` (neprivilegovan�
 SSH průzkum: procesy, porty, apache vhost, systemd, aliasy). Cíl: inventura
 před přestavbou — silný rychlý server s jednotnou autentizací.
 
+## 0. TODO — až bude příhodná chvíle
+
+Schválené, čeká na provedení (stav k 2026-08-29; detaily v sekcích 5 a 6):
+
+- [ ] **pikusy: commitnout afterleaf** (rename tex-server→afterleaf + ~3 dny
+      práce jsou jen v pracovním stromu — riziko ztráty)
+- [ ] **revokovat sklepress tokeny** (deSEC + Nextcloud app password
+      „sklepress" — jsou commitnuté v gitu) a nové dát mimo git; zvážit
+      vypnutí dynDNS, dokud sklepress nemá auth
+- [ ] **opravit SPF** v DNS (bounces na outlook/msn)
+- [ ] archivace sklepu (bez roota): `mkdir -p /home/www/archiv &&
+      mv /home/www/html/{nextsklep,nextcloud-18.0.3} /home/www/archiv/ &&
+      rm /home/www/html/sklep-old` — POZOR nedotýkat se
+      `/home/www/sklep-data/data-18.0.3` (živá data!)
+- [ ] root úklid: `systemctl disable --now mailman3 mailman3-web`;
+      `rm -rf /home/www/rails/{redmine,tep-pre,hello}`; z apache vhostu
+      smazat bloky/aliasy: kartana/souboj-bazin, sklep-old, nextsklep,
+      nextcloud-18.0.3, owncloud-10.3.1, mailman3; zabít cizí VS Code
+      server na :33233, pokud nikomu neslouží
+- [ ] naplánovat **reboot** (uptime 380+ dní) a ověřit, že vše nastartuje
+- [ ] smazat mrtvé PG datové adresáře (9.4/9.6/11/13) po záloze
+- [ ] roadmap kroky 1–4 (OIDC v tepu → afterleaf místo preklepu → sklep →
+      strangler tepu), viz sekce 7
+
 ## 1. Železo a systém
 
 - Debian **trixie/sid**, kernel 6.12 (bpo), 4 CPU, **7,7 GB RAM**, disky:
