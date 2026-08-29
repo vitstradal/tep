@@ -125,7 +125,7 @@ v novějších verzích) bez dalších triků.
 | `bludiste.git`, `lagblast` | nechat |
 | `nextcloud-skyprint` | identifikováno: klon cizí NC aplikace **SkyPrint** (tisk z Nextcloudu přes CUPS) — před-pokus dnešního sklepressu; rudiment |
 | `pikomap`, `pikomapt` | nechat |
-| port `:33233` | zůstává neurčený — není docker (proxy kryje jen overleaf 2080/2081/20443), není proces vitas/xofon, token-chráněné HTTP („Forbidden: missing or invalid connection token", typické pro VS Code server / go-plugin RPC). **Určí jen root: `sudo ss -tlnp \| grep 33233`** |
+| port `:33233` | **vyřešeno** (root, 8/2026): `code-f6cfa2ea24` = **VS Code Server** — pozůstatek něčího VS Code Remote-SSH/Tunnel připojení, ne služba Pikomatu. Vlastníka ukáže `ps -o user,lstart -p <pid>`; neaktivní instanci lze zabít (VS Code si ji příště nainstaluje znovu) |
 | `epta` | **nemazat, nic se s ní neděje** — jen jsem si při skenu všiml aktivních IMAP procesů toho účtu; jde o běžně používanou schránku (stejný vzor jako tabor@/soustredeni@ = unix účet + dovecot). Žádná akce |
 | `redmine` (2016) | smazat lze |
 | `tep-pre` (2014) | testovací kopie tepu — smazat lze |
