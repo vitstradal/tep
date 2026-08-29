@@ -28,7 +28,7 @@ před přestavbou — silný rychlý server s jednotnou autentizací.
 | `/preklep` | **Overleaf CE** | docker (node ×12, mongo, vlastní nginx :2081/:20443) | **vlastní účty — NEnapojeno na tep (největší bolest)** | aktivní; v `/home/www/overleaf` leží soubor `CRASH` |
 | `/pub/herna/` | herna (realtime hry, pikviz) | Rust/axum :31415, user `marvin`, z `~/git/herna` | tokeny herny; obsah přes tep neautorizuje | aktivní |
 | `/pub/prednasky` `/pub/bleskarty` `/pub/pikoraptor` `/pub/tep-foto` | statické frontendy z pikusy | rsync `dist/` | prednasky+tep-foto přes tep (csrf/friend); zbytek bez auth | aktivní |
-| `/mailman3` | mailing listy | mailman3 + uwsgi | vlastní (mailman) | aktivní |
+| `/mailman3` | mailing listy | mailman3 + uwsgi | vlastní (mailman) | **mrtvé** (service failed, routing vypnutý) |
 | `/fotky`, `/html`, `/ovvp` | statika | Apache | bez auth | ? |
 | `/provedouci` | statika pro vedoucí | Apache | **htpasswd** (mimo tep) | ? |
 | `/tep-dev` | dev instance tepu | Rails, ruby 3.3.6, RackEnv development | htpasswd + Devise | testovací |
@@ -40,13 +40,19 @@ Na localhostu dále: `:33233` (odpovídá „missing connection token" — vypad
 jako code-server/openvscode; **neidentifikováno**), `:42653` (nic nevrací,
 zřejmě interní port Mattermostu/dockeru).
 
-Mailové adresy: `pikomat@`, `tabor@`, `soustredeni@`, `vikendovky@`,
-`juniorsoustredeni@`, `besidka@`, `pikovecery@`, `propagace-l@`, `maska-l@`,
-`lipnice-l@`, `pikomat-l@` = **mailman listy**; k tomu `/etc/aliases`
-(pikobrani → osobní adresy, webmaster → honza+vitas, root → honza) a osobní
-IMAP schránky orgů (dovecot). Pozn.: bounce z 7/2026 ukázal **SPF fail** na
-outlook/msn — DNS SPF neautorizuje odesílací server; maily na Microsoft
-domény se nedoručují.
+Mailové adresy — tři historické vrstvy, z nichž žije jen poslední:
+1. **majordomo** (`/etc/postfix/majordomo.aliases`) — celé zakomentované, mrtvé;
+2. **mailman3** — služba `failed`, web `inactive`, postfix routing v `main.cf`
+   **zakomentovaný**; definice listů (tabor@, soustredeni@, …) v
+   `/var/lib/mailman3` jen leží. **Mailman nic neobsluhuje** (potvrzeno,
+   už se neprovozuje) — enabled služby jen dělají error noise, vypnout;
+3. **živý stav**: akční adresy = **unixoví uživatelé** (`/home/tabor`,
+   `/home/soustredeni`, `/home/junior`, `/home/pikomat`…) — sdílené schránky
+   čtené orgy přes **dovecot IMAP**. K tomu `/etc/postfix/aliases`
+   (pikobrani → osobní adresy, webmaster → honza+vitas, root → honza).
+
+Pozn.: bounce z 7/2026 ukázal **SPF fail** na outlook/msn — DNS SPF
+neautorizuje odesílací server; maily na Microsoft domény se nedoručují.
 
 ## 3. Ekosystém pikusy (mimo hlavní server)
 
@@ -109,21 +115,47 @@ v novějších verzích) bez dalších triků.
    (friendly error pages = únik informací; chrání je jen htpasswd).
 8. Port `:33233` — neidentifikovaná služba s connection-token API.
 
-## 6. Otázky (podezřelé komponenty — rudiment, nebo důležité?)
+## 6. Rozhodnutí a dovyšetřené položky (konzultace 2026-08-29)
 
-1. **`/kartana/souboj-bazin`** (`/home/www/rails/kartic`, 5/2025) — čí to je
-   a žije to?
-2. **`/saman`** (`/home/honza/www`) — Honzovy stránky, nechat?
-3. **`bludiste.git`, `lagblast`, `nextcloud-skyprint`, `pikomap`, `pikomapt`**
-   v `~/git` na serveru — co z toho žije?
-4. **port :33233** (code-server?) — pouštíš si na serveru vzdálené IDE, nebo
-   to je zombie?
-5. **`epta`** — účet s aktivním IMAP; osoba, nebo služba?
-6. **„server marvin"** — na pikomatu je `marvin` unix user + klep bot;
-   existuje i *samostatný stroj* marvin (DNS nic nevrací)? Co přesně jsi
-   myslel?
-7. `/provedouci` (htpasswd) a `/ovvp` — používá se ještě?
-8. `redmine`, `tep-pre`, `hello`, staré sklepy — smím navrhnout smazání?
+| Položka | Verdikt / zjištění |
+|---|---|
+| mailman3 | **neprovozuje se** — služba failed, routing vypnutý; listy jen leží → služby disable, data archiv |
+| `/kartana/souboj-bazin` | **zastavit** (vyžaduje root: smazat blok z apache vhostu) |
+| `/saman` | nechat (Honzovy www) |
+| `bludiste.git`, `lagblast` | nechat |
+| `nextcloud-skyprint` | identifikováno: klon cizí NC aplikace **SkyPrint** (tisk z Nextcloudu přes CUPS) — před-pokus dnešního sklepressu; rudiment |
+| `pikomap`, `pikomapt` | nechat |
+| port `:33233` | zůstává neurčený — není docker (proxy kryje jen overleaf 2080/2081/20443), není proces vitas/xofon, token-chráněné HTTP („Forbidden: missing or invalid connection token", typické pro VS Code server / go-plugin RPC). **Určí jen root: `sudo ss -tlnp \| grep 33233`** |
+| `epta` | **nemazat, nic se s ní neděje** — jen jsem si při skenu všiml aktivních IMAP procesů toho účtu; jde o běžně používanou schránku (stejný vzor jako tabor@/soustredeni@ = unix účet + dovecot). Žádná akce |
+| `redmine` (2016) | smazat lze |
+| `tep-pre` (2014) | testovací kopie tepu — smazat lze |
+| `hello` (2013) | identifikováno: hračka na zkoušení Devise (routes s `sign_up => 'cmon_let_me_in'`) — smazat lze |
+| staré sklepy | **POZOR na zrady**: `sklep-old` NENÍ kopie — je to **symlink na živou produkci** (druhé dveře k `/sklep`); `owncloud-10.3.1` už na disku neexistuje (alias visí do prázdna); `/home/www/sklep-data/data-18.0.3` je přes jméno **ŽIVÁ datová složka** produkce (symlink `data →` na ni, změny 7/2026) — **nedotýkat**. Skutečné staré kopie k archivaci: `nextsklep` (413 M, NC 18 app) a `nextcloud-18.0.3` (1,6 G app strom) |
+| afterleaf běžící na :3000 | v pořádku — ladí se, zatím se nepoužívá |
+
+### Připravené kroky (čekají na ruční spuštění / root)
+
+Bez roota (vitas, skupina pikoweb stačí) — archivace starých app stromů:
+
+```sh
+mkdir -p /home/www/archiv
+mv /home/www/html/nextsklep /home/www/archiv/
+mv /home/www/html/nextcloud-18.0.3 /home/www/archiv/
+rm /home/www/html/sklep-old        # symlink na živou produkci (duplikátní URL)
+# obnova kdykoli: mv zpět, resp. ln -s nextcloud-26.0.13 /home/www/html/sklep-old
+```
+
+S rootem:
+
+```sh
+systemctl disable --now mailman3 mailman3-web    # mrtvé, jen error noise
+# v /etc/apache2/sites-enabled/pikomat-ssl.conf smazat:
+#   - blok /kartana/souboj-bazin (zastavit dle rozhodnutí)
+#   - aliasy /sklep-old, /nextsklep, /nextcloud-18.0.3, /owncloud-10.3.1
+#   - blok /mailman3
+rm -rf /home/www/rails/{redmine,tep-pre,hello}   # schválené rudimenty
+sudo ss -tlnp | grep -E "33233|42653"            # identifikace záhadných portů
+```
 
 ## 7. Cílový stav a doporučená cesta
 
