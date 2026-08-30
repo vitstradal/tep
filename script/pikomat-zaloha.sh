@@ -43,8 +43,11 @@ MIN_VOLNE_GB=50          # tvrdá stopka, ať záloha nezaplní disk
 #  ZALOHUJ_DB   — whitelist (oddělený mezerami); neprázdný = dumpuj JEN tyto
 #  NEZALOHUJ_DB — blacklist; použije se, když je whitelist prázdný
 # Seznam DB s velikostmi vypíše: pikomat-zaloha.sh --list
+# Stav :5432 (2026-08-30): sklep_db 25GB, tep_db 2GB, tep_dev_db 666MB,
+# mattermost_db 240MB, postgres — zálohují se; mailman3, mailman3web,
+# listmonk_db — vyřazené (mrtvé služby, v PG zůstávají).
 ZALOHUJ_DB=""
-NEZALOHUJ_DB="mailman3web"
+NEZALOHUJ_DB="mailman3 mailman3web listmonk_db"
 
 cd /   # ať sudo -u postgres nekřičí kvůli nečitelnému cwd
 
