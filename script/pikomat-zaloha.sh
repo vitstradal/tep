@@ -39,8 +39,27 @@ UCHOVAT_SNAP=5           # kolik denních rsync snapshotů držet
 CLUSTERY="5432 5435"     # PG porty
 MIN_VOLNE_GB=50          # tvrdá stopka, ať záloha nezaplní disk
 
+# Výběr databází:
+#  ZALOHUJ_DB   — whitelist (oddělený mezerami); neprázdný = dumpuj JEN tyto
+#  NEZALOHUJ_DB — blacklist; použije se, když je whitelist prázdný
+# Seznam DB s velikostmi vypíše: pikomat-zaloha.sh --list
+ZALOHUJ_DB=""
+NEZALOHUJ_DB="mailman3web"
+
+cd /   # ať sudo -u postgres nekřičí kvůli nečitelnému cwd
+
 DRY=""
-if [ "${1:-}" = "--dry-run" ]; then DRY="--dry-run"; fi
+case "${1:-}" in
+  --dry-run) DRY="--dry-run" ;;
+  --list)
+    for port in $CLUSTERY; do
+      echo "=== cluster :$port"
+      sudo -u postgres psql -p "$port" -c \
+        "SELECT datname AS db, pg_size_pretty(pg_database_size(datname)) AS velikost
+         FROM pg_database WHERE NOT datistemplate ORDER BY pg_database_size(datname) DESC"
+    done
+    exit 0 ;;
+esac
 
 LOG_DIR="$ZALOHA_ROOT/log"
 LOG="$LOG_DIR/zaloha-$DNES.log"
@@ -83,12 +102,19 @@ for port in $CLUSTERY; do
     sudo -u postgres pg_dumpall -p "$port" --globals-only \
       | zstd -q -o "$PG_DIR/globals-$port.sql.zst" -f
   fi
-  # vsechny ne-template databaze
+  # ne-template databaze, filtrovane pres ZALOHUJ_DB / NEZALOHUJ_DB
   for db in $(sudo -u postgres psql -p "$port" -At \
               -c "SELECT datname FROM pg_database WHERE NOT datistemplate"); do
+    if [ -n "$ZALOHUJ_DB" ]; then
+      case " $ZALOHUJ_DB " in *" $db "*) ;; *) log "pg :$port — $db preskocena (neni v ZALOHUJ_DB)"; continue ;; esac
+    else
+      case " $NEZALOHUJ_DB " in *" $db "*) log "pg :$port — $db preskocena (NEZALOHUJ_DB)"; continue ;; esac
+    fi
     log "pg :$port — dump $db"
     if [ -z "$DRY" ]; then
-      sudo -u postgres pg_dump -p "$port" -Fc -f "$PG_DIR/$db-$port.dump" "$db"
+      # pg_dump bezi jako postgres, do souboru zapisuje root (redirect) —
+      # postgres do /backup psat nesmi
+      sudo -u postgres pg_dump -p "$port" -Fc "$db" > "$PG_DIR/$db-$port.dump"
     fi
   done
 done
