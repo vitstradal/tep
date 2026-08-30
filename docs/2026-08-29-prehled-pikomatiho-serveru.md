@@ -163,6 +163,8 @@ v novějších verzích) bez dalších triků.
 | `hello` (2013) | identifikováno: hračka na zkoušení Devise (routes s `sign_up => 'cmon_let_me_in'`) — smazat lze |
 | staré sklepy | **POZOR na zrady**: `sklep-old` NENÍ kopie — je to **symlink na živou produkci** (druhé dveře k `/sklep`); `owncloud-10.3.1` už na disku neexistuje (alias visí do prázdna); `/home/www/sklep-data/data-18.0.3` je přes jméno **ŽIVÁ datová složka** produkce (symlink `data →` na ni, změny 7/2026) — **nedotýkat**. Skutečné staré kopie k archivaci: `nextsklep` (413 M, NC 18 app) a `nextcloud-18.0.3` (1,6 G app strom) |
 | afterleaf běžící na :3000 | v pořádku — ladí se, zatím se nepoužívá |
+| `listmonk_db` (PG, 9 MB) | objeveno při zálohách (8/2026): databáze **listmonku** (self-hosted newsletter) — žádný proces/port neběží, zřejmě mrtvý experiment (náhrada mailmanu?). Ze zálohy vyřazeno, v PG ponecháno. K rozhodnutí: dropnout? |
+| PG databáze :5432 (2026-08-30) | sklep_db 25 GB, tep_db 2 GB, tep_dev_db 666 MB, mattermost_db 240 MB, mailman3 19 MB, mailman3web 10 MB, listmonk_db 9 MB — zálohují se všechny kromě mailman*/listmonk |
 
 ### Připravené kroky (čekají na ruční spuštění / root)
 
