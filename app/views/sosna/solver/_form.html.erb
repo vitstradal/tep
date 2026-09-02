@@ -111,7 +111,7 @@
            <%= select :school, :id,
                    options_for_select(
                            [['Vyber školu', :none], ['Jiná škola', :jina]] +
-                           @schools_sorted.map{ |s| ["#{s.long}, #{s.short}", s.id, { 'data-city' => s.city_group }] } <<
+                           @schools_sorted.map{ |s| [s.select_label, s.id, { 'data-city' => s.city_group }] } <<
                            ['Jiná škola', :jina],
                            (@school.nil? || @school.id.nil?) ? :none
                                            : @school.id < 0  ? :jina

@@ -23,9 +23,25 @@ class SosnaSolverControllerTest < ActionController::TestCase
     assert_equal 'Praha', Sosna::School.new(city: 'Praha 5').city_group
     assert_equal 'Praha', Sosna::School.new(city: 'Praha 4 - Modřany').city_group
     assert_equal 'Praha', Sosna::School.new(city: 'Praha').city_group
+    assert_equal 'Ostrava', Sosna::School.new(city: 'Ostrava-Vítkovice').city_group
+    assert_equal 'Brno', Sosna::School.new(city: 'Brno-Líšeň').city_group
     assert_equal 'Frýdek-Místek', Sosna::School.new(city: 'Frýdek-Místek').city_group
     assert_equal 'Kostelec nad Labem', Sosna::School.new(city: 'Kostelec nad Labem').city_group
     assert_equal '', Sosna::School.new(city: nil).city_group
+  end
+
+  test "city_part_short abbreviates parts, nil without part" do
+    assert_equal 'P10', Sosna::School.new(city: 'Praha 10').city_part_short
+    assert_equal 'O-Vítkovice', Sosna::School.new(city: 'Ostrava-Vítkovice').city_part_short
+    assert_equal 'P4 - Modřany', Sosna::School.new(city: 'Praha 4 - Modřany').city_part_short
+    assert_nil Sosna::School.new(city: 'Praha').city_part_short
+    assert_nil Sosna::School.new(city: 'Brno').city_part_short
+    assert_nil Sosna::School.new(city: 'Frýdek-Místek').city_part_short
+
+    s = Sosna::School.new(city: 'Praha 10', name: 'ZS A', street: 'X', num: '1', psc: '100 00', short: 'ZSA')
+    assert_equal 'P10, ZS A, X 1, 100 00, ZSA', s.select_label
+    bez = Sosna::School.new(city: 'Brno', name: 'ZS C', street: 'Z', num: '3', psc: '600 00', short: 'ZSC')
+    assert_equal 'ZS C, Z 3, 600 00, ZSC', bez.select_label
   end
 
   test "new form has city filter select with grouped cities" do
