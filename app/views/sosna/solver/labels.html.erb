@@ -64,17 +64,21 @@
            <label class="checkbox" for="confirmed_only"> <%= check_box_tag 'confirmed_only', '1', false %> Pouze potvrzení řešitelé
                  (mají <code>confirm_state</code> mají nastavený na <code>conf</code>).
            </label>
-           <label for="level"> Který leták:
-             <%= select_tag 'level', options_for_select([['všichni papíroví', ''],
-                                                         ['jen junior leták', 'jr_only'],
-                                                         ['jen senior leták', 'pi_only'],
-                                                         ['oba letáky', 'both']], '') %>
-             <span class="text-muted">(tři hromádky: jen junior / jen senior / oba)</span>
-           </label>
-           <label for="roc"> Ročník:
-             <%= select_tag 'roc', options_for_select(@annuals, @annual.to_s) %>
-             <span class="text-muted">— obálky jdou vygenerovat i pro starší ročník</span>
-           </label>
+           <div>
+             <label for="level"> Kteří lidé (podle toho, jaký leták chtějí):
+               <%= select_tag 'level', options_for_select([['všichni papíroví', ''],
+                                                           ['jen kdo chce junior', 'jr_only'],
+                                                           ['jen kdo chce senior', 'pi_only'],
+                                                           ['kdo chce oba', 'both']], '') %>
+               <span class="text-muted">(tři hromádky: jen junior / jen senior / oba)</span>
+             </label>
+           </div>
+           <div>
+             <label for="roc"> Ročník:
+               <%= select_tag 'roc', options_for_select(@annuals, @annual.to_s) %>
+               <span class="text-muted">— obálky jdou vygenerovat i pro starší ročník</span>
+             </label>
+           </div>
            <label class="checkbox" for="jen_do_devitky">
              <%= check_box_tag 'jen_do_devitky', '1', false %> U staršího ročníku jen ty, kdo jsou <b>teď</b> nejvýš v 9. ročníku
              <span class="text-muted">(tehdejší ročník + uplynulé roky ≤ 9: u loňska vypadnou tehdejší deváťáci, u předloňska i osmáci…)</span>
