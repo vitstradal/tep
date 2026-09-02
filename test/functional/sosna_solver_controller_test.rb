@@ -28,6 +28,10 @@ class SosnaSolverControllerTest < ActionController::TestCase
     assert_equal 'Frýdek-Místek', Sosna::School.new(city: 'Frýdek-Místek').city_group
     assert_equal 'Kostelec nad Labem', Sosna::School.new(city: 'Kostelec nad Labem').city_group
     assert_equal '', Sosna::School.new(city: nil).city_group
+    # pseudo-školy (DOMÁCÍ VZDĚLÁVÁNÍ, PŘEDŠKOLÁCI) mají město '-' —
+    # nesmí z nich vzniknout město a mají být vidět při každém filtru
+    assert_equal '', Sosna::School.new(city: '-').city_group
+    assert_nil Sosna::School.new(city: '-').city_part_short
   end
 
   test "city_part_short abbreviates parts, nil without part" do
@@ -49,6 +53,7 @@ class SosnaSolverControllerTest < ActionController::TestCase
     Sosna::School.create!(name: 'ZS A', city: 'Praha 5', street: 'X', num: '1', psc: '150 00')
     Sosna::School.create!(name: 'ZS B', city: 'Praha 10', street: 'Y', num: '2', psc: '100 00')
     Sosna::School.create!(name: 'ZS C', city: 'Brno', street: 'Z', num: '3', psc: '600 00')
+    Sosna::School.create!(name: 'DOMÁCÍ VZDĚLÁVÁNÍ', city: '-', street: '-', num: '-', psc: '00000', short: 'DOM')
     get :new
     assert_response :success
     body = response.body
@@ -57,6 +62,8 @@ class SosnaSolverControllerTest < ActionController::TestCase
     assert_match '<option value="Brno">Brno</option>', body
     assert_match 'data-city="Praha"', body       # opce školy nesou město
     assert_match '<option value="jine">Jiné město</option>', body
+    assert_no_match(/<option value="-">/, body)  # '-' není město
+    assert_match 'data-city="">DOMÁCÍ VZDĚLÁVÁNÍ', body.gsub(/ value="\d+"/, '') # pseudo-škola bez města (vidět vždy)
   end
 
   test "labels page offers annual select with existing annuals" do

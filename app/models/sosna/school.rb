@@ -48,6 +48,7 @@ class Sosna::School < ActiveRecord::Base
   # whitelist zůstávají celá (Frýdek-Místek, Kostelec nad Labem...).
   def city_group
     c = city.to_s.strip
+    return '' if c !~ /\p{L}/   # pseudo-školy (DOM, PRE) mají město '-'
     PART_CITIES.each do |base|
       return base if c =~ /\A#{base}\s*(\d|[-–])/
     end
