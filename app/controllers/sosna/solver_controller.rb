@@ -159,9 +159,8 @@ class Sosna::SolverController < SosnaController
            where = {annual: @annual, is_test_solver: false}
            where.merge!({ where_to_send: ['home', 'school'] }) if params[:obalkovani]
            where.merge!({ confirm_state: 'conf'}) if params[:confirmed_only]
-           # filtr podle chtěného letáku (viz paper_jr/paper_pi na solverovi)
-           where.merge!({ paper_jr: true }) if params[:level] == 'jr'
-           where.merge!({ paper_pi: true }) if params[:level] == 'pi'
+           # filtr podle chtěného letáku (viz Sosna::Solver.paper_level_where)
+           where.merge!(Sosna::Solver.paper_level_where(params[:level]))
            @solvers = get_sorted_solvers(where);
          end
          @schools = []

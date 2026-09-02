@@ -116,6 +116,25 @@ class Sosna::Solver < ActiveRecord::Base
      ['home', 'school'].include?(self.where_to_send)
   end
 
+  ##
+  # Podmínky pro obálkování podle chtěných letáků (viz labels).
+  #
+  # *Params*
+  # level:: 'jr_only' jen junior | 'pi_only' jen senior | 'both' oba |
+  #         'jr'/'pi' včetně těch s oběma (inclusive) | jinak bez filtru
+  #
+  # *Returns* hash do where()
+  def self.paper_level_where(level)
+    case level
+    when 'jr'      then { paper_jr: true }
+    when 'pi'      then { paper_pi: true }
+    when 'jr_only' then { paper_jr: true,  paper_pi: false }
+    when 'pi_only' then { paper_pi: true,  paper_jr: false }
+    when 'both'    then { paper_jr: true,  paper_pi: true }
+    else {}
+    end
+  end
+
   # Junior leták je jen do 6. ročníku — starším se volba tiše zahodí
   # (typicky po postupu do vyššího ročníku).
   before_validation do
