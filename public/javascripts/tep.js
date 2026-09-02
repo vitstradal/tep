@@ -132,6 +132,9 @@ jQuery(document).ready(function($) {
           .change(update_paper_level_div);
         update_paper_level_div();
 
+        // výběr školy dle města
+        init_school_city_filter();
+
         // ctrl-enter submit formu in textarea
         $('.ctrl-enter-submit').keydown(function (e) {
                 if (e.ctrlKey && e.keyCode == 13) {
@@ -1338,5 +1341,72 @@ function update_paper_level_div() {
         jr.find('input[type=checkbox]').prop('checked', false)
     } else {
         jr.show()
+    }
+}
+
+/* výběr školy dle města (přihláška řešitele): #school_city filtruje
+   #school_id přes data-city; „Jiné město" => rovnou „Jiná škola";
+   u „Jiná škola" s vybraným městem se město předvyplní do formuláře
+   nové školy. Server město nečte — čistě klientský komfort. */
+function init_school_city_filter() {
+    var city = $('#school_city')
+    var school = $('#school_id')
+    if (city.length === 0 || school.length === 0) return
+
+    // plný seznam opcí si zapamatuj (filtruje se rebuild-em)
+    var all = school.find('option').map(function () {
+        return { value: $(this).val(), text: $(this).text(),
+                 city: $(this).data('city') || null }
+    }).get()
+
+    function rebuild(selectedCity, keepValue) {
+        school.empty()
+        var seenJina = false
+        all.forEach(function (o) {
+            if (o.value === 'jina' && seenJina) return   // druhá „Jiná škola" na konci
+            if (o.city === null || selectedCity === 'none' || o.city === selectedCity) {
+                if (o.value === 'jina') seenJina = true
+                school.append($('<option>').val(o.value).text(o.text)
+                                           .attr('data-city', o.city))
+            }
+        })
+        school.val(keepValue !== undefined ? keepValue : 'none')
+        if (school.val() === null) school.val('none')
+    }
+
+    city.change(function () {
+        var c = city.val()
+        if (c === 'jine') {
+            rebuild('__nic__', 'jina')       // jen „Vyber/Jiná škola" -> rovnou jiná
+        } else {
+            var cur = school.val()
+            var curCity = school.find('option:selected').data('city')
+            rebuild(c, (c !== 'none' && curCity && curCity !== c) ? 'none' : cur)
+        }
+        school.change()                      // ať se ukáže/schová school_div
+        prefill_city()
+    })
+
+    school.change(prefill_city)
+
+    function prefill_city() {
+        if (school.val() !== 'jina') return
+        var c = city.val()
+        var f = $('#sosna_school_city')
+        if (c && c !== 'none' && c !== 'jine' &&
+            (f.val() === '' || f.data('autofilled'))) {
+            f.val(c).data('autofilled', true)
+        }
+    }
+
+    // obnova stavu (reload / redisplay po chybě): odvoď město z vybrané školy
+    var initCity = school.find('option:selected').data('city')
+    if (initCity) {
+        city.val(initCity)
+        rebuild(initCity, school.find('option:selected').val())
+    } else if (school.val() === 'jina' && $('#sosna_school_city').val()) {
+        var known = city.find('option[value="' + $('#sosna_school_city').val().replace(/\s+\d+.*$/, '') + '"]')
+        city.val(known.length ? known.val() : 'jine')
+        if (known.length) rebuild(known.val(), 'jina')
     }
 }

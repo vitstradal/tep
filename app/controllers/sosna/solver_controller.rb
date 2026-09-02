@@ -737,6 +737,9 @@ EOL
       # (toto bude klíč k třízení, nebude se zobrazovat)
       "#{s.city}-#{s.long}".gsub(/\d+/){|m| '0'*(10 - m.size) + m }
     }
+    # města pro filtrovací select (Praha N sloučená pod Praha)
+    @school_cities = @schools.map(&:city_group).reject(&:empty?).uniq
+                             .sort_by { |c| translit(c).downcase }
   end
 
   def _edit_want_send_first

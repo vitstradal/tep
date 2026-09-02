@@ -35,4 +35,12 @@ class Sosna::School < ActiveRecord::Base
   def long
      "#{city}, #{name}, #{street} #{num}, #{psc} "
   end
+
+  ##
+  # Město pro seskupování ve výběru školy: „Praha 5" i „Praha 4 - Modřany"
+  # spadají pod „Praha" (uřízne se koncové číslo a vše za ním). Města bez
+  # čísla zůstávají beze změny (Frýdek-Místek, Kostelec nad Labem...).
+  def city_group
+    city.to_s.strip.sub(/\s+\d+.*$/, '')
+  end
 end

@@ -92,13 +92,26 @@
 
       <hr>
 
+      <%# město filtruje nabídku škol (čistě klientská věc, server ho nečte);
+          Praha 1..22 je sloučená pod „Praha" — viz School#city_group %>
+      <div class="form-group">
+        <%= f.label :solver_school_city, "Město školy", :class =>  'col-sm-3 control-label no-padding-right'%>
+        <div class="col-sm-9">
+           <%= select_tag 'school_city',
+                   options_for_select(
+                           [['Vyber město', 'none'], ['Jiné město', 'jine']] +
+                           @school_cities.map { |c| [c, c] },
+                           'none') %>
+        </div>
+      </div>
+
       <div class="form-group">
         <%= f.label :solver_school, "Škola", :class =>  'col-sm-3 control-label no-padding-right'%>
         <div class="col-sm-9 <%= form_error_class @solver, :school %>">
            <%= select :school, :id,
                    options_for_select(
                            [['Vyber školu', :none], ['Jiná škola', :jina]] +
-                           @schools_sorted.map{ |s| ["#{s.long}, #{s.short}", s.id] } <<
+                           @schools_sorted.map{ |s| ["#{s.long}, #{s.short}", s.id, { 'data-city' => s.city_group }] } <<
                            ['Jiná škola', :jina],
                            (@school.nil? || @school.id.nil?) ? :none
                                            : @school.id < 0  ? :jina

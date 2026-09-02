@@ -19,6 +19,30 @@ class SosnaSolverControllerTest < ActionController::TestCase
     }
   end
 
+  test "city_group merges prague parts, keeps dashed towns" do
+    assert_equal 'Praha', Sosna::School.new(city: 'Praha 5').city_group
+    assert_equal 'Praha', Sosna::School.new(city: 'Praha 4 - Modřany').city_group
+    assert_equal 'Praha', Sosna::School.new(city: 'Praha').city_group
+    assert_equal 'Frýdek-Místek', Sosna::School.new(city: 'Frýdek-Místek').city_group
+    assert_equal 'Kostelec nad Labem', Sosna::School.new(city: 'Kostelec nad Labem').city_group
+    assert_equal '', Sosna::School.new(city: nil).city_group
+  end
+
+  test "new form has city filter select with grouped cities" do
+    Sosna::Config.create!(key: 'annual', value: '33')
+    Sosna::School.create!(name: 'ZS A', city: 'Praha 5', street: 'X', num: '1', psc: '150 00')
+    Sosna::School.create!(name: 'ZS B', city: 'Praha 10', street: 'Y', num: '2', psc: '100 00')
+    Sosna::School.create!(name: 'ZS C', city: 'Brno', street: 'Z', num: '3', psc: '600 00')
+    get :new
+    assert_response :success
+    body = response.body
+    assert_match 'id="school_city"', body
+    assert_equal 1, body.scan('<option value="Praha">Praha</option>').size, 'Praha sloučená jednou'
+    assert_match '<option value="Brno">Brno</option>', body
+    assert_match 'data-city="Praha"', body       # opce školy nesou město
+    assert_match '<option value="jine">Jiné město</option>', body
+  end
+
   test "labels page offers annual select with existing annuals" do
     org = User.new(email: 'org-lab@x.cz', password: 'password123', roles: [:org])
     org.skip_confirmation!
