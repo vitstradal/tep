@@ -1382,6 +1382,14 @@ function init_school_city_filter() {
             var cur = school.val()
             var curCity = school.find('option:selected').data('city')
             rebuild(c, (c !== 'none' && curCity && curCity !== c) ? 'none' : cur)
+            // jediná škola ve městě -> vyber ji rovnou; u dvou a více
+            // zůstává „Vyber školu" (pseudo-školy bez města se nepočítají)
+            if (c !== 'none' && school.val() === 'none') {
+                var reals = school.find('option').filter(function () {
+                    return $(this).data('city') === c
+                })
+                if (reals.length === 1) school.val(reals.val())
+            }
         }
         school.change()                      // ať se ukáže/schová school_div
         prefill_city()
