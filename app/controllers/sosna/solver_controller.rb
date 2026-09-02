@@ -127,6 +127,8 @@ class Sosna::SolverController < SosnaController
   #
   def labels
     @annual = params[:roc] || @annual
+    # ročníky, které v db reálně jsou — pro select (obálky starších ročníků)
+    @annuals = Sosna::Solver.distinct.pluck(:annual).compact.sort_by(&:to_i).reverse
     @ids = (params[:ids]  || '').gsub(/;.*$/,'').split(/[,\n\s]+/).map { |x| x.to_i }
     @skoly_ids = (params[:skoly_ids]  || '').gsub(/;.*$/,'').split(/[,\n\s]+/).map { |x| x.to_i }
     @ignore_where_to_send = params[:ignore_where_to_send]

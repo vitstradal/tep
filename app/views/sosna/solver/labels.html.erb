@@ -72,8 +72,8 @@
              <span class="text-muted">(tři hromádky: jen junior / jen senior / oba)</span>
            </label>
            <label for="roc"> Ročník:
-             <%= text_field_tag 'roc', @annual, size: 4 %>
-             <span class="text-muted">— obálky lze generovat i pro minulý ročník, žádné excelování lidi.pik</span>
+             <%= select_tag 'roc', options_for_select(@annuals, @annual.to_s) %>
+             <span class="text-muted">— obálky jdou vygenerovat i pro starší ročník, žádné excelování lidi.pik</span>
            </label>
            <label class="checkbox" for="ignore_where_to_send"> <%= check_box_tag 'ignore_where_to_send', '1', false %>
                   Ignorovat <code>where_to_send</code> a posli to <code>homedomu</code>

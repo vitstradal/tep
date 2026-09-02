@@ -19,6 +19,22 @@ class SosnaSolverControllerTest < ActionController::TestCase
     }
   end
 
+  test "labels page offers annual select with existing annuals" do
+    org = User.new(email: 'org-lab@x.cz', password: 'password123', roles: [:org])
+    org.skip_confirmation!
+    org.save!
+    Sosna::Config.create!(key: 'annual', value: '33')
+    %w[32 33].each do |roc|
+      Sosna::Solver.create!(name: 'J', last_name: 'N', annual: roc, grade_num: '5',
+                            email: "r#{roc}@x.cz", where_to_send: 'school')
+    end
+    sign_in org
+    get :labels
+    assert_response :success
+    assert_match '<option selected="selected" value="33">33</option>', response.body
+    assert_match '<option value="32">32</option>', response.body
+  end
+
   test "registration stores paper level choices" do
     Sosna::Config.create!(key: 'annual', value: '33')
     post :create, params: solver_params('junior@seznam.cz', grade: 5, paper_jr: '1', paper_pi: '0')
