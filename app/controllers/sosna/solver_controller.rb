@@ -126,6 +126,7 @@ class Sosna::SolverController < SosnaController
   # @annual, @round:: ročník a série
   #
   def labels
+    @annual_soucasny = @annual   # aktuální ročník z konfigurace (load_config)
     @annual = params[:roc] || @annual
     # ročníky, které v db reálně jsou — pro select (obálky starších ročníků)
     @annuals = Sosna::Solver.distinct.pluck(:annual).compact.sort_by(&:to_i).reverse
@@ -163,6 +164,8 @@ class Sosna::SolverController < SosnaController
            where.merge!({ confirm_state: 'conf'}) if params[:confirmed_only]
            # filtr podle chtěného letáku (viz Sosna::Solver.paper_level_where)
            where.merge!(Sosna::Solver.paper_level_where(params[:level]))
+           # jen ti, kdo jsou teď nejvýš v 9. ročníku (obálky pro starší ročník)
+           where.merge!(Sosna::Solver.jen_do_devitky_where(@annual, @annual_soucasny)) if params[:jen_do_devitky]
            @solvers = get_sorted_solvers(where);
          end
          @schools = []

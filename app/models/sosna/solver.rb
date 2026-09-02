@@ -117,6 +117,22 @@ class Sosna::Solver < ActiveRecord::Base
   end
 
   ##
+  # „Jen ty, kdo jsou TEĎ nejvýš v 9. ročníku" — pro obálkování starších
+  # ročníků: tehdejší grade_num + počet uplynulých let musí být <= 9
+  # (u loňska vypadnou tehdejší deváťáci, u předloňska i osmáci, ...).
+  # Řešitele bez vyplněného ročníku (nil/'') nechává. Pro aktuální ročník
+  # nefiltruje nic.
+  #
+  # *Returns* hash do where()
+  def self.jen_do_devitky_where(vybrany_annual, soucasny_annual)
+    diff = soucasny_annual.to_i - vybrany_annual.to_i
+    return {} if diff <= 0
+    max_grade = MAX_GRADE - diff
+    grades = max_grade >= 0 ? ('0'..max_grade.to_s).to_a : []
+    { grade_num: [nil, ''] + grades }
+  end
+
+  ##
   # Podmínky pro obálkování podle chtěných letáků (viz labels).
   #
   # *Params*

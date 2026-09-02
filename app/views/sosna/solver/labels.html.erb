@@ -73,7 +73,11 @@
            </label>
            <label for="roc"> Ročník:
              <%= select_tag 'roc', options_for_select(@annuals, @annual.to_s) %>
-             <span class="text-muted">— obálky jdou vygenerovat i pro starší ročník, žádné excelování lidi.pik</span>
+             <span class="text-muted">— obálky jdou vygenerovat i pro starší ročník</span>
+           </label>
+           <label class="checkbox" for="jen_do_devitky">
+             <%= check_box_tag 'jen_do_devitky', '1', false %> U staršího ročníku jen ty, kdo jsou <b>teď</b> nejvýš v 9. ročníku
+             <span class="text-muted">(tehdejší ročník + uplynulé roky ≤ 9: u loňska vypadnou tehdejší deváťáci, u předloňska i osmáci…)</span>
            </label>
            <label class="checkbox" for="ignore_where_to_send"> <%= check_box_tag 'ignore_where_to_send', '1', false %>
                   Ignorovat <code>where_to_send</code> a posli to <code>homedomu</code>

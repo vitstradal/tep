@@ -23,4 +23,21 @@ class SosnaPaperLevelTest < ActiveSupport::TestCase
     assert_equal [jen_jr, oba].sort_by(&:id), najdi.call('jr').sort_by(&:id)
     assert_equal [jen_pi, oba].sort_by(&:id), najdi.call('pi').sort_by(&:id)
   end
+
+  test "jen_do_devitky_where posouva hranici podle uplynulych let" do
+    # aktuální ročník => žádný filtr
+    assert_equal({}, Sosna::Solver.jen_do_devitky_where('33', '33'))
+    # loňský: tehdejší deváťáci ven (zůstává 0..8 + nevyplněné)
+    w1 = Sosna::Solver.jen_do_devitky_where('32', '33')
+    assert_includes w1[:grade_num], '8'
+    assert_not_includes w1[:grade_num], '9'
+    assert_includes w1[:grade_num], nil
+    # předloňský: ven i tehdejší osmáci
+    w2 = Sosna::Solver.jen_do_devitky_where('31', '33')
+    assert_not_includes w2[:grade_num], '8'
+    assert_includes w2[:grade_num], '7'
+    # dávná historie: nezbude nikdo s ročníkem (jen nevyplnění)
+    w10 = Sosna::Solver.jen_do_devitky_where('20', '33')
+    assert_equal [nil, ''], w10[:grade_num]
+  end
 end
