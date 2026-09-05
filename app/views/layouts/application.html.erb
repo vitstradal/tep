@@ -161,30 +161,33 @@
       <%= menu_li '/onas', 'O Pikomatu', ico: 'fa-square' do %>
         <ul class="submenu">
           <%= menu_lii wiki_main_path(''),               'Úvod' %>
-          <%= menu_lii wiki_main_path('onas/organizatori'),   'Organizátoři' %>
-          <%= menu_lii wiki_main_path('onas/onas'),           'Kontakty'  %>
-          <%= menu_lii wiki_main_path('onas/historie'),        'Historie'   %>
+          <%= menu_lii wiki_main_path('onas/organizatori'),   'Co je Pikomat' %>
+          <%= menu_lii wiki_main_path('onas/jakresit'),       'Jak se zapojit' %>
+          <%= menu_lii wiki_main_path('onas/organizatori') + '#Organizatori_Pikomatu_MFF_UK', 'Organizátoři' %>
+          <%= menu_lii wiki_main_path('pravidla'),            'Pikomat Klasik' %>
+          <%= menu_lii wiki_main_path('junior'),              'Pikomat Junior' %>
         </ul>
       <% end %>
       <%= menu_li '/onas', 'Zadání', ico: 'fa-edit' do %>
         <ul class="submenu">
-          <%= menu_lii wiki_main_path('archiv/aktualni'),      'Aktuální série' %>
-          <%= menu_lii wiki_main_path('archiv/aktualni-junior'),      'Aktuální série junior' %>
-          <%= menu_lii wiki_main_path('archiv/vysledkovka'),   'Výsledková listina' %>
+          <%= menu_lii wiki_main_path('archiv/aktualni'),      'Aktuální série Klasik' %>
+          <%= menu_lii wiki_main_path('archiv/aktualni-junior'),      'Aktuální série Junior' %>
+          <%= menu_lii wiki_main_path('archiv/vysledkovka'),   'Výsledková listina Klasik' %>
           <%= menu_lii wiki_main_path('archiv/vysledkovka-junior'),   'Výsledková listina Junior' %>
           <%= menu_lii wiki_main_path('archiv'),            'Archiv příkladů' %>
 
            <% if is_bonus_active %>
             <%= menu_lii wiki_main_path('archiv/bonus'),        'Bonusová série' %>
           <% end %>
-          <%= menu_lii wiki_main_path('pravidla'),           'Pravidla'  %>
+          <%= menu_lii wiki_main_path('jak_sepisovat'),      'Jak sepsat řešení'  %>
           <%#= menu_lii wiki_main_path('onas/faq'),                'Otázky a odpovědi'   %>
         </ul>
       <% end %>
       <%= menu_li '/onas', 'Akce', ico: 'fa-bullhorn' do %>
         <ul class="submenu">
           <%= menu_lii act_events_path, 'Přehled akcí' %>
-          <%= menu_lii act_events_filter_path('so','all'), 'Soustředění' %>
+          <%= menu_lii act_events_filter_path('so','all'), 'Soustředění Klasik' %>
+          <%= menu_lii act_events_filter_path('sj','all'), 'Soustředění Junior' %>
           <%= menu_lii act_events_filter_path('ta','all'), 'Tábory' %>
           <%= menu_lii act_events_filter_path('vs','all'), 'Pikoúterý' %>
           <%= menu_lii act_participant_new_path, 'Můj účastnický účet' %>

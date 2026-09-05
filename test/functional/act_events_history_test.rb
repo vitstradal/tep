@@ -99,10 +99,12 @@ class ActEventsHistoryTest < ActionController::TestCase
   end
 
   test "soustredeni counts as long term even when weekend length" do
-    Act::EventCategory.create!(code: 'so', name: 'Soustředění', visible: 'ev', multi_day: true)
-    junior = Act::Event.create!(title: 'Sous junior', event_category: 'so',
+    Act::EventCategory.create!(code: 'sj', name: 'Soustředění junior', visible: 'ev', multi_day: true)
+    junior = Act::Event.create!(title: 'Sous junior', event_category: 'sj',
                                 event_start: Date.new(2025, 10, 3), event_end: Date.new(2025, 10, 5))
-    assert junior.long_term?, 'soustředění (i víkendové) je dlouhodobé'
+    assert junior.long_term?, 'soustředění junior (víkendové, kategorie sj) je dlouhodobé'
+    assert Act::Event.new(title: 'x', event_category: 'so',
+                          event_start: Date.new(2025, 10, 3), event_end: Date.new(2025, 10, 5)).long_term?
     enroll(junior, @kid)
 
     sign_in @org

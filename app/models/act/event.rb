@@ -134,10 +134,11 @@ class Act::Event < ActiveRecord::Base
   # Kolik dní (včetně) musí akce trvat, aby byla „dlouhodobá"
   LONG_TERM_MIN_DAYS = 5
 
-  # Kategorie, které jsou dlouhodobé vždy — soustředění (kód 'so') je
-  # dlouhodobé i jako víkendové (junior); kategorie má navíc multi_day
-  # false, takže by podle délky nikdy nevyšlo.
-  LONG_TERM_CATEGORIES = ["so"]
+  # Kategorie, které jsou dlouhodobé vždy — soustředění ('so') a
+  # soustředění junior ('sj') jsou dlouhodobá i jako víkendová;
+  # kategorie 'so' má navíc multi_day false, takže by podle délky
+  # nikdy nevyšla.
+  LONG_TERM_CATEGORIES = ["so", "sj"]
 
   ##
   # Dlouhodobá akce (tábor, soustředění) vs. krátkodobá (víkendovka,
