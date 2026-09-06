@@ -89,6 +89,16 @@ kontrola_mista() {
 log "=== start zalohy $DNES ${DRY:+(DRY RUN)}"
 kontrola_mista
 
+# -Fc je komprimovany sam o sobe (gzip); pg_dump >= 16 umi zstd — lepsi
+# pomer i rychlost, komprese je klientska (funguje i proti PG 15 serveru)
+PGDUMP_VER=$(sudo -u postgres pg_dump --version | grep -oE '[0-9]+' | head -1)
+if [ "${PGDUMP_VER:-0}" -ge 16 ]; then
+  PG_KOMPRES="--compress=zstd:6"
+else
+  PG_KOMPRES="--compress=6"
+fi
+log "pg_dump v$PGDUMP_VER, komprese: $PG_KOMPRES"
+
 ############################################################
 # 1. PostgreSQL
 ############################################################
@@ -117,7 +127,7 @@ for port in $CLUSTERY; do
     if [ -z "$DRY" ]; then
       # pg_dump bezi jako postgres, do souboru zapisuje root (redirect) —
       # postgres do /backup psat nesmi
-      sudo -u postgres pg_dump -p "$port" -Fc "$db" > "$PG_DIR/$db-$port.dump"
+      sudo -u postgres pg_dump -p "$port" -Fc "$PG_KOMPRES" "$db" > "$PG_DIR/$db-$port.dump"
     fi
   done
 done
