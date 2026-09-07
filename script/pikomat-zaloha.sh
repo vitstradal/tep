@@ -32,12 +32,12 @@
 
 set -euo pipefail
 
-ZALOHA_ROOT="/backup/pikomat"
+ZALOHA_ROOT="/home/backup/pikomat"
 DNES=$(date +%F)
 UCHOVAT_PG_DNU=14        # kolik dní držet PG dumpy
 UCHOVAT_SNAP=5           # kolik denních rsync snapshotů držet
 CLUSTERY="5432 5435"     # PG porty
-MIN_VOLNE_GB=50          # tvrdá stopka, ať záloha nezaplní disk
+MIN_VOLNE_GB=100          # tvrdá stopka, ať záloha nezaplní disk
 
 # Výběr databází:
 #  ZALOHUJ_DB   — whitelist (oddělený mezerami); neprázdný = dumpuj JEN tyto
