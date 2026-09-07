@@ -45,9 +45,12 @@ prod-quiz-create:
 	rake quiz:create RAILS_ENV=production NAME='$(NAME)' TITLE='$(TITLE)' TYPE='$(TYPE)' PUBLIC='$(PUBLIC)'
 
 # Komprese PDF řešení uzavřeného ročníku (ori i rev; gzip, tep čte
-# transparentně). Použití: make prod-compress-pdfs ROC=40
+# transparentně). Čistý ruby skript bez Rails/rake — jde pustit pod
+# kýmkoli, kdo smí zapisovat do var/uploads.
+# Použití: make prod-compress-pdfs ROC=40
 prod-compress-pdfs:
-	rake "sosna:compress_pdfs[$(ROC)]" RAILS_ENV=production
+	@test -n "$(ROC)" || { echo "pouziti: make prod-compress-pdfs ROC=40"; exit 1; }
+	ruby script/compress-pdfs.rb $(ROC)
 dev-seed:
 	rake db:seed RAILS_ENV=development
 loc-seed:

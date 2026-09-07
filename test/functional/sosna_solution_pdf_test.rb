@@ -1,5 +1,4 @@
 require 'test_helper'
-require 'rake'
 
 class SosnaSolutionPdfTest < ActionController::TestCase
   include Devise::Test::ControllerHelpers
@@ -48,14 +47,13 @@ class SosnaSolutionPdfTest < ActionController::TestCase
     assert_equal 'application/pdf', response.media_type
   end
 
-  test "compress_pdfs rake task compresses and keeps incompressible" do
-    Tep::Application.load_tasks if Rake::Task.tasks.empty?
-    Rake::Task['sosna:compress_pdfs'].reenable
+  test "compress-pdfs script compresses and keeps incompressible" do
     dobre = File.join(UPLOADS, 'rocnik40/serie01/dobre.pdf')
     spatne = File.join(UPLOADS, 'rocnik40/serie01/spatne.pdf')
     File.binwrite(dobre, 'A' * 100_000)                     # krásně stlačitelné
     File.binwrite(spatne, Random.bytes(100_000))            # nestlačitelné
-    capture_io { Rake::Task['sosna:compress_pdfs'].invoke('40') }
+    out = `ruby #{Rails.root.join('script/compress-pdfs.rb')} 40 #{UPLOADS} 2>&1`
+    assert $?.success?, "skript selhal: #{out}"
 
     assert File.exist?("#{dobre}.gz"), 'stlačitelný soubor má .gz'
     assert_not File.exist?(dobre),     'originál stlačitelného je pryč'
