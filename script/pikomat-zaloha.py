@@ -35,6 +35,7 @@ import argparse
 import datetime
 import fcntl
 import glob
+import grp
 import os
 import re
 import shutil
@@ -54,6 +55,7 @@ DEFAULTS = {
     'zalohuj_db': [],          # whitelist; neprázdný = dumpuj JEN tyto
     'nezalohuj_db': [],        # blacklist; použije se při prázdném whitelistu
     'snapshoty': [],           # [{nazev, zdroj, exclude: [...]}, ...]
+    'skupina': '',             # skupina s právem číst dumpy/logy ('' = vypnuto)
 }
 
 DNES = datetime.date.today().isoformat()
@@ -118,6 +120,20 @@ def vyber_pg_dump():
     return binarka, verze, kompres
 
 
+GID = None   # gid ze skupina=..., naplní main()
+
+
+def pod_skupinu(cesta):
+    """Dej adresář/soubor pod zálohovou skupinu, jen ke čtení.
+    Adresáře 2750 (setgid, ať skupinu dědí i co vyrobí rsync/retence),
+    soubory 640. Soubory uvnitř rsync snapshotů se NEsahají — drží
+    věrně práva zdroje."""
+    if GID is None:
+        return
+    os.chown(cesta, -1, GID)
+    os.chmod(cesta, 0o2750 if os.path.isdir(cesta) else 0o640)
+
+
 def volne_gb(cesta):
     return shutil.disk_usage(cesta).free // 2**30
 
@@ -135,6 +151,8 @@ def zalohuj_pg(cfg, dry):
     log(f'pg_dump {pg_dump} (v{verze}), komprese: {kompres}')
     pg_dir = os.path.join(cfg['zaloha_root'], 'pg', DNES)
     os.makedirs(pg_dir, exist_ok=True)
+    pod_skupinu(os.path.dirname(pg_dir))
+    pod_skupinu(pg_dir)
 
     for port in cfg['clustery']:
         if not pg_bezi(port):
@@ -150,6 +168,7 @@ def zalohuj_pg(cfg, dry):
                 dumpall.stdout.close()
                 if dumpall.wait() != 0 or zst.returncode != 0:
                     chyba(f'globals :{port} selhaly')
+            pod_skupinu(f.name)
 
         for db in psql(port, 'SELECT datname FROM pg_database WHERE NOT datistemplate'):
             if cfg['zalohuj_db']:
@@ -169,6 +188,7 @@ def zalohuj_pg(cfg, dry):
                                        stdout=f)
                 if r.returncode != 0:
                     chyba(f'pg_dump {db}:{port} selhal (rc={r.returncode})')
+                pod_skupinu(f.name)
 
     # retence: adresáře pojmenované datem, starší než uchovat_pg_dnu pryč
     hranice = datetime.date.today() - datetime.timedelta(days=cfg['uchovat_pg_dnu'])
@@ -189,6 +209,7 @@ def snapshot(cfg, snap, dry):
     cil = os.path.join(cil_dir, DNES)
     minule = os.path.join(cil_dir, 'latest')
     os.makedirs(cil_dir, exist_ok=True)
+    pod_skupinu(cil_dir)
 
     cmd = ['rsync', '-aHAX', '--numeric-ids', '--delete']
     if dry:
@@ -237,7 +258,7 @@ def vypis_db(cfg):
 
 
 def main():
-    global LOG_FILE
+    global LOG_FILE, GID
     ap = argparse.ArgumentParser(description='záloha pikomatu (PG dumpy + rsync snapshoty)')
     ap.add_argument('--config', default=CONFIG_DEFAULT, help=f'default {CONFIG_DEFAULT}')
     ap.add_argument('--dry-run', action='store_true')
@@ -254,7 +275,17 @@ def main():
     if os.geteuid() != 0:
         chyba('spusť pod rootem')
 
-    os.makedirs(os.path.join(cfg['zaloha_root'], 'log'), exist_ok=True)
+    if cfg['skupina']:
+        try:
+            GID = grp.getgrnam(cfg['skupina']).gr_gid
+        except KeyError:
+            chyba(f"skupina '{cfg['skupina']}' neexistuje"
+                  f" (groupadd {cfg['skupina']}; usermod -aG {cfg['skupina']} <kdo>)")
+
+    log_dir = os.path.join(cfg['zaloha_root'], 'log')
+    os.makedirs(log_dir, exist_ok=True)
+    pod_skupinu(cfg['zaloha_root'])
+    pod_skupinu(log_dir)
 
     # jen jedna instance najednou
     zamek = open(os.path.join(cfg['zaloha_root'], '.lock'), 'w')
@@ -263,7 +294,8 @@ def main():
     except BlockingIOError:
         chyba('záloha už běží, končím')
 
-    LOG_FILE = open(os.path.join(cfg['zaloha_root'], 'log', f'zaloha-{DNES}.log'), 'a')
+    LOG_FILE = open(os.path.join(log_dir, f'zaloha-{DNES}.log'), 'a')
+    pod_skupinu(LOG_FILE.name)
 
     log(f"=== start zálohy {DNES}{' (DRY RUN)' if args.dry_run else ''}")
     kontrola_mista(cfg)

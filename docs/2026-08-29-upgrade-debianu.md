@@ -22,6 +22,7 @@ Datum: 2026-08-29. Předchází instalaci OxiCloudu (rozhodnuto: nejdřív OS).
    konfigurák TOML, systemd timer; nahradila starší pikomat-zaloha.sh).
    Instalace (root, soubory z tep repa `script/`):
    ```sh
+   groupadd zaloha && usermod -aG zaloha vitas   # čtení záloh pro zálohy záloh
    install -m 755 pikomat-zaloha.py /usr/local/sbin/pikomat-zaloha.py
    install -m 644 pikomat-zaloha.conf /etc/pikomat-zaloha.conf
    install -m 644 pikomat-zaloha.service pikomat-zaloha.timer /etc/systemd/system/
