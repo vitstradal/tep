@@ -26,6 +26,26 @@ class Sosna::Solution < ActiveRecord::Base
 
 
   ##
+  # PDF starých ročníků mohou být na disku komprimovaná jako <cesta>.gz
+  # (rake sosna:compress_pdfs) — čtení je transparentní.
+  #
+  # *Returns* [plná_cesta, je_gzip?]; když neexistuje ani jedno, vrací
+  # nekomprimovanou cestu (volající selže stejně jako dřív)
+  def self.real_path(upload_dir, rel)
+    full = File.join(upload_dir, rel)
+    return [full, false] if File.exist?(full)
+    return ["#{full}.gz", true] if File.exist?("#{full}.gz")
+    [full, false]
+  end
+
+  ##
+  # *Returns* obsah PDF (originál, nebo transparentně rozbalený .gz)
+  def self.read_pdf(upload_dir, rel)
+    full, gz = real_path(upload_dir, rel)
+    gz ? Zlib::GzipReader.open(full) { |g| g.read } : File.binread(full)
+  end
+
+  ##
   # *Returns* název souboru řešení (originál) na disku / nil
   def get_filename_ori
     _get_filename(true)

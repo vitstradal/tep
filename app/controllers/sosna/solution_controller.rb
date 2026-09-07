@@ -384,7 +384,7 @@ class Sosna::SolutionController < SosnaController
       filename = solution.filename_corr || solution.filename
       filename_disp = solution.get_filename_rev
     end
-    send_file UPLOAD_DIR + filename, :filename => filename_disp, :type => 'application/pdf'
+    _send_pdf filename, filename_disp
   end
 
   ##
@@ -405,7 +405,7 @@ class Sosna::SolutionController < SosnaController
       filename_disp = solution.get_filename_ori
     end
 
-    send_file UPLOAD_DIR + solution.filename, :filename => filename_disp, :type => 'application/pdf'
+    _send_pdf solution.filename, filename_disp
   end
 
   ##
@@ -439,7 +439,15 @@ class Sosna::SolutionController < SosnaController
           filename_disp = solution.get_filename_ori
         end
         next if filename.nil?
-        zipfile.add('reseni/' + File.basename(filename_disp),  UPLOAD_DIR + filename)
+        full, gz = Sosna::Solution.real_path(UPLOAD_DIR, filename)
+        if gz
+          # komprimovaný ročník: do zipu rozbalený obsah, jakoby nic
+          zipfile.get_output_stream('reseni/' + File.basename(filename_disp)) do |os|
+            os.write Zlib::GzipReader.open(full) { |g| g.read }
+          end
+        else
+          zipfile.add('reseni/' + File.basename(filename_disp), full)
+        end
       end
     end
     log("zip size:#{File::size?(zip_file_name)}")
@@ -1033,6 +1041,19 @@ class Sosna::SolutionController < SosnaController
   end
 
   private
+
+  ##
+  # Pošli PDF řešení; komprimované ročníky (<soubor>.gz, viz rake
+  # sosna:compress_pdfs) rozbalí transparentně — klient nic nepozná.
+  def _send_pdf(rel, filename_disp)
+    full, gz = Sosna::Solution.real_path(UPLOAD_DIR, rel)
+    if gz
+      send_data Zlib::GzipReader.open(full) { |g| g.read },
+                :filename => filename_disp, :type => 'application/pdf'
+    else
+      send_file full, :filename => filename_disp, :type => 'application/pdf'
+    end
+  end
 
   # scores hash of integers (key are problem_no, values are score)
   #  { '1' => 5, '2'=>'1',  '3'=>1,  '4' => 3, '5' => 1, '6' => 1, '7' => 0 }
