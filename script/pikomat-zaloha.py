@@ -193,8 +193,16 @@ def snapshot(cfg, snap, dry):
     cmd = ['rsync', '-aHAX', '--numeric-ids', '--delete']
     if dry:
         cmd.append('--dry-run')
-    if os.path.isdir(minule):
-        cmd.append('--link-dest=' + os.path.realpath(minule))
+    # hardlinkovat proti minulému snapshotu; když latest visí do prázdna
+    # (ručně smazaný snapshot), vzít nejnovější jiný existující — jinak
+    # by se dělala plná kopie
+    minuly = os.path.realpath(minule) if os.path.isdir(minule) else None
+    if minuly is None:
+        starsi = [d for d in sorted(glob.glob(os.path.join(cil_dir, '20*')))
+                  if os.path.isdir(d) and os.path.basename(d) != DNES]
+        minuly = starsi[-1] if starsi else None
+    if minuly:
+        cmd.append('--link-dest=' + minuly)
     cmd += ['--exclude=' + e for e in snap.get('exclude', [])]
     cmd += [zdroj.rstrip('/') + '/', cil + '/']
 
