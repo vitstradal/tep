@@ -18,19 +18,25 @@ Datum: 2026-08-29. Předchází instalaci OxiCloudu (rozhodnuto: nejdřív OS).
 
 ## Fáze 0 — předpoklady (bez nich nezačínat)
 
-1. **Zálohy** — hotový skript `script/pikomat-zaloha.sh` (v tep repu;
-   nahraný i na serveru v `~vitas/pikomat-zaloha.sh`). Instalace (root):
+1. **Zálohy** — hotová služba: `script/pikomat-zaloha.py` (Python,
+   konfigurák TOML, systemd timer; nahradila starší pikomat-zaloha.sh).
+   Instalace (root, soubory z tep repa `script/`):
    ```sh
-   install -m 755 ~vitas/pikomat-zaloha.sh /usr/local/sbin/pikomat-zaloha.sh
-   /usr/local/sbin/pikomat-zaloha.sh --dry-run   # zkouška
-   /usr/local/sbin/pikomat-zaloha.sh             # první běh (~370 GB, dlouho)
-   echo "30 3 * * * root /usr/local/sbin/pikomat-zaloha.sh >/dev/null 2>&1" \
-     > /etc/cron.d/pikomat-zaloha
+   install -m 755 pikomat-zaloha.py /usr/local/sbin/pikomat-zaloha.py
+   install -m 644 pikomat-zaloha.conf /etc/pikomat-zaloha.conf
+   install -m 644 pikomat-zaloha.service pikomat-zaloha.timer /etc/systemd/system/
+   /usr/local/sbin/pikomat-zaloha.py --dry-run   # zkouška
+   systemctl start pikomat-zaloha               # první běh (~370 GB, dlouho)
+   systemctl daemon-reload && systemctl enable --now pikomat-zaloha.timer
+   systemctl list-timers 'pikomat-zaloha*'      # kontrola plánu (denně 3:30)
    ```
-   Zálohuje: všechny PG databáze z :5432 i :5435 (tep, klep/mattermost_db,
-   sklep NC, per-DB `pg_dump -Fc` + globals, retence 14 dní) a rsync
-   hardlink snapshoty `/home/www` + `/home/pikomat` do `/backup/pikomat`
-   (jiný fyzický disk než /home; retence 5 snapshotů). POZOR: není to
+   Co a kam se zálohuje, řídí `/etc/pikomat-zaloha.conf`: PG databáze
+   z :5432 i :5435 (tep, klep/mattermost_db, sklep NC; per-DB
+   `pg_dump -Fc` + globals, retence 14 dní; mailman3/listmonk vyřazeny)
+   a rsync hardlink snapshoty `/home/www` + `/home/pikomat` do
+   `/home/backup/pikomat` (jiný fyzický disk než /home; retence
+   5 snapshotů). Log: `journalctl -u pikomat-zaloha` + soubor
+   v `<zaloha_root>/log/`. POZOR: není to
    offsite; a overleaf mongo (docker) file-kopie nemusí být konzistentní
    — viz hlavička skriptu. K tomu ještě ručně: `/etc`,
    `/opt/mattermost/config`, crontaby, případně maily ostatních účtů

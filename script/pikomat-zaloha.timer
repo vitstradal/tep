@@ -1,0 +1,13 @@
+# /etc/systemd/system/pikomat-zaloha.timer
+# Denní záloha ve 3:30; Persistent=true dožene běh zmeškaný
+# kvůli vypnutému stroji.
+[Unit]
+Description=Denni zaloha pikomatu
+
+[Timer]
+OnCalendar=*-*-* 03:30:00
+Persistent=true
+RandomizedDelaySec=10min
+
+[Install]
+WantedBy=timers.target

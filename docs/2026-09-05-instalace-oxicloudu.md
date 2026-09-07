@@ -127,5 +127,5 @@ curl -s http://127.0.0.1:8086/ | head -3     # žije?
 - [ ] sdílecí odkazy (obdoba NC share links)
 - [ ] kvóty, admin správa uživatelů
 - [ ] výkon na 25 GB metadat / 100 GB souborů (zkušební rsync části sklepu)
-- [ ] zálohy: DB dump (pikomat-zaloha.sh ji vezme automaticky) + storage
+- [ ] zálohy: DB dump (pikomat-zaloha.py ji vezme automaticky) + storage
       adresář (přidat /home/www/oxicloud-data do zálohy, až bude ostrý)

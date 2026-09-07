@@ -1,0 +1,13 @@
+# /etc/systemd/system/pikomat-zaloha.service
+# Jednorázový běh zálohy; plánuje pikomat-zaloha.timer.
+# Ruční spuštění: systemctl start pikomat-zaloha
+# Log: journalctl -u pikomat-zaloha (a soubor v <zaloha_root>/log/)
+[Unit]
+Description=Zaloha pikomatu (PostgreSQL dumpy + rsync snapshoty)
+
+[Service]
+Type=oneshot
+ExecStart=/usr/local/sbin/pikomat-zaloha.py
+# záloha nemá dusit provoz
+Nice=10
+IOSchedulingClass=idle
