@@ -56,6 +56,7 @@ DEFAULTS = {
     'nezalohuj_db': [],        # blacklist; použije se při prázdném whitelistu
     'snapshoty': [],           # [{nazev, zdroj, exclude: [...]}, ...]
     'skupina': '',             # skupina s právem číst dumpy/logy ('' = vypnuto)
+    'skupina_cte_snapshoty': False,  # i obsah snapshotů: --chown=:skupina --chmod=g+rX
 }
 
 DNES = datetime.date.today().isoformat()
@@ -214,6 +215,10 @@ def snapshot(cfg, snap, dry):
     cmd = ['rsync', '-aHAX', '--numeric-ids', '--delete']
     if dry:
         cmd.append('--dry-run')
+    # čitelnost pro zálohovou skupinu: skupina souborů se ztrácí (vlastník
+    # a módy zůstávají) — po obnově ji vrátí pikomat-fix-perms.py
+    if GID is not None and cfg['skupina_cte_snapshoty']:
+        cmd += ['--chown=:' + cfg['skupina'], '--chmod=g+rX']
     # hardlinkovat proti minulému snapshotu; když latest visí do prázdna
     # (ručně smazaný snapshot), vzít nejnovější jiný existující — jinak
     # by se dělala plná kopie
