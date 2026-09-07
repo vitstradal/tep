@@ -43,6 +43,11 @@ prod-seed:
 #   make prod-quiz-create NAME=sranda PUBLIC=1 TITLE='Sranda anketa'
 prod-quiz-create:
 	rake quiz:create RAILS_ENV=production NAME='$(NAME)' TITLE='$(TITLE)' TYPE='$(TYPE)' PUBLIC='$(PUBLIC)'
+
+# Komprese PDF řešení uzavřeného ročníku (ori i rev; gzip, tep čte
+# transparentně). Použití: make prod-compress-pdfs ROC=40
+prod-compress-pdfs:
+	rake "sosna:compress_pdfs[$(ROC)]" RAILS_ENV=production
 dev-seed:
 	rake db:seed RAILS_ENV=development
 loc-seed:
