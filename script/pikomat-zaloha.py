@@ -107,8 +107,10 @@ def vyber_pg_dump():
     """Nejnovější nainstalovaná binárka; Debianí wrapper by vybral verzi
     default clusteru (15), zstd ale umí až pg_dump >= 16 (komprese je
     klientská, funguje i proti staršímu serveru)."""
-    kandidati = sorted(glob.glob('/usr/lib/postgresql/*/bin/pg_dump'),
-                       key=lambda p: int(p.split('/')[4]))
+    kandidati = sorted(
+        (p for p in glob.glob('/usr/lib/postgresql/*/bin/pg_dump')
+         if p.split('/')[4].isdigit()),
+        key=lambda p: int(p.split('/')[4]))
     binarka = kandidati[-1] if kandidati else 'pg_dump'
     ver = subprocess.run([binarka, '--version'], capture_output=True, text=True)
     verze = int(re.search(r'\d+', ver.stdout).group())
