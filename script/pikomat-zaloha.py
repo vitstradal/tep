@@ -219,21 +219,41 @@ def snapshot(cfg, snap, dry):
     # a módy zůstávají) — po obnově ji vrátí pikomat-fix-perms.py
     if GID is not None and cfg['skupina_cte_snapshoty']:
         cmd += ['--chown=:' + cfg['skupina'], '--chmod=g+rX']
-    # hardlinkovat proti minulému snapshotu; když latest visí do prázdna
-    # (ručně smazaný snapshot), vzít nejnovější jiný existující — jinak
-    # by se dělala plná kopie
-    minuly = os.path.realpath(minule) if os.path.isdir(minule) else None
-    if minuly is None:
-        starsi = [d for d in sorted(glob.glob(os.path.join(cil_dir, '20*')))
-                  if os.path.isdir(d) and os.path.basename(d) != DNES]
-        minuly = starsi[-1] if starsi else None
-    if minuly:
-        cmd.append('--link-dest=' + minuly)
+    # hardlinkovat proti minulým snapshotům: latest + nejnovější další
+    # (rsync umí až 20 --link-dest). Díky druhému poslouží částečný
+    # snapshot z havarovaného běhu jako zdroj hardlinků místo toho,
+    # aby se už zkopírovaná data kopírovala znovu; a když latest visí
+    # do prázdna (ručně smazaný snapshot), pořád se hardlinkuje.
+    minule_snapshoty = []
+    if os.path.isdir(minule):
+        minule_snapshoty.append(os.path.realpath(minule))
+    for d in sorted(glob.glob(os.path.join(cil_dir, '20*')), reverse=True):
+        if os.path.isdir(d) and os.path.basename(d) != DNES and d not in minule_snapshoty:
+            minule_snapshoty.append(d)
+    cmd += ['--link-dest=' + d for d in minule_snapshoty[:2]]
     cmd += ['--exclude=' + e for e in snap.get('exclude', [])]
     cmd += [zdroj.rstrip('/') + '/', cil + '/']
 
     log(f'rsync {zdroj} -> {cil}')
-    r = subprocess.run(cmd, stderr=LOG_FILE)
+    # hlídač místa: pojistka před během nestačí, několikahodinový rsync
+    # umí disk zaplnit sám (2026-09-07: plná kopie www dojela na ENOSPC)
+    proc = subprocess.Popen(cmd, stderr=LOG_FILE)
+    doslo_misto = False
+    while True:
+        try:
+            proc.wait(timeout=30)
+            break
+        except subprocess.TimeoutExpired:
+            if volne_gb(cfg['zaloha_root']) < cfg['min_volne_gb']:
+                doslo_misto = True
+                proc.terminate()
+                proc.wait()
+                break
+    r = proc
+    if doslo_misto:
+        chyba(f"rsync {nazev} zastaven: málo místa "
+              f"(< {cfg['min_volne_gb']} GB) — částečný snapshot {cil} "
+              f"poslouží příště jako zdroj hardlinků")
     # 24 = soubory zmizely během přenosu (živé systémy) — není chyba
     if r.returncode not in (0, 24):
         chyba(f'rsync {nazev} rc={r.returncode}')
