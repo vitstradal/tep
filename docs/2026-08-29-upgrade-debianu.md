@@ -20,16 +20,12 @@ Datum: 2026-08-29. Předchází instalaci OxiCloudu (rozhodnuto: nejdřív OS).
 
 1. **Zálohy** — hotová služba: `script/pikomat-zaloha.py` (Python,
    konfigurák TOML, systemd timer; nahradila starší pikomat-zaloha.sh).
-   Instalace (root, soubory z tep repa `script/`):
+   Instalace i aktualizace (root, v tep repu):
    ```sh
+   make install-pikomat-zalohy       # skript+fix-perms+unity+timer; conf nechává
    groupadd zaloha && usermod -aG zaloha vitas   # čtení záloh pro zálohy záloh
-   install -m 755 pikomat-zaloha.py /usr/local/sbin/pikomat-zaloha.py
-   install -m 644 pikomat-zaloha.conf /etc/pikomat-zaloha.conf
-   install -m 644 pikomat-zaloha.service pikomat-zaloha.timer /etc/systemd/system/
    /usr/local/sbin/pikomat-zaloha.py --dry-run   # zkouška
    systemctl start pikomat-zaloha               # první běh (~370 GB, dlouho)
-   systemctl daemon-reload && systemctl enable --now pikomat-zaloha.timer
-   systemctl list-timers 'pikomat-zaloha*'      # kontrola plánu (denně 3:30)
    ```
    Co a kam se zálohuje, řídí `/etc/pikomat-zaloha.conf`: PG databáze
    z :5432 i :5435 (tep, klep/mattermost_db, sklep NC; per-DB

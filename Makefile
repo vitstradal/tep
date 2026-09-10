@@ -44,6 +44,20 @@ prod-seed:
 prod-quiz-create:
 	rake quiz:create RAILS_ENV=production NAME='$(NAME)' TITLE='$(TITLE)' TYPE='$(TYPE)' PUBLIC='$(PUBLIC)'
 
+# Instalace/aktualizace zálohovacího systému (pouštět pod rootem na
+# pikomatu). Skript + fix-perms + systemd unity; konfigurák
+# /etc/pikomat-zaloha.conf nechává být, založí ho jen napoprvé.
+install-pikomat-zalohy:
+	@test "$$(id -u)" = 0 || { echo "pust pod rootem"; exit 1; }
+	install -m 755 script/pikomat-zaloha.py /usr/local/sbin/pikomat-zaloha.py
+	install -m 755 script/pikomat-fix-perms.py /usr/local/sbin/pikomat-fix-perms.py
+	test -e /etc/pikomat-zaloha.conf || install -m 644 script/pikomat-zaloha.conf /etc/pikomat-zaloha.conf
+	install -m 644 script/pikomat-zaloha.service script/pikomat-zaloha.timer /etc/systemd/system/
+	rm -f /usr/local/sbin/pikomat-zaloha.sh
+	systemctl daemon-reload
+	systemctl enable --now pikomat-zaloha.timer
+	@systemctl list-timers 'pikomat-zaloha*' --no-pager | head -2
+
 # Komprese PDF řešení uzavřeného ročníku (ori i rev; gzip, tep čte
 # transparentně). Čistý ruby skript bez Rails/rake — jde pustit pod
 # kýmkoli, kdo smí zapisovat do var/uploads.
