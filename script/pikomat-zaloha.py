@@ -88,6 +88,14 @@ def nacti_config(cesta):
     neznam = set(cfg) - set(DEFAULTS)
     if neznam:
         chyba(f'konfigurák {cesta}: neznámé klíče {sorted(neznam)}')
+    # klíč přilepený na konec souboru spadne do poslední [[snapshoty]]
+    # sekce — hlídat i tam, jinak se tiše ignoruje
+    for snap in cfg['snapshoty']:
+        neznam = set(snap) - {'nazev', 'zdroj', 'exclude'}
+        if neznam:
+            chyba(f'konfigurák {cesta}: neznámé klíče {sorted(neznam)} '
+                  f"v [[snapshoty]] '{snap.get('nazev', '?')}' — "
+                  'globální klíče patří na začátek souboru, před sekce')
     return cfg
 
 
