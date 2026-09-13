@@ -117,7 +117,9 @@ Doorkeeper.configure do
 
   default_scopes  :tep
   #optional_scopes :write, :update
-  optional_scopes nil
+  # openid/profile/email: OIDC scopes pro OxiCloud (a dalsi OIDC klienty);
+  # klasicti OAuth2 klienti zustavaji na default scope :tep.
+  optional_scopes :openid, :profile, :email
 
   # Change the way client credentials are retrieved from the request object.
   # By default it retrieves first from the `HTTP_AUTHORIZATION` header, then

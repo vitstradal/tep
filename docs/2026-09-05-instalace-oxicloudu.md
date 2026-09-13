@@ -129,3 +129,39 @@ curl -s http://127.0.0.1:8086/ | head -3     # žije?
 - [ ] výkon na 25 GB metadat / 100 GB souborů (zkušební rsync části sklepu)
 - [ ] zálohy: DB dump (pikomat-zaloha.py ji vezme automaticky) + storage
       adresář (přidat /home/www/oxicloud-data do zálohy, až bude ostrý)
+
+
+## 5. OIDC pres tep (doplneno 2026-09-13)
+
+Tep umi od 2026-09-13 plne OIDC (gem `doorkeeper-openid_connect`):
+discovery na `/.well-known/openid-configuration`, id_token, userinfo.
+OAuth pousti jen org uzivatele (resource_owner_authenticator).
+
+Nasazeni na serveru (v /home/www/rails/tep):
+
+```sh
+bundle install
+rails db:migrate
+make gen-oidc-signing-key   # config/oidc_signing_key.pem (gitignored)
+make restart
+```
+
+Registrace klienta: jako tep admin na /oauth/applications zalozit
+aplikaci "OxiCloud":
+  - Redirect URI: https://pikomat.mff.cuni.cz/oxicloud/api/auth/oidc/callback
+  - Scopes: openid profile email
+  - Confidential: ano
+
+OxiCloud (/etc/oxicloud/oxicloud.env, pak systemctl restart oxicloud):
+
+```sh
+OXICLOUD_OIDC_ENABLED=true
+OXICLOUD_OIDC_ISSUER_URL=https://pikomat.mff.cuni.cz
+OXICLOUD_OIDC_CLIENT_ID=<uid z /oauth/applications>
+OXICLOUD_OIDC_CLIENT_SECRET=<secret z /oauth/applications>
+OXICLOUD_OIDC_REDIRECT_URI=https://pikomat.mff.cuni.cz/oxicloud/api/auth/oidc/callback
+OXICLOUD_OIDC_FRONTEND_URL=https://pikomat.mff.cuni.cz/oxicloud
+OXICLOUD_OIDC_PROVIDER_NAME=TEP
+```
+
+Admini v OxiCloudu se spravuji rucne (zadny groups claim se nemapuje).

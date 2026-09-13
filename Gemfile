@@ -39,3 +39,6 @@ gem 'sprockets-rails'
 ########################### rails7
 #gem 'doorkeeper'
 gem 'doorkeeper', '~> 5.5'
+# OIDC vrstva nad Doorkeeperem — discovery dokument, id_token, userinfo
+# (potreba pro OxiCloud SSO; ciste OAuth2 mu nestaci)
+gem 'doorkeeper-openid_connect', '~> 1.8'

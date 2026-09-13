@@ -136,6 +136,9 @@ ctags:
 
 gen-secret-key-base:
 	script/gen_secret_key_base.rb
+
+gen-oidc-signing-key:
+	script/gen_oidc_signing_key.rb
 adventomat:
 	rails runner -e production script/adventomat.rb
 
