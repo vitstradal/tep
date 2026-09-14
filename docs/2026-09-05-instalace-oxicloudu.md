@@ -41,6 +41,20 @@ Rebuild po `git pull`: spustit znovu `./build.sh`.
 
 ## 2. Instalace do /opt (root)
 
+**Automatizováno skriptem** `script/install-oxicloud.sh` (idempotentní;
+první běh = plná instalace, další = upgrade binárky+restart). Na serveru:
+
+```sh
+cd /home/www/rails/tep && git pull
+sudo make install-oxicloud      # nebo: sudo script/install-oxicloud.sh
+```
+
+Skript udělá vše z tohoto oddílu: uživatel `oxicloud`, adresáře, binárka
++ statika z `~vitas/build/OxiCloud`, DB `sklepox_db`/uživatel `sklepox`
+na PG17 :5435, vygeneruje secrety do `/etc/oxicloud/oxicloud.env` (640,
+napoprvé; upgrade je nechává), systemd unit, `enable --now` a health check.
+Zbytek oddílu je referenční popis toho, co skript vytvoří.
+
 Pilotní volby (rozhodnuto 2026-09-14): DB `sklepox_db`/uživatel `sklepox`
 na PG17 :5435; auth lokální účty (OIDC vypnuté — tep OIDC vrstva je
 rozpracovaná, pilot ji nečeká); přístup jen ssh tunelem (bez Apache;

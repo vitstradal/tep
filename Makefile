@@ -58,6 +58,13 @@ install-pikomat-zalohy:
 	systemctl enable --now pikomat-zaloha.timer
 	@systemctl list-timers 'pikomat-zaloha*' --no-pager | head -2
 
+# Instalace/upgrade OxiCloudu (pod rootem na pikomatu). První běh založí
+# uživatele, DB sklepox_db, secrety, konfig a systemd unit; další běh je
+# upgrade binárky+statiky z buildu (~vitas/build/OxiCloud) + restart.
+install-oxicloud:
+	@test "$$(id -u)" = 0 || { echo "pust pod rootem"; exit 1; }
+	script/install-oxicloud.sh
+
 # Komprese PDF řešení uzavřeného ročníku (ori i rev; gzip, tep čte
 # transparentně). Čistý ruby skript bez Rails/rake — jde pustit pod
 # kýmkoli, kdo smí zapisovat do var/uploads.
