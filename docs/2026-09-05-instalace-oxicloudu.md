@@ -41,37 +41,44 @@ Rebuild po `git pull`: spustit znovu `./build.sh`.
 
 ## 2. Instalace do /opt (root)
 
+Pilotní volby (rozhodnuto 2026-09-14): DB `sklepox_db`/uživatel `sklepox`
+na PG17 :5435; auth lokální účty (OIDC vypnuté — tep OIDC vrstva je
+rozpracovaná, pilot ji nečeká); přístup jen ssh tunelem (bez Apache;
+OxiCloud neumí běh pod subcestou, viz níže). Binárka je v0.8.9.
+
 ```sh
 # uživatel a adresáře
 useradd --system --home /var/lib/oxicloud --shell /usr/sbin/nologin oxicloud
 mkdir -p /opt/oxicloud /etc/oxicloud /var/lib/oxicloud/tmp
-# data na RAID (/home, 791 GB volných) — sem poputuje obsah sklepu
+# data na RAID (/home) — sem poputuje obsah sklepu
 mkdir -p /home/www/oxicloud-data
 chown oxicloud:oxicloud /var/lib/oxicloud /var/lib/oxicloud/tmp /home/www/oxicloud-data
 
-# binárka + statika
+# binárka + statika (build v0.8.9 pod vitasem)
 install -m 755 ~vitas/build/OxiCloud/target/release/oxicloud /opt/oxicloud/oxicloud
 cp -r ~vitas/build/OxiCloud/static-dist /opt/oxicloud/static-dist
 
-# databáze na PG17 (:5435)
-sudo -u postgres createuser -p 5435 oxicloud
-sudo -u postgres createdb   -p 5435 -O oxicloud oxicloud
-sudo -u postgres psql -p 5435 -c "ALTER USER oxicloud PASSWORD '<vygeneruj>'"
+# databáze sklepox_db na PG17 (:5435)
+sudo -u postgres createuser -p 5435 sklepox
+sudo -u postgres createdb   -p 5435 -O sklepox sklepox_db
+sudo -u postgres psql -p 5435 -c "ALTER USER sklepox PASSWORD '<DB_HESLO>'"
 ```
 
-`/etc/oxicloud/oxicloud.env` (práva 640, root:oxicloud):
+`/etc/oxicloud/oxicloud.env` (práva 640, root:oxicloud). `<JWT>` a
+`<DB_HESLO>` vygeneruj `openssl rand -hex 32` resp. `openssl rand -base64 24`:
 
 ```sh
 OXICLOUD_SERVER_HOST=127.0.0.1
 OXICLOUD_SERVER_PORT=8086
-OXICLOUD_BASE_URL=https://pikomat.mff.cuni.cz/oxisklep
+OXICLOUD_BASE_URL=http://localhost:8086
 OXICLOUD_STORAGE_PATH=/home/www/oxicloud-data
 OXICLOUD_STATIC_PATH=/opt/oxicloud/static-dist
 OXICLOUD_TEMP_DIR=/var/lib/oxicloud/tmp
-OXICLOUD_DB_CONNECTION_STRING=postgres://oxicloud:<heslo>@localhost:5435/oxicloud
-DATABASE_URL=postgres://oxicloud:<heslo>@localhost:5435/oxicloud
-OXICLOUD_JWT_SECRET=<openssl rand -hex 32>
+OXICLOUD_DB_CONNECTION_STRING=postgres://sklepox:<DB_HESLO>@localhost:5435/sklepox_db
+DATABASE_URL=postgres://sklepox:<DB_HESLO>@localhost:5435/sklepox_db
+OXICLOUD_JWT_SECRET=<JWT>
 OXICLOUD_ENABLE_AUTH=true
+OXICLOUD_OIDC_ENABLED=false
 MIMALLOC_PURGE_DELAY=0
 ```
 
@@ -79,7 +86,7 @@ MIMALLOC_PURGE_DELAY=0
 
 ```ini
 [Unit]
-Description=OxiCloud — souborove uloziste (pilot /oxisklep)
+Description=OxiCloud — souborove uloziste (pilot, ssh tunel)
 After=network.target postgresql.service
 
 [Service]
