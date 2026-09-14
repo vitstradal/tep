@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 35) do
+ActiveRecord::Schema[7.2].define(version: 36) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -154,6 +154,12 @@ ActiveRecord::Schema[7.2].define(version: 35) do
     t.timestamptz "revoked_at"
     t.text "scopes"
     t.index ["token"], name: "idx_350926_index_oauth_access_grants_on_token", unique: true
+  end
+
+  create_table "oauth_openid_requests", force: :cascade do |t|
+    t.bigint "access_grant_id", null: false
+    t.string "nonce", null: false
+    t.index ["access_grant_id"], name: "index_oauth_openid_requests_on_access_grant_id"
   end
 
   create_table "oauth_access_tokens", force: :cascade do |t|
