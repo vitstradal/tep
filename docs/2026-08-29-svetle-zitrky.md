@@ -85,9 +85,17 @@ share-linky/ACL ověřit na místě. Proto:
    OAuth2 (pokud OxiCloud neumí — fronta přes `mod_auth_openidc` nepůjde
    bez OIDC; fallback: vlastní tenký Rust proxy s tep OAuth2, nebo
    OxiCloud upravit — **ověřit v pilotu jako první věc**).
-3. Kalendáře: rustical na localhost, `/caldav` + přepnout well-known
-   redirecty z NC; migrace ICS exportem z NC; přepojit `pikoorg-cal.rb`
-   (marvin) a klienty orgů.
+3. Kalendáře (revize 2026-09-14): rustical NEPOTŘEBA — OxiCloud má
+   vlastní plnohodnotný CalDAV server (`/caldav`, události v PG; ověřeno
+   ve zdrojácích: MKCALENDAR, calendar-query/multiget REPORT, PROPFIND,
+   PUT). OxiCloud ale nemá kalendářové web UI (SPA jen soubory/foto/
+   hudba). Proto: **klikací kalendář postavit v tepu** (FullCalendar.js,
+   org auth) — tep čte/zapisuje na OxiCloud CalDAV server-side jedním
+   service app-heslem; rozšířit stávající `lib/cal_dav_report.rb` o zápis
+   (PUT VEVENT, gem `icalendar` už je). Kanonický store = OxiCloud, takže
+   telefony (DAVx5), Thunderbird, wiki `{{calendar}}` i `pikoorg-cal.rb`
+   (marvin) čtou tentýž kalendář — jen přesměrovat URL z NC na OxiCloud.
+   Blokuje to běžící OxiCloud pilot (nejdřív založit kalendář+service účet).
 4. Data: 105+ GB kopírovat rsyncem po skupinách (Tabor, Soustredeni, …),
    read-only okno až na finální přepnutí `/sklep`.
 5. Nextcloud po přepnutí zmrazit read-only, po půl roce archiv (app strom
