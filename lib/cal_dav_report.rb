@@ -7,6 +7,9 @@ require 'rexml/xpath'
 #require 'selene'
 require 'icalendar'
 require 'faraday'
+require 'base64'
+require 'securerandom'
+require 'cgi'
 require 'pp'
 
 #
@@ -77,7 +80,100 @@ class CalDavReport
         return result
     end
 
-    private 
+    ##
+    # Klikací kalendář (viz Cal::EventsController). Čte i zapisuje na CalDAV
+    # kolekci @uri (dnes Nextcloud/sklep, cílově OxiCloud /caldav). Zápis
+    # vyžaduje user/password (service app-heslo); veřejné čtení ne.
+
+    # Seznam událostí v rozsahu jako pole hashů se vším, co UI potřebuje
+    # (uid pro editaci/smazání, etag pro optimistický zámek). Na rozdíl od
+    # `report` (které vrací Icalendar objekty pro wiki) je to plochý JSON-ready
+    # tvar pro FullCalendar.
+    def list(start, stop)
+        resp = _conn.run_request(:report, @uri.path, _report_body(start, stop),
+                                 _headers('Content-Type' => 'application/xml', 'Depth' => '1'))
+        raise "CalDAV REPORT #{@uri.path}: #{resp.status}" unless resp.success?
+        xml = REXML::Document.new(resp.body)
+        events = []
+        REXML::XPath.each(xml, '//d:response', { 'd' => 'DAV:' }) do |r|
+            etag = REXML::XPath.first(r, './/d:getetag/text()', { 'd' => 'DAV:' })&.value
+            data = REXML::XPath.first(r, './/c:calendar-data/text()',
+                                      { 'c' => 'urn:ietf:params:xml:ns:caldav' })&.value
+            next unless data
+            ev = Icalendar::Calendar.parse(data).first&.events&.first
+            next unless ev
+            events << {
+                uid:         ev.uid&.to_s,
+                etag:        etag,
+                summary:     ev.summary&.to_s,
+                description: ev.description&.to_s,
+                dtstart:     ev.dtstart&.value_ical,
+                dtend:       ev.dtend&.value_ical,
+                all_day:     ev.dtstart.is_a?(Icalendar::Values::Date),
+            }
+        end
+        events
+    end
+
+    # Vytvoř/uprav událost. uid je zároveň jméno .ics zdroje (idempotentní
+    # upsert). Vrací etag z odpovědi.
+    def put_event(uid, ical)
+        resp = _conn.put(_event_path(uid), ical,
+                         _headers('Content-Type' => 'text/calendar; charset=utf-8'))
+        raise "CalDAV PUT #{_event_path(uid)}: #{resp.status}" unless resp.success?
+        resp.headers['etag']
+    end
+
+    def delete_event(uid)
+        resp = _conn.delete(_event_path(uid), nil, _headers)
+        # 404 = už neexistuje → bereme jako úspěch (idempotentní smazání)
+        return true if resp.success? || resp.status == 404
+        raise "CalDAV DELETE #{_event_path(uid)}: #{resp.status}"
+    end
+
+    # Postav VEVENT (jeden .ics) z parametrů z UI. all_day → DATE bez času.
+    def self.build_vevent(uid:, summary:, dtstart:, dtend:, description: nil, all_day: false)
+        cal = Icalendar::Calendar.new
+        cal.prodid = '-//Pikomat//tep kalendar//CS'
+        cal.event do |e|
+            e.uid = uid
+            e.summary = summary.to_s
+            if all_day
+                e.dtstart = Icalendar::Values::Date.new(dtstart)
+                e.dtend   = Icalendar::Values::Date.new(dtend)
+            else
+                e.dtstart = Icalendar::Values::DateTime.new(dtstart)
+                e.dtend   = Icalendar::Values::DateTime.new(dtend)
+            end
+            e.description = description.to_s unless description.to_s.empty?
+        end
+        cal.to_ical
+    end
+
+    def self.new_uid
+        "#{SecureRandom.uuid}"
+    end
+
+    private
+
+    # Faraday spojení na host:port kolekce; port bereme z URI (u OxiCloudu
+    # na localhostu není 443). ssl verify off — interní/self-signed cíle.
+    def _conn
+        Faraday.new(url: "#{@uri.scheme}://#{@uri.host}:#{@uri.port}",
+                    ssl: { verify: false })
+    end
+
+    # Přidej Basic auth hlavičku, jen když máme credentials (veřejné čtení bez).
+    def _headers(extra = {})
+        return extra unless @user
+        extra.merge('Authorization' =>
+            'Basic ' + Base64.strict_encode64("#{@user}:#{@password}"))
+    end
+
+    def _event_path(uid)
+        base = @uri.path.end_with?('/') ? @uri.path : "#{@uri.path}/"
+        "#{base}#{CGI.escape(uid.to_s)}.ics"
+    end
 
     def _report_body start, stop
         """<?xml version='1.0'?>
