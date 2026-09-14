@@ -281,6 +281,39 @@ def snapshot(cfg, snap, dry):
             shutil.rmtree(d)
 
 
+def normalizuj_prava(cfg, dry):
+    """Zajisti, že celý strom záloh je čitelný pro skupinu 'skupina'
+    (skupina + g+rX). Dotýká se jen toho, co pravidlo porušuje.
+
+    Nutné navíc k rsync --chmod=g+rX: ten platí jen na soubory, které
+    rsync opravdu přenese. Nezměněné soubory se hardlinkují ze staršího
+    snapshotu a dědí jeho práva — takže cokoli ze snapshotu vyrobeného
+    dřív než jsme --chmod zavedli (nebo s cizí skupinou / módem 0600/0700)
+    zůstane pro skupinu nečitelné a rozbije zálohu zálohy. Tenhle průchod
+    to zhojí i zpětně. Práva v záloze jsou záměrně obětovaná; reálné
+    vlastníky vrací při obnově pikomat-fix-perms.py."""
+    if GID is None or not cfg['skupina_cte_snapshoty']:
+        return
+    root = cfg['zaloha_root']
+    skup = cfg['skupina']
+    # (popis, find-test porušovatelů, akce). Běží jako find -print [-exec]:
+    # jeden průchod na úlohu, exec jen na porušovatele (na čistém stromě
+    # nic nemění, jen projde).
+    ulohy = [
+        ('skupina',        ['!', '-type', 'l', '!', '-group', skup], ['chgrp', '-h', skup]),
+        ('práva adresářů', ['-type', 'd', '!', '-perm', '-g+rx'],    ['chmod', 'g+rX']),
+        ('práva souborů',  ['-type', 'f', '!', '-perm', '-g+r'],     ['chmod', 'g+r']),
+    ]
+    for popis, test, akce in ulohy:
+        cmd = ['find', root] + test + ['-print']
+        if not dry:
+            cmd += ['-exec'] + akce + ['{}', '+']
+        r = subprocess.run(cmd, capture_output=True, text=True)
+        pocet = len(r.stdout.splitlines())
+        log(f'normalizace práv ({popis}): {pocet} '
+            f'{"ke změně (dry)" if dry else "opraveno"}')
+
+
 def vypis_db(cfg):
     for port in cfg['clustery']:
         print(f'=== cluster :{port}')
@@ -336,6 +369,7 @@ def main():
     for snap in cfg['snapshoty']:
         kontrola_mista(cfg)
         snapshot(cfg, snap, args.dry_run)
+    normalizuj_prava(cfg, args.dry_run)
     log(f"=== hotovo; volné místo: {volne_gb(cfg['zaloha_root'])} GB")
 
 
