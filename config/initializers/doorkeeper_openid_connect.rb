@@ -8,6 +8,20 @@
 # Podpisovy klic: `make gen-oidc-signing-key` (soubor je v .gitignore,
 # na kazdem prostredi zvlast — stejny vzor jako secret_key_base).
 
+require 'openssl'
+
+# Chybejici klic nesmi shodit boot (a s nim OAuth2 pro klep/sklep) — gem
+# ale vyzaduje platny klic, takze fallback na docasny (per-boot) s warningem.
+_oidc_key_path = Rails.root.join('config', 'oidc_signing_key.pem')
+_oidc_signing_key =
+  if File.exist?(_oidc_key_path)
+    File.read(_oidc_key_path)
+  else
+    Rails.logger&.warn("OIDC: chybí #{_oidc_key_path}, používám dočasný klíč " \
+                       '(id_tokeny nepřežijí restart) — spusť make gen-oidc-signing-key')
+    OpenSSL::PKey::RSA.new(2048).to_pem
+  end
+
 Doorkeeper::OpenidConnect.configure do
   # Issuer musi byt presne ta URL, pod kterou klienti tep vidi —
   # OxiCloud si z ni sklada <issuer>/.well-known/openid-configuration
@@ -16,7 +30,7 @@ Doorkeeper::OpenidConnect.configure do
     Rails.env.production? ? 'https://pikomat.mff.cuni.cz' : 'http://localhost:3000'
   end
 
-  signing_key File.read(Rails.root.join('config', 'oidc_signing_key.pem'))
+  signing_key _oidc_signing_key
 
   subject_types_supported [:public]
 
