@@ -69,5 +69,13 @@ Doorkeeper::OpenidConnect.configure do
     claim :preferred_username, scope: :profile do |user|
       user.email
     end
+    # OxiCloud mapuje admin roli z groups claimu (OXICLOUD_OIDC_ADMIN_GROUPS);
+    # přístup jako takový už gatuje resource_owner_authenticator (jen org).
+    claim :groups, scope: :profile do |user|
+      groups = []
+      groups << 'org' if user.org?
+      groups << 'admin' if user.admin?
+      groups
+    end
   end
 end
