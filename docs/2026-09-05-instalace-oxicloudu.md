@@ -39,106 +39,49 @@ mkdir -p ~/build && cd ~/build \
 Výsledek: `~/build/OxiCloud/target/release/oxicloud` + `~/build/OxiCloud/static-dist/`.
 Rebuild po `git pull`: spustit znovu `./build.sh`.
 
-## 2. Instalace do /opt (root)
+## 2. Deployment — vlastní `sklepox` session (JEDINÝ zdroj pravdy)
 
-**Automatizováno skriptem** `script/install-oxicloud.sh` (idempotentní;
-první běh = plná instalace, další = upgrade binárky+restart). Na serveru:
+> ⚠️ **NEinstalovat OxiCloud z tep repa.** Dřívější `script/install-oxicloud.sh`
+> (make install-oxicloud) stavěl z upstream klonu BEZ base-path podpory a
+> 2026-09-15 tím přepsal funkční deployment → /sklepox servíroval root
+> assety. Skript je odstraněný. Tep repo drží k OxiCloudu jen OIDC klienta
+> (`rake oidc:register`) a root `.well-known` DAV redirect.
 
-```sh
-cd /home/www/rails/tep && git pull
-sudo make install-oxicloud      # nebo: sudo script/install-oxicloud.sh
-```
+Nasazení (build i deploy) vlastní `sklepox` session; toto je referenční popis:
 
-Skript udělá vše z tohoto oddílu: uživatel `oxicloud`, adresáře, binárka
-+ statika z `~vitas/build/OxiCloud`, DB `sklepox_db`/uživatel `sklepox`
-na PG17 :5435, vygeneruje secrety do `/etc/oxicloud/oxicloud.env` (640,
-napoprvé; upgrade je nechává), systemd unit, `enable --now` a health check.
-Zbytek oddílu je referenční popis toho, co skript vytvoří.
+- **Zdroj buildu:** `/home/vitas/git/OxiCloud`, větev `vitas` (base-path
+  podpora; origin = upstream AtalayaLabs/OxiCloud). NE `~vitas/build/OxiCloud`
+  (to je čistý upstream bez base-path — právě ten to rozbil).
+- **Build:** `docker build --build-arg PUBLIC_BASE_PATH=/sklepox`
+  (musl static-pie, přenositelné). `PUBLIC_BASE_PATH` se vkompilovává do
+  frontendu → změna prefixu = rebuild.
+- **Deploy:** staging `~/oxicloud/` + `sudo bash ~/oxicloud/update.sh`
+  (běžný upgrade) / `repair-sklepox.sh` (náprava). Skripty žijí v `~/oxicloud`.
+- **Layout:** `/opt/oxicloud/{bin/oxicloud,static}`,
+  `/etc/oxicloud/oxicloud.env` (640 root:oxicloud), `/var/lib/oxicloud`,
+  unit `oxicloud.service` (User=oxicloud, hardened). Server :8086 loopback.
+- **Prefix — dva knoby:** runtime `OXICLOUD_BASE_PATH=/sklepox` (env) +
+  build-time `PUBLIC_BASE_PATH=/sklepox` (frontend). Server při bootu
+  porovná env s meta v index.html a při neshodě odmítne start.
+- **Apache:** `ProxyPass /sklepox http://127.0.0.1:8086/sklepox`
+  (BEZ trailing slash cíle — jinak padá DPoP na wrong_htu), upgrade=websocket.
+- **DB:** momentálně `oxicloud` na PG17 :5435 (rename na `sklepox_db` čeká na
+  přímé Vítovo potvrzení ve vlákně sklepox). Storage `/var/lib/oxicloud`.
 
-Pilotní volby (rozhodnuto 2026-09-14): DB `sklepox_db`/uživatel `sklepox`
-na PG17 :5435; auth lokální účty (OIDC vypnuté — tep OIDC vrstva je
-rozpracovaná, pilot ji nečeká); přístup jen ssh tunelem (bez Apache;
-OxiCloud neumí běh pod subcestou, viz níže). Binárka je v0.8.9.
+## 3. OIDC přihlášení přes tep (přístup pro orgy)
 
-```sh
-# uživatel a adresáře
-useradd --system --home /var/lib/oxicloud --shell /usr/sbin/nologin oxicloud
-mkdir -p /opt/oxicloud /etc/oxicloud /var/lib/oxicloud/tmp
-# data na RAID (/home) — sem poputuje obsah sklepu
-mkdir -p /home/www/oxicloud-data
-chown oxicloud:oxicloud /var/lib/oxicloud /var/lib/oxicloud/tmp /home/www/oxicloud-data
-
-# binárka + statika (build v0.8.9 pod vitasem)
-install -m 755 ~vitas/build/OxiCloud/target/release/oxicloud /opt/oxicloud/oxicloud
-cp -r ~vitas/build/OxiCloud/static-dist /opt/oxicloud/static-dist
-
-# databáze sklepox_db na PG17 (:5435)
-sudo -u postgres createuser -p 5435 sklepox
-sudo -u postgres createdb   -p 5435 -O sklepox sklepox_db
-sudo -u postgres psql -p 5435 -c "ALTER USER sklepox PASSWORD '<DB_HESLO>'"
-```
-
-`/etc/oxicloud/oxicloud.env` (práva 640, root:oxicloud). `<JWT>` a
-`<DB_HESLO>` vygeneruj `openssl rand -hex 32` resp. `openssl rand -base64 24`:
-
-```sh
-OXICLOUD_SERVER_HOST=127.0.0.1
-OXICLOUD_SERVER_PORT=8086
-OXICLOUD_BASE_URL=http://localhost:8086
-OXICLOUD_STORAGE_PATH=/home/www/oxicloud-data
-OXICLOUD_STATIC_PATH=/opt/oxicloud/static-dist
-OXICLOUD_TEMP_DIR=/var/lib/oxicloud/tmp
-OXICLOUD_DB_CONNECTION_STRING=postgres://sklepox:<DB_HESLO>@localhost:5435/sklepox_db
-DATABASE_URL=postgres://sklepox:<DB_HESLO>@localhost:5435/sklepox_db
-OXICLOUD_JWT_SECRET=<JWT>
-OXICLOUD_ENABLE_AUTH=true
-OXICLOUD_OIDC_ENABLED=false
-MIMALLOC_PURGE_DELAY=0
-```
-
-`/etc/systemd/system/oxicloud.service` (vzor afterleaf):
-
-```ini
-[Unit]
-Description=OxiCloud — souborove uloziste (pilot, ssh tunel)
-After=network.target postgresql.service
-
-[Service]
-Type=simple
-User=oxicloud
-Group=oxicloud
-EnvironmentFile=/etc/oxicloud/oxicloud.env
-WorkingDirectory=/opt/oxicloud
-ExecStart=/opt/oxicloud/oxicloud
-Restart=on-failure
-RestartSec=2s
-NoNewPrivileges=true
-ProtectSystem=full
-ProtectHome=read-only
-ReadWritePaths=/var/lib/oxicloud /home/www/oxicloud-data
-
-[Install]
-WantedBy=multi-user.target
-```
-
-```sh
-systemctl daemon-reload && systemctl enable --now oxicloud
-curl -s http://127.0.0.1:8086/ | head -3     # žije?
-```
-
-## 3. První kroky po startu
-
-1. Admin účet: `POST /api/setup` (UI to nabídne při prvním otevření).
-2. Pilotní přístup bez Apache: `ssh -L 8086:127.0.0.1:8086 pikomat...`
-   → http://localhost:8086/.
-3. **Ověřit chování pod subcestou** (`OXICLOUD_BASE_URL=…/oxisklep`) —
-   pokud SPA subpath neunese, pilot zůstane na tunelu a veřejná expozice
-   se vyřeší až s vlastním jménem/portem (otevřená otázka pilotu č. 1).
-4. Apache (root, až subpath ověřen):
-   `ProxyPass /oxisklep http://127.0.0.1:8086/` + ProxyPassReverse.
-5. Auth: začít lokálními účty; OIDC nechat vypnuté (tep OIDC neumí —
-   rozhodnuto žít s Doorkeeper OAuth2; jestli OxiCloud umí jen čisté
-   OIDC, je tohle druhá otevřená otázka pilotu — případně tenká proxy).
+1. Tep issuer `https://pikomat.mff.cuni.cz` (bez lomítka), OIDC vrstva
+   hotová (discovery, id_token, userinfo, groups claim org/admin).
+2. Registrace klienta (na prod tepu):
+   `make prod-oidc-register NAME=oxicloud REDIRECT_URI=https://pikomat.mff.cuni.cz/sklepox/api/auth/oidc/callback`
+   → vypíše client_id/secret.
+3. Ty dvě hodnoty + OIDC blok do `/etc/oxicloud/oxicloud.env`
+   (`OXICLOUD_OIDC_ENABLED=true`, ISSUER_URL, REDIRECT_URI, SCOPES
+   `openid profile email`, `OXICLOUD_OIDC_ADMIN_GROUPS=admin`), restart oxicloud.
+4. Přístup gatuje tep jen orgům (`resource_owner_authenticator`); tep-admini
+   dostanou přes groups claim admina v OxiCloudu.
+5. CalDAV/CardDAV autodiscovery: tep na kořeni redirectuje
+   `/.well-known/caldav|carddav` → `/sklepox/{caldav,carddav}/` (RFC 6764).
 
 ## 4. Pilotní checklist (z čeho se rozhodne o migraci sklepu)
 
