@@ -44,6 +44,13 @@ prod-seed:
 prod-quiz-create:
 	rake quiz:create RAILS_ENV=production NAME='$(NAME)' TITLE='$(TITLE)' TYPE='$(TYPE)' PUBLIC='$(PUBLIC)'
 
+# Registrace OIDC klienta (Doorkeeper app) pro službu přihlašovanou přes tep.
+# Vypíše client_id/secret. Např. OxiCloud pod /sklepox:
+#   make prod-oidc-register NAME=oxicloud \
+#     REDIRECT_URI=https://pikomat.mff.cuni.cz/sklepox/api/auth/oidc/callback
+prod-oidc-register:
+	rake oidc:register RAILS_ENV=production NAME='$(NAME)' REDIRECT_URI='$(REDIRECT_URI)'
+
 # Instalace/aktualizace zálohovacího systému (pouštět pod rootem na
 # pikomatu). Skript + fix-perms + systemd unity; konfigurák
 # /etc/pikomat-zaloha.conf nechává být, založí ho jen napoprvé.

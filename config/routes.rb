@@ -7,6 +7,11 @@ Tep::Application.routes.draw do
 
 
   # přidání akcí je třeba přidat i práva v app/models/ability.rb
+  # RFC 6764 CalDAV/CardDAV autodiscovery — klienti ptají kořen domény,
+  # OxiCloud běží pod /sklepox; přesměruj na jeho DAV kolekce.
+  get '/.well-known/caldav',  to: redirect('/sklepox/caldav/',  status: 301)
+  get '/.well-known/carddav', to: redirect('/sklepox/carddav/', status: 301)
+
   # anon:
   get  '/sosna/solver/new'                   => 'sosna/solver#new',                     :as => :sosna_solver_new
   get  '/prihlaska'                          => 'sosna/solver#new',                     :as => :sosna_solver_new_short
