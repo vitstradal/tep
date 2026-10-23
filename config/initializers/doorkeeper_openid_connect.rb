@@ -57,13 +57,13 @@ Doorkeeper::OpenidConnect.configure do
     # auto-link na existujici lokalni ucet se stejnym emailem
     # (OXICLOUD_OIDC_AUTO_LINK_EMAIL_MATCH). Tep emaily overuje
     # (devise :confirmable), takze to plati.
-    claim :email, scope: :email do |user|
+    claim :email, scope: :email, response: [:id_token, :user_info] do |user|
       user.email
     end
-    claim :email_verified, scope: :email do |user|
+    claim :email_verified, scope: :email, response: [:id_token, :user_info] do |user|
       user.confirmed_at.present?
     end
-    claim :name, scope: :profile do |user|
+    claim :name, scope: :profile, response: [:id_token, :user_info] do |user|
       user.full_name
     end
     claim :preferred_username, scope: :profile do |user|

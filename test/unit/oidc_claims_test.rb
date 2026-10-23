@@ -26,4 +26,10 @@ class OidcClaimsTest < ActiveSupport::TestCase
     assert_equal 'org@x.cz', gen(:preferred_username).call(u, nil, nil)
     assert_equal 'Jan Org',  gen(:name).call(u, nil, nil)
   end
+
+  test "identity claims are in id_token too" do
+    %i[email email_verified name].each do |c|
+      assert_includes Doorkeeper::OpenidConnect.configuration.claims.public_send(c).response, :id_token
+    end
+  end
 end
