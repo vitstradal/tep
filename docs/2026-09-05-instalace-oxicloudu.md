@@ -65,8 +65,8 @@ Nasazení (build i deploy) vlastní `sklepox` session; toto je referenční popi
   porovná env s meta v index.html a při neshodě odmítne start.
 - **Apache:** `ProxyPass /sklepox http://127.0.0.1:8086/sklepox`
   (BEZ trailing slash cíle — jinak padá DPoP na wrong_htu), upgrade=websocket.
-- **DB:** momentálně `oxicloud` na PG17 :5435 (rename na `sklepox_db` čeká na
-  přímé Vítovo potvrzení ve vlákně sklepox). Storage `/var/lib/oxicloud`.
+- **DB:** `sklepox_db` (vlastník `sklepox_user`) na PG17 :5432, connection
+  string v `oxicloud.env`. Storage `/var/lib/oxicloud`.
 
 ## 3. OIDC přihlášení přes tep (přístup pro orgy)
 
