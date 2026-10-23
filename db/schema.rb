@@ -156,12 +156,6 @@ ActiveRecord::Schema[7.2].define(version: 36) do
     t.index ["token"], name: "idx_350926_index_oauth_access_grants_on_token", unique: true
   end
 
-  create_table "oauth_openid_requests", force: :cascade do |t|
-    t.bigint "access_grant_id", null: false
-    t.string "nonce", null: false
-    t.index ["access_grant_id"], name: "index_oauth_openid_requests_on_access_grant_id"
-  end
-
   create_table "oauth_access_tokens", force: :cascade do |t|
     t.bigint "resource_owner_id"
     t.bigint "application_id"
@@ -187,6 +181,12 @@ ActiveRecord::Schema[7.2].define(version: 36) do
     t.timestamptz "created_at"
     t.timestamptz "updated_at"
     t.index ["uid"], name: "idx_350917_index_oauth_applications_on_uid", unique: true
+  end
+
+  create_table "oauth_openid_requests", force: :cascade do |t|
+    t.bigint "access_grant_id", null: false
+    t.string "nonce", null: false
+    t.index ["access_grant_id"], name: "index_oauth_openid_requests_on_access_grant_id"
   end
 
   create_table "quiz_answers", force: :cascade do |t|
@@ -349,4 +349,6 @@ ActiveRecord::Schema[7.2].define(version: 36) do
     t.index ["email"], name: "idx_350836_index_users_on_email", unique: true
     t.index ["reset_password_token"], name: "idx_350836_index_users_on_reset_password_token", unique: true
   end
+
+  add_foreign_key "oauth_openid_requests", "oauth_access_grants", column: "access_grant_id", on_delete: :cascade
 end

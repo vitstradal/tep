@@ -21,11 +21,7 @@ tags
 /doc
 /ovvp
 /Trash
-/var/uploads/*.zip
-/var/uploads/*.tmpl
-/var/uploads/*.pdf
-/var/uploads/*.ext
-/var/uploads/*.bad
+/var/uploads/
 /public/doc
 /config/initializers/secret_key_base.rb
 /config/oidc_signing_key.pem
