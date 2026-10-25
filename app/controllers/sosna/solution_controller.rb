@@ -143,7 +143,7 @@ class Sosna::SolutionController < SosnaController
     #return false if pen_max.nil?
     return false if res_min < sol_max
     log("_results_updated? A3");
-    return false if res_min < pen_max
+    return false if pen_max && res_min < pen_max
     log("_results_updated? A4");
     return true
   end
@@ -914,6 +914,50 @@ class Sosna::SolutionController < SosnaController
     redirect_to sosna_solutions_user_url(roc, level, se, solution.solver.id)
   end
 
+
+  ##
+  #  POST /sosna/solution/vysl_publish
+  #
+  # vyvěsí výsledkovku do archivu webu (archiv/rocnikNN[/junior]/vyslS.wiki)
+  # a v archiv/index.wiki přidá sérii příznak `v`
+  #
+  # *Params*
+  # roc, level, se:: ročník, úroveň, série
+  #
+  # *Redirect* index
+  def vysl_publish
+    roc, level, se, ul = _params_roc_level_se_ul
+    giwi = Giwi.get_giwi(:web_edit)
+    authorize! :update, giwi.auth_name
+    if ! _results_updated?(roc, level, se)
+      add_alert 'Výsledky nejsou aktuální, použij "Vygeneruj výsledky"'
+      return redirect_to sosna_solutions_org_path(roc, level, se)
+    end
+    _prepare_solvers_problems_solutions(want_test: false, want_bonus: false)
+    _sort_solvers_by_rank
+    text = render_to_string('sosna/solution/vysl_wiki', layout: false)
+
+    junior = level == Sosna::Solver::JUNIOR_LEVEL
+    page = "archiv/rocnik#{roc}#{junior ? '/junior' : ''}/vysl#{se}"
+    index, = giwi.get_page('archiv/index.wiki')
+    new_index = self.class.archiv_index_flag(index.to_s, roc, junior, se.to_i, 'v')
+    if new_index.nil?
+      add_alert "V archiv/index.wiki chybí řádek {{#{junior ? 'archiv_junior' : 'archiv'} #{roc}|…}}, nic nevyvěšeno"
+      return redirect_to sosna_solutions_org_path(roc, level, se)
+    end
+    giwi.set_files({ "#{page}.wiki" => text, 'archiv/index.wiki' => new_index },
+                   "archiv: výsledkovka po #{se}. sérii #{roc}. ročníku#{@level_text}", current_user.full_email)
+    add_alert "Výsledkovka vyvěšena: /#{page}"
+    redirect_to sosna_solutions_org_path(roc, level, se)
+  end
+
+  # řádek {{archiv 42|zr|z}} z archiv/index.wiki s přidaným příznakem série; nil když chybí
+  def self.archiv_index_flag(index, roc, junior, se, flag)
+    m = index.match(/\{\{#{junior ? 'archiv_junior' : 'archiv'}\s+#{roc}\|([^}]*)\}\}/) or return nil
+    flags = m[1].split('|', -1)
+    flags[se - 1] = (flags[se - 1].to_s.chars | [flag]).sort_by { |ch| 'znrv'.index(ch) || 9 }.join
+    index.sub(m[0], m[0].sub(/\|.*\}\}\z/, "|#{flags.map(&:to_s).join('|')}}}"))
+  end
 
   ##
   #  POST /sosna/solution/update_results

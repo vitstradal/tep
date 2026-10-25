@@ -258,6 +258,26 @@ class Giwi
     return status
   end
 
+  # více souborů jedním commitem, bez slučování souběžných změn
+  def set_files(files, message, email = 'unknown')
+    index = @repo.index
+    cur_tree = _get_cur_tree
+    index.read_tree(cur_tree) if cur_tree
+    files.each do |path, text|
+      index.add(:path => path, :oid => @repo.write(text, :blob), :mode => 0100644)
+    end
+    name = ''
+    if match = /^(.*)\s*<(\S*@\S*)>$/.match(email)
+      name, email = [match[1].strip, match[2]]
+    end
+    Rugged::Commit.create(@repo,
+      :tree => index.write_tree(@repo),
+      :author => { :email => email, :time => Time.now, :name => name },
+      :message => message,
+      :parents => [ _get_cur_target ].compact,
+      :update_ref => 'refs/heads/' + @branch)
+  end
+
   def _post_commit_hook
     hook_path = File.join(@path, 'hooks/post-receive')
     if File.executable?(hook_path)

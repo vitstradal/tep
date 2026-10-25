@@ -21,6 +21,13 @@
                                            :ico    => 'fa-envelope',
                                            :href   =>  sosna_solutions_vysl_pik_url(roc:@annual, level: @level, se:@round, emails:1) %>
       </div>
+      <% if can? :update, Giwi.auth_name(:web_edit) %>
+        <div class="btn-group">
+          <%= form_tag({action: :vysl_publish, roc: @annual, level: @level, se: @round}, :class => 'btn-group form-inline') do %>
+            <button type="submit" class="btn btn-danger" data-confirm="Vyvěsit výsledkovku po <%= @round %>. sérii na web (archiv)?"> <i class="fa fa-globe"></i> Generuj přímo do stránek a zveřejni</button>
+          <% end %>
+        </div>
+      <% end %>
       <div class="btn-group">
         <%= button_tag "Filtruj soustredeni", :class=> 'btn btn-primary', ico: 'fa-filter', href: sosna_solutions_org_url(roc:@annual, se:@round, sous: 1) %>
       </div>

@@ -126,6 +126,7 @@ Tep::Application.routes.draw do
 
   get  '/sosna/solutions(/:roc(/:level(/:se(/:ul))))' => 'sosna/solution#index',     :as => :sosna_solutions_org
 
+  post '/sosna/solution/vysl_publish'       => 'sosna/solution#vysl_publish',:as => :sosna_solution_vysl_publish
   post '/sosna/solution/update_results'      => 'sosna/solution#update_results',:as => :sosna_solution_update_results
   post '/sosna/solutions/update_scores'      => 'sosna/solution#update_scores', :as => :sosna_solutions_update_scores
   post '/sosna/solutions/update_papers'      => 'sosna/solution#update_papers', :as => :sosna_solutions_update_papers

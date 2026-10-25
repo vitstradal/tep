@@ -100,6 +100,7 @@ class Ability
       can :lidi, Sosna::Solution
       can :vysl_pik,  Sosna::Solution
       can :vysl_wiki, Sosna::Solution
+      can :vysl_publish, Sosna::Solution
       can :download, Sosna::Solution
       can :download_org, Sosna::Solution
       can :upload, Sosna::Solution
