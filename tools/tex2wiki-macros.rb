@@ -71,6 +71,7 @@ Tex2Wiki.macros do
   macro :text, 1, '%1'
   macro :footnote, 1, ' (%1)'
   macro :TODO, 1, ''
+  macro :show, 1, ''
   macro :par, 0, "\n\n"
   macro :break, 0, "\\\\\n"
   macro(:tecky, 0) { ' …… ' }

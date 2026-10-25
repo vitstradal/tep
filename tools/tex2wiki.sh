@@ -1,5 +1,7 @@
 #!/bin/sh
 
+echo "VAROVÁNÍ: tex2wiki.sh je zastaralý, použij tools/tex2wiki.rb (ruby tools/tex2wiki.rb --help)" >&2
+
 HPPDIR=/home/vitas/vs/hpp
 M4_TO_WI_M4=/home/www/rails/tep/tools/m4-to-wi.m4
 
