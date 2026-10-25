@@ -51,6 +51,13 @@ class Tex2WikiTest < Minitest::Test
     assert_includes out, '**Obrázek s~trojúhelníky**'
   end
 
+  def test_image_width_from_leaflet
+    c = Tex2Wiki::Converter.new(rocnik: 41)
+    c.convert('\obrazky{zad3.11|8cm|Popisek} \XeTeXpdffile zad1ml-21.pdf width .5\hsize')
+    assert_equal 8.0, c.image_cm('zad3.11')
+    assert_equal 8.5, c.image_cm('zad1ml-21')
+  end
+
   def test_lists
     out = conv("\\itemsnum{}\n\\item první\n\n\\item druhá\n\\enditems")
     assert_includes out, " 1. první\n 1. druhá"

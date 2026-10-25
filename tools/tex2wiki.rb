@@ -80,6 +80,12 @@ module Tex2Wiki
       @labels = {}
       @defs = []
       @list = []
+      @image_cm = {}
+    end
+
+    # šířka obrázku v letáku v cm (podle \obrazky{…|8cm|…} nebo width u \XeTeXpdffile)
+    def image_cm(name)
+      @image_cm[name]
     end
 
     def fdir
@@ -319,8 +325,21 @@ module Tex2Wiki
       @s.scan(/\s*/)
       name = @s.scan(/"[^"]*"|[^\s{}\\]+/).to_s.delete('"')
       return warn('\\XeTeXpdffile bez jména souboru') && '' if name.empty?
-      @s.scan(/\s*(width|height|scaled)\s*/) && (@s.scan(DIMEN) || @s.scan(/\d+/))
+      if (key = @s.scan(/\s*(width|height|scaled)\s*/))
+        dim = @s.scan(DIMEN) || @s.scan(/\d+/)
+        @image_cm[name.sub(/\.(pdf|png|jpe?g)\z/i, '')] = dimen_cm(dim) if key.strip == 'width'
+      end
       name
+    end
+
+    HSIZE_CM = 17.0
+
+    # TeXový rozměr v cm ("8cm", "45mm", ".45\hsize"), nil když nejde určit
+    def dimen_cm(dim)
+      d = dim.to_s.strip
+      return HSIZE_CM * (d[/[\d.]+/] || 1).to_f if d.include?('size')
+      n = d[/-?[\d.]+/]&.to_f or return nil
+      { 'cm' => 1, 'mm' => 0.1, 'pt' => 0.0351, 'bp' => 0.0353, 'in' => 2.54, 'em' => 0.35 }[d[/[a-z]+/]]&.*(n)
     end
 
     # konec zadání úlohy; s vz_link odkaz na vzorové řešení
@@ -356,6 +375,7 @@ module Tex2Wiki
       return nil if file.nil? || file.empty?
       label = rest.size == 1 && rest[0] !~ /\A[\d.]+\s*(cm|mm|pt|em)\z/ ? rest[0] : File.basename(file).delete('.')
       @labels[label] ||= @labels.size + 1
+      @image_cm[file.sub(/\.(pdf|png|jpe?g)\z/i, '')] ||= dimen_cm(rest[0]) if rest.size >= 2
       [file, label, rest.size >= 2 ? rest[1..].join('|') : nil]
     end
 
@@ -478,12 +498,14 @@ if $PROGRAM_NAME == __FILE__
     o.on('--junior') { opt[:junior] = true }
     o.on('--write', 'bez něj jen ukáže, co by udělal') { opt[:write] = true }
     o.on('--force', 'přepsat i ručně upravené stránky') { opt[:force] = true }
+    o.on('--redo-images', 'znovu vyrobit i existující PNG') { opt[:redo_images] = true }
     o.on('--web DIR', 'klon web repa (default ~/git/web)') { |v| opt[:web] = v }
     o.on('--src DIR', 'adresář se zdroji (opakovatelné)') { |v| (opt[:src] ||= []) << v }
   end
   parser.parse!
   opt[:srcs] = opt[:src] if opt[:src]
-  sync = -> { Tex2Wiki::Sync.new(web: opt[:web], srcs: opt[:srcs], write: opt[:write], force: opt[:force]) }
+  sync = -> { Tex2Wiki::Sync.new(web: opt[:web], srcs: opt[:srcs], write: opt[:write], force: opt[:force],
+                                     redo_images: opt[:redo_images]) }
   case ARGV[0]
   when 'sync'
     sync.call.run(Integer(ARGV.fetch(1)))

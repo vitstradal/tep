@@ -23,11 +23,12 @@ module Tex2Wiki
 
     attr_reader :log
 
-    def initialize(web:, srcs:, write: false, force: false, out: $stdout)
+    def initialize(web:, srcs:, write: false, force: false, redo_images: false, out: $stdout)
       @web = web
       @srcs = srcs
       @write = write
       @force = force
+      @redo_images = redo_images
       @out = out
     end
 
@@ -189,6 +190,7 @@ module Tex2Wiki
           next
         end
         if File.exist?(target) && File.read(target) == wiki
+          images(src, conv).each { |i| say "  #{rel}: obrázek #{i}" } if @redo_images
           next
         end
         say "  #{rel}: #{{ new: 'nová', stub: 'místo odkazu na pdf', ours: 'aktualizace', edited: 'PŘEPSÁNÍ ruční úpravy' }[st]} (z #{src.path})"
@@ -209,7 +211,7 @@ module Tex2Wiki
       todo = []
       conv.images.each do |name|
         dest = File.join(dir(src.rocnik, src.junior), "#{File.basename(name)}.png")
-        next if File.exist?(dest)
+        next if File.exist?(dest) && !@redo_images
         png = find_file(src, "#{name}.png")
         pdf = find_file(src, "#{name.sub(/\.(\d+)\z/, '-\1')}.pdf") || find_file(src, "#{name}.pdf")
         unless png || pdf
@@ -222,11 +224,25 @@ module Tex2Wiki
         if png
           FileUtils.cp(png, dest)
         else
-          _, err, st = Open3.capture3('pdftoppm', '-png', '-r', '150', '-singlefile', pdf, dest.delete_suffix('.png'))
+          px = image_px(pdf, conv.image_cm(name))
+          _, err, st = Open3.capture3('pdftoppm', '-png', '-singlefile', '-scale-to-x', px.to_s, '-scale-to-y', '-1',
+                                      pdf, dest.delete_suffix('.png'))
           todo << "#{name}: pdftoppm selhal: #{err}" unless st.success?
         end
       end
       todo
+    end
+
+    PX_PER_CM = 38
+    MAX_PX = 700
+
+    # šířka PNG: velikost v letáku (nebo přirozená velikost PDF) * PX_PER_CM, nejvýš MAX_PX
+    def image_px(pdf, cm)
+      cm ||= begin
+        out, = Open3.capture2('pdfinfo', pdf)
+        out[/Page size:\s*([\d.]+)/, 1].to_f / 72 * 2.54
+      end
+      (cm * PX_PER_CM).round.clamp(40, MAX_PX)
     end
 
     # pořadí: adresář zdroje, jeho projekt, pak ostatní projekty ročníku (stejná větev junior/klasik napřed)
