@@ -362,6 +362,7 @@ module Tex2Wiki
       return files if files.empty?
       pages = files.grep(/\.wiki\z/).map { |f| f.delete_prefix('archiv/').delete_suffix('.wiki') }
       git('commit', '-q', '-m', "archiv: #{pages.join(', ')} (tex2wiki)")
+      git('pull', '-q', '--rebase')
       git('push', '-q')
       files
     end
