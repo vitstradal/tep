@@ -64,13 +64,11 @@ module Tex2Wiki
                                      File.basename(f)[/\d+/].to_i == c.meta[:serie] ? 0 : 1])
         end
       end
-      # stejná stránka z více míst: přednost má soubor, jehož jméno sedí se sérií (zad5j.tex
-      # pro \ses5), pak ne skoro prázdná šablona, pak načítaný letákem (pozdější leták),
-      # pak delší, pak pořadí --src
+      # stejná stránka z více míst: prázdné šablony prohrají, pak pořadí --src (preklep-mirror
+      # bývá opravenější), pak jméno sedí se sérií (zad5j.tex pro \ses5), pak načítaný
+      # letákem (pozdější leták), pak delší
       found.group_by(&:key).map do |_, list|
-        # šablona načítaná letákem, ale skoro prázdná, nemá přednost před plným textem
-        big = list.map { |x| -x.rank[2] }.max
-        best = list.min_by { |x| [x.rank.last, -x.rank[2] * 2 < big ? 1 : 0, *x.rank] }
+        best = list.min_by { |x| [-x.rank[2] < TEMPLATE_SIZE ? 1 : 0, x.rank[3], x.rank.last, *x.rank] }
         (list - [best]).each { |o| say "  (#{o.path} přeskočen, přednost má #{best.path})" }
         best
       end.sort_by { |s| [s.junior ? 1 : 0, s.serie, s.kind == :vz ? 1 : 0] }
@@ -172,6 +170,8 @@ module Tex2Wiki
       return :edited unless m
       Digest::SHA256.hexdigest(cur.sub(MARKER, ''))[0, 12] == m[:out] ? :ours : :edited
     end
+
+    TEMPLATE_SIZE = 1000
 
     def run(rocnik)
       changed = []
