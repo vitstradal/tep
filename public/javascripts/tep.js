@@ -1025,7 +1025,7 @@ function _init_anketa_div(div) {
   }
   var tab = [];
   //console.log("stat", stat);
-  var $tr = $('<tr>').append('<td>&sum; (' + Object.keys(voters).length + ')</td>');
+  var $tr = $('<tr>').append('<td>&sum;(' + Object.keys(voters).length + ')</td>');
   var max_y = 0;
   var max_ym = 0;
   for (var k in stat ) {
