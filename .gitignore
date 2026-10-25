@@ -25,3 +25,4 @@ tags
 /public/doc
 /config/initializers/secret_key_base.rb
 /config/oidc_signing_key.pem
+script/hesla.txt

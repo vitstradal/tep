@@ -942,6 +942,7 @@ function _init_anketa_div(div) {
    var stat = {};
    var cols_max = 0;
    var cols_max2 = 0;
+   var voters = {};
    var $table = $(div).next().find('table');
    //console.log("pos", pos);
    //console.log("csrf", $('meta[name=csrf-token]').attr('content'));
@@ -1013,6 +1014,7 @@ function _init_anketa_div(div) {
      cols_max2 = Math.max(cols_max2, c);
      if( dostat ) {
              cols_max = Math.max(cols_max, c);
+             voters[r] = true;
              stat[c] = stat[c] || {};
              stat[c][txt] = stat[c][txt] || 0;
              stat[c][txt]++;
@@ -1023,7 +1025,7 @@ function _init_anketa_div(div) {
   }
   var tab = [];
   //console.log("stat", stat);
-  var $tr = $('<tr>').append('<td>&sum;</td>');
+  var $tr = $('<tr>').append('<td>&sum; (' + Object.keys(voters).length + ')</td>');
   var max_y = 0;
   var max_ym = 0;
   for (var k in stat ) {
