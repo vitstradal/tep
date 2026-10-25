@@ -65,6 +65,11 @@ class Tex2WikiTest < Minitest::Test
     assert_equal "**tučně** a ''kurzíva''\n", out
   end
 
+  def test_subheadings
+    assert_includes conv("\\podnadpis{Jak sčítat?}\nText"), "==== Jak sčítat? ===="
+    assert_includes conv("\\podnadpis Jak násobit\\par Text"), "==== Jak násobit ===="
+  end
+
   def test_halign_to_table
     out = conv('\halign{$#$&&$#$\cr 1&2\cr 3&4\cr}')
     assert_includes out, '|| $1$ || $2$ ||'

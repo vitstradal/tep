@@ -303,6 +303,13 @@ module Tex2Wiki
       body
     end
 
+    # argument {…}, nebo text do konce odstavce (\podnadpis Nadpis\par)
+    def read_arg_or_par
+      return read_arg if @s.check(/[ \t]*\{/)
+      raw = @s.scan_until(/\n[ \t]*\n|\\par\b|\z/).to_s
+      raw.sub(/(\n[ \t]*\n|\\par)\z/, '')
+    end
+
     def stop!
       @s.terminate
       ''

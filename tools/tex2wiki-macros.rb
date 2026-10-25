@@ -25,8 +25,9 @@ Tex2Wiki.macros do
   macro :uloha, 0, "\n\n**Úloha:** "
   macro :dukaz, 0, "\n\n''Důkaz:'' "
   macro :veta, 1, "\n\n**%1** "
-  macro :nadpisek, 0, ''
-  macro :podnadpis, 0, ''
+  macro(:nadpis, 0) { |c| Tex2Wiki::Converter.line("=== #{c.conv(c.read_arg_or_par).strip} ===\n\n") }
+  macro(:podnadpis, 0) { |c| Tex2Wiki::Converter.line("==== #{c.conv(c.read_arg_or_par).strip} ====\n\n") }
+  macro(:nadpisek, 0) { |c| "\n\n''#{c.conv(c.read_arg_or_par).strip}''\n\n" }
   macro :denik, 1, "\n\n''%1''\n\n"
   macro :pojem, 1, '%1'
   macro :mili, 0, "\n\n**Milé řešitelky, milí řešitelé,**\n\n"
