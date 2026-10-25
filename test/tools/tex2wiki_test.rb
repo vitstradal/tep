@@ -82,6 +82,16 @@ class Tex2WikiTest < Minitest::Test
     assert_includes out, '|| $1$ || $2$ ||'
   end
 
+  def test_latex_environments
+    c = Tex2Wiki::Converter.new(rocnik: 42, junior: true)
+    out = c.convert("\\begin{table}[ht]\n\\centering\n\\begin{tabular}{c|c}\n2 & 7 \\\\\n\\hline\n9 & 5 \\\\\n\\end{tabular}\n\\end{table}\n" \
+                    "\\begin{figure}\n\\includegraphics[width=0.5\\linewidth]{obrazky/vz1j-51.pdf}\n\\caption{}\n\\label{fig:x}\n\\end{figure}")
+    assert_includes out, '|| 2 || 7 ||'
+    assert_includes out, '[[Image(archiv/rocnik42/junior/vz1j-51.png)]]'
+    assert_equal 8.5, c.image_cm('obrazky/vz1j-51')
+    assert_empty c.warnings
+  end
+
   def test_unknown_macro_warns
     c = Tex2Wiki::Converter.new(rocnik: 41)
     c.convert('\neznamemakro x')
@@ -155,6 +165,23 @@ class Tex2WikiSyncTest < Minitest::Test
     assert_includes File.read(page('zad2')), 'Opravené zadání.'
   end
 
+  def test_gen_only_creates_new_pages
+    sync.run(41)
+    File.write(File.join(@src, '41_1_k/zad2.tex'), "\\ses2{1. 12. 2025}\n\\ul1\nOpravené zadání.\n\\ulend\n")
+    res = sync.run(41, mode: :gen)
+    refute_includes File.read(page('zad2')), 'Opravené zadání.'
+    assert_equal ['archiv/rocnik41/zad2.wiki'], res[:outdated]
+    assert_equal ['41/2r'], res[:unpublished]
+  end
+
+  def test_publish_regenerates_tasks_in_gen_mode
+    s = sync
+    s.run(41)
+    s.publish(41, 2, 'r')
+    s.run(41, mode: :gen)
+    assert_includes File.read(page('zad2')), '→ vzorové řešení'
+  end
+
   def test_next_year_task_in_last_leaflet_is_ignored
     FileUtils.mkdir_p(File.join(@src, '41_7_k'))
     File.write(File.join(@src, '41_7_k/zad1.tex'), "\\ses1{20. října 2026}\n\\ul1\nZ příštího ročníku.\n\\ulend\n")
@@ -166,5 +193,39 @@ class Tex2WikiSyncTest < Minitest::Test
   def test_dry_run_writes_nothing
     Tex2Wiki::Sync.new(web: @web, srcs: [@src], out: StringIO.new).run(41)
     refute File.exist?(page('zad2'))
+  end
+end
+
+class Tex2WikiRepoTest < Minitest::Test
+  def test_current_rocnik
+    assert_equal 42, Tex2Wiki::Repo.current_rocnik(Date.new(2026, 10, 25))
+    assert_equal 41, Tex2Wiki::Repo.current_rocnik(Date.new(2026, 6, 1))
+  end
+
+  def test_commit_and_clean
+    Dir.mktmpdir do |d|
+      origin = File.join(d, 'web.git')
+      work = File.join(d, 'work')
+      system('git', 'init', '-q', '--bare', origin)
+      system('git', 'clone', '-q', origin, work, err: File::NULL)
+      FileUtils.mkdir_p(File.join(work, 'archiv'))
+      File.write(File.join(work, 'archiv/index.wiki'), "{{archiv  42|z}}\n")
+      system('git', '-C', work, 'add', '-A')
+      system('git', '-C', work, '-c', 'user.name=t', '-c', 'user.email=t@t', 'commit', '-qm', 'init')
+      system('git', '-C', work, 'push', '-q', 'origin', 'HEAD', err: File::NULL)
+      clone = File.join(d, 'clone')
+      system('git', 'clone', '-q', origin, clone)
+      repo = Tex2Wiki::Repo.new(clone)
+      assert_equal [42], repo.recent_rocniky.select { |r| r == 42 }
+      File.write(File.join(clone, 'archiv/zad1.wiki'), "x\n")
+      assert repo.dirty?
+      repo.clean
+      refute repo.dirty?
+      File.write(File.join(clone, 'archiv/zad1.wiki'), "x\n")
+      ENV['GIT_AUTHOR_NAME'] = ENV['GIT_COMMITTER_NAME'] = 't'
+      ENV['GIT_AUTHOR_EMAIL'] = ENV['GIT_COMMITTER_EMAIL'] = 't@t'
+      assert_equal ['archiv/zad1.wiki'], repo.commit_and_push
+      assert_includes `git -C #{origin} log --format=%s`, 'archiv: zad1 (tex2wiki)'
+    end
   end
 end

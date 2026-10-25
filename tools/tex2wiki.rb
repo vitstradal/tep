@@ -337,7 +337,7 @@ module Tex2Wiki
     # TeXový rozměr v cm ("8cm", "45mm", ".45\hsize"), nil když nejde určit
     def dimen_cm(dim)
       d = dim.to_s.strip
-      return HSIZE_CM * (d[/[\d.]+/] || 1).to_f if d.include?('size')
+      return HSIZE_CM * (d[/[\d.]+/] || 1).to_f if d =~ /size|width/
       n = d[/-?[\d.]+/]&.to_f or return nil
       { 'cm' => 1, 'mm' => 0.1, 'pt' => 0.0351, 'bp' => 0.0353, 'in' => 2.54, 'em' => 0.35 }[d[/[a-z]+/]]&.*(n)
     end
@@ -365,6 +365,35 @@ module Tex2Wiki
         Converter.line("|| #{cells.join(' || ')} ||")
       end
       "\n#{out.join}\n\n"
+    end
+
+    # LaTeXová prostředí; figure/table/center jsou jen obal
+    def env_begin(env)
+      read_opt_arg
+      case env
+      when 'tabular', 'tabular*'
+        read_arg
+        body = @s.scan_until(/\\end\s*\{tabular\*?\}/).to_s.sub(/\\end\s*\{tabular\*?\}\z/, '')
+        halign(body.gsub(/\\\\(\[[^\]]*\])?/, '\cr'))
+      when 'itemize' then list_begin('*')
+      when 'enumerate' then list_begin('1.')
+      when 'figure', 'figure*', 'table', 'table*', 'center', 'minipage' then "\n\n"
+      else
+        warn("neznámé prostředí #{env}")
+        ''
+      end
+    end
+
+    def env_end(env)
+      %w[itemize enumerate].include?(env) ? list_end : "\n\n"
+    end
+
+    def includegraphics
+      opts = read_opt_arg.to_s
+      file = read_arg.strip
+      width = opts[/width\s*=\s*([^,\]]+)/, 1]
+      @image_cm[file.sub(/\.(pdf|png|jpe?g)\z/i, '')] = dimen_cm(width) if width
+      image(file)
     end
 
     # --- obrázky -----------------------------------------------------------
@@ -485,43 +514,97 @@ require_relative 'tex2wiki-macros'
 if $PROGRAM_NAME == __FILE__
   require 'optparse'
   require_relative 'tex2wiki-sync'
-  opt = { web: File.expand_path('~/git/web'), srcs: %w[/home/pikomat/preklep-mirror /home/pikomat] }
+  opt = { web: File.expand_path('~/tex2wiki-web'), srcs: %w[/home/pikomat/preklep-mirror /home/pikomat], publish: [] }
   parser = OptionParser.new do |o|
     o.banner = <<~USAGE
-      usage: tex2wiki.rb soubor.tex [--rocnik N] [--junior]   převod jednoho souboru na stdout
-             tex2wiki.rb sync ROCNIK [--write] [--force]       převede zveřejněné série do web repa
-             tex2wiki.rb check ROCNIK                          shoda stávajících stránek s novým převodem
-             tex2wiki.rb diff ROCNIK zad3|vz3 [--junior]       rozdíl stávající stránky a nového převodu
-             tex2wiki.rb publish ROCNIK SERIE z|r [--junior] [--write]   příznak v archiv/index.wiki
+      usage: tex2wiki.rb --gen [ROCNIK…]        vytvoří nové stránky zveřejněných sérií (nic nepřepíše)
+             tex2wiki.rb --regen [ROCNIK…]      i stránky, jejichž TeX se změnil (ruční úpravy ne)
+             tex2wiki.rb --publish 42/2r        zveřejní sérii (z zadání, r řešení, j2r junior) a --gen
+             tex2wiki.rb --commit               commit + push do webu
+             tex2wiki.rb --clean                zahodí necommitnuté změny v klonu
+      Bez ROCNIK bere letošní a loňský ročník. Klon webu: ~/tex2wiki-web (udělá si ho sám).
+
+      ladění: tex2wiki.rb soubor.tex [--rocnik N] [--junior]   převod na stdout
+              tex2wiki.rb check ROCNIK                          shoda stránek s novým převodem
+              tex2wiki.rb diff ROCNIK zad3|vz3 [--junior]       rozdíl stránky a nového převodu
     USAGE
+    o.on('--gen') { opt[:cmd] = :gen }
+    o.on('--regen') { opt[:cmd] = :regen }
+    o.on('--publish SPEC') { |v| opt[:publish] << v; opt[:cmd] ||= :gen }
+    o.on('--commit') { opt[:cmd] = :commit }
+    o.on('--clean') { opt[:cmd] = :clean }
+    o.on('--force', 'přepsat i ručně upravené stránky (s --regen)') { opt[:force] = true }
+    o.on('--redo-images', 'znovu vyrobit i existující PNG') { opt[:redo_images] = true }
+    o.on('--web DIR', 'klon web repa') { |v| opt[:web] = File.expand_path(v) }
+    o.on('--src DIR', 'adresář se zdroji (opakovatelné)') { |v| (opt[:src] ||= []) << v }
     o.on('--rocnik N', Integer) { |v| opt[:rocnik] = v }
     o.on('--junior') { opt[:junior] = true }
-    o.on('--write', 'bez něj jen ukáže, co by udělal') { opt[:write] = true }
-    o.on('--force', 'přepsat i ručně upravené stránky') { opt[:force] = true }
-    o.on('--redo-images', 'znovu vyrobit i existující PNG') { opt[:redo_images] = true }
-    o.on('--web DIR', 'klon web repa (default ~/git/web)') { |v| opt[:web] = v }
-    o.on('--src DIR', 'adresář se zdroji (opakovatelné)') { |v| (opt[:src] ||= []) << v }
   end
   parser.parse!
   opt[:srcs] = opt[:src] if opt[:src]
-  sync = -> { Tex2Wiki::Sync.new(web: opt[:web], srcs: opt[:srcs], write: opt[:write], force: opt[:force],
-                                     redo_images: opt[:redo_images]) }
-  case ARGV[0]
-  when 'sync'
-    sync.call.run(Integer(ARGV.fetch(1)))
-  when 'check'
-    sync.call.check(Integer(ARGV.fetch(1)))
-  when 'diff'
-    sync.call.diff(Integer(ARGV.fetch(1)), ARGV.fetch(2), junior: opt[:junior])
-  when 'publish'
-    sync.call.publish(Integer(ARGV.fetch(1)), Integer(ARGV.fetch(2)), ARGV.fetch(3), junior: opt[:junior])
-  when nil
-    abort parser.banner
+  repo = Tex2Wiki::Repo.new(opt[:web])
+  sync = -> { Tex2Wiki::Sync.new(web: opt[:web], srcs: opt[:srcs], write: true, force: opt[:force],
+                                 redo_images: opt[:redo_images]) }
+  me = 'tex2wiki.rb'
+
+  case opt[:cmd]
+  when :gen, :regen
+    repo.prepare
+    rocniky = ARGV.map { |a| Integer(a) }
+    rocniky = repo.recent_rocniky if rocniky.empty?
+    s = sync.call
+    opt[:publish].each do |spec|
+      m = spec.match(%r{\A(?:(\d+)/)?(j)?(\d+)([zr]+)\z}) or abort "--publish #{spec}: čekám např. 42/2r nebo 42/j2z"
+      r = m[1] ? m[1].to_i : Tex2Wiki::Repo.current_rocnik
+      s.publish(r, m[3].to_i, m[4], junior: !m[2].nil?)
+      rocniky |= [r]
+    end
+    res = Hash.new { |h, k| h[k] = [] }
+    rocniky.sort.each do |r|
+      s.run(r, mode: opt[:cmd]).each { |k, v| res[k].concat(v) }
+    end
+    puts
+    puts "Zapsáno: #{res[:written].size} stránek." unless res[:written].empty?
+    puts "Nic nového." if res[:written].empty? && opt[:publish].empty?
+    puts "TeX se změnil, přepíše --regen: #{res[:outdated].join(', ')}" unless res[:outdated].empty?
+    unless res[:edited].empty?
+      puts "Ručně upravené, nepřepisuji: #{res[:edited].join(', ')}"
+      puts "  (rozdíl: #{me} diff 42 zad2 [--junior]; přepsat: #{me} --regen --force)"
+    end
+    puts "Nezveřejněné série se zdrojem: #{res[:unpublished].join(' ')}  (zveřejní --publish ROCNIK/SERIE)" unless res[:unpublished].empty?
+    puts
+    if repo.dirty?
+      puts 'Další krok:'
+      puts "  zkontroluj změny:  git -C #{opt[:web]} status; git -C #{opt[:web]} diff"
+      puts "  pak buď:           #{me} --commit   (commit a push, tím je to na webu)"
+      puts "  nebo:              #{me} --clean    (vše zahodit)"
+    else
+      puts 'Další krok: není co commitovat.'
+    end
+  when :commit
+    files = repo.commit_and_push
+    abort 'Není co commitovat. Další krok: --gen.' if files.empty?
+    puts 'Pushnuto, na webu je:'
+    files.grep(/\.wiki\z/).each { |f| puts "  https://pikomat.mff.cuni.cz/#{f.delete_suffix('.wiki')}" }
+    puts
+    puts 'Další krok: zkontrolovat stránky na webu; u nové série oznámení do novinek a rámečků.'
+  when :clean
+    repo.clean
+    puts "Klon #{opt[:web]} je stejný jako web na serveru. Další krok: #{me} --gen."
   else
-    file = ARGV[0]
-    rocnik = opt[:rocnik] || file[%r{(?:^|/)(\d\d)(?:_|/)}, 1]&.to_i
-    wiki, c = Tex2Wiki.page(File.read(file), rocnik: rocnik, junior: opt[:junior], source: file)
-    puts wiki
-    c.warnings.each { |w| $stderr.puts "varování: #{w}" }
+    case ARGV[0]
+    when 'check'
+      sync.call.check(Integer(ARGV.fetch(1)))
+    when 'diff'
+      sync.call.diff(Integer(ARGV.fetch(1)), ARGV.fetch(2), junior: opt[:junior])
+    when nil
+      abort parser.banner
+    else
+      file = ARGV[0]
+      rocnik = opt[:rocnik] || file[%r{(?:^|/)(\d\d)(?:_|/)}, 1]&.to_i
+      wiki, c = Tex2Wiki.page(File.read(file), rocnik: rocnik, junior: opt[:junior], source: file)
+      puts wiki
+      c.warnings.each { |w| $stderr.puts "varování: #{w}" }
+    end
   end
 end

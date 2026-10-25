@@ -5,6 +5,7 @@
 require 'digest'
 require 'fileutils'
 require 'open3'
+require 'date'
 
 module Tex2Wiki
   Source = Struct.new(:path, :rocnik, :junior, :kind, :serie, :rank, keyword_init: true) do
@@ -30,6 +31,7 @@ module Tex2Wiki
       @force = force
       @redo_images = redo_images
       @out = out
+      @published = []
     end
 
     def say(msg)
@@ -70,7 +72,6 @@ module Tex2Wiki
       # letákem (pozdější leták), pak delší
       found.group_by(&:key).map do |_, list|
         best = list.min_by { |x| [-x.rank[2] < TEMPLATE_SIZE ? 1 : 0, x.rank[3], x.rank.last, *x.rank] }
-        (list - [best]).each { |o| say "  (#{o.path} přeskočen, přednost má #{best.path})" }
         best
       end.sort_by { |s| [s.junior ? 1 : 0, s.serie, s.kind == :vz ? 1 : 0] }
     end
@@ -174,36 +175,41 @@ module Tex2Wiki
 
     TEMPLATE_SIZE = 1000
 
-    def run(rocnik)
-      changed = []
+    STATES = { new: 'nová', stub: 'místo odkazu na pdf', ours: 'aktualizace', edited: 'PŘEPSÁNÍ ruční úpravy' }.freeze
+
+    # mode :gen jen nové stránky, :regen i vygenerované, které se změnily; ručně upravené jen s force
+    # vrací {zapsané: [...], změněné ve zdroji: [...], ruční: [...], nezveřejněné: [...]}
+    def run(rocnik, mode: :regen)
+      res = Hash.new { |h, k| h[k] = [] }
+      allowed = mode == :gen ? %i[new stub] : %i[new stub ours]
+      allowed += [:edited] if @force
       sources(rocnik).each do |src|
         target = File.join(dir(src.rocnik, src.junior), "#{src.page}.wiki")
         rel = target.delete_prefix("#{@web}/")
         unless allowed?(src)
-          say "  #{rel}: nezveřejněno (chybí '#{src.kind == :vz ? 'r' : 'z'}' v archiv/index.wiki)"
+          res[:unpublished] << "#{rocnik}/#{src.junior ? 'j' : ''}#{src.serie}#{src.kind == :vz ? 'r' : 'z'}"
           next
         end
         wiki, conv = render(src)
-        st = state(target)
-        if st == :edited && !@force
-          say "  #{rel}: ručně upravená stránka, přeskakuji (--force přepíše; --diff ukáže rozdíl)"
-          next
-        end
         if File.exist?(target) && File.read(target) == wiki
           images(src, conv).each { |i| say "  #{rel}: obrázek #{i}" } if @redo_images
           next
         end
-        say "  #{rel}: #{{ new: 'nová', stub: 'místo odkazu na pdf', ours: 'aktualizace', edited: 'PŘEPSÁNÍ ruční úpravy' }[st]} (z #{src.path})"
+        st = state(target)
+        unless allowed.include?(st) || (st == :ours && @published.include?([src.rocnik, src.junior, src.serie]))
+          res[st == :edited ? :edited : :outdated] << rel
+          next
+        end
+        say "  #{rel}: #{STATES[st]} (z #{src.path})"
         conv.warnings.each { |w| say "      varování: #{w}" }
         images(src, conv).each { |i| say "      obrázek #{i}" }
         if @write
           FileUtils.mkdir_p(File.dirname(target))
           File.write(target, wiki)
         end
-        changed << rel
+        res[:written] << rel
       end
-      say(@write ? "zapsáno: #{changed.size}" : "(nanečisto, --write zapíše)") unless changed.empty?
-      changed
+      res
     end
 
     # obrázek zad1.11 -> zad1.11.png (z png, nebo z metapost pdf zad1-11.pdf)
@@ -301,7 +307,69 @@ module Tex2Wiki
       fl[serie - 1] = (fl[serie - 1].to_s.chars | flag.chars).sort_by { |ch| 'znrv'.index(ch) || 9 }.join
       new_line = line.sub(/\|.*\}\}\z/, "|#{fl.join('|')}}}")
       say "#{line}  ->  #{new_line}"
+      @published << [rocnik, junior, serie]
       File.write(index_path, idx.sub(line, new_line)) if @write
+    end
+  end
+  # vlastní klon web repa, se kterým tex2wiki pracuje
+  class Repo
+    ORIGINS = ['/home/www/git/web.git', 'ssh+git://pikomat.mff.cuni.cz/home/www/git/web.git'].freeze
+
+    def self.current_rocnik(today = Date.today)
+      today.year - 1984 - (today.month >= 9 ? 0 : 1)
+    end
+
+    def initialize(dir)
+      @dir = dir
+    end
+
+    def git(*args)
+      out, st = Open3.capture2e('git', '-C', @dir, *args)
+      abort "git #{args.join(' ')} selhal:\n#{out}" unless st.success?
+      out
+    end
+
+    def prepare
+      if File.directory?(File.join(@dir, '.git'))
+        if dirty?
+          puts "V #{@dir} jsou necommitnuté změny z minula, pokračuji nad nimi (--commit nebo --clean)."
+        else
+          git('pull', '-q', '--ff-only')
+        end
+      else
+        origin = ORIGINS.find { |o| o.include?('://') || File.directory?(o) }
+        puts "Klonuji #{origin} do #{@dir}"
+        out, st = Open3.capture2e('git', 'clone', '-q', origin, @dir)
+        abort out unless st.success?
+      end
+    end
+
+    def dirty?
+      !git('status', '--porcelain').empty?
+    end
+
+    # ročníky z archiv/index.wiki, letošní a loňský
+    def recent_rocniky
+      cur = self.class.current_rocnik
+      File.read(File.join(@dir, 'archiv/index.wiki')).scan(/\{\{archiv(?:_junior)?\s+(\d+)\|/).flatten.map(&:to_i)
+          .uniq.select { |r| r >= cur - 1 }.sort
+    end
+
+    def commit_and_push
+      abort "#{@dir} neexistuje, nejdřív --gen" unless File.directory?(@dir)
+      git('add', '-A', 'archiv')
+      files = git('diff', '--cached', '--name-only').lines.map(&:chomp)
+      return files if files.empty?
+      pages = files.grep(/\.wiki\z/).map { |f| f.delete_prefix('archiv/').delete_suffix('.wiki') }
+      git('commit', '-q', '-m', "archiv: #{pages.join(', ')} (tex2wiki)")
+      git('push', '-q')
+      files
+    end
+
+    def clean
+      git('fetch', '-q')
+      git('reset', '-q', '--hard', '@{u}')
+      git('clean', '-qfd')
     end
   end
 end

@@ -39,6 +39,11 @@ Tex2Wiki.macros do
   macro(:obref, 1) { |c, label| c.obref(label.strip) }
   macro(:XeTeXpdffile, 0) { |c| c.image(c.read_filename) }
   macro(:XeTeXpicfile, 0) { |c| c.image(c.read_filename) }
+  macro(:includegraphics, 0) { |c| c.includegraphics }
+  macro(:caption, 1) { |c, a| (t = c.conv(a).strip).empty? ? '' : "**#{t}**\n\n" }
+  macro :label, 1, ''
+  macro(:begin, 1) { |c, env| c.env_begin(env.strip) }
+  macro(:end, 1) { |c, env| c.env_end(env.strip) }
 
   # --- seznamy -------------------------------------------------------------
   macro(:items, 1) { |c, _| c.list_begin('*') }
@@ -92,7 +97,7 @@ Tex2Wiki.macros do
             offinterlineskip nointerlineskip midinsert endinsert topinsert
             makeheadline nopagenumbers ninepoint tensf tensfnolig twelvesfm sixteensfm
             fourteensfm fourteensf tensfm tensfr tensfnoligr tentt teni hrulefill dotfill
-            crcr cr hline hthickline cara myvrule noalign]
+            crcr cr hline linewidth textwidth hthickline cara myvrule noalign]
   ignore_dimen %w[hskip vskip kern mkern raise lower moveleft moveright leftskip rightskip
                   parindent parskip baselineskip topskip hsize vsize hoffset voffset tabskip]
   ignore_number %w[penalty looseness tolerance hfuzz]
