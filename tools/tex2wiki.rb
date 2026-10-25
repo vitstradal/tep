@@ -64,7 +64,7 @@ module Tex2Wiki
   end
 
   class Converter
-    DIMEN = /\s*-?(\d+(\.\d*)?|\.\d+)\s*(pt|cm|mm|em|ex|in|bp|sp|pc|dd|cc|fil+|true\s*\w+)|\s*\\[hv]size|\s*\\baselineskip/
+    DIMEN = /\s*-?(\d+(\.\d*)?|\.\d+)\s*(pt|cm|mm|em|ex|in|bp|sp|pc|dd|cc|fil+|true\s*\w+)|\s*-?(\d+(\.\d*)?|\.\d+)?\s*\\[hv]size|\s*\\baselineskip/
     PARA = "\n\n"
 
     attr_reader :meta, :warnings, :images, :defs
@@ -311,6 +311,7 @@ module Tex2Wiki
     def read_filename
       @s.scan(/\s*/)
       name = @s.scan(/"[^"]*"|[^\s{}\\]+/).to_s.delete('"')
+      return warn('\\XeTeXpdffile bez jména souboru') && '' if name.empty?
       @s.scan(/\s*(width|height|scaled)\s*/) && (@s.scan(DIMEN) || @s.scan(/\d+/))
       name
     end
@@ -352,6 +353,11 @@ module Tex2Wiki
     end
 
     def image(file, label = nil)
+      file = file.to_s.strip
+      if file.empty? || file.start_with?('\\')
+        warn("divné jméno obrázku: #{file.inspect}")
+        return ''
+      end
       @images << file.sub(/\.(pdf|png|jpe?g)\z/i, '') unless @images.include?(file.sub(/\.(pdf|png|jpe?g)\z/i, ''))
       png = File.basename(file).sub(/\.(pdf|png|jpe?g)\z/i, '')
       ext = file =~ /\.(png|jpe?g)\z/i ? '' : '.png'
@@ -457,6 +463,7 @@ if $PROGRAM_NAME == __FILE__
     o.banner = <<~USAGE
       usage: tex2wiki.rb soubor.tex [--rocnik N] [--junior]   převod jednoho souboru na stdout
              tex2wiki.rb sync ROCNIK [--write] [--force]       převede zveřejněné série do web repa
+             tex2wiki.rb check ROCNIK                          shoda stávajících stránek s novým převodem
              tex2wiki.rb diff ROCNIK zad3|vz3 [--junior]       rozdíl stávající stránky a nového převodu
              tex2wiki.rb publish ROCNIK SERIE z|r [--junior] [--write]   příznak v archiv/index.wiki
     USAGE
@@ -473,6 +480,8 @@ if $PROGRAM_NAME == __FILE__
   case ARGV[0]
   when 'sync'
     sync.call.run(Integer(ARGV.fetch(1)))
+  when 'check'
+    sync.call.check(Integer(ARGV.fetch(1)))
   when 'diff'
     sync.call.diff(Integer(ARGV.fetch(1)), ARGV.fetch(2), junior: opt[:junior])
   when 'publish'

@@ -65,6 +65,8 @@ Tex2Wiki.macros do
   macro :line, 1, '%1'
   macro :hbox, 1, '%1'
   macro :vbox, 1, '%1'
+  macro :vtop, 1, '%1'
+  macro :vcenter, 1, '%1'
   macro :mbox, 1, '%1'
   macro :text, 1, '%1'
   macro :footnote, 1, ' (%1)'

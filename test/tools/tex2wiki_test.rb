@@ -83,7 +83,7 @@ class Tex2WikiSyncTest < Minitest::Test
     @web = File.join(@dir, 'web')
     @src = File.join(@dir, 'src')
     FileUtils.mkdir_p([File.join(@web, 'archiv/rocnik41'), File.join(@src, '41_1_k')])
-    File.write(File.join(@src, '41_1_k/zad2.tex'), "\\ses2{1. 1. 2026}\n\\ul1\nZadání.\n\\ulend\n")
+    File.write(File.join(@src, '41_1_k/zad2.tex'), "\\ses2{1. 12. 2025}\n\\ul1\nZadání.\n\\ulend\n")
     File.write(File.join(@src, '41_1_k/vz2.tex'), "\\vr2\n\\ur1\nZadání.\n\\reseni Řešení.\n")
     index('{{archiv  41|zrv|z}}')
   end
@@ -129,7 +129,7 @@ class Tex2WikiSyncTest < Minitest::Test
   def test_keeps_hand_edited_pages
     sync.run(41)
     File.write(page('zad2'), File.read(page('zad2')) + "ruční doplněk\n")
-    File.write(File.join(@src, '41_1_k/zad2.tex'), "\\ses2{1. 1. 2026}\n\\ul1\nJiné zadání.\n\\ulend\n")
+    File.write(File.join(@src, '41_1_k/zad2.tex'), "\\ses2{1. 12. 2025}\n\\ul1\nJiné zadání.\n\\ulend\n")
     sync.run(41)
     assert_includes File.read(page('zad2')), 'ruční doplněk'
     sync(force: true).run(41)
@@ -138,9 +138,17 @@ class Tex2WikiSyncTest < Minitest::Test
 
   def test_regenerates_own_unedited_pages
     sync.run(41)
-    File.write(File.join(@src, '41_1_k/zad2.tex'), "\\ses2{1. 1. 2026}\n\\ul1\nOpravené zadání.\n\\ulend\n")
+    File.write(File.join(@src, '41_1_k/zad2.tex'), "\\ses2{1. 12. 2025}\n\\ul1\nOpravené zadání.\n\\ulend\n")
     sync.run(41)
     assert_includes File.read(page('zad2')), 'Opravené zadání.'
+  end
+
+  def test_next_year_task_in_last_leaflet_is_ignored
+    FileUtils.mkdir_p(File.join(@src, '41_7_k'))
+    File.write(File.join(@src, '41_7_k/zad1.tex'), "\\ses1{20. října 2026}\n\\ul1\nZ příštího ročníku.\n\\ulend\n")
+    index('{{archiv  41|z|z}}')
+    sync.run(41)
+    refute File.exist?(page('zad1'))
   end
 
   def test_dry_run_writes_nothing

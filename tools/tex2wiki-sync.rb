@@ -40,7 +40,7 @@ module Tex2Wiki
     # soubory, které letak.tex projektu opravdu načítá (\input bez %)
     def inputs(project_dir)
       @inputs ||= {}
-      @inputs[project_dir] ||= Dir.glob(File.join(project_dir, '*.tex')).flat_map do |f|
+      @inputs[project_dir] ||= Dir.glob(File.join(project_dir, '*.tex')).select { |f| File.file?(f) && File.readable?(f) }.flat_map do |f|
         File.read(f, encoding: 'UTF-8').scrub.lines.grep_v(/\A\s*%/).flat_map { |l| l.sub(/(?<!\\)%.*/, '').scan(/\\input\s+"?([^\s"}]+)/).flatten }
       end.map { |n| n.sub(/\.tex\z/, '') }
     end
@@ -49,25 +49,38 @@ module Tex2Wiki
       found = []
       @srcs.each_with_index do |dir, si|
         Dir.glob(File.join(dir, "#{rocnik}{_,/}**/*.tex")).each do |f|
-          next unless File.basename(f) =~ /\A(zad|vz)\s?\d+j?\.tex\z/
+          next unless File.basename(f) =~ /\A(zad|vz)\s?\d+j?\.tex\z/ && File.file?(f) && File.readable?(f)
           tex = File.read(f, encoding: 'UTF-8').scrub
           c = Converter.new(rocnik: rocnik)
           c.convert(tex)
           next unless c.meta[:serie] && %i[zad vz].include?(c.meta[:kind])
+          next if c.meta[:kind] == :zad && !termin_fits?(c.meta[:termin], rocnik, c.meta[:serie])
           rel = f.delete_prefix("#{dir}/")
           junior = rel =~ %r{\A\d+_[^/]*j\b|/(s|r|l|zad|vz)\d+j/|j\.tex\z|junior}i ? true : false
           used = inputs(File.dirname(f)).include?(File.basename(f, '.tex')) ? 0 : 1
           found << Source.new(path: f, rocnik: rocnik, junior: junior, kind: c.meta[:kind],
-                              serie: c.meta[:serie], rank: [used, si, -rel[/\A\d+_(\d+)/, 1].to_i, -tex.size])
+                              serie: c.meta[:serie],
+                              rank: [used, used.zero? ? -rel[/\A\d+_(\d+)/, 1].to_i : 0, -tex.size, si,
+                                     File.basename(f)[/\d+/].to_i == c.meta[:serie] ? 0 : 1])
         end
       end
-      # stejná stránka z více míst: přednost má soubor načítaný letákem, pak pořadí --src,
-      # pak pozdější leták (41_5_j před 41_3_j), pak delší (prázdné šablony prohrají)
+      # stejná stránka z více míst: přednost má soubor, jehož jméno sedí se sérií (zad5j.tex
+      # pro \ses5), pak ne skoro prázdná šablona, pak načítaný letákem (pozdější leták),
+      # pak delší, pak pořadí --src
       found.group_by(&:key).map do |_, list|
-        best = list.min_by(&:rank)
+        # šablona načítaná letákem, ale skoro prázdná, nemá přednost před plným textem
+        big = list.map { |x| -x.rank[2] }.max
+        best = list.min_by { |x| [x.rank.last, -x.rank[2] * 2 < big ? 1 : 0, *x.rank] }
         (list - [best]).each { |o| say "  (#{o.path} přeskočen, přednost má #{best.path})" }
         best
       end.sort_by { |s| [s.junior ? 1 : 0, s.serie, s.kind == :vz ? 1 : 0] }
+    end
+
+    # ročník R začíná na podzim roku 1984 + R (1. a 2. série mají termín ještě ten rok);
+    # leták 7 už nese zadání 1. série příštího ročníku
+    def termin_fits?(termin, rocnik, serie)
+      year = termin.to_s[/\b(19|20)\d\d\b/] or return true
+      (serie <= 2 ? [1984 + rocnik] : [1984 + rocnik, 1985 + rocnik]).include?(year.to_i)
     end
 
     # --- zveřejnění ----------------------------------------------------------
@@ -105,16 +118,25 @@ module Tex2Wiki
 
     def header(src, conv)
       r, j, n = src.rocnik, src.junior, src.serie
-      kdo = j ? ' Pikomatu junior' : ''
+      kdo = j ? ' Pikomatu Junior' : ''
       h = +''
       if src.kind == :zad
         h << "= Zadání #{n}. série #{r}. ročníku#{kdo} =\n\n"
         h << "Termín odeslání: #{conv.meta[:termin]}\n\n" if conv.meta[:termin]
-        h << "Pravidla pro odevzdávání řešení najdete [[/pravidla|zde]]. O tom, jak řešení sepisovat, si můžete přečíst [[/jak_sepisovat|zde]] nebo se podívat na [[https://www.youtube.com/watch?v=03xRajBF5zA&feature=youtu.be|video]].\n\n"
+        if j
+          h << "Pikomat Junior je **pro řešitele 3. až 6. tříd**, můžou se zúčastnit i mladší.\n\n"
+          h << "Jak řešit, odevzdávat a další důležité informace ohledně Pikomatu Junior naleznete [[/junior|zde]].\n\n"
+        else
+          h << "Pravidla pro odevzdávání řešení najdete [[/pravidla|zde]]. O tom, jak řešení sepisovat, si můžete přečíst [[/jak_sepisovat|zde]] nebo se podívat na [[https://www.youtube.com/watch?v=03xRajBF5zA&feature=youtu.be|video]].\n\n"
+        end
         h << "Adresa: Pikomat, KPMS MFF UK, Sokolovská 83, 186 75 Praha 8\n\n"
         pdfs = []
-        pdfs << "Celý leták najdete ve formátu pdf [[#{pdf_link(r, j, "letak#{n}.pdf")}|zde]]." if pdf_link(r, j, "letak#{n}.pdf")
-        pdfs << "Samostatné zadání je k dispozici také ve formátu [[#{pdf_link(r, j, "zad#{n}.pdf")}|pdf]]." if pdf_link(r, j, "zad#{n}.pdf")
+        if j && pdf_link(r, j, "zad#{n}.pdf")
+          pdfs << "Zadání je k dispozici také ve formátu **[[#{pdf_link(r, j, "zad#{n}.pdf")}|pdf]]**. Velice **doporučujeme dětem dát toto vytištěné zadání**."
+        elsif pdf_link(r, j, "zad#{n}.pdf")
+          pdfs << "Samostatné zadání je k dispozici také ve formátu [[#{pdf_link(r, j, "zad#{n}.pdf")}|pdf]]."
+        end
+        pdfs.unshift("Celý leták najdete ve formátu pdf [[#{pdf_link(r, j, "letak#{n}.pdf")}|zde]].") if pdf_link(r, j, "letak#{n}.pdf")
         h << pdfs.join(' ') << "\n" unless pdfs.empty?
       else
         h << "= Vzorová řešení #{n}. série #{r}. ročníku#{kdo} =\n\n"
@@ -207,14 +229,41 @@ module Tex2Wiki
       todo
     end
 
+    # pořadí: adresář zdroje, jeho projekt, pak ostatní projekty ročníku (stejná větev junior/klasik napřed)
     def find_file(src, name)
-      here = File.join(File.dirname(src.path), name)
-      return here if File.exist?(here)
-      @srcs.each do |d|
-        hit = Dir.glob(File.join(d, "#{src.rocnik}{_,/}**/#{name}")).first
-        return hit if hit
+      root = @srcs.find { |d| src.path.start_with?("#{d}/") }
+      project = root && File.join(root, src.path.delete_prefix("#{root}/").split('/').first)
+      local = [File.dirname(src.path), File.join(File.dirname(src.path), 'obrazky')]
+      hit = local.map { |d| File.join(d, name) }.find { |f| File.file?(f) }
+      hit ||= Dir.glob(File.join(project, '**', name)).min if project && File.directory?(project)
+      hit || @srcs.flat_map { |d| Dir.glob(File.join(d, "#{src.rocnik}{_*,}", '**', name)) }
+                  .min_by { |f| [junior_path?(f) == src.junior ? 0 : 1, f] }
+    end
+
+    def junior_path?(path)
+      path =~ %r{/\d+_[^/]*j/|/(s|r|l|zad|vz)\d+j/|junior}i ? true : false
+    end
+
+    # shoda stávajících stránek s novým převodem (slova, bez hlavičky); kandidáti na přegenerování
+    def check(rocnik)
+      sources(rocnik).each do |src|
+        target = File.join(dir(src.rocnik, src.junior), "#{src.page}.wiki")
+        next unless File.exist?(target)
+        st = state(target)
+        next if st == :stub
+        cur = words(File.read(target, encoding: 'UTF-8').scrub)
+        new = words(render(src).first)
+        nt = new.tally
+        lcs = cur.tally.sum { |w, n| [n, nt[w].to_i].min }
+        say format('  %-34s %-7s shoda %3d %%  (%d / %d slov)', target.delete_prefix("#{@web}/"), st,
+                   cur.empty? ? 0 : 200 * lcs / (cur.size + new.size), cur.size, new.size)
       end
-      nil
+    end
+
+    def words(wiki)
+      body = wiki.sub(/\A.*?^----\s*$/m, '').sub(/\A.*?(?=^=+\s*Úloha)/m, '')
+      body.gsub(/\{\{#.*?\}\}|#ul\d+|[~\u00a0]|\\,|\{\\rm\s*|\[\[#[^\]]*\]\]|,id=[^)]*/m, ' ')
+          .gsub('--', '–').scan(/[[:alnum:]]+/)
     end
 
     def diff(rocnik, page, junior: false)
