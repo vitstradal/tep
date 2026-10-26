@@ -232,7 +232,11 @@
             <%= menu_lii :sosna_solutions_org, 'Řešení řešitelů' %>
             <%= menu_lii :wiki_piki,           'Piki'  %>
             <%#= menu_lii :wiki_web,            'Web' %>
-            <%= menu_lii wiki_web_edit_path('index', :ls => '.'),       'Web Edit (all)'%>
+            <% if can? :update, Giwi.auth_name(:web_edit) %>
+              <%= menu_lii wiki_web_edit_path('index', :ls => '.'),       'Web Edit (all)'%>
+            <% else %>
+              <%= disabled_li 'Web Edit (all)' %>
+            <% end %>
             <%= menu_lii wiki_piki_path('opravovatele'),                'Opravovatelé'%>
             <%= menu_lii wiki_piki_path('priklady'),                    'Příklady'%>
             <%= menu_lii 'https://pikomat.mff.cuni.cz/klep',            'Klep' %>
@@ -378,7 +382,11 @@
                  </li>
 
                  <%######################### tab Seznam -%>
-                 <li <%=class_active_if( @event_tab == 'list') %>><%= ilink_to act_event_display_participants_path(@event), ico: 'fa-list'  do%>Seznam<%end%> </li>
+                 <% if can? :display_participants, Act::Event -%>
+                   <li <%=class_active_if( @event_tab == 'list') %>><%= ilink_to act_event_display_participants_path(@event), ico: 'fa-list'  do%>Seznam<%end%> </li>
+                 <% else -%>
+                   <%= disabled_li 'Seznam', ico: 'fa-list', tab: true %>
+                 <% end -%>
 
                  <%######################### tab Piki -%>
                  <% if @event.event_piki_url != ""  -%>

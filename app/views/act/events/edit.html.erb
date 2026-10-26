@@ -3,8 +3,13 @@
     <h1>Editovat akci <%= button_tag "Zpět", :href => act_event_path(@event), :class=>'btn', :ico =>'fa-reply' %>
     </h1>
 
-    <% if can? :edit, Act::Event %>
+    <% if can? :update, Act::Event %>
       <%= render :partial => "form_edit", :locals => { :is_edit => true, :is_jakna => false } %>
+    <% else %>
+      <p title="<%= ApplicationHelper::MORG_ONLY %>"><i class="fa fa-lock"></i> Jen pro čtení, upravovat může morg.</p>
+      <fieldset disabled>
+        <%= render :partial => "form_edit", :locals => { :is_edit => true, :is_jakna => false } %>
+      </fieldset>
     <% end %>
 
     <hr>

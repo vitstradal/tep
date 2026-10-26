@@ -139,6 +139,10 @@ class Ability
       can :read, Act::EventInvitation
       can :papers_please, Act::Event
       can :history, Act::Event
+      can :edit, Act::Event
+      can :edit_invitations, Act::Event
+      can :jakna, Act::Event
+      can :jakna, Act::EventCategory
     end
 
     # master-org, or more-org, 
@@ -173,6 +177,9 @@ class Ability
 
       can :manage, Act::EventParticipant
       can :manage, Act::EventInvitation
+      can :display_participants, Act::Event
+      can :edit_participants, Act::Event
+      can :enroll_others, Act::Event
     end
 
     if user.admin?

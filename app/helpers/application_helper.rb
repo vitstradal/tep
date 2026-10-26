@@ -64,6 +64,22 @@ module ApplicationHelper
        end
     end
   end
+  MORG_ONLY = 'Jen pro morga – až budeš větší.'.freeze
+
+  ##
+  # šedá položka menu/tabu bez odkazu, důvod v tooltipu
+  def disabled_li(text, why: MORG_ONLY, ico: nil, tab: false)
+    text = content_tag(:span, text, :class => 'hidden-xs') if tab
+    text = content_tag(:i, '', :class => "ace-icon fa #{ico}") + " " + text if ico
+    content_tag(:li, content_tag(:a, text, title: why, style: 'opacity:.45;cursor:not-allowed'), :class => 'disabled')
+  end
+
+  ##
+  # šedý button bez akce, důvod v tooltipu
+  def disabled_button(text, why: MORG_ONLY, ico: nil)
+    content_tag(:span, button_tag(text, :class => 'btn disabled', :type => 'button', :ico => ico), title: why, style: 'cursor:not-allowed')
+  end
+
   def icon(icon_name)
     content_tag(:span, '', :class => "ace-icon fa #{icon_name.to_s.gsub('_','-')}")
   end

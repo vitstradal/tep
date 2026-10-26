@@ -1,16 +1,21 @@
 
 <h1><%= @event.title %>
 
-<% if (can? :edit, Act::Event) && !@edit_participants %>
+<% if (can? :update, Act::Event) && !@edit_participants %>
   <%= button_tag "Edituj akci", :href => act_event_edit_path(@event), :class=>'btn btn-warning', :ico => 'fa-wrench' %>
+<% elsif (can? :edit, Act::Event) && !@edit_participants %>
+  <%= button_tag "Nastavení akce", :href => act_event_edit_path(@event), :class=>'btn btn-info', :ico => 'fa-wrench' %>
 <% end %>
 <% if !@edit_participants %>
-  <% if can? :update_other, Act::EventParticipant %>
+  <% if can? :edit_participants, Act::Event %>
     <%= button_tag "Edituj účastníky", :href => act_event_edit_participants_path(@event), :class=>'btn btn-danger', :ico => 'fa-users' %>
     <%= button_tag "Přihlaš nové účastníky", :href => act_event_enroll_others_path(@event, "ev", "ev"), :class=>'btn btn-success', :ico => 'fa-pencil-square-o' %>
+  <% elsif current_user&.org? %>
+    <%= disabled_button "Edituj účastníky", :ico => 'fa-users' %>
+    <%= disabled_button "Přihlaš nové účastníky", :ico => 'fa-pencil-square-o' %>
   <% end %>
 <% end %>
-<% if (can? :edit, Act::EventInvitation) && !@edit_participants && (@event.enable_only_specific_participants || @event.enable_only_specific_substitutes || @event.enable_only_specific_organisers) %>
+<% if (can? :edit_invitations, Act::Event) && !@edit_participants && (@event.enable_only_specific_participants || @event.enable_only_specific_substitutes || @event.enable_only_specific_organisers) %>
   <%= button_tag "Edituj pozvané", :href => act_event_edit_invitations_path(@event), :class=>'btn btn-warning', :ico => 'fa-envelope' %>
 <% end %>
 </h1>
@@ -84,12 +89,14 @@
 <% show_substitutes = ! @event.open_for_everyone? || @substitutes_yes.length() > 0 || @substitutes_maybe.length() > 0 || @substitutes_no.length() > 0 %>
 
 <div>
-<% if can? :read_other, Act::Participant %>
+<% if can? :display_participants, Act::Event %>
   <p>
   <% if ! @edit_participants %>
     <%= button_tag "Zobraz hromadné informace", :href => act_event_display_participants_path(@event), :class => 'btn btn-info', :ico => 'fa-book' %>
   <% end %>
   </p>
+<% elsif current_user&.org? %>
+  <p><%= disabled_button "Zobraz hromadné informace", :ico => 'fa-book' %></p>
 <% end %>
 <h2>Přihlášení účastníci <%=act_count_participiants(@parts_yes)%></h2>
 <% if current_user %>

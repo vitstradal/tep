@@ -204,8 +204,6 @@ class Act::EventsController < ActController
     @breadcrumb.push [ _breadcrumb_event(@event) ]
     @breadcrumb.push [ _breadcrumb_event_edit(@event) ]
     @paper_templates = _list_paper_templates
-
-    return render 'permission_denied', :locals => { :desired => "editovat existující " } unless can? :update, Act::Event
   end
 
   ##

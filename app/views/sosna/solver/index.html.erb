@@ -56,7 +56,7 @@
              <% if s.user %>
                <% if !s.user_email_consistent? %><span title="řešitel nemá stejný email jako jeho uživatel (<%="#{s.email} vs #{s.user_email}"%>)">!!!</span><% end %>
                  <% if current_user.admin? %>
-                   <%= link_to s.user.id, user_show_path(s.user.id)%>
+                   <%= link_to_if (can? :user, :tep), s.user.id, user_show_path(s.user.id)%>
                  <% else %>
                    <%= s.user.id %>
                  <% end %>

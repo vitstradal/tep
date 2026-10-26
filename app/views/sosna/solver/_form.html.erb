@@ -329,7 +329,9 @@
         <% if is_confirm %>
             <%= f.submit :class=>'btn btn-primary', :value=>'Potvrzuji uvedené údaje' %>
         <% else %>
-          <% if is_edit %>
+          <% if is_edit && !(can? :update, Sosna::Solver) %>
+            <%= disabled_button 'Uložit' %>
+          <% elsif is_edit %>
             <%= f.submit :class=>'btn btn-primary', :value=>'Uložit' %>
           <% else %>
             <%= f.submit :class=>'btn btn-primary', :value=>'Přihlásit se do Pikomatu' %>

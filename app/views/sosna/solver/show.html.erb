@@ -7,7 +7,7 @@
 <hr>
 <% user = @solver.user %>
 <% if user %>
-   Řešitel je uživatelem tepu <%= link_to "#{user.name} #{user.last_name} (#{user.email})" , user_show_path(user.id) %>.
+   Řešitel je uživatelem tepu <%= link_to_if (can? :user, :tep), "#{user.name} #{user.last_name} (#{user.email})" , user_show_path(user.id) %>.
 <% else %>
   Řešitel nemá nemá uživatele
 <% end %>
