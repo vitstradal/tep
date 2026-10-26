@@ -81,6 +81,7 @@ module Tex2Wiki
       @defs = []
       @list = []
       @image_cm = {}
+      @footnotes = []
     end
 
     # šířka obrázku v letáku v cm (podle \obrazky{…|8cm|…} nebo width u \XeTeXpdffile)
@@ -97,6 +98,7 @@ module Tex2Wiki
       src.scan(/\\obrazky\s*\{([^{}]*)\}/) { |(spec)| spec.split(';').each { |it| label_for(it) } }
       @s = StringScanner.new(src)
       out = parse_text(nil)
+      out << flush_footnotes
       cleanup(out)
     end
 
@@ -140,6 +142,12 @@ module Tex2Wiki
       else
         @s.getch.to_s
       end
+    end
+
+    # {…} jen když následuje
+    def skip_brace_arg
+      read_arg if @s.check(/\s*\{/)
+      nil
     end
 
     def read_opt_arg
@@ -202,6 +210,8 @@ module Tex2Wiki
           out << group
         elsif @s.scan(/\}/)
           warn('nadbytečná }')
+        elsif @s.scan(/~/)
+          out << "\u00a0"
         elsif @s.scan(/---/)
           out << '—'
         elsif @s.scan(/--/)
@@ -211,7 +221,7 @@ module Tex2Wiki
         elsif @s.scan(/\n[ \t]*/)
           out << "\n"
         else
-          out << (@s.scan(/[^\\${}\n-]+|-/) || @s.getch).to_s
+          out << (@s.scan(/[^\\${}\n~-]+|-/) || @s.getch).to_s
         end
       end
       out
@@ -346,7 +356,26 @@ module Tex2Wiki
     def ulend
       n = @meta[:ul]
       link = @vz_link && n ? "\n\n[[#{@vz_link}#ul#{n}|→ vzorové řešení]]" : ''
-      "#{link}\n\n"
+      "#{flush_footnotes}#{link}\n\n"
+    end
+
+    # plain \footnote{značka}{text} i LaTeXové \footnote{text}; text se vypíše na konci úlohy
+    def footnote
+      first = read_arg
+      if @s.check(/\s*\{/)
+        mark, text = conv(first).strip, read_arg
+      else
+        mark, text = '*' * (@footnotes.size + 1), first
+      end
+      @footnotes << "#{mark} #{conv(text).strip.gsub(/\s*\n\s*/, ' ')}"
+      mark
+    end
+
+    def flush_footnotes
+      return '' if @footnotes.empty?
+      notes = @footnotes.map { |f| "''#{f}''\n\n" }.join
+      @footnotes = []
+      "\n\n#{notes}"
     end
 
     # \halign{šablona\cr řádek&řádek\cr …} -> wiki tabulka

@@ -63,7 +63,7 @@ Tex2Wiki.macros do
   macro :textbf, 1, '**%1**'
   macro :textit, 1, "''%1''"
   macro :emph, 1, "''%1''"
-  macro :uv, 1, '{{uv %1}}'
+  macro :uv, 1, '„%1“'
   macro :underline, 1, '__%1__'
   macro :centerline, 1, "\n\n%1\n\n"
   macro :leftline, 1, "\n\n%1\n\n"
@@ -75,12 +75,12 @@ Tex2Wiki.macros do
   macro :vcenter, 1, '%1'
   macro :mbox, 1, '%1'
   macro :text, 1, '%1'
-  macro :footnote, 1, ' (%1)'
+  macro(:footnote, 0) { |c| c.footnote }
   macro :TODO, 1, ''
   macro :show, 1, ''
   macro :par, 0, "\n\n"
   macro :break, 0, "\\\\\n"
-  macro(:tecky, 0) { ' …… ' }
+  macro(:tecky, 0) { |c| c.skip_brace_arg; ' …… ' }
   macro(:vyplntecky, 0) { ' …… ' }
   macro(:teckovana, 0) { "\n\n…………………………………………\n\n" }
   macro(:tabulka, 1) { |c, a| c.halign(a) }
@@ -111,7 +111,7 @@ Tex2Wiki.macros do
   end
   math 'deg', '^\circ'
   math 'degree', '^\circ'
-  math 'tecky', '\ldots\ldots'
+  math('tecky', ->(c) { c.skip_brace_arg; '\ldots\ldots' })
   math 'vyplntecky', '\ldots\ldots'
   math 'nmod', '\pmod{%1}', 1
   math 'N', '\mathbb{N}'
@@ -121,4 +121,5 @@ Tex2Wiki.macros do
   math 'podsebou', '\begin{matrix}%1\end{matrix}', 1
   math 'Tpodsebou', '\begin{matrix}%1\end{matrix}', 1
   math 'myvrule', '\vert'
+  math 'sevenrm', ''
 end

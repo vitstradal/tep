@@ -48,7 +48,7 @@ class Tex2WikiTest < Minitest::Test
   def test_junior_image_caption
     out = conv('\obrazky{obrazky/zad3.11|8cm|Obrázek s~trojúhelníky}', junior: true)
     assert_includes out, '[[Image(archiv/rocnik41/junior/zad3.11.png,id=zad311)]]'
-    assert_includes out, '**Obrázek s~trojúhelníky**'
+    assert_includes out, "**Obrázek s\u00a0trojúhelníky**"
   end
 
   def test_image_width_from_leaflet
@@ -90,6 +90,19 @@ class Tex2WikiTest < Minitest::Test
     assert_includes out, '[[Image(archiv/rocnik42/junior/vz1j-51.png)]]'
     assert_equal 8.5, c.image_cm('obrazky/vz1j-51')
     assert_empty c.warnings
+  end
+
+  def test_tie_quotes_footnote_dots
+    out = conv("a~dále \\uv{Ahoj,\nkapitáne} vět.\\footnote{$^*$}{Dva\nslova}\n\n$x\\tecky{1em}>\\tecky y$ a \\tecky{1cm}.")
+    assert_includes out, "a\u00a0dále „Ahoj,\nkapitáne“ vět.$^*$"
+    assert_includes out, "''$^*$ Dva slova''"
+    assert_includes out, '$x\\ldots\\ldots>\\ldots\\ldots y$'
+    assert_includes out, 'a  …… .'
+  end
+
+  def test_footnote_text_ends_the_task
+    out = conv("\\ul1\nText\\footnote{Pozn.}\n\nDál.\n\\ulend\n\\ul2\nB\n\\ulend")
+    assert_match(/Dál\.\n\n''\* Pozn\.''\n\n=== Úloha č\. 2/, out)
   end
 
   def test_unknown_macro_warns
