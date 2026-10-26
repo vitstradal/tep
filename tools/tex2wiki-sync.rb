@@ -289,7 +289,7 @@ module Tex2Wiki
     end
 
     def diff(rocnik, page, junior: false)
-      src = sources(rocnik).find { |s| s.page == page && s.junior == junior } or abort "zdroj pro #{page} nenalezen"
+      src = sources(rocnik).find { |s| s.page == page && s.junior == !!junior } or abort "zdroj pro #{page} nenalezen"
       target = File.join(dir(rocnik, junior), "#{page}.wiki")
       wiki, = render(src)
       File.write(tmp = "#{target}.tex2wiki", wiki)
