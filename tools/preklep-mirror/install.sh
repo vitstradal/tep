@@ -23,7 +23,7 @@ sed -e "s|@IMAGE@|$IMAGE|" -e "s|@USER@|$OWNER:$GID|" -e "s|@DATA@|$DATA|" -e "s
     "$SRC/compose.yml" > "$APP/compose.yml"
 chmod 644 "$APP/compose.yml"
 
-install -d -o "$OWNER" -g "$GROUP" -m 2775 "$BASE"
+install -d -o "$OWNER" -g "$GROUP" -m 2755 "$BASE"
 [ -e "$BASE/refresh" ] || install -o "$OWNER" -g "$GROUP" -m 664 /dev/null "$BASE/refresh"
 
 # dosavadní zrcadlo (adresář) se přesune jako první generace, nic se nemaže
