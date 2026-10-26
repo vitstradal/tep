@@ -311,6 +311,31 @@ module Tex2Wiki
       File.write(index_path, idx.sub(line, new_line)) if @write
     end
   end
+  # zrcadlo překlepu: touch refresh, kontejner preklep-mirror po exportu zapíše stamp
+  module Mirror
+    BASE = '/home/pikomat/preklep-mirror.d'
+
+    def self.refresh(base = BASE, timeout: 180, poll: 2, out: $stdout)
+      trigger = File.join(base, 'refresh')
+      stamp = File.join(base, 'stamp')
+      return unless File.writable?(trigger)
+      FileUtils.touch(trigger)
+      asked = File.mtime(trigger)
+      out.print 'Obnovuji zrcadlo překlepu'
+      deadline = Time.now + timeout
+      until File.exist?(stamp) && File.mtime(stamp) >= asked
+        if Time.now > deadline
+          old = File.exist?(stamp) ? File.mtime(stamp).strftime('%-d. %-m. %H:%M') : '?'
+          out.puts "\nZrcadlo neodpovídá (docker logs preklep-mirror), pokračuji se zrcadlem z #{old}."
+          return
+        end
+        out.print '.'
+        sleep poll
+      end
+      out.puts " hotovo (#{File.read(stamp).lines.first.to_s.strip})"
+    end
+  end
+
   # vlastní klon web repa, se kterým tex2wiki pracuje
   class Repo
     ORIGINS = ['/home/www/git/web.git', 'ssh+git://pikomat.mff.cuni.cz/home/www/git/web.git'].freeze

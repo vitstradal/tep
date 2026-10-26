@@ -578,6 +578,7 @@ if $PROGRAM_NAME == __FILE__
 
   case opt[:cmd]
   when :gen, :regen
+    Tex2Wiki::Mirror.refresh unless opt[:src]
     repo.prepare
     rocniky = ARGV.map { |a| Integer(a) }
     rocniky = repo.recent_rocniky if rocniky.empty?

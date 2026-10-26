@@ -1,0 +1,20 @@
+# Šablona; install.sh doplní @IMAGE@, @USER@, @DATA@, @BASE@ a uloží do /usr/local/lib/preklep-mirror/.
+name: preklep-mirror
+services:
+  preklep-mirror:
+    image: @IMAGE@
+    container_name: preklep-mirror
+    restart: unless-stopped
+    user: "@USER@"
+    entrypoint: ["/bin/bash", "/app/loop.sh"]
+    environment:
+      MONGO_URL: "mongodb://mongo:27017/sharelatex?directConnection=true"
+      HOME: /tmp
+    volumes:
+      - /usr/local/lib/preklep-mirror:/app:ro
+      - @DATA@:/overleaf:ro
+      - @BASE@:/mirror
+    networks: [lib_default]
+networks:
+  lib_default:
+    external: true

@@ -209,6 +209,30 @@ class Tex2WikiSyncTest < Minitest::Test
   end
 end
 
+class Tex2WikiMirrorTest < Minitest::Test
+  def test_refresh_waits_for_stamp
+    Dir.mktmpdir do |d|
+      FileUtils.touch(File.join(d, 'refresh'))
+      writer = Thread.new { sleep 0.2; File.write(File.join(d, 'stamp'), "2026-10-26 3 projektů\n") }
+      out = StringIO.new
+      Tex2Wiki::Mirror.refresh(d, timeout: 5, poll: 0.05, out: out)
+      writer.join
+      assert_includes out.string, 'hotovo (2026-10-26 3 projektů)'
+    end
+  end
+
+  def test_refresh_gives_up_and_without_trigger_does_nothing
+    Dir.mktmpdir do |d|
+      out = StringIO.new
+      Tex2Wiki::Mirror.refresh(d, out: out)
+      assert_empty out.string
+      FileUtils.touch(File.join(d, 'refresh'))
+      Tex2Wiki::Mirror.refresh(d, timeout: 0.1, poll: 0.05, out: out)
+      assert_includes out.string, 'Zrcadlo neodpovídá'
+    end
+  end
+end
+
 class Tex2WikiRepoTest < Minitest::Test
   def test_current_rocnik
     assert_equal 42, Tex2Wiki::Repo.current_rocnik(Date.new(2026, 10, 25))
