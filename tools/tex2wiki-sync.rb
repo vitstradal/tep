@@ -296,7 +296,7 @@ module Tex2Wiki
       target = File.join(dir(rocnik, junior), "#{page}.wiki")
       wiki, = render(src)
       File.write(tmp = "#{target}.tex2wiki", wiki)
-      system('diff', '-u', target, tmp)
+      say 'Stránka je stejná jako nový převod z TeXu.' if system('diff', '-u', target, tmp)
       File.delete(tmp)
     end
 

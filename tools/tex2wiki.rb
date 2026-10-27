@@ -630,6 +630,8 @@ if $PROGRAM_NAME == __FILE__
     when 'check'
       sync.call.check(Integer(ARGV.fetch(1)))
     when 'diff'
+      Tex2Wiki::Mirror.refresh unless opt[:src]
+      repo.prepare
       sync.call.diff(Integer(ARGV.fetch(1)), ARGV.fetch(2), junior: opt[:junior])
     when nil
       abort parser.banner
