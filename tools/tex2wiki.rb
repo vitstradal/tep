@@ -546,17 +546,17 @@ if $PROGRAM_NAME == __FILE__
   opt = { web: File.expand_path('~/tex2wiki-web'), srcs: %w[/home/pikomat/preklep-mirror /home/pikomat], publish: [] }
   parser = OptionParser.new do |o|
     o.banner = <<~USAGE
-      usage: tex2wiki.rb --gen [ROCNIK…]        vytvoří nové stránky zveřejněných sérií (nic nepřepíše)
-             tex2wiki.rb --regen [ROCNIK…]      i stránky, jejichž TeX se změnil (ruční úpravy ne)
-             tex2wiki.rb --regen --force 42 zad2 [--junior]   přepíše jen tuto stránku i s ručními úpravami
-             tex2wiki.rb --publish 42/2r        zveřejní sérii (z zadání, r řešení, j2r junior) a --gen
-             tex2wiki.rb --commit               commit + push do webu
-             tex2wiki.rb --clean                zahodí necommitnuté změny v klonu
+      usage: tex2wiki --gen [ROCNIK…]           vytvoří nové stránky zveřejněných sérií (nic nepřepíše)
+             tex2wiki --regen [ROCNIK…]         i stránky, jejichž TeX se změnil (ruční úpravy ne)
+             tex2wiki --regen --force 42 zad2 [--junior]      přepíše jen tuto stránku i s ručními úpravami
+             tex2wiki --publish 42/2r           zveřejní sérii (z zadání, r řešení, j2r junior) a --gen
+             tex2wiki --commit                  commit + push do webu
+             tex2wiki --clean                   zahodí necommitnuté změny v klonu
       Bez ROCNIK bere letošní a loňský ročník. Klon webu: ~/tex2wiki-web (udělá si ho sám).
 
-      ladění: tex2wiki.rb soubor.tex [--rocnik N] [--junior]   převod na stdout
-              tex2wiki.rb check ROCNIK                          shoda stránek s novým převodem
-              tex2wiki.rb diff ROCNIK zad3|vz3 [--junior]       rozdíl stránky a nového převodu
+      ladění: tex2wiki soubor.tex [--rocnik N] [--junior]      převod na stdout
+              tex2wiki check ROCNIK                             shoda stránek s novým převodem
+              tex2wiki diff ROCNIK zad3|vz3 [--junior]          rozdíl stránky a nového převodu
     USAGE
     o.on('--gen') { opt[:cmd] = :gen }
     o.on('--regen') { opt[:cmd] = :regen }
@@ -575,7 +575,7 @@ if $PROGRAM_NAME == __FILE__
   repo = Tex2Wiki::Repo.new(opt[:web])
   sync = -> { Tex2Wiki::Sync.new(web: opt[:web], srcs: opt[:srcs], write: true, force: opt[:force],
                                  redo_images: opt[:redo_images]) }
-  me = 'tex2wiki.rb'
+  me = 'tex2wiki'
 
   case opt[:cmd]
   when :gen, :regen
