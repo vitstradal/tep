@@ -180,11 +180,13 @@ module Tex2Wiki
 
     # mode :gen jen nové stránky, :regen i vygenerované, které se změnily; ručně upravené jen s force
     # vrací {zapsané: [...], změněné ve zdroji: [...], ruční: [...], nezveřejněné: [...]}
-    def run(rocnik, mode: :regen)
+    # only: [[junior, 'zad2'], …] omezí běh na tyto stránky
+    def run(rocnik, mode: :regen, only: nil)
       res = Hash.new { |h, k| h[k] = [] }
       allowed = mode == :gen ? %i[new empty stub] : %i[new empty stub ours]
       allowed += [:edited] if @force
       sources(rocnik).each do |src|
+        next if only && !only.include?([src.junior, src.page])
         target = File.join(dir(src.rocnik, src.junior), "#{src.page}.wiki")
         rel = target.delete_prefix("#{@web}/")
         unless allowed?(src)

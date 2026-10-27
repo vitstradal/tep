@@ -548,6 +548,7 @@ if $PROGRAM_NAME == __FILE__
     o.banner = <<~USAGE
       usage: tex2wiki.rb --gen [ROCNIK…]        vytvoří nové stránky zveřejněných sérií (nic nepřepíše)
              tex2wiki.rb --regen [ROCNIK…]      i stránky, jejichž TeX se změnil (ruční úpravy ne)
+             tex2wiki.rb --regen --force 42 zad2 [--junior]   přepíše jen tuto stránku i s ručními úpravami
              tex2wiki.rb --publish 42/2r        zveřejní sérii (z zadání, r řešení, j2r junior) a --gen
              tex2wiki.rb --commit               commit + push do webu
              tex2wiki.rb --clean                zahodí necommitnuté změny v klonu
@@ -578,10 +579,13 @@ if $PROGRAM_NAME == __FILE__
 
   case opt[:cmd]
   when :gen, :regen
+    pages, nums = ARGV.partition { |a| a =~ /\A(zad|vz)\d+\z/ }
+    rocniky = nums.map { |a| Integer(a) }
+    abort 'Stránku zadej i s ročníkem: --regen --force 42 zad2' if !pages.empty? && rocniky.empty?
     Tex2Wiki::Mirror.refresh unless opt[:src]
     repo.prepare
-    rocniky = ARGV.map { |a| Integer(a) }
     rocniky = repo.recent_rocniky if rocniky.empty?
+    only = pages.map { |p| [!!opt[:junior], p] } unless pages.empty?
     s = sync.call
     opt[:publish].each do |spec|
       m = spec.match(%r{\A(?:(\d+)/)?(j)?(\d+)([zr]+)\z}) or abort "--publish #{spec}: čekám např. 42/2r nebo 42/j2z"
@@ -591,7 +595,7 @@ if $PROGRAM_NAME == __FILE__
     end
     res = Hash.new { |h, k| h[k] = [] }
     rocniky.sort.each do |r|
-      s.run(r, mode: opt[:cmd]).each { |k, v| res[k].concat(v) }
+      s.run(r, mode: opt[:cmd], only: only).each { |k, v| res[k].concat(v) }
     end
     puts
     puts "Zapsáno: #{res[:written].size} stránek." unless res[:written].empty?
@@ -599,7 +603,7 @@ if $PROGRAM_NAME == __FILE__
     puts "TeX se změnil, přepíše --regen: #{res[:outdated].join(', ')}" unless res[:outdated].empty?
     unless res[:edited].empty?
       puts "Ručně upravené, nepřepisuji: #{res[:edited].join(', ')}"
-      puts "  (rozdíl: #{me} diff 42 zad2 [--junior]; přepsat: #{me} --regen --force)"
+      puts "  (rozdíl: #{me} diff 42 zad2 [--junior]; přepsat jen ji: #{me} --regen --force 42 zad2 [--junior])"
     end
     puts "Nezveřejněné série se zdrojem: #{res[:unpublished].join(' ')}  (zveřejní --publish ROCNIK/SERIE)" unless res[:unpublished].empty?
     puts

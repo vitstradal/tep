@@ -177,6 +177,15 @@ class Tex2WikiSyncTest < Minitest::Test
     assert_includes out.string, 'obrázek 3x3.mrizka.png <- '
   end
 
+  def test_force_only_selected_page
+    sync.publish(41, 2, 'r')
+    sync.run(41)
+    %w[zad2 vz2].each { |p| File.write(page(p), "ruční #{p}\n") }
+    sync(force: true).run(41, only: [[false, 'zad2']])
+    assert_includes File.read(page('zad2')), '=== Úloha č. 1 ==='
+    assert_equal "ruční vz2\n", File.read(page('vz2'))
+  end
+
   def test_keeps_hand_edited_pages
     sync.run(41)
     File.write(page('zad2'), File.read(page('zad2')) + "ruční doplněk\n")
