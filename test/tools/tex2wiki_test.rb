@@ -161,6 +161,22 @@ class Tex2WikiSyncTest < Minitest::Test
     assert_includes File.read(page('zad2')), '=== Úloha č. 1 ==='
   end
 
+  def test_fills_emptied_page
+    File.write(page('zad2'), "\n")
+    sync.run(41)
+    assert_includes File.read(page('zad2')), '=== Úloha č. 1 ==='
+  end
+
+  def test_image_pdf_with_dashes_and_missing_image_of_unchanged_page
+    File.write(File.join(@src, '41_1_k/zad2.tex'), "\\ses2{1. 12. 2025}\n\\ul1\n\\obrazky{3x3.mrizka|7cm|}\n\\ulend\n")
+    FileUtils.mkdir_p(File.join(@src, '41_1_k/obrazky'))
+    File.write(File.join(@src, '41_1_k/obrazky/3x3-mrizka.pdf'), '')
+    sync.run(41)
+    out = StringIO.new
+    Tex2Wiki::Sync.new(web: @web, srcs: [@src], out: out).run(41)
+    assert_includes out.string, 'obrázek 3x3.mrizka.png <- '
+  end
+
   def test_keeps_hand_edited_pages
     sync.run(41)
     File.write(page('zad2'), File.read(page('zad2')) + "ruční doplněk\n")

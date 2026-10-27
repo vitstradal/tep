@@ -163,10 +163,11 @@ module Tex2Wiki
       flags(src.rocnik, src.junior)[src.serie].to_s.include?('r')
     end
 
-    # :new, :stub, :ours, :edited
+    # :new, :empty, :stub, :ours, :edited
     def state(path)
       return :new unless File.exist?(path)
       cur = File.read(path, encoding: 'UTF-8').scrub
+      return :empty if cur.strip.empty?
       return :stub if cur.gsub(/^=+[^=\n]*=+\s*$/, '') =~ REDIRECT_STUB
       m = cur.match(MARKER)
       return :edited unless m
@@ -175,13 +176,13 @@ module Tex2Wiki
 
     TEMPLATE_SIZE = 1000
 
-    STATES = { new: 'nová', stub: 'místo odkazu na pdf', ours: 'aktualizace', edited: 'PŘEPSÁNÍ ruční úpravy' }.freeze
+    STATES = { new: 'nová', empty: 'místo prázdné stránky', stub: 'místo odkazu na pdf', ours: 'aktualizace', edited: 'PŘEPSÁNÍ ruční úpravy' }.freeze
 
     # mode :gen jen nové stránky, :regen i vygenerované, které se změnily; ručně upravené jen s force
     # vrací {zapsané: [...], změněné ve zdroji: [...], ruční: [...], nezveřejněné: [...]}
     def run(rocnik, mode: :regen)
       res = Hash.new { |h, k| h[k] = [] }
-      allowed = mode == :gen ? %i[new stub] : %i[new stub ours]
+      allowed = mode == :gen ? %i[new empty stub] : %i[new empty stub ours]
       allowed += [:edited] if @force
       sources(rocnik).each do |src|
         target = File.join(dir(src.rocnik, src.junior), "#{src.page}.wiki")
@@ -192,7 +193,7 @@ module Tex2Wiki
         end
         wiki, conv = render(src)
         if File.exist?(target) && File.read(target) == wiki
-          images(src, conv).each { |i| say "  #{rel}: obrázek #{i}" } if @redo_images
+          images(src, conv).each { |i| say "  #{rel}: obrázek #{i}" }
           next
         end
         st = state(target)
@@ -212,14 +213,14 @@ module Tex2Wiki
       res
     end
 
-    # obrázek zad1.11 -> zad1.11.png (z png, nebo z metapost pdf zad1-11.pdf)
+    # obrázek zad1.11 -> zad1.11.png (z png, nebo z pdf zad1-11.pdf / zad1.11.pdf)
     def images(src, conv)
       todo = []
       conv.images.each do |name|
         dest = File.join(dir(src.rocnik, src.junior), "#{File.basename(name)}.png")
         next if File.exist?(dest) && !@redo_images
         png = find_file(src, "#{name}.png")
-        pdf = find_file(src, "#{name.sub(/\.(\d+)\z/, '-\1')}.pdf") || find_file(src, "#{name}.pdf")
+        pdf = find_file(src, "#{name.tr('.', '-')}.pdf") || find_file(src, "#{name}.pdf")
         unless png || pdf
           todo << "#{name}: CHYBÍ zdroj"
           next
@@ -245,7 +246,7 @@ module Tex2Wiki
     # šířka PNG: velikost v letáku (nebo přirozená velikost PDF) * PX_PER_CM, nejvýš MAX_PX
     def image_px(pdf, cm)
       cm ||= begin
-        out, = Open3.capture2('pdfinfo', pdf)
+        out, = Open3.capture3('pdfinfo', pdf)
         out[/Page size:\s*([\d.]+)/, 1].to_f / 72 * 2.54
       end
       (cm * PX_PER_CM).round.clamp(40, MAX_PX)
