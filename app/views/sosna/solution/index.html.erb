@@ -32,15 +32,23 @@
         <%= button_tag "Filtruj soustredeni", :class=> 'btn btn-primary', ico: 'fa-filter', href: sosna_solutions_org_url(roc:@annual, se:@round, sous: 1) %>
       </div>
       <div class="btn-group">
-        <%= form_tag({action: :update_results, roc: @annual, level: @level, se: @round, ul: @problem_no}, :class => 'btn-group form-inline') do %>
-                <button type="submit" class="btn btn-primary"> <i class="fa fa-flash"></i> Vygenerovat výsledky</button>
+        <% if can? :update_results, Sosna::Solution %>
+          <%= form_tag({action: :update_results, roc: @annual, level: @level, se: @round, ul: @problem_no}, :class => 'btn-group form-inline') do %>
+                  <button type="submit" class="btn btn-primary"> <i class="fa fa-flash"></i> Vygenerovat výsledky</button>
+          <% end %>
+        <% else %>
+          <%= disabled_button 'Vygenerovat výsledky', ico: 'fa-flash' %>
         <% end %>
       </div>
       
       <% if  @problem_no %>
         <div class="btn-group">
            <%= button_tag "Editovat body", :class=> 'btn btn-danger', ico: 'fa-th', href: url_for(action: 'edit', roc: @annual, se: @round, ul: @problem_no)  %>
-           <%= button_tag "Editovat papíry", :class=> 'btn btn-danger', ico: 'fa-file-text', href: url_for(action: 'edit', roc: @annual, se: @round, ul: @problem_no, paper: 'yes')  %>
+           <% if can? :update_papers, Sosna::Solution %>
+             <%= button_tag "Editovat papíry", :class=> 'btn btn-danger', ico: 'fa-file-text', href: url_for(action: 'edit', roc: @annual, se: @round, ul: @problem_no, paper: 'yes')  %>
+           <% else %>
+             <%= disabled_button 'Editovat papíry', ico: 'fa-file-text' %>
+           <% end %>
         </div>
         <hr>
         <%= form_tag({:action => :upload_rev} , :multipart => true , :class => 'form-inline') do %>
@@ -65,8 +73,16 @@
       <% else # problem_no %>
         <div class="btn-group">
           <%= button_tag "Editovat body", :class=> 'btn btn-danger', ico: 'fa-th', href: sosna_solutions_edit2_url(@annual, @level, @round)  %>
-          <%= button_tag "Editovat papíry", :class=> 'btn btn-danger', ico: 'fa-file-text', href: sosna_solutions_edit2_url(@annual, @level, @round, paper: 'yes')  %>
-          <%= button_tag "Editovat penalizaci", :class=> 'btn btn-danger', ico: 'fa-thumbs-down', href: sosna_solutions_edit2_url(@annual, @level, @round, penalisation: 'yes' )  %>
+          <% if can? :update_papers, Sosna::Solution %>
+            <%= button_tag "Editovat papíry", :class=> 'btn btn-danger', ico: 'fa-file-text', href: sosna_solutions_edit2_url(@annual, @level, @round, paper: 'yes')  %>
+          <% else %>
+            <%= disabled_button 'Editovat papíry', ico: 'fa-file-text' %>
+          <% end %>
+          <% if can? :update_penalisations, Sosna::Solution %>
+            <%= button_tag "Editovat penalizaci", :class=> 'btn btn-danger', ico: 'fa-thumbs-down', href: sosna_solutions_edit2_url(@annual, @level, @round, penalisation: 'yes' )  %>
+          <% else %>
+            <%= disabled_button 'Editovat penalizaci', ico: 'fa-thumbs-down' %>
+          <% end %>
         </div>
         <p>Pro nahrání opraveného řešení vyber úlohu:
 
