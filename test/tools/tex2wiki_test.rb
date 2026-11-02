@@ -112,6 +112,12 @@ class Tex2WikiTest < Minitest::Test
   end
 end
 
+# PDF v testech jsou textové soubory
+module PlainPdfText
+  def pdf_text(path) = File.read(path)
+end
+Tex2Wiki::Sync.prepend(PlainPdfText)
+
 class Tex2WikiSyncTest < Minitest::Test
   def setup
     @dir = Dir.mktmpdir
@@ -231,6 +237,73 @@ class Tex2WikiSyncTest < Minitest::Test
   def test_dry_run_writes_nothing
     Tex2Wiki::Sync.new(web: @web, srcs: [@src], out: StringIO.new).run(41)
     refute File.exist?(page('zad2'))
+  end
+
+  def pdf(rel, text = 'pdf')
+    File.write(File.join(@src, rel), text)
+  end
+
+  def web_pdf(name)
+    File.join(@web, 'archiv/rocnik41', name)
+  end
+
+  def test_header_links_rules_without_zde
+    sync.run(41)
+    head = File.read(page('zad2'))[/\A.*?^----$/m]
+    assert_includes head, '[[/pravidla|pravidla pro odevzdávání řešení]]'
+    assert_includes head, 'Řešení posílej na adresu: Pikomat'
+    refute_includes head, '|zde]]'
+    refute_includes head, 'fa-file-pdf-o'
+  end
+
+  def test_copies_and_links_pdfs_of_published_series
+    pdf('41_1_k/zad2.pdf')
+    pdf('41_1_k/vz2.pdf')
+    pdf('41_1_k/letak1.pdf', "Zadání úloh 2. série 41. ročníku\n…\nZadání úloh 3.\nsérie 41. ročníku")
+    File.write(File.join(@src, '41_1_k/zad3.tex'), "\\ses3{12. 1. 2026}\n\\ul1\nTřetí.\n\\ulend\n")
+    index('{{archiv  41|zrv|z|z}}')
+    res = sync.run(41)
+    assert_equal %w[zad2.pdf letak1.pdf], %w[zad2.pdf letak1.pdf vz2.pdf].select { |f| File.exist?(web_pdf(f)) }
+    assert_includes File.read(page('zad2')),
+                    '{{ico fa-file-pdf-o}} [[/archiv/rocnik41/zad2.pdf|zadání]] · {{ico fa-file-pdf-o}} [[/archiv/rocnik41/letak1.pdf|celý leták]]'
+    assert_includes File.read(page('zad3')), '[[/archiv/rocnik41/letak1.pdf|celý leták]]'
+    assert_includes res[:pdf_missing], 'archiv/rocnik41/zad3.pdf'
+    sync.publish(41, 2, 'r')
+    sync.run(41)
+    assert File.exist?(web_pdf('vz2.pdf'))
+    assert_includes File.read(page('vz2')), '{{ico fa-file-pdf-o}} [[/archiv/rocnik41/vz2.pdf|vzorová řešení]]'
+    assert_includes File.read(page('vz2')), 'K těmto řešením patří [[/archiv/rocnik41/zad2|zadání 2. série]].'
+  end
+
+  def test_newer_pdf_overwrites_web_and_web_only_pdf_stays
+    pdf('41_1_k/zad2.pdf', 'v1')
+    File.write(web_pdf('letak1.pdf'), 'Zadání úloh 2. série 41. ročníku')
+    sync.run(41)
+    pdf('41_1_k/zad2.pdf', 'v2')
+    res = sync.run(41)
+    assert_equal 'v2', File.read(web_pdf('zad2.pdf'))
+    assert_equal ['archiv/rocnik41/zad2.pdf'], res[:pdf]
+    assert_includes File.read(page('zad2')), '[[/archiv/rocnik41/letak1.pdf|celý leták]]'
+  end
+
+  def test_dry_run_links_pdf_but_copies_nothing
+    pdf('41_1_k/zad2.pdf')
+    out = StringIO.new
+    Tex2Wiki::Sync.new(web: @web, srcs: [@src], out: out).run(41)
+    assert_includes out.string, 'pdf zad2.pdf <- '
+    refute File.exist?(web_pdf('zad2.pdf'))
+  end
+
+  def test_junior_pdf_is_recommended_for_print
+    FileUtils.mkdir_p([File.join(@src, '41_4_j'), File.join(@web, 'archiv/rocnik41/junior')])
+    File.write(File.join(@src, '41_4_j/zad5j.tex'), "\\ses5{1. 3. 2026}\n\\ul1\nJunior.\n\\ulend\n")
+    File.write(File.join(@src, '41_4_j/zad5.pdf'), 'pdf')
+    File.write(File.join(@src, '41_4_j/letak4.pdf'), 'Zadání příkladů 5. série 41. ročníku Pikomatu Junior')
+    File.write(File.join(@web, 'archiv/index.wiki'), "{{archiv  41|z}}\n{{archiv_junior 41|||||z}}\n")
+    sync.run(41)
+    w = File.read(File.join(@web, 'archiv/rocnik41/junior/zad5.wiki'))
+    assert_includes w, '**[[/archiv/rocnik41/junior/zad5.pdf|Zadání k vytištění]]**'
+    assert_includes w, '[[/archiv/rocnik41/junior/letak4.pdf|celý leták]]'
   end
 end
 

@@ -554,6 +554,11 @@ if $PROGRAM_NAME == __FILE__
              tex2wiki --clean                   zahodí necommitnuté změny v klonu
       Bez ROCNIK bere letošní a loňský ročník. Klon webu: ~/tex2wiki-web (udělá si ho sám).
 
+      PDF: nahraj do kořene projektu v překlepu zadN.pdf (samostatné zadání), vzN.pdf (vzoráky)
+      a letakM.pdf (celý leták, M = číslo letáku). tex2wiki je zkopíruje vedle stránek a dá na ně
+      odkaz: zadN a letak se zveřejní se zadáním (z), vzN s řešením (r). Leták se pozná podle
+      textu „Zadání úloh N. série“, takže leták se zadáním 2. a 3. série dostanou obě stránky.
+
       ladění: tex2wiki soubor.tex [--rocnik N] [--junior]      převod na stdout
               tex2wiki check ROCNIK                             shoda stránek s novým převodem
               tex2wiki diff ROCNIK zad3|vz3 [--junior]          rozdíl stránky a nového převodu
@@ -599,12 +604,14 @@ if $PROGRAM_NAME == __FILE__
     end
     puts
     puts "Zapsáno: #{res[:written].size} stránek." unless res[:written].empty?
-    puts "Nic nového." if res[:written].empty? && opt[:publish].empty?
+    puts "PDF z překlepu: #{res[:pdf].uniq.join(', ')}" unless res[:pdf].empty?
+    puts "Nic nového." if res[:written].empty? && res[:pdf].empty? && opt[:publish].empty?
     puts "TeX se změnil, přepíše --regen: #{res[:outdated].join(', ')}" unless res[:outdated].empty?
     unless res[:edited].empty?
       puts "Ručně upravené, nepřepisuji: #{res[:edited].join(', ')}"
       puts "  (rozdíl: #{me} diff 42 zad2 [--junior]; přepsat jen ji: #{me} --regen --force 42 zad2 [--junior])"
     end
+    puts "PDF chybí (nahraj do kořene projektu v překlepu): #{res[:pdf_missing].uniq.join(', ')}" unless res[:pdf_missing].empty?
     puts "Nezveřejněné série se zdrojem: #{res[:unpublished].join(' ')}  (zveřejní --publish ROCNIK/SERIE)" unless res[:unpublished].empty?
     puts
     if repo.dirty?

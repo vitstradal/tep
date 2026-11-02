@@ -112,38 +112,46 @@ module Tex2Wiki
       "/archiv/rocnik#{rocnik}#{junior ? '/junior' : ''}/#{page}"
     end
 
-    def pdf_link(rocnik, junior, name)
-      File.exist?(File.join(dir(rocnik, junior), name)) ? "#{url(rocnik, junior, name)}" : nil
+    VIDEO = 'https://www.youtube.com/watch?v=03xRajBF5zA&feature=youtu.be'
+    ADRESA = 'Pikomat, KPMS MFF UK, Sokolovská 83, 186 75 Praha 8'
+    PDF_ICO = '{{ico fa-file-pdf-o}}'
+
+    # odkaz na PDF, které je na webu, nebo ho pdfs zkopíruje z překlepu
+    def pdf_url(src, name)
+      file = pdf_files(src).find { |n, _| n == name } or return
+      url(src.rocnik, src.junior, name) if file[1] || File.exist?(File.join(dir(src.rocnik, src.junior), name))
     end
 
     def header(src, conv)
       r, j, n = src.rocnik, src.junior, src.serie
       kdo = j ? ' Pikomatu Junior' : ''
+      pdf = ->(name, text) { (u = pdf_url(src, name)) && "#{PDF_ICO} [[#{u}|#{text}]]" }
       h = +''
       if src.kind == :zad
         h << "= Zadání #{n}. série #{r}. ročníku#{kdo} =\n\n"
         h << "Termín odeslání: #{conv.meta[:termin]}\n\n" if conv.meta[:termin]
         if j
-          h << "Pikomat Junior je **pro řešitele 3. až 6. tříd**, můžou se zúčastnit i mladší.\n\n"
-          h << "Jak řešit, odevzdávat a další důležité informace ohledně Pikomatu Junior naleznete [[/junior|zde]].\n\n"
+          h << "Pikomat Junior je **pro řešitele 3. až 6. tříd**, můžou se zúčastnit i mladší. " \
+               "[[/junior|Jak řešit a odevzdávat]] a další důležité informace najdeš na stránce Juniora.\n\n"
         else
-          h << "Pravidla pro odevzdávání řešení najdete [[/pravidla|zde]]. O tom, jak řešení sepisovat, si můžete přečíst [[/jak_sepisovat|zde]] nebo se podívat na [[https://www.youtube.com/watch?v=03xRajBF5zA&feature=youtu.be|video]].\n\n"
+          h << "Než začneš psát, pozorně si přečti [[/pravidla|pravidla pro odevzdávání řešení]] a " \
+               "[[/jak_sepisovat|návod, jak řešení sepsat]], nebo se podívej na [[#{VIDEO}|krátké video]].\n\n"
         end
-        h << "Adresa: Pikomat, KPMS MFF UK, Sokolovská 83, 186 75 Praha 8\n\n"
-        pdfs = []
-        if j && pdf_link(r, j, "zad#{n}.pdf")
-          pdfs << "Zadání je k dispozici také ve formátu **[[#{pdf_link(r, j, "zad#{n}.pdf")}|pdf]]**. Velice **doporučujeme dětem dát toto vytištěné zadání**."
-        elsif pdf_link(r, j, "zad#{n}.pdf")
-          pdfs << "Samostatné zadání je k dispozici také ve formátu [[#{pdf_link(r, j, "zad#{n}.pdf")}|pdf]]."
-        end
-        pdfs.unshift("Celý leták najdete ve formátu pdf [[#{pdf_link(r, j, "letak#{n}.pdf")}|zde]].") if pdf_link(r, j, "letak#{n}.pdf")
-        h << pdfs.join(' ') << "\n" unless pdfs.empty?
+        h << "Řešení posílej na adresu: #{ADRESA}\n\n"
+        zadani = if j && (u = pdf_url(src, "zad#{n}.pdf"))
+                   "#{PDF_ICO} **[[#{u}|Zadání k vytištění]]**: dětem ho velice doporučujeme dát vytištěné."
+                 else
+                   pdf.call("zad#{n}.pdf", 'zadání')
+                 end
+        letak = letaky(r, j)[n]
+        links = [zadani, letak && pdf.call(letak[0], 'celý leták')]
       else
         h << "= Vzorová řešení #{n}. série #{r}. ročníku#{kdo} =\n\n"
-        h << "Zadání této série najdete [[#{url(r, j, "zad#{n}")}|zde]].\n\n"
-        pdf = pdf_link(r, j, "vz#{n}.pdf")
-        h << "Vzorová řešení jsou k dispozici také ve formátu [[#{pdf}|pdf]].\n" if pdf
+        h << "K těmto řešením patří [[#{url(r, j, "zad#{n}")}|zadání #{n}. série]].\n\n"
+        links = [pdf.call("vz#{n}.pdf", 'vzorová řešení')]
       end
+      links.compact!
+      h << links.join(' · ') << "\n\n" unless links.empty?
       h << "----\n\n"
     end
 
@@ -193,6 +201,7 @@ module Tex2Wiki
           res[:unpublished] << "#{rocnik}/#{src.junior ? 'j' : ''}#{src.serie}#{src.kind == :vz ? 'r' : 'z'}"
           next
         end
+        pdfs(src, res).each { |p| say "  #{rel}: pdf #{p}" }
         wiki, conv = render(src)
         if File.exist?(target) && File.read(target) == wiki
           images(src, conv).each { |i| say "  #{rel}: obrázek #{i}" }
@@ -240,6 +249,65 @@ module Tex2Wiki
         end
       end
       todo
+    end
+
+    # [jméno na webu, zdroj v překlepu nebo nil]; leták podle série, jejíž zadání obsahuje
+    def pdf_files(src)
+      n = src.serie
+      return [["vz#{n}.pdf", pdf_source(src, "vz#{n}.pdf")]] if src.kind == :vz
+      [["zad#{n}.pdf", pdf_source(src, "zad#{n}.pdf")], letaky(src.rocnik, src.junior)[n]].compact
+    end
+
+    # zadN.pdf, letakM.pdf, vzN.pdf z překlepu vedle stránky; novější z překlepu přepíše, nic nemaže
+    def pdfs(src, res)
+      rel_dir = dir(src.rocnik, src.junior).delete_prefix("#{@web}/")
+      res[:pdf_missing] << "#{rel_dir}/letak*.pdf se zadáním #{src.serie}. série" if src.kind == :zad && !letaky(src.rocnik, src.junior)[src.serie]
+      pdf_files(src).filter_map do |name, from|
+        dest = File.join(dir(src.rocnik, src.junior), name)
+        unless from
+          res[:pdf_missing] << "#{rel_dir}/#{name}" unless File.exist?(dest)
+          next
+        end
+        next if File.exist?(dest) && FileUtils.compare_file(from, dest)
+        if @write
+          FileUtils.mkdir_p(File.dirname(dest))
+          FileUtils.cp(from, dest)
+        end
+        res[:pdf] << "#{rel_dir}/#{name}"
+        "#{name} <- #{from}"
+      end.uniq
+    end
+
+    # kořen projektu zdroje, pak kořeny ostatních projektů ročníku
+    def pdf_source(src, name)
+      root = @srcs.find { |d| src.path.start_with?("#{d}/") } or return
+      project = File.join(root, src.path.delete_prefix("#{root}/").split('/').first)
+      [project, *projects(src.rocnik, src.junior)].map { |d| File.join(d, name) }.find { |f| File.file?(f) }
+    end
+
+    def projects(rocnik, junior)
+      @srcs.flat_map { |d| Dir.glob(File.join(d, "#{rocnik}_*")).sort }.select { |d| junior_path?("#{d}/") == junior }
+    end
+
+    # {série => [letakM.pdf, zdroj v překlepu nebo nil]} podle „Zadání úloh/příkladů N. série R. ročníku“ v PDF
+    def letaky(rocnik, junior)
+      @letaky ||= {}
+      @letaky[[rocnik, junior]] ||= begin
+        files = Dir.glob(File.join(dir(rocnik, junior), 'letak*.pdf')).to_h { |f| [File.basename(f), nil] }
+        projects(rocnik, junior).reverse_each do |d|
+          Dir.glob(File.join(d, 'letak*.pdf')).each { |f| files[File.basename(f)] = f }
+        end
+        files.each_with_object({}) do |(name, from), map|
+          text = pdf_text(from || File.join(dir(rocnik, junior), name))
+          text.scan(/Zadání\s+\S+\s+(\d+)\.\s*série\s+#{rocnik}\.\s*ročníku/).flatten.map(&:to_i).uniq
+              .each { |n| map[n] ||= [name, from] }
+        end
+      end
+    end
+
+    def pdf_text(path)
+      out, = Open3.capture2('pdftotext', '-q', path, '-')
+      out.force_encoding('UTF-8').scrub
     end
 
     PX_PER_CM = 38
@@ -388,7 +456,7 @@ module Tex2Wiki
       git('add', '-A', 'archiv')
       files = git('diff', '--cached', '--name-only').lines.map(&:chomp)
       return files if files.empty?
-      pages = files.grep(/\.wiki\z/).map { |f| f.delete_prefix('archiv/').delete_suffix('.wiki') }
+      pages = files.grep(/\.(wiki|pdf)\z/).map { |f| f.delete_prefix('archiv/').delete_suffix('.wiki') }
       git('commit', '-q', '-m', "archiv: #{pages.join(', ')} (tex2wiki)")
       git('pull', '-q', '--rebase')
       git('push', '-q')
