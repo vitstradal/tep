@@ -81,6 +81,11 @@
         <%= f.text_field :place_return, :size=>"7", :value => event_participant.place_return %>
       </td>
     <% end %>
+    <% if event_participant.event.spec_tshirt %>
+      <td>
+        <%= f.text_field :tshirt, :size=>"4", :value => event_participant.tshirt %>
+      </td>
+    <% end %>
 
     <% if event_participant.event.spec_participant %>
       <td>
@@ -152,6 +157,17 @@
     <% if current_user.org? || event_participant.participant.is_me?(current_user) %>
       <td>
       <%= event_participant.place_return %>
+      </td>
+    <% else %>
+      <td style="background-color:#dcdcdc;">
+      </td>
+    <% end %>
+  <% end %>
+
+  <% if event_participant.event.spec_tshirt %>
+    <% if current_user.org? || event_participant.participant.is_me?(current_user) %>
+      <td>
+      <%= event_participant.tshirt %>
       </td>
     <% else %>
       <td style="background-color:#dcdcdc;">

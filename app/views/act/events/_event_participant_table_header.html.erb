@@ -9,7 +9,7 @@ org only
 <td colspan="<%= num_user_attributes %>" style="text-align: center;">
 user only
 </td>
-<% num_electible_attributes = (@edit_participants ? 4 : 0) + (@event.spec_place ? 1 : 0) + (@event.spec_place_return ? 1 : 0) + (@event.spec_participant ? 1 : 0) + (@event.spec_mass ? 1 : 0) %>
+<% num_electible_attributes = (@edit_participants ? 4 : 0) + (@event.spec_place ? 1 : 0) + (@event.spec_place_return ? 1 : 0) + (@event.spec_tshirt ? 1 : 0) + (@event.spec_participant ? 1 : 0) + (@event.spec_mass ? 1 : 0) %>
 <% if num_electible_attributes > 0 %>
 <td colspan="
 <%= num_electible_attributes %>
@@ -44,6 +44,9 @@ ID
 <% end %>
 <% if @event.spec_place_return %>
 <th>Návrat</th>
+<% end %>
+<% if @event.spec_tshirt %>
+<th>Tričko</th>
 <% end %>
 <% if @event.spec_participant %>
 <th>Info k účastníkovi</th>

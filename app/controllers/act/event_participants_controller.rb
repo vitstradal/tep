@@ -168,7 +168,7 @@ class Act::EventParticipantsController < ActController
 
   private
     def event_participant_params
-      params.require(:event_participant).permit(:status, :note, :place, :mass, :participant_info)
+      params.require(:event_participant).permit(:status, :note, :place, :place_return, :tshirt, :mass, :participant_info)
     end
 
     def _find_event(event_id)

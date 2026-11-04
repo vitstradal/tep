@@ -79,6 +79,7 @@ class Act::EventsController < ActController
       unless @event_participant
         @event_participant = Act::EventParticipant.new
       end
+      @event_participant.tshirt = current_user.participant.tshirt if @event_participant.tshirt.blank?
     end
 
     @num_p_yes = @event.num_signed("yes", false, true, "participant")
@@ -487,6 +488,7 @@ class Act::EventsController < ActController
     _filter_parts()
 
     @attr_table = Act::Participant::ATTR_TABLE
+    @attr_table = @attr_table.merge(event_tshirt: "Velikost trička") if @event.spec_tshirt
     return _display_participants_render_table(format) if format =~ /^(csv|pdf|pdfl)$/
 
 
@@ -503,7 +505,7 @@ class Act::EventsController < ActController
     col = params[:col] || '1111111111111111111111111111111111111111'
     mask = col.split(//).map { |x| x == '1' ? true : false }
 
-    header = _mask(Act::Participant::ATTR_TABLE.keys.map(&:to_s), mask)
+    header = _mask(@attr_table.keys.map(&:to_s), mask)
     parts = []
     if params[:org] != '0'
       parts.push(@orgs_yes)   if params['yes'] != '0'
@@ -525,9 +527,7 @@ class Act::EventsController < ActController
     rows << header
     parts.each do |part|
       part.each do |event_participant|
-        arr = Act::Participant::ATTR_TABLE.keys.map do |attr|
-          event_participant.participant.send(attr)
-        end
+        arr = @attr_table.keys.map { |attr| event_participant.display_attr(attr) }
         rows << _mask(arr, mask)
       end
     end

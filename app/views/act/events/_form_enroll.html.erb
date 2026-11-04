@@ -63,6 +63,15 @@
     <%= f.hidden_field :place_return %>
   <% end %>
 
+  <% if @event.spec_tshirt %>
+    <p>
+      <%= f.label :tshirt, "Velikost trička " %>
+      <%= f.select :tshirt, @event.spec_tshirt_detail.split(',').map(&:strip), { include_blank: true, selected: @event_participant.tshirt } %>
+    </p>
+  <% else %>
+    <%= f.hidden_field :tshirt %>
+  <% end %>
+
   <% if @event.spec_participant %>
     <p>
     <%= f.label :participant_info, "Na co chci u svého dítěte upozornit (neveřejné): " %><br>

@@ -34,6 +34,9 @@ class Act::EventParticipant < ActiveRecord::Base
   ROLE_OPTIONS = ["org", "participant"]
   validates :role, inclusion: { in: ROLE_OPTIONS, message: "Role účasti je org, nebo participant" }, allow_nil: true
 
+  # velikost trička objednaná na akci si účastník pamatuje pro příští přihlášky
+  after_save { participant.update_column(:tshirt, tshirt) if saved_change_to_tshirt? && tshirt.present? }
+
   ##
   # Odhad role z ročníku účastnického účtu (<= 9. ročník = účastník,
   # vyšší = org). *Returns* 'org' | 'participant' | nil (bez ročníku).
@@ -167,10 +170,15 @@ class Act::EventParticipant < ActiveRecord::Base
     end
   end
 
+  # sloupec hromadných informací: údaj z přihlášky na akci, jinak z účastnického účtu
+  def display_attr(attr)
+    attr == :event_tshirt ? tshirt : participant.send(attr)
+  end
+
   ##
   # *Returns* je třeba poslat mail?
   def self.mail_change?(old, new)
-    care_if_changed = [:status, :place, :participant_info, :mass, :chosen]
+    care_if_changed = [:status, :place, :tshirt, :participant_info, :mass, :chosen]
     care_if_changed.each do |attr|
       if old.send(attr) != new.send(attr)
         return true

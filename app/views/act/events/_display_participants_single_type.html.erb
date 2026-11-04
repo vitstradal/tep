@@ -1,8 +1,8 @@
 <% event_participants.each do |participant| %>
    <tr data-org="<%= participant.org? ? 1 : 0 %>"  data-status="<%= participant.status %>" data-chosen="<%= participant.chosen %>" bgcolor="<%= participant.status_color %>" >
-   <% for attr in Act::Participant::ATTR_TABLE do %>
+   <% for attr in @attr_table do %>
      <td>
-       <%= participant.participant.send(attr[0]) %>
+       <%= participant.display_attr(attr[0]) %>
      </td>
   <% end %>
   </tr>

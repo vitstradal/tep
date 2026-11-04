@@ -115,6 +115,13 @@
   </div>
 
   <div class="form-group">
+    <%= f.label :tshirt, "Velikost trička (předvyplní se v přihláškách na akce)", :class => 'col-sm-3 control-label no-padding-right' %>
+    <div class="col-sm-9">
+      <%= f.text_field :tshirt, value: participant.tshirt %>
+    </div>
+  </div>
+
+  <div class="form-group">
     <%= f.label :eating_habits, "Stravovací návyky (např. vegetarián, bez lepku, ...)", :class => 'col-sm-3 control-label no-padding-right' %>
     <div class="col-sm-9 <%= form_error_class participant, :eating_habits %>">
       <%= f.text_area :eating_habits, value: participant.eating_habits %>

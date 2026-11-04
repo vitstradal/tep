@@ -36,4 +36,14 @@ class ActEventParticipantsRoleTest < ActionController::TestCase
     post :set_role, params: { event_id: @event.id, participant_id: @kid.id }
     assert_equal 'participant', @ep.reload.role     # toggle zpět
   end
+
+  test "morg edits return place and t-shirt size in the participants table" do
+    @event.update!(spec_tshirt: true, spec_place_return: true, spec_place_return_detail: 'Praha,Brno')
+    sign_in @morg
+    post :update, params: { event_id: @event.id, participant_id: @kid.id,
+                            event_participant: { place_return: 'Brno', tshirt: 'M' } }
+    @ep.reload
+    assert_equal 'Brno', @ep.place_return
+    assert_equal 'M', @ep.tshirt
+  end
 end

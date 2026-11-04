@@ -71,4 +71,38 @@ class ActEventsOrgAccessTest < ActionController::TestCase
     get :show, params: { event_id: @event.id }
     assert_no_match 'akce se teprve připravuje', response.body
   end
+
+  test "t-shirt size offered on enrollment and shown to morg" do
+    @event.update!(spec_tshirt: true, spec_tshirt_detail: '128, S,M')
+    sign_in @morg
+    get :edit, params: { event_id: @event.id }
+    assert_match 'Účastníci zadávají velikost trička', response.body
+    get :edit_participants, params: { event_id: @event.id }
+    assert_match '<th>Tričko</th>', response.body
+    get :display_participants, params: { event_id: @event.id }
+    assert_match 'Velikost trička', response.body
+  end
+
+  test "t-shirt size is preselected from participant and remembered on change" do
+    @event.update!(spec_tshirt: true, spec_tshirt_detail: '128, S,M',
+                   event_start: Date.today + 30, event_end: Date.today + 40)
+    kid = make_user('kid@x.cz', [:user])
+    p = Act::Participant.create!(name: 'Jan', last_name: 'Kid', nickname: '', grade: 7, email: 'kid@x.cz',
+                                 user_id: kid.id, activated: 'full', tshirt: 'S', phone: '1', parent_email: 'r@x.cz',
+                                 parent_phone: '2', birth: Date.new(2014, 1, 1), address: 'A', birth_number: '1',
+                                 health_insurance: '111', sex: 'male')
+    sign_in kid
+    get :show, params: { event_id: @event.id }
+    assert_select 'select#event_participant_tshirt option', 4
+    assert_select 'select#event_participant_tshirt option[selected][value="S"]'
+    post :enroll, params: { event_id: @event.id,
+                            event_participant: { event_id: @event.id, participant_id: p.id, status: 'yes', chosen: 'participant', tshirt: 'M' } }
+    assert_equal 'M', Act::EventParticipant.find_by(event_id: @event.id, participant_id: p.id).tshirt
+    assert_equal 'M', p.reload.tshirt
+    sign_out kid
+    sign_in @morg
+    get :display_participants, params: { event_id: @event.id, fmt: 'csv' }
+    assert_match(/event_tshirt/, response.body)
+    assert_match(/,M\s*\z/, response.body)
+  end
 end
