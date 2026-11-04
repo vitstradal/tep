@@ -682,7 +682,9 @@ class Act::EventsController < ActController
     end
 
     def event_participant_params
-      params.require(:event_participant).permit!#(:event_id, :participant_id, :status, :note, :place, :mass, :participant_info)
+      ep = params.require(:event_participant).permit!#(:event_id, :participant_id, :status, :note, :place, :mass, :participant_info)
+      ep[:tshirt] = '' if params.key?(:want_tshirt) && params[:want_tshirt] != '1'
+      ep
     end
 
     def _find_event(event_id)
