@@ -46,7 +46,7 @@ Aktuální stav přihlášky:
 <% end %>
 
 <% if @event.spec_tshirt %>
-  <p>Tričko: <b><%= @event_participant.tshirt.presence || "nechce" %></b><p>
+  <p>Velikost trička: <b><%= @event_participant.tshirt %></b><p>
 <% end %>
 
 <% if @event.spec_participant %>

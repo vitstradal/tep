@@ -64,13 +64,9 @@
   <% end %>
 
   <% if @event.spec_tshirt %>
-    <% want_tshirt = @event_participant.new_record? || @event_participant.tshirt_was.present? %>
     <p>
-      <%= hidden_field_tag :want_tshirt, '0', id: nil %>
-      <%= check_box_tag :want_tshirt, '1', want_tshirt, onchange: "document.getElementById('event_participant_tshirt').disabled = !this.checked" %>
-      <%= label_tag :want_tshirt, "Chci tričko" %>,
-      <%= f.label :tshirt, "velikost " %>
-      <%= f.select :tshirt, @event.spec_tshirt_detail.split(',').map(&:strip), { selected: @event_participant.tshirt.presence || 'XS' }, { disabled: !want_tshirt } %>
+      <%= f.label :tshirt, "Velikost trička " %>
+      <%= f.select :tshirt, @event.spec_tshirt_detail.split(',').map(&:strip), { selected: @event_participant.tshirt.presence || 'XS' } %>
     </p>
   <% else %>
     <%= f.hidden_field :tshirt %>

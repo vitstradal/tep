@@ -76,7 +76,7 @@ class ActEventsOrgAccessTest < ActionController::TestCase
     @event.update!(spec_tshirt: true, spec_tshirt_detail: '128, S,M')
     sign_in @morg
     get :edit, params: { event_id: @event.id }
-    assert_match 'Na akci budou trička', response.body
+    assert_match 'Na akci se rozdávají trička', response.body
     get :edit_participants, params: { event_id: @event.id }
     assert_match '<th>Tričko</th>', response.body
     get :display_participants, params: { event_id: @event.id }
@@ -99,20 +99,6 @@ class ActEventsOrgAccessTest < ActionController::TestCase
                             event_participant: { event_id: @event.id, participant_id: p.id, status: 'yes', chosen: 'participant', tshirt: 'M' } }
     assert_equal 'M', Act::EventParticipant.find_by(event_id: @event.id, participant_id: p.id).tshirt
     assert_equal 'M', p.reload.tshirt
-    get :show, params: { event_id: @event.id }
-    assert_select 'input#want_tshirt[checked]'
-    post :enroll, params: { event_id: @event.id, want_tshirt: '0',
-                            event_participant: { event_id: @event.id, participant_id: p.id, status: 'yes', chosen: 'participant' } }
-    assert_equal '', Act::EventParticipant.find_by(event_id: @event.id, participant_id: p.id).tshirt
-    assert_equal 'M', p.reload.tshirt
-    sign_out kid
-    sign_in kid.reload
-    get :show, params: { event_id: @event.id }
-    assert_select 'input#want_tshirt'
-    assert_select 'input#want_tshirt[checked]', 0
-    assert_select 'select#event_participant_tshirt[disabled] option[selected][value="M"]'
-    post :enroll, params: { event_id: @event.id, want_tshirt: '1',
-                            event_participant: { event_id: @event.id, participant_id: p.id, status: 'yes', chosen: 'participant', tshirt: 'M' } }
     sign_out kid
     sign_in @morg
     get :display_participants, params: { event_id: @event.id, fmt: 'csv' }
