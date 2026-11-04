@@ -117,7 +117,7 @@
   <div class="form-group">
     <%= f.label :tshirt, "Velikost trička (předvyplní se v přihláškách na akce)", :class => 'col-sm-3 control-label no-padding-right' %>
     <div class="col-sm-9">
-      <%= f.select :tshirt, (Act::Participant::TSHIRT_SIZES | [participant.tshirt].reject(&:blank?)), { include_blank: true, selected: participant.tshirt } %>
+      <%= f.select :tshirt, (Act::Participant::TSHIRT_SIZES | [participant.tshirt].reject(&:blank?)), { selected: participant.tshirt.presence || 'XS' } %>
     </div>
   </div>
 

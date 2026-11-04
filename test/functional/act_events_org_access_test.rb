@@ -93,7 +93,7 @@ class ActEventsOrgAccessTest < ActionController::TestCase
                                  health_insurance: '111', sex: 'male')
     sign_in kid
     get :show, params: { event_id: @event.id }
-    assert_select 'select#event_participant_tshirt option', 4
+    assert_select 'select#event_participant_tshirt option', 3
     assert_select 'select#event_participant_tshirt option[selected][value="S"]'
     post :enroll, params: { event_id: @event.id,
                             event_participant: { event_id: @event.id, participant_id: p.id, status: 'yes', chosen: 'participant', tshirt: 'M' } }

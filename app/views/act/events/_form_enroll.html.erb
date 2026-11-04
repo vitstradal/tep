@@ -66,7 +66,7 @@
   <% if @event.spec_tshirt %>
     <p>
       <%= f.label :tshirt, "Velikost trička " %>
-      <%= f.select :tshirt, @event.spec_tshirt_detail.split(',').map(&:strip), { include_blank: true, selected: @event_participant.tshirt } %>
+      <%= f.select :tshirt, @event.spec_tshirt_detail.split(',').map(&:strip), { selected: @event_participant.tshirt.presence || 'XS' } %>
     </p>
   <% else %>
     <%= f.hidden_field :tshirt %>

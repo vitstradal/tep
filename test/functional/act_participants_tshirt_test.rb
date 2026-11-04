@@ -21,6 +21,9 @@ class ActParticipantsTshirtTest < ActionController::TestCase
     get :edit, params: { participant_id: @p.id }
     assert_select 'select#participant_tshirt option[selected][value="S"]'
     assert_select 'select#participant_tshirt option[value="3XL"]'
+    @p.update_column(:tshirt, '')
+    get :edit, params: { participant_id: @p.id }
+    assert_select 'select#participant_tshirt option[selected][value="XS"]'
     @p.update_column(:tshirt, '140')
     get :edit, params: { participant_id: @p.id }
     assert_select 'select#participant_tshirt option[selected][value="140"]'
