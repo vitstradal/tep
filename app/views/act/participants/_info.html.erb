@@ -25,6 +25,7 @@
 
 <%= render :partial => "display_doubleton", locals: { first: "Telefonní číslo na zákonného zástupce", second: participant.parent_phone.to_s } %>
 
+<%= render :partial => "display_doubleton", locals: { first: "Velikost trička", second: participant.tshirt.to_s } %>
 <%= render :partial => "display_doubleton", locals: { first: "Stravovací návyky", second: participant.eating_habits.to_s } %>
 
 <%= render :partial => "display_doubleton", locals: { first: "Zdravotní problémy", second: participant.health_problems.to_s } %>
