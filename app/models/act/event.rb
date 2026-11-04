@@ -152,6 +152,7 @@ class Act::Event < ActiveRecord::Base
 
     # helper method for deciding whether the target event should be visible for the current user
   def event_visible?(user)
+    return !!(user && (user.admin? || user.morg?)) if visible == 'morg'
     return (user && user.admin?) || ((visible == 'ev' || (user && (user.org? || visible=='user'))) &&
        (Act::EventInvitation::chosen_ps?(self, Act::Participant::get_participant(user)) ||
         ((user.nil? || ! user.org?) && !uninvited_participants_dont_see) || (user && user.org? && !uninvited_organisers_dont_see)))

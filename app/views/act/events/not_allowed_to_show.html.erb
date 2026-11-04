@@ -2,6 +2,8 @@
 K zobrazení této akce bohužel nemáš oprávnění. Abys mohl vidět informace o této akci, musíš být
 <% if @event.visible == "user" %>
   přihlášený.
+<% elsif @event.visible == "morg" %>
+  morg (akce se teprve připravuje).
 <% else %>
   org.
 <% end %>

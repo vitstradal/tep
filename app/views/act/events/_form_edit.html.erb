@@ -20,7 +20,7 @@
     <span id="full_act_categories" data-codes=<%= Act::EventCategory::all_full_act().to_json %>></span>
 
   <div id='event_visible_all_divx'>
-    <%= render :partial => "f_select", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :visible, text: 'Kdo se o akci vůbec dozví', options: [["každý", "ev"], ["user", "user"], ["org", "org"]] } %>
+    <%= render :partial => "f_select", locals: { f: f, obj: @event, is_jakna: is_jakna, name: :visible, text: 'Kdo se o akci vůbec dozví', options: [["každý", "ev"], ["user", "user"], ["org", "org"], ["jen morg (příprava)", "morg"]] } %>
   </div>
 
   <div id='event_visible_restricted_div'>

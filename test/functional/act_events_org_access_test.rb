@@ -56,4 +56,19 @@ class ActEventsOrgAccessTest < ActionController::TestCase
     get :jakna
     assert_response :success
   end
+
+  test "event in preparation is visible only to morg" do
+    @event.update!(visible: 'morg')
+    sign_in @org
+    get :show, params: { event_id: @event.id }
+    assert_match 'akce se teprve připravuje', response.body
+    get :index
+    assert_no_match 'Tábor 2026', response.body
+    sign_out @org
+    sign_in @morg
+    get :index
+    assert_match 'Tábor 2026', response.body
+    get :show, params: { event_id: @event.id }
+    assert_no_match 'akce se teprve připravuje', response.body
+  end
 end
