@@ -216,6 +216,8 @@ class Act::Participant < ActiveRecord::Base
     male? ? "Muž" : "Žena"
   end
 
+  TSHIRT_SIZES = %w[XS S M L XL XXL 3XL]
+
   ATTR_TABLE =
     {
       id: "Id",

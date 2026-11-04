@@ -19,7 +19,11 @@ class ActParticipantsTshirtTest < ActionController::TestCase
     get :show, params: { participant_id: @p.id }
     assert_match 'Velikost trička', response.body
     get :edit, params: { participant_id: @p.id }
-    assert_select 'input#participant_tshirt[value="S"]'
+    assert_select 'select#participant_tshirt option[selected][value="S"]'
+    assert_select 'select#participant_tshirt option[value="3XL"]'
+    @p.update_column(:tshirt, '140')
+    get :edit, params: { participant_id: @p.id }
+    assert_select 'select#participant_tshirt option[selected][value="140"]'
     patch :update, params: { participant_id: @p.id, participant: { tshirt: 'L' } }
     assert_equal 'L', @p.reload.tshirt
   end
