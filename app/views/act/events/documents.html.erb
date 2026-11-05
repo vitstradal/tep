@@ -6,6 +6,9 @@
   <h2>Potřebné dokumenty</h2>
   <p>
     K akci je potřeba vytisknout a podepsat několik dokumentů (přihlášku, souhlasy, prohlášení o bezinfekčnosti apod.).
+    Můžeš si stáhnout
+    <%= button_tag 'dokumenty bez osobních údajů', href: act_event_my_papers_please_path(@event.id), class: 'btn btn-white btn-sm', ico: 'fa-file-pdf-o', target: 'act_export' %>
+    – údaje o akci jsou vyplněné, údaje o dítěti doplň ručně.
   </p>
   <div class="alert alert-info">
     <b>Když se přihlásíš a máš účastnický účet</b>, dokumenty ti předvyplníme – jméno, datum narození, rodné číslo,

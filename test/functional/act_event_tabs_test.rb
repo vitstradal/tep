@@ -101,7 +101,10 @@ class ActEventDocumentsTest < ActionController::TestCase
     assert_match 'předvyplníme', response.body
     assert_select 'a[href^="/users/sign_in"]'
     assert_select 'a[href="/act/participants/new_complet"]'
+    assert_select "a[href=?]", "/act/events/#{@event.id}/papers_please/my"
     assert_select 'table', 0
+    get :my_papers_please, params: { event_id: @event.id }
+    assert_response :success
   end
 
   test "participant sees filled values and edit link" do
