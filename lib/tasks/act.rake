@@ -19,42 +19,64 @@ namespace :act do
     puts "act:backfill_roles: doplněno #{count} rolí (akce od #{sy_start})"
   end
 
-  desc 'Porovnej datum narození účastníků s řešiteli téhož uživatele; FIX=1 opraví posun o den podle řešitele'
-  task birth_check: :environment do
-    fix = ENV['FIX'] == '1'
-    parse = ->(s) { (m = s.to_s.match(/(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})/)) && (Date.new(m[3].to_i, m[2].to_i, m[1].to_i) rescue nil) }
-    hours = Hash.new(0)
-    shifted, other, conflict, fixed = [], [], [], 0
+  birth_header = %w[id jmeno prijmeni email ulozeno_utc zobrazuje resitel navrh duvod]
+  parse_cz_date = lambda do |str|
+    m = str.to_s.match(/(\d{1,2})\.\s*(\d{1,2})\.\s*(\d{4})/)
+    m && (Date.new(m[3].to_i, m[2].to_i, m[1].to_i) rescue nil)
+  end
+  cz_date = ->(date) { date&.strftime('%-d.%-m.%Y') }
 
-    Act::Participant.where.not(birth: nil).find_each do |par|
-      utc = par.birth.utc
-      hours[utc.hour] += 1
-      next if par.user_id.nil?
-      solver_dates = Sosna::Solver.where(user_id: par.user_id).pluck(:birth).map(&parse).compact.uniq
-      next if solver_dates.empty?
-      line = "  par #{par.id} #{par.name} #{par.last_name}: účastník #{utc.strftime('%-d. %-m. %Y %H:%M')} UTC, řešitel #{solver_dates.map { |d| d.strftime('%-d. %-m. %Y') }.join(' / ')}"
-      if solver_dates.size > 1
-        conflict << line
-        next
-      end
-      solver = solver_dates.first
-      diff = (solver - utc.to_date).to_i
-      next if diff == 0
-      if diff.abs == 1
-        shifted << line
-        if fix
-          par.update_column(:birth, Time.utc(solver.year, solver.month, solver.day))
-          fixed += 1
+  desc 'Vyexportuj data narození všech účastníků s návrhem opravy do CSV (FILE=, výchozí tmp/birth.csv); sloupec navrh pak uprav a pusť act:birth_import'
+  task birth_export: :environment do
+    require 'csv'
+    file = ENV['FILE'] || Rails.root.join('tmp', 'birth.csv').to_s
+    this_year = Date.current.year
+    plausible = ->(d) { d.year.between?(this_year - 40, this_year - 3) }
+    counts = Hash.new(0)
+    rows = []
+    Act::Participant.order(:last_name, :name).find_each do |par|
+      utc = par.birth&.utc
+      shown = utc&.to_date
+      fixed = utc && (utc.hour >= 12 ? shown + 1 : shown)
+      solver = par.user_id ? Sosna::Solver.where(user_id: par.user_id).pluck(:birth).map(&parse_cz_date).compact.uniq : []
+      tz = fixed != shown ? ' (po opravě časové zóny)' : ''
+      proposal, why =
+        if fixed.nil? then [solver.size == 1 ? solver.first : nil, 'nevyplněno']
+        elsif solver.empty? then [fixed, "bez řešitele#{tz}"]
+        elsif solver.include?(fixed) then [fixed, "sedí s řešitelem#{tz}"]
+        elsif !plausible.(fixed) && solver.count(&plausible) == 1 then [solver.find(&plausible), 'nesmyslný rok u účastníka, podle řešitele']
+        else [fixed, "ROZHODNI: liší se od řešitele#{tz}"]
         end
-      else
-        other << line
-      end
+      counts[why.sub(tz, '')] += 1
+      rows << [par.id, par.name, par.last_name, par.email, utc&.strftime('%Y-%m-%d %H:%M'), cz_date.(shown),
+               solver.map { |d| cz_date.(d) }.join(' / '), cz_date.(proposal), why]
     end
+    CSV.open(file, 'w', col_sep: ';') do |csv|
+      csv << birth_header
+      rows.sort_by { |r| r[8].start_with?('ROZHODNI') ? 0 : 1 }.each { |r| csv << r }
+    end
+    puts "act:birth_export: #{file}"
+    counts.sort_by { |_, n| -n }.each { |why, n| puts "  #{why}: #{n}" }
+  end
 
-    puts "Hodina (UTC) uloženého data narození: #{hours.sort.map { |h, n| "#{h}h: #{n}" }.join(', ')}"
-    puts "Posun o den proti řešiteli (#{shifted.size}):", *shifted
-    puts "Jiný rozdíl – řeší člověk (#{other.size}):", *other
-    puts "Řešitelé téhož uživatele se neshodnou (#{conflict.size}):", *conflict
-    puts fix ? "Opraveno #{fixed} účastníků podle řešitele." : "Nic neměněno; opravu posunů spustí FIX=1."
+  desc 'Nastav data narození podle sloupce navrh v CSV z act:birth_export (FILE=); bez APPLY=1 jen vypíše změny'
+  task birth_import: :environment do
+    require 'csv'
+    file = ENV['FILE'] || Rails.root.join('tmp', 'birth.csv').to_s
+    apply = ENV['APPLY'] == '1'
+    changed = 0
+    CSV.foreach(file, col_sep: ';', headers: true) do |row|
+      next if row['navrh'].to_s.strip.empty?
+      date = parse_cz_date.(row['navrh'])
+      abort "řádek id #{row['id']}: nečitelné datum '#{row['navrh']}'" unless date
+      par = Act::Participant.find_by(id: row['id'])
+      abort "účastník #{row['id']} neexistuje" unless par
+      target = Time.utc(date.year, date.month, date.day)
+      next if par.birth&.utc == target
+      puts "  #{par.id} #{par.name} #{par.last_name}: #{par.birth&.utc&.strftime('%Y-%m-%d %H:%M') || '-'} -> #{cz_date.(date)}"
+      par.update_column(:birth, target) if apply
+      changed += 1
+    end
+    puts apply ? "act:birth_import: nastaveno #{changed} dat narození" : "act:birth_import: #{changed} změn; nic neuloženo, uložíš s APPLY=1"
   end
 end
