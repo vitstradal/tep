@@ -157,12 +157,16 @@ class Act::Event < ActiveRecord::Base
     !!(user && user.org?) || Date.current <= event_end + ENROLL_VISIBLE_DAYS_AFTER_END
   end
 
+  def self.paper_keys(field_names)
+    field_names.map { |f| f.to_s.sub(/\+\d+\z/, '').sub(/\Aadress\z/, 'address').to_sym }.uniq
+  end
+
   def people_visible?(user)
     !!(user && user.org?) || event_participants.exists?
   end
 
-  def documents_visible?(user)
-    paper_template.present? && !!Act::Participant.has_participant?(user)
+  def documents_visible?(_user)
+    paper_template.present?
   end
 
     # helper method for deciding whether the target event should be visible for the current user

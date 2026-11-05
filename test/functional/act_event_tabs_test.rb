@@ -85,3 +85,44 @@ class ActEventTabsTest < ActionController::TestCase
     assert_match(/přihlašování/, response.body)
   end
 end
+
+class ActEventDocumentsTest < ActionController::TestCase
+  include Devise::Test::ControllerHelpers
+  tests Act::EventsController
+
+  setup do
+    Act::EventCategory.create!(code: 'tabor', name: 'Tábor', visible: 'ev')
+    @event = Act::Event.create!(title: 'Tábor', event_category: 'tabor', paper_template: 'x.pdf',
+                                event_start: Date.current + 10, event_end: Date.current + 20)
+  end
+
+  test "anonymous gets benefits and login/registration links" do
+    get :documents, params: { event_id: @event.id }
+    assert_match 'předvyplníme', response.body
+    assert_select 'a[href^="/users/sign_in"]'
+    assert_select 'a[href="/act/participants/new_complet"]'
+    assert_select 'table', 0
+  end
+
+  test "participant sees filled values and edit link" do
+    kid = User.new(email: 'kid@x.cz', password: 'password123', roles: [:user])
+    kid.skip_confirmation!
+    kid.save!
+    p = Act::Participant.create!(name: 'Jan', last_name: 'Kid', nickname: '', grade: 7, email: 'kid@x.cz',
+                                 user_id: kid.id, activated: 'full', phone: '777', parent_email: 'r@x.cz',
+                                 parent_phone: '2', birth: Date.new(2014, 1, 1), address: 'Ulice 1, Praha', birth_number: '140101/1234',
+                                 health_insurance: '111', sex: 'male')
+    sign_in kid
+    get :documents, params: { event_id: @event.id }
+    assert_match '140101/1234', response.body
+    assert_match '1. 1. 2014', response.body
+    assert_match 'nevyplněno', response.body
+    assert_no_match 'Zdravotník', response.body
+    assert_select "a[href=?]", "/act/participants/#{p.id}/edit"
+    assert_select "a[href=?]", "/act/events/#{@event.id}/papers_please/my"
+  end
+
+  test "paper keys strip suffixes" do
+    assert_equal %i[name address rc], Act::Event.paper_keys(['name', 'name+1', 'adress+2', 'rc'])
+  end
+end

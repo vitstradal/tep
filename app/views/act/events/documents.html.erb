@@ -2,17 +2,50 @@
 
 <% if !@event.paper_template.present? %>
   <p>K této akci nejsou potřeba žádné dokumenty.</p>
-<% elsif !Act::Participant::has_participant?(current_user) %>
-  <div class="alert alert-warning">
-    Dokumenty se předvyplňují z účastnického účtu, takže je potřeba se přihlásit a mít
-    <%= link_to "účastnický účet", act_participant_new_path %>.
+<% elsif @participant.nil? %>
+  <h2>Potřebné dokumenty</h2>
+  <p>
+    K akci je potřeba vytisknout a podepsat několik dokumentů (přihlášku, souhlasy, prohlášení o bezinfekčnosti apod.).
+  </p>
+  <div class="alert alert-info">
+    <b>Když se přihlásíš a máš účastnický účet</b>, dokumenty ti předvyplníme – jméno, datum narození, rodné číslo,
+    adresu, kontakty na tebe i rodiče a zdravotní pojišťovnu. Stačí je pak jen vytisknout a podepsat.
+    Údaje se vyplňují jednou a použijí se pro všechny další akce.
   </div>
+  <p>
+    <% if current_user.nil? %>
+      <%= button_tag 'Přihlásit se', href: new_user_session_path(next: request.path), class: 'btn btn-primary', ico: 'fa-sign-in' %>
+      nebo, pokud ještě nemáš žádný účet,
+      <%= button_tag 'Založ si účet', href: act_participant_new_complet_path, class: 'btn btn-purple', ico: 'fa-edit' %>
+    <% else %>
+      <%= button_tag 'Založ si účastnický účet', href: act_participant_new_path, class: 'btn btn-purple', ico: 'fa-edit' %>
+    <% end %>
+  </p>
 <% else %>
   <h2>Potřebné dokumenty</h2>
 
   <p>
-  Stáhni si potřebné <%= link_to "dokumenty k akci", act_event_my_papers_please_path(@event.id) %>.
-  Dokumenty jsou předvyplněné, ale je nutné je vytisknout a podepsat.
-  Předvyplněné údaje je možné před vytištěním editovat, pokud jsou nepřesné.
+  Stáhni si <%= button_tag 'předvyplněné dokumenty', href: act_event_my_papers_please_path(@event.id), class: 'btn btn-primary btn-sm', ico: 'fa-file-pdf-o', target: 'act_export' %>,
+  vytiskni je a podepiš. Z tvého účastnického účtu se do nich vyplní:
   </p>
+
+  <table class="table table-condensed table-bordered" style="width:auto">
+    <% @paper_rows.each do |row| %>
+      <tr>
+        <th><%= row[:label] %></th>
+        <% if row[:value].blank? %>
+          <td class="red"><i>nevyplněno</i></td>
+        <% else %>
+          <td><%= row[:value] %></td>
+        <% end %>
+        <td><small class="grey"><%= row[:fix] ? 'opravíš sám' : 'opraví org' %></small></td>
+      </tr>
+    <% end %>
+  </table>
+
+  <div class="alert alert-warning">
+    Nesedí některý údaj? Oprav si ho v <%= link_to 'účastnickém účtu', act_participant_edit_path(@participant) %> a dokumenty si stáhni znovu.
+    Jméno, příjmení a datum narození ti opraví org – napiš na pikomat@mff.cuni.cz.
+    Předvyplněné údaje lze případně upravit i přímo v PDF před tiskem.
+  </div>
 <% end %>

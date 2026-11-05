@@ -116,7 +116,31 @@ class Act::EventsController < ActController
     return unless _find_event(params[:event_id])
     @event_tab = 'docs'
     @breadcrumb = [ [ _breadcrumb_events ], [ _breadcrumb_event_category(@event.event_category) ], [ _breadcrumb_event(@event) ] ]
+    @participant = Act::Participant.get_participant(current_user)
+    return if @event.paper_template.blank? || @participant.nil?
+
+    stash = _paper_stash(@event, @participant)
+    used = _paper_used_keys(@event)
+    @paper_rows = PAPER_FIELDS.select { |k, _| used.nil? || used.include?(k) }
+                              .map { |k, f| f.merge(key: k, value: stash[k].to_s) }
   end
+
+  # údaje účastníka dosazované do papírů; fix: false = opravuje org
+  PAPER_FIELDS = {
+    full_name:        { label: 'Jméno a příjmení', fix: false },
+    name:             { label: 'Jméno', fix: false },
+    last_name:        { label: 'Příjmení', fix: false },
+    nickname:         { label: 'Přezdívka', fix: true },
+    birth_date:       { label: 'Datum narození', fix: false },
+    rc:               { label: 'Rodné číslo', fix: true },
+    address:          { label: 'Adresa', fix: true },
+    place:            { label: 'Místo podpisu (podle adresy)', fix: true },
+    email:            { label: 'Email', fix: true },
+    phone:            { label: 'Telefon', fix: true },
+    parent_email:     { label: 'Email na zákonného zástupce', fix: true },
+    parent_phone:     { label: 'Telefon na zákonného zástupce', fix: true },
+    health_insurance: { label: 'Zdravotní pojišťovna', fix: true },
+  }.freeze
 
   ##
   # POST /event/:event_id/enroll
@@ -675,45 +699,7 @@ class Act::EventsController < ActController
        return render plain: "tento event nema papiry (ev#{event.id} par#{participant.id})"
      end
 
-     date_today = Time.now.strftime('%-d. %-m. %-Y')
-
-     event_category = event.get_event_category
-
-     stash = {
-       event_name: event.title,
-       event_date: event.date_str,
-       event_category_name: event_category.name,
-       event_category_short: event_category.name,
-       event_category_short_genitiv: event_category.genitiv,
-       event_category_name_genitiv: event_category.genitiv,
-       event_info_url: event.event_info_url,
-       event_medic: event.event_medic,
-       #event_spec_place_return: event.spec_place_return_detail,
-       exit_place: event.spec_place_return_detail,
-       date_today: date_today,
-     }
-     if ! participant.nil?
-       participiant_birth_date =  participant.birth.strftime('%-d. %-m. %-Y')
-       place = participant.address_lokativ || "V Praze"
-       stash.merge!( {
-         place: place,
-         name: participant.name,
-         full_name: "#{participant.name} #{participant.last_name}",
-         last_name: participant.last_name,
-         address: participant.address,
-         adress: participant.address,
-         birth_date: participiant_birth_date,
-         nickname: participant.nickname,
-         email: participant.email,
-         parent_email: participant.parent_email,
-         parent_phone: participant.parent_phone,
-         phone: participant.phone,
-         health_insurance: participant.health_insurance,
-         rc: participant.birth_number,
-         sex: participant.sex,
-         a: participant.sex == 'male' ? '' : 'a',
-       })
-     end
+     stash = _paper_stash(event, participant)
 
      stash.keys.each do |key|
        (1..5).each do |i|
@@ -883,6 +869,54 @@ class Act::EventsController < ActController
         url: act_events_jakna_path
       }
     end
+    def _paper_stash(event, participant)
+      event_category = event.get_event_category
+      stash = {
+        event_name: event.title,
+        event_date: event.date_str,
+        event_category_name: event_category.name,
+        event_category_short: event_category.name,
+        event_category_short_genitiv: event_category.genitiv,
+        event_category_name_genitiv: event_category.genitiv,
+        event_info_url: event.event_info_url,
+        event_medic: event.event_medic,
+        exit_place: event.spec_place_return_detail,
+        date_today: Time.now.strftime('%-d. %-m. %-Y'),
+      }
+      if ! participant.nil?
+        stash.merge!( {
+          place: participant.address_lokativ || "V Praze",
+          name: participant.name,
+          full_name: "#{participant.name} #{participant.last_name}",
+          last_name: participant.last_name,
+          address: participant.address,
+          adress: participant.address,
+          birth_date: participant.birth&.strftime('%-d. %-m. %-Y'),
+          nickname: participant.nickname,
+          email: participant.email,
+          parent_email: participant.parent_email,
+          parent_phone: participant.parent_phone,
+          phone: participant.phone,
+          health_insurance: participant.health_insurance,
+          rc: participant.birth_number,
+          sex: participant.sex,
+          a: participant.sex == 'male' ? '' : 'a',
+        })
+      end
+      stash
+    end
+
+    # klíče použité ve formuláři šablony (bez přípony +N), nil = nepodařilo se zjistit
+    def _paper_used_keys(event)
+      path = "#{Rails.root}/#{PAPER_TEMPLATES_DIR}/#{event.paper_template}"
+      return nil unless File.exist?(path)
+      Rails.cache.fetch(['paper_fields', path, File.mtime(path).to_i]) do
+        Act::Event.paper_keys(PdfForms.new.get_field_names(path))
+      end
+    rescue StandardError
+      nil
+    end
+
     def _list_paper_templates
       Dir.glob("#{Rails.root.to_s}/#{PAPER_TEMPLATES_DIR}/*.pdf").map do |file|
         File.basename(file)
