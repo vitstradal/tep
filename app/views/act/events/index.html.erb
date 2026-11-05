@@ -1,5 +1,7 @@
 <div class="col-xs-12">
-<%= render layout: 'tabs_main', locals: { tab: 'index' } do %>
+<div class="act_events_bck_white">
+  <h1>Zobrazování akcí</h1>
+</div>
 
 <p class="act_events_bck_white">
 Řešíš Pikomat a chtěl bys poznat ostatní řešitele?
@@ -17,6 +19,32 @@ Pikomat je skupina, kterou nestmeluje pouze matematika, ale také přátelství 
       <%= link_to "zde", act_participant_new_path %>.
     </div>
   </p>
+<% end %>
+
+<% if can? :new, Act::Event %>
+  <a href=<%= act_event_new_url %> class="btn btn-primary" type="submit">
+    <span class="ace-icon fa fa-edit"></span>
+    <span>Vytvořit </span>
+    <span class="hidden-xs">novou </span>
+    <span>akci</span>
+  </a>
+<% end %>
+<% if can? :read, Act::EventCategory %>
+  <a href=<%= act_event_categories_url %> class="btn btn-primary" type="submit">
+    <span class="ace-icon fa fa-flask"></span>
+     <span>Typy akcí</span>
+  </a>
+<% end %>
+<% if current_user && current_user.org? %>
+  <a href=<%= act_events_jakna_path %> class="btn btn-primary" type="submit">
+    <span class="ace-icon fa fa-print"></span>
+    <span>Návod</span>
+    <span class="hidden-xs"> na používání</span>
+  </a>
+<% end %>
+
+<% if (can? :new, Act::Event) || (can? :read, Act::EventCategory) || (current_user && current_user.org?) %>
+  <br><br>
 <% end %>
 
 <div class="tabbable">
@@ -48,5 +76,4 @@ Pikomat je skupina, kterou nestmeluje pouze matematika, ale také přátelství 
     </div>
   </div>
 </div>
-<% end %>
 </div>

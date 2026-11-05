@@ -1,5 +1,4 @@
-<%= render layout: 'tabs_main', locals: { tab: 'jakna' } do %>
-<h2>Návod na tvorbu akcí</h2>
+<h1>Návod na tvorbu akcí <%= button_tag "Zpět", :href => act_events_path, :class=>'btn', :ico =>'fa-reply' %></h1>
 
 
 <div class="col-sm-6">
@@ -109,5 +108,4 @@
 <div class="col-sm-6">
 <% @event = @sous %>
 <%= render :partial => "form_edit", :locals => { :is_edit => false, :is_jakna => true } %>
-</div></div>
-<% end %>
+</div>
