@@ -101,8 +101,8 @@ class ActEventsOrgAccessTest < ActionController::TestCase
     assert_equal 'M', p.reload.tshirt
     sign_out kid
     sign_in @morg
-    get :display_participants, params: { event_id: @event.id, fmt: 'csv' }
-    assert_match(/event_tshirt/, response.body)
+    get :display_participants, params: { event_id: @event.id, fmt: 'csv', col: '1' * 30 }
+    assert_match(/Velikost trička/, response.body)
     assert_match(/,M\s*\z/, response.body)
   end
 end

@@ -210,6 +210,25 @@ class Act::Participant < ActiveRecord::Base
     sex == "female"
   end
 
+  def sex_sign
+    male? ? '♂' : (female? ? '♀' : '')
+  end
+
+  CZ_ALPHABET = 'aábcčdďeéěfghiíjklmnňoópqrřsštťuúůvwxyýzž'
+  CZ_PRIMARY = { 'á' => 'a', 'ď' => 'd', 'é' => 'e', 'ě' => 'e', 'í' => 'i', 'ň' => 'n', 'ó' => 'o',
+                 'ť' => 't', 'ú' => 'u', 'ů' => 'u', 'ý' => 'y' }.freeze
+
+  # klíč pro řazení podle české abecedy (č, ř, š, ž a ch jako samostatná písmena)
+  def self.cz_sort_key(str)
+    tokens = str.to_s.downcase.strip.scan(/ch|./m)
+    value = lambda do |t, base|
+      next CZ_ALPHABET.index('h') + 0.5 if t == 'ch'
+      i = CZ_ALPHABET.index(base ? CZ_PRIMARY.fetch(t, t) : t)
+      i ? i : 100 + t.ord
+    end
+    [tokens.map { |t| value.(t, true) }, tokens.map { |t| value.(t, false) }]
+  end
+
   ##
   # *Returns* pohlaví čitelně
   def sex_str()

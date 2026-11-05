@@ -133,13 +133,9 @@ jQuery(function($) {
   if (document.getElementById("act_display_participants")) {
     var url = "https://cdn.datatables.net/1.13.7/js/jquery.dataTables.min.js";
     $.getScript( url, function() {
-      var show_org = true
-      var show_sub = true
-      var show_par = true
-      var show_yes = true
-      var show_no = true
-      var show_maybe = true
-      var show_columns = []
+      const controls = $('#act_display_controls')
+      const view = controls.data('view')
+      const num_attrs = controls.data('attrs')
       const table = new DataTable('#act_display_participants', {
           paging: false,
           ordering: false,
@@ -149,116 +145,83 @@ jQuery(function($) {
           scrollX: true
       });
 
-      $('span.toggle-vis').click( function (ev) {
-          let element =  $(this)
-          let columnIdx = element.data('column')
-          let column = table.column(columnIdx)
-          let column_visible = column.visible()
-          element.toggleClass('bold', !column_visible)
-          column.visible(!column_visible)
+      function set_on(el, on) {
+         $(el).toggleClass('btn-primary', on).toggleClass('btn-white', !on)
+      }
+      function is_on(el) {
+         return $(el).hasClass('btn-primary')
+      }
+      function show_column(idx, show) {
+         set_on($('button.toggle-vis[data-column="' + idx + '"]'), show)
+         table.column(idx).visible(show, false)
+      }
+
+      $('button.toggle-vis').click( function (ev) {
+          const idx = $(this).data('column')
+          show_column(idx, !is_on(this))
+          table.columns.adjust().draw(false)
           update_url()
       });
-      $('span.clear-vis').click( function (ev) {
-         let count = table.columns().every( function(columnIdx) {
-                console.log("columns index", columnIdx);
-                let show = [0,2,3].includes(columnIdx)
-                $('span.toggle-vis[data-column="' + columnIdx +'"]').toggleClass('bold', show)
-                table.column(columnIdx).visible(show)
-         });
+      $('button.clear-vis').click( function (ev) {
+         const name_cols = [1, 2]
+         for (let idx = 0; idx < num_attrs; idx++) show_column(idx, name_cols.includes(idx))
+         table.columns.adjust().draw(false)
          update_url()
       });
-
-      $('span.toggle-org-vis').click( function (ev) {
-         show_org = ! $(this).hasClass('bold');
-         $(this).toggleClass('bold', show_org);
-         redraw_table();
+      $('button.toggle-group').click( function (ev) {
+         const group = $(this).data('group')
+         view[group] = is_on(this) ? 0 : 1
+         set_on(this, view[group] == 1)
+         redraw_table()
       });
-
-      $('span.toggle-sub-vis').click( function (ev) {
-         show_sub = ! $(this).hasClass('bold');
-         $(this).toggleClass('bold', show_sub);
-         redraw_table();
+      $('button.set-sort').click( function (ev) {
+         view.sort = $(this).data('sort')
+         window.location.search = query()
       });
-
-      $('span.toggle-par-vis').click( function (ev) {
-         show_par = ! $(this).hasClass('bold');
-         $(this).toggleClass('bold', show_par);
-         redraw_table();
-      });
-
-      $('span.toggle-yes-vis').click( function (ev) {
-         show_yes = ! $(this).hasClass('bold');
-         $(this).toggleClass('bold', show_yes);
-         redraw_table();
-      });
-
-      $('span.toggle-no-vis').click( function (ev) {
-         show_no = ! $(this).hasClass('bold');
-         $(this).toggleClass('bold', show_no);
-         redraw_table();
-      });
-
-      $('span.toggle-maybe-vis').click( function (ev) {
-         show_maybe = ! $(this).hasClass('bold');
-         $(this).toggleClass('bold', show_maybe);
-         redraw_table();
+      $('button.set-empty').click( function (ev) {
+         view.empty = $(this).data('empty')
+         window.location.search = query()
       });
 
       function visible_columns() {
-         return table.columns().indexes().toArray().map(idx => table.column(idx).visible() ? 1 : 0)
+         const cols = []
+         for (let idx = 0; idx < num_attrs; idx++) cols.push(table.column(idx).visible() ? 1 : 0)
+         return cols
       }
       function redraw_table() {
          table.rows().every( function() {
              const tr = $(this.node());
-             const is_org = tr.data('org');
-             const is_sub = is_org ? false : tr.data('chosen') == 'substitute';
-             const is_par = is_org ? false : tr.data('chosen') == 'participant';
-             const status = tr.data('status')
-             show = true
-
-             if( status == 'maybe' && ! show_maybe ) {
-                show = false
+             const header = tr.data('group')
+             if (header) {
+                tr.toggle(view[header] == 1)
+                return
              }
-             if( status == 'no' && ! show_no ) {
-                show = false
-             }
-             if( status == 'yes' && ! show_yes ) {
-                show = false
-             }
-             if( is_org && ! show_org ) {
-                show = false
-             }
-             if( is_par && ! show_par ) {
-                show = false
-             }
-             if( is_sub && ! show_sub ) {
-                show = false
-             }
-
-             console.log("row", show, "chosen", tr.data('chosen'), "status", status, "show", show );
-             tr.toggle(show);
+             const is_org = tr.data('org') == 1;
+             const group = is_org ? 'org' : (tr.data('chosen') == 'substitute' ? 'sub' : 'par')
+             tr.toggle(view[group] == 1 && view[tr.data('status')] == 1);
          });
          update_url()
       }
-      function update_url() {
-        var params = {
+      function query() {
+        const params = {
           "col": visible_columns().join(''),
-          "org": show_org ? 1 : 0,
-          "par": show_par ? 1 : 0,
-          "sub": show_sub ? 1 : 0,
-          "yes": show_yes ? 1 : 0,
-          "no" : show_no  ? 1 : 0,
-          "maybe": show_maybe ? 1 : 0,
+          "org": view.org, "par": view.par, "sub": view.sub,
+          "yes": view.yes, "no": view.no, "maybe": view.maybe,
+          "sort": view.sort, "empty": view.empty,
         }
-        const url = '?' + Object.entries(params).map(([k, v]) => `${k}=${v}`).join('&')
-        const url_pdf = url + '&fmt=pdf'
-        const url_pdfl = url + '&fmt=pdfl'
-        const url_csv = url + '&fmt=csv'
-        $('.download-csv').attr('href', url_csv)
-        $('.download-pdf').attr('href', url_pdf)
-        $('.download-pdfl').attr('href', url_pdfl)
+        return '?' + Object.entries(params).map(([k, v]) => `${k}=${v}`).join('&')
+      }
+      function update_url() {
+        const url = query()
+        history.replaceState(null, '', url)
+        $('.download-csv').attr('href', url + '&fmt=csv')
+        $('.download-pdf').attr('href', url + '&fmt=pdf')
+        $('.download-pdfl').attr('href', url + '&fmt=pdfl')
       }
 
+      view.col.split('').forEach((c, idx) => { if (idx < num_attrs) table.column(idx).visible(c == '1', false) })
+      table.columns.adjust().draw(false)
+      redraw_table()
     });
   }
 });

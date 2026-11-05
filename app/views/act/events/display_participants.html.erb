@@ -2,21 +2,42 @@
   <%= @event.title %>
 </h1>
 
-
-<div>
-  <% @attr_table.each_with_index do |attr, index| %>
-    <span class="bold toggle-vis" data-column="<%= index %>"><%= attr[1] %></span>
-    <%= "-" if index < @attr_table.length() - 1 %>
-  <% end %>
-  <br/>
-  <span class='bold toggle-par-vis'>účastníci</span> -
-  <span class='bold toggle-sub-vis'>náhradníci</span> -
-  <span class='bold toggle-org-vis'>org</span> --
-  <span class='bold toggle-yes-vis'>jede</span> -
-  <span class='bold toggle-no-vis'>nejede</span> -
-  <span class='bold toggle-maybe-vis'>možná</span> --
-  <span class='clear-vis'>name-only</span>
-  <br/>
+<% toggle = ->(cls, on, text, data = {}) { content_tag(:button, text, type: 'button', class: "btn btn-xs #{on ? 'btn-primary' : 'btn-white'} #{cls}", data: data) } %>
+<div id="act_display_controls" data-view="<%= { col: @view[:col].map { |c| c ? 1 : 0 }.join, org: @view[:org] ? 1 : 0, par: @view[:par] ? 1 : 0, sub: @view[:sub] ? 1 : 0, yes: @view[:yes] ? 1 : 0, no: @view[:no] ? 1 : 0, maybe: @view[:maybe] ? 1 : 0, sort: @view[:sort], empty: @view[:empty] }.to_json %>" data-attrs="<%= @attr_table.size %>">
+  <p>
+    <b>Sloupce:</b>
+    <% @attr_table.each_with_index do |attr, index| %>
+      <%= toggle.('toggle-vis', @view[:col][index], attr[1], column: index) %>
+    <% end %>
+  </p>
+  <p>
+    <b>Kdo:</b>
+    <span class="btn-group">
+      <%= toggle.('toggle-group', @view[:par], 'účastníci', group: 'par') %>
+      <%= toggle.('toggle-group', @view[:sub], 'náhradníci', group: 'sub') %>
+      <%= toggle.('toggle-group', @view[:org], 'orgové', group: 'org') %>
+    </span>
+    <span class="btn-group">
+      <%= toggle.('toggle-group', @view[:yes], 'jede', group: 'yes') %>
+      <%= toggle.('toggle-group', @view[:maybe], 'možná', group: 'maybe') %>
+      <%= toggle.('toggle-group', @view[:no], 'nejede', group: 'no') %>
+    </span>
+    <button type="button" class="btn btn-xs btn-white clear-vis">jen příjmení a jméno</button>
+  </p>
+  <p>
+    <b>Řadit podle:</b>
+    <span class="btn-group">
+      <% Act::EventsController::DISPLAY_SORTS.each do |key, sort| %>
+        <%= toggle.('set-sort', @view[:sort] == key, sort[:text], sort: key) %>
+      <% end %>
+    </span>
+    &nbsp; <b>Prázdné sloupce:</b>
+    <span class="btn-group">
+      <% (0..Act::EventsController::DISPLAY_MAX_EMPTY).each do |n| %>
+        <%= toggle.('set-empty', @view[:empty] == n, n.to_s, empty: n) %>
+      <% end %>
+    </span>
+  </p>
   <%= button_tag 'download CSV', :class=>'download-csv btn btn-primary', :href => "?fmt=csv", ico: 'fa-excel' %>
   <%= button_tag 'download PDF', :class=>'download-pdf btn btn-primary', :href => "?fmt=pdf", ico: 'fa-pdf' %>
   <%= button_tag 'download PDF landscape', :class=>'download-pdfl btn btn-primary', :href => "?fmt=pdfl", ico: 'fa-pdf' %>
@@ -28,46 +49,27 @@
     <thead>
     <tr>
       <% for attr in @attr_table do %>
-        <td>
-          <b>
-            <%= attr[1] %>
-          </b>
-        </td>
+        <td><b><%= attr[1] %></b></td>
+      <% end %>
+      <% @view[:empty].times do %>
+        <td style="min-width:6em"></td>
       <% end %>
     </tr>
-
     </thead>
     <tbody>
-
-    <tr>
-      <% for attr in @attr_table do %>
-        <td>Organizátoři</td>
+    <% [['org', 'Organizátoři', [@orgs_yes, @orgs_maybe, @orgs_no]],
+        ['par', 'Účastníci', [@parts_yes, @parts_maybe, @parts_no]],
+        ['sub', 'Náhradníci', [@substitutes_yes, @substitutes_maybe, @substitutes_no]]].each do |group, title, lists| %>
+      <tr data-group="<%= group %>">
+        <% for attr in @attr_table do %>
+          <td><b><%= title %></b></td>
+        <% end %>
+        <% @view[:empty].times do %><td></td><% end %>
+      </tr>
+      <% lists.each do |list| %>
+        <%= render :partial => "display_participants_single_type", locals: { event_participants: list } %>
       <% end %>
-    </tr>
-
-    <%= render :partial => "display_participants_single_type", locals: { event_participants: @orgs_yes   } %>
-    <%= render :partial => "display_participants_single_type", locals: { event_participants: @orgs_maybe } %>
-    <%= render :partial => "display_participants_single_type", locals: { event_participants: @orgs_no    } %>
-
-    <tr>
-      <% for attr in @attr_table do %>
-        <td>Účastníci</td>
-      <% end %>
-    </tr>
-
-    <%= render :partial => "display_participants_single_type", locals: { event_participants: @parts_yes   } %>
-    <%= render :partial => "display_participants_single_type", locals: { event_participants: @parts_maybe } %>
-    <%= render :partial => "display_participants_single_type", locals: { event_participants: @parts_no    } %>
-
-    <tr>
-      <% for attr in @attr_table do %>
-        <td>Náhradníci</td>
-      <% end %>
-    </tr>
-
-    <%= render :partial => "display_participants_single_type", locals: { event_participants: @substitutes_yes  } %>
-    <%= render :partial => "display_participants_single_type", locals: { event_participants: @substitutes_maybe } %>
-    <%= render :partial => "display_participants_single_type", locals: { event_participants: @substitutes_no   } %>
-      </tbody>
+    <% end %>
+    </tbody>
   </table>
 </div>

@@ -487,11 +487,39 @@ class Act::EventsController < ActController
     _filter_orgs()
     _filter_parts()
 
-    @attr_table = Act::Participant::ATTR_TABLE
+    @attr_table = DISPLAY_FIRST_ATTRS.merge(Act::Participant::ATTR_TABLE.except(*DISPLAY_FIRST_ATTRS.keys, :sex))
     @attr_table = @attr_table.merge(event_tshirt: "Velikost trička") if @event.spec_tshirt
+    @view = _display_participants_view
+    sort_key = DISPLAY_SORTS.fetch(@view[:sort])[:key]
+    %i[@orgs_yes @orgs_maybe @orgs_no @parts_yes @parts_maybe @parts_no @substitutes_yes @substitutes_maybe @substitutes_no].each do |var|
+      instance_variable_set(var, instance_variable_get(var).sort_by { |ep| sort_key.call(ep.participant) })
+    end
     return _display_participants_render_table(format) if format =~ /^(csv|pdf|pdfl)$/
+  end
 
+  # andulka nemá ♂/♀
+  PDF_SYMBOL_FONTS = %w[/usr/share/fonts/truetype/liberation/LiberationSans-Regular.ttf
+                        /usr/share/fonts/truetype/dejavu/DejaVuSans.ttf].freeze
+  DISPLAY_FIRST_ATTRS = { sex_sign: "Pohlaví", last_name: "Příjmení", name: "Jméno" }.freeze
+  DISPLAY_DEFAULT_COLUMNS = %i[last_name name].freeze
+  DISPLAY_MAX_EMPTY = 3
+  DISPLAY_SORTS = {
+    'last_name' => { text: 'příjmení', key: ->(p) { [Act::Participant.cz_sort_key(p.last_name), Act::Participant.cz_sort_key(p.name)] } },
+    'sex'       => { text: 'pohlaví',  key: ->(p) { [p.male? ? 0 : 1, Act::Participant.cz_sort_key(p.last_name), Act::Participant.cz_sort_key(p.name)] } },
+    'grade'     => { text: 'ročníku',  key: ->(p) { [p.grade.to_s.to_i, Act::Participant.cz_sort_key(p.last_name), Act::Participant.cz_sort_key(p.name)] } },
+  }.freeze
 
+  # co je v seznamu účastníků vidět: z parametrů, jinak jen příjmení a jméno účastníků
+  def _display_participants_view
+    default_col = @attr_table.keys.map { |k| DISPLAY_DEFAULT_COLUMNS.include?(k) ? '1' : '0' }.join
+    flag = ->(name, default) { params.key?(name) ? params[name] != '0' : default }
+    {
+      col: (params[:col].presence || default_col).ljust(@attr_table.size, '0').chars.map { |c| c == '1' },
+      org: flag.(:org, false), par: flag.(:par, true), sub: flag.(:sub, false),
+      yes: flag.(:yes, true), no: flag.(:no, true), maybe: flag.(:maybe, true),
+      sort: DISPLAY_SORTS.key?(params[:sort]) ? params[:sort] : 'last_name',
+      empty: params[:empty].to_i.clamp(0, DISPLAY_MAX_EMPTY),
+    }
   end
 
   # vyfiltruje jen ty prvky pole arr, kde je v mask true
@@ -502,33 +530,33 @@ class Act::EventsController < ActController
   end
 
   def _display_participants_render_table(format)
-    col = params[:col] || '1111111111111111111111111111111111111111'
-    mask = col.split(//).map { |x| x == '1' ? true : false }
+    mask = @view[:col]
+    empty = [''] * @view[:empty]
 
-    header = _mask(@attr_table.keys.map(&:to_s), mask)
+    header = _mask(@attr_table.values, mask) + empty.map { format == 'csv' ? '' : "\u00a0" * 16 }
     parts = []
-    if params[:org] != '0'
-      parts.push(@orgs_yes)   if params['yes'] != '0'
-      parts.push(@orgs_maybe) if params['maybe'] != '0'
-      parts.push(@orgs_no)    if params['no'] != '0'
+    if @view[:org]
+      parts.push(@orgs_yes)   if @view[:yes]
+      parts.push(@orgs_maybe) if @view[:maybe]
+      parts.push(@orgs_no)    if @view[:no]
     end
-    if params[:par] != '0'
-      parts.push(@parts_yes)   if params['yes'] != '0'
-      parts.push(@parts_maybe) if params['maybe'] != '0'
-      parts.push(@parts_no)    if params['no'] != '0'
+    if @view[:par]
+      parts.push(@parts_yes)   if @view[:yes]
+      parts.push(@parts_maybe) if @view[:maybe]
+      parts.push(@parts_no)    if @view[:no]
     end
-    if params[:sub] != '0'
-      parts.push(@substitutes_yes)   if params['yes'] != '0'
-      parts.push(@substitutes_maybe) if params['maybe'] != '0'
-      parts.push(@substitutes_no)    if params['no'] != '0'
+    if @view[:sub]
+      parts.push(@substitutes_yes)   if @view[:yes]
+      parts.push(@substitutes_maybe) if @view[:maybe]
+      parts.push(@substitutes_no)    if @view[:no]
     end
 
     rows = []
     rows << header
     parts.each do |part|
       part.each do |event_participant|
-        arr = @attr_table.keys.map { |attr| event_participant.display_attr(attr) }
-        rows << _mask(arr, mask)
+        arr = @attr_table.keys.map { |attr| event_participant.display_attr(attr).to_s }
+        rows << _mask(arr, mask) + empty
       end
     end
 
@@ -551,10 +579,15 @@ class Act::EventsController < ActController
         #Rails.logger.info("rows=#{rows}")
         pdf.font_families.update(
           'andulka' => {
-            normal: '/home/www/rails/tep/public/stylesheets/andulka/andulkabook-webfont.ttf',
+            normal: Rails.root.join('public/stylesheets/andulka/andulkabook-webfont.ttf').to_s,
           }
         )
         pdf.font('andulka')
+        symbols = PDF_SYMBOL_FONTS.find { |f| File.exist?(f) }
+        if symbols
+          pdf.font_families.update('symbols' => { normal: symbols })
+          pdf.fallback_fonts(['symbols'])
+        end
         pdf.table(rows)
         send_data pdf.render,
           filename: "list.pdf",
