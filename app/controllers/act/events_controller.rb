@@ -126,7 +126,7 @@ class Act::EventsController < ActController
     return if @participant.nil?
 
     stash = _paper_stash(@event, @participant)
-    @paper_rows = fields.map { |k, f| f.merge(key: k, value: stash[k].to_s) }
+    @paper_rows = PAPER_FIELDS.map { |k, f| f.merge(key: k, value: stash[k].to_s, in_pdf: fields.key?(k)) }
   end
 
   # údaje účastníka dosazované do papírů; fix: false = opravuje org

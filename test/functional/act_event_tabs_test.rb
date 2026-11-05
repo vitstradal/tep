@@ -122,7 +122,13 @@ class ActEventDocumentsTest < ActionController::TestCase
     assert_match '1. 1. 2014', response.body
     assert_match 'nevyplněno', response.body
     assert_no_match 'Zdravotník', response.body
+    assert_match '777', response.body
+    assert_match 'předvyplněno', response.body
     assert_select "a[href=?]", "/act/participants/#{p.id}/edit"
+    @controller.define_singleton_method(:_paper_used_keys) { |_e| %i[full_name birth_date] }
+    get :documents, params: { event_id: @event.id }
+    assert_match 'dopiš ručně', response.body
+    assert_match '777', response.body
     assert_select "a[href=?]", "/act/events/#{@event.id}/papers_please/my"
   end
 
