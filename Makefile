@@ -152,3 +152,7 @@ adventomat:
 
 pull:
 	git pull
+
+release:
+	git push 
+	ssh pikomat.mff.cuni.cz make -C rails/tep pull restart
