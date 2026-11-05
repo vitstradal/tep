@@ -1,4 +1,4 @@
-<h1>Typy akcí</h1>
+<%= render layout: 'act/events/tabs_main', locals: { tab: 'categories' } do %>
 
 <p>
   <% if can? :new, Act::Event %>
@@ -47,3 +47,4 @@
   </tr>
 <% end %>
 </table>
+<% end %>

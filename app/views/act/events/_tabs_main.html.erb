@@ -1,0 +1,36 @@
+<div class="act_events_bck_white">
+  <h1>Akce Pikomatu</h1>
+</div>
+
+<% if current_user && current_user.org? %>
+<div class="tabbable">
+    <ul class="nav nav-tabs">
+        <li <%=class_active_if(tab == 'index') %>>
+            <%=ilink_to act_events_path, ico:'fa-list' do %>Zobrazování akcí<%end%>
+        </li>
+
+        <% if can? :new, Act::Event %>
+            <li <%=class_active_if(tab == 'new') %>>
+                <%=ilink_to act_event_new_path, ico:'fa-edit' do %>Nová akce<%end%>
+            </li>
+        <% else %>
+            <%= disabled_li 'Nová akce', ico: 'fa-edit', tab: true %>
+        <% end %>
+
+        <% if can? :read, Act::EventCategory %>
+            <li <%=class_active_if(tab == 'categories') %>>
+                <%=ilink_to act_event_categories_path, ico:'fa-flask' do %>Typy akcí<%end%>
+            </li>
+        <% end %>
+
+        <li <%=class_active_if(tab == 'jakna') %>>
+            <%=ilink_to act_events_jakna_path, ico:'fa-print' do %>Návod na používání<%end%>
+        </li>
+    </ul>
+    <div class="tab-content clearfix">
+      <%= yield -%>
+    </div>
+</div>
+<% else %>
+  <%= yield -%>
+<% end %>
