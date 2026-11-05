@@ -574,26 +574,25 @@ class Act::EventsController < ActController
 
     if format == 'pdf' || format == 'pdfl'
       page_layout =  format == 'pdf'  ? :portrait :  :landscape
-      Prawn::Document.generate("tabulka.pdf", page_layout: page_layout) do |pdf|
-        #pdf.font_size 4
-        #Rails.logger.info("rows=#{rows}")
-        pdf.font_families.update(
-          'andulka' => {
-            normal: Rails.root.join('public/stylesheets/andulka/andulkabook-webfont.ttf').to_s,
-          }
-        )
-        pdf.font('andulka')
-        symbols = PDF_SYMBOL_FONTS.find { |f| File.exist?(f) }
-        if symbols
-          pdf.font_families.update('symbols' => { normal: symbols })
-          pdf.fallback_fonts(['symbols'])
-        end
-        pdf.table(rows)
-        send_data pdf.render,
-          filename: "list.pdf",
-          type: "application/pdf",
-          disposition: "inline" # nebo "attachment"
+      pdf = Prawn::Document.new(page_layout: page_layout)
+      #pdf.font_size 4
+      #Rails.logger.info("rows=#{rows}")
+      pdf.font_families.update(
+        'andulka' => {
+          normal: Rails.root.join('public/stylesheets/andulka/andulkabook-webfont.ttf').to_s,
+        }
+      )
+      pdf.font('andulka')
+      symbols = PDF_SYMBOL_FONTS.find { |f| File.exist?(f) }
+      if symbols
+        pdf.font_families.update('symbols' => { normal: symbols })
+        pdf.fallback_fonts(['symbols'])
       end
+      pdf.table(rows)
+      send_data pdf.render,
+        filename: "list.pdf",
+        type: "application/pdf",
+        disposition: "inline" # nebo "attachment"
     end
   end
   ##
