@@ -34,8 +34,42 @@ class ApplicationController < ActionController::Base
 #    _error(exception)
 #  end
 
+  # náhled „jak to vidí“ pro morgy: role se jen ubírají, nikdy nepřidávají
+  VIEW_AS_ROLES = { 'morg' => %i[org morg user], 'org' => %i[org user], 'user' => %i[user], 'anon' => nil }.freeze
+  VIEW_AS_TXT = { 'morg' => 'morg', 'org' => 'org', 'user' => 'účastník', 'anon' => 'nepřihlášený' }.freeze
+
+  helper_method :real_user, :view_as, :view_as_allowed?
+
+  def real_user
+    warden.authenticate(scope: :user)
+  end
+
+  def view_as_allowed?(user = real_user)
+    !!(user && (user.admin? || user.morg?))
+  end
+
+  def view_as
+    level = session[:view_as]
+    level if VIEW_AS_ROLES.key?(level) && view_as_allowed?
+  end
+
+  def current_user
+    real = super
+    level = view_as
+    return real if level.nil?
+    return nil if level == 'anon'
+    return @view_as_user if @view_as_user && @view_as_user.id == real.id
+    @view_as_user = User.find(real.id).tap do |u|
+      u.roles = u.roles.to_a & VIEW_AS_ROLES[level]
+      u.readonly!
+    end
+  end
+
   rescue_from CanCan::AccessDenied do |exception|
-      if current_user.nil?
+      if current_user.nil? && view_as
+        add_alert "Jako #{VIEW_AS_TXT[view_as]} sem nemáš přístup."
+        redirect_to root_path
+      elsif current_user.nil?
         redirect_to new_user_session_url(:next => request.path)
       else
         _error(exception)

@@ -77,6 +77,8 @@ Tep::Application.routes.draw do
   post  '/act/participants/:participant_id/delete'                 => 'act/participants#delete',             :as => :act_participant_delete
   get  '/act/participant/tnx'                                      => 'act/participants#create_tnx',         :as => :act_participant_create_tnx
 
+  post  '/view_as'                                                 => 'view_as#update',                      :as => :view_as
+
   # event_categories:
   get   '/act/event_categories'                                    => 'act/event_categories#index',          :as => :act_event_categories
   get   '/act/event_categories/jakna'                              => 'act/event_categories#jakna',          :as => :act_event_categories_jakna

@@ -286,6 +286,7 @@
 <%# akcni tlacitka %>
 <%################################################################################## %>
        <%= yield :action_buttons %>
+       <%= render 'layouts/view_as' %>
        <ul class="breadcrumb">
          <% @breadcrumb.each_with_index do |b, idx| %>
            <% b.each_with_index do |bread| %>
@@ -315,6 +316,8 @@
        </ul>
        <div style='padding-left:12px' id="page-content-top2"></div>
      </div><%#breadcrumb %>
+   <% elsif view_as %>
+     <%= render 'layouts/view_as' %>
    <% end %>
 
 
@@ -362,27 +365,27 @@
             <ul id="myTab" class="nav nav-tabs">
                <%######################### tab Infromace -%>
                <% if @event.event_info_url != "" -%>
-                  <li <%=class_active_if( @event_tab == 'info') %>> <%=ilink_to 'Informace', @event.event_info_url, ico: 'fa-book' %></li>
+                  <li <%=class_active_if( @event_tab == 'info') %>> <%=ilink_to 'Informace', @event.event_info_url, ico: 'fa-book', title: 'Vidí každý, kdo vidí akci' %></li>
                <% end -%>
 
                <%######################### tab Přihlašování -%>
                <% if @event.enrollment_visible?(current_user) -%>
-                  <li <%=class_active_if( @event_tab == 'show') %>> <%=ilink_to 'Přihlašování', act_event_path(@event), ico: 'fa-pencil-square-o' %></li>
+                  <li <%=class_active_if( @event_tab == 'show') %>> <%=ilink_to 'Přihlašování', act_event_path(@event), ico: 'fa-pencil-square-o', title: "Orgové vždy, ostatní do #{Act::Event::ENROLL_VISIBLE_DAYS_AFTER_END} dnů po konci akce" %></li>
                <% end -%>
 
                <%######################### tab Lidé -%>
                <% if @event.people_visible?(current_user) -%>
-                  <li <%=class_active_if( @event_tab == 'people') %>> <%=ilink_to 'Lidé', act_event_people_path(@event), ico: 'fa-users' %></li>
+                  <li <%=class_active_if( @event_tab == 'people') %>> <%=ilink_to 'Lidé', act_event_people_path(@event), ico: 'fa-users', title: 'Orgové vždy, ostatní když je někdo přihlášený' %></li>
                <% end -%>
 
                <%######################### tab Dokumenty -%>
                <% if @event.documents_visible?(current_user) -%>
-                  <li <%=class_active_if( @event_tab == 'docs') %>> <%=ilink_to 'Dokumenty', act_event_documents_path(@event), ico: 'fa-file-text-o' %></li>
+                  <li <%=class_active_if( @event_tab == 'docs') %>> <%=ilink_to 'Dokumenty', act_event_documents_path(@event), ico: 'fa-file-text-o', title: 'Kdo má účastnický účet, když jsou k akci nastavené papíry' %></li>
                <% end -%>
 
                <%######################### tab Fotky %>
                <% if @event.event_photos_url != "" -%>
-                  <li <%=class_active_if( @event_tab == 'foto') %>> <%=ilink_to 'Fotky', @event.event_photos_url, ico: 'fa-photo'  %></li>
+                  <li <%=class_active_if( @event_tab == 'foto') %>> <%=ilink_to 'Fotky', @event.event_photos_url, ico: 'fa-photo', title: 'Vidí každý, kdo vidí akci' %></li>
                <% end -%>
 
                <%######################### tab Orgove -%>
@@ -390,23 +393,23 @@
 
                  <%######################### tab Edituj akci -%>
                  <li class="act_margin_enroll_others <%=active %w(edit edit-inv edit-par enroll).include?(@event_tab)%>">
-                     <%=ilink_to act_event_edit_path(@event), ico:'fa-cogs' do  %>Nastavení akce<%end%>
+                     <%=ilink_to act_event_edit_path(@event), ico:'fa-cogs', title: 'Vidí org, měnit může jen morg' do  %>Nastavení akce<%end%>
                  </li>
 
                  <%######################### tab Seznam -%>
                  <% if can? :display_participants, Act::Event -%>
-                   <li <%=class_active_if( @event_tab == 'list') %>><%= ilink_to act_event_display_participants_path(@event), ico: 'fa-list'  do%>Seznam<%end%> </li>
+                   <li <%=class_active_if( @event_tab == 'list') %>><%= ilink_to act_event_display_participants_path(@event), ico: 'fa-list', title: 'Jen morg' do%>Seznam<%end%> </li>
                  <% else -%>
                    <%= disabled_li 'Seznam', ico: 'fa-list', tab: true %>
                  <% end -%>
 
                  <%######################### tab Piki -%>
                  <% if @event.event_piki_url != ""  -%>
-                    <li <%=class_active_if( @event_tab == 'piki') %>> <%=ilink_to @event.event_piki_url, ico: 'fa-flask' do %>Piki<%end%></li>
+                    <li <%=class_active_if( @event_tab == 'piki') %>> <%=ilink_to @event.event_piki_url, ico: 'fa-flask', title: 'Jen org' do %>Piki<%end%></li>
                  <% end -%>
                  <%######################### tab Sklep -%>
                  <% if @event.event_sklep_url != ""  -%>
-                    <li <%=class_active_if( @event_tab == 'sklep') %>> <%=ilink_to @event.event_sklep_url, ico: 'fa-cube' do %>Sklep<%end%></li>
+                    <li <%=class_active_if( @event_tab == 'sklep') %>> <%=ilink_to @event.event_sklep_url, ico: 'fa-cube', title: 'Jen org' do %>Sklep<%end%></li>
                  <% end -%>
                <% end -%>
             </ul>

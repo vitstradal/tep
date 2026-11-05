@@ -1,0 +1,10 @@
+<% if view_as_allowed? %>
+  <%= form_tag view_as_path, method: :post, class: 'pull-right no-print', style: 'margin:6px 12px 0 0' do %>
+    <label title="Náhled stránky s menšími právy; nic navíc neodemkne" style="margin:0">
+      Jak to vidí
+      <%= select_tag :view_as, options_for_select([['já', '']] + ApplicationController::VIEW_AS_TXT.invert.to_a, view_as.to_s),
+                     onchange: 'this.form.submit()',
+                     style: (view_as ? 'background:#f89406;color:#fff;font-weight:bold' : '') %>
+    </label>
+  <% end %>
+<% end %>

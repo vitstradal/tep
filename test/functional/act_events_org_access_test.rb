@@ -36,6 +36,8 @@ class ActEventsOrgAccessTest < ActionController::TestCase
     assert_response :success
     assert_match 'Nastavení akce', response.body
     assert_no_match(%r{href="/act/events/\d+/display_participants}, response.body)
+    assert_no_match 'Edituj účastníky', response.body
+    get :people, params: { event_id: @event.id }
     assert_match 'btn disabled', response.body
   end
 
