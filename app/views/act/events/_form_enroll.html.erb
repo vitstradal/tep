@@ -1,9 +1,7 @@
 <% if @event.paper_template.present? %>
-  <h2>Potřebné dokumenty</h2>
-
-  Stáhni si potřebné <%= link_to "dokumenty k akci", act_event_my_papers_please_path(@event.id) %>.
-  Dokumenty jsou předvyplněné, ale je nutné je vytisknout a podepsat. 
-  Předvyplněné údaje je možné před vytištěním editovat, pokud jsou nepřesné.
+  <div class="alert alert-info">
+    Nezapomeň na <%= link_to "dokumenty k akci", act_event_documents_path(@event) %> – je potřeba je vytisknout a podepsat.
+  </div>
 <% end %>
 <% if chosen == "participant" %>
   <h2>Přihláška</h2>

@@ -150,6 +150,21 @@ class Act::Event < ActiveRecord::Base
     (event_end - event_start).to_i + 1 >= LONG_TERM_MIN_DAYS
   end
 
+  ENROLL_VISIBLE_DAYS_AFTER_END = 7
+
+  # účastníkům tab Přihlašování zmizí týden po konci akce, orgům zůstává
+  def enrollment_visible?(user)
+    !!(user && user.org?) || Date.current <= event_end + ENROLL_VISIBLE_DAYS_AFTER_END
+  end
+
+  def people_visible?(user)
+    !!(user && user.org?) || event_participants.exists?
+  end
+
+  def documents_visible?(user)
+    paper_template.present? && !!Act::Participant.has_participant?(user)
+  end
+
     # helper method for deciding whether the target event should be visible for the current user
   def event_visible?(user)
     return !!(user && (user.admin? || user.morg?)) if visible == 'morg'

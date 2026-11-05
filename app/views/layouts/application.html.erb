@@ -366,7 +366,19 @@
                <% end -%>
 
                <%######################### tab Přihlašování -%>
-               <li <%=class_active_if( @event_tab == 'show') %>> <%=ilink_to 'Přihlašování', act_event_path(@event), ico: 'fa-users' %></li>
+               <% if @event.enrollment_visible?(current_user) -%>
+                  <li <%=class_active_if( @event_tab == 'show') %>> <%=ilink_to 'Přihlašování', act_event_path(@event), ico: 'fa-pencil-square-o' %></li>
+               <% end -%>
+
+               <%######################### tab Lidé -%>
+               <% if @event.people_visible?(current_user) -%>
+                  <li <%=class_active_if( @event_tab == 'people') %>> <%=ilink_to 'Lidé', act_event_people_path(@event), ico: 'fa-users' %></li>
+               <% end -%>
+
+               <%######################### tab Dokumenty -%>
+               <% if @event.documents_visible?(current_user) -%>
+                  <li <%=class_active_if( @event_tab == 'docs') %>> <%=ilink_to 'Dokumenty', act_event_documents_path(@event), ico: 'fa-file-text-o' %></li>
+               <% end -%>
 
                <%######################### tab Fotky %>
                <% if @event.event_photos_url != "" -%>

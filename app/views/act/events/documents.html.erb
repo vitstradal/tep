@@ -1,0 +1,18 @@
+<h1><%= @event.title %></h1>
+
+<% if !@event.paper_template.present? %>
+  <p>K této akci nejsou potřeba žádné dokumenty.</p>
+<% elsif !Act::Participant::has_participant?(current_user) %>
+  <div class="alert alert-warning">
+    Dokumenty se předvyplňují z účastnického účtu, takže je potřeba se přihlásit a mít
+    <%= link_to "účastnický účet", act_participant_new_path %>.
+  </div>
+<% else %>
+  <h2>Potřebné dokumenty</h2>
+
+  <p>
+  Stáhni si potřebné <%= link_to "dokumenty k akci", act_event_my_papers_please_path(@event.id) %>.
+  Dokumenty jsou předvyplněné, ale je nutné je vytisknout a podepsat.
+  Předvyplněné údaje je možné před vytištěním editovat, pokud jsou nepřesné.
+  </p>
+<% end %>

@@ -62,6 +62,8 @@ class Ability
     # event
     can :index, Act::Event
     can :show, Act::Event
+    can :people, Act::Event
+    can :documents, Act::Event
     can :create, Act::Participant
     can :my_papers_please, Act::Event
 

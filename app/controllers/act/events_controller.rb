@@ -74,6 +74,8 @@ class Act::EventsController < ActController
     @breadcrumb.push [ _breadcrumb_event_category(@event.event_category) ]
     @breadcrumb.push [ _breadcrumb_event(@event) ]
 
+    return redirect_to act_event_people_path(@event) unless @event.enrollment_visible?(current_user)
+
     if Act::Participant::has_participant?(current_user)
       @event_participant = Act::EventParticipant.find_by(event_id: params[:event_id], participant_id: Act::Participant::participant_id(current_user))
       unless @event_participant
@@ -90,6 +92,30 @@ class Act::EventsController < ActController
     _get_participants()
     _filter_orgs()
     _filter_parts()
+  end
+
+  ##
+  # GET /act/events/:event_id/people
+  #
+  # Tab Lidé: přihlášení účastníci, náhradníci a orgové
+  def people
+    return unless _find_event(params[:event_id])
+    @event_tab = 'people'
+    @breadcrumb = [ [ _breadcrumb_events ], [ _breadcrumb_event_category(@event.event_category) ], [ _breadcrumb_event(@event) ] ]
+
+    _get_participants()
+    _filter_orgs()
+    _filter_parts()
+  end
+
+  ##
+  # GET /act/events/:event_id/documents
+  #
+  # Tab Dokumenty: odkaz na předvyplněné papíry k akci
+  def documents
+    return unless _find_event(params[:event_id])
+    @event_tab = 'docs'
+    @breadcrumb = [ [ _breadcrumb_events ], [ _breadcrumb_event_category(@event.event_category) ], [ _breadcrumb_event(@event) ] ]
   end
 
   ##
