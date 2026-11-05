@@ -21,34 +21,28 @@ class ActBirthCsvTaskTest < ActiveSupport::TestCase
     Act::Participant.create!(name: 'A', last_name: email, nickname: '', user_id: u.id, activated: 'desact', birth: birth_par, sex: 'male')
   end
 
-  test "export proposes, edited csv is applied only with APPLY" do
-    shifted = make('a@x.cz', Time.utc(2013, 12, 31, 23), '1.1.2014')
-    ok      = make('b@x.cz', Time.utc(2014, 2, 2), '2. 2. 2014')
-    tz      = make('c@x.cz', Time.utc(2014, 5, 4, 22), nil)
-    tzsolv  = make('d@x.cz', Time.utc(2009, 6, 18, 22), '12.6.2009')
-    badyear = make('e@x.cz', Time.utc(16, 2, 11), '11.2.2016')
-    kidyear = make('f@x.cz', Time.utc(2022, 2, 20, 23), '21.2.2012')
+  test "export lists only undecided rows, import applies automatic and edited proposals only with APPLY" do
+    shifted  = make('a@x.cz', Time.utc(2013, 12, 31, 23), '1.1.2014')
+    ok       = make('b@x.cz', Time.utc(2014, 2, 2), '2. 2. 2014')
+    tz       = make('c@x.cz', Time.utc(2014, 5, 4, 22), nil)
+    tzsolv   = make('d@x.cz', Time.utc(2009, 6, 18, 22), '12.6.2009')
+    badyear  = make('e@x.cz', Time.utc(16, 2, 11), '11.2.2016')
+    kidyear  = make('f@x.cz', Time.utc(2022, 2, 20, 23), '21.2.2012')
     solvyear = make('g@x.cz', Time.utc(2008, 11, 23, 23), '24.11.2024')
-    plusone = make('h@x.cz', Time.utc(2018, 4, 28), %w[29.4.2018 19.3.2020])
-    swapped = make('i@x.cz', Time.utc(2014, 9, 8), '9.8.2014')
+    plusone  = make('h@x.cz', Time.utc(2018, 4, 28), %w[29.4.2018 19.3.2020])
+    swapped  = make('i@x.cz', Time.utc(2014, 9, 8), '9.8.2014')
+    other    = make('j@x.cz', Time.utc(2013, 12, 1), '19.2.2013')
     capture_io { Rake::Task['act:birth_export'].invoke }
-    rows = CSV.read(@file, col_sep: ';', headers: true).to_h { |r| [r['id'].to_i, r] }
-    assert_equal '21.2.2012', rows[kidyear.id]['navrh']
-    assert_equal '24.11.2008', rows[solvyear.id]['navrh']
-    assert_equal '29.4.2018', rows[plusone.id]['navrh']
-    assert_equal '9.8.2014', rows[swapped.id]['navrh']
-    assert_equal '1.1.2014', rows[shifted.id]['navrh']
-    assert_equal '31.12.2013', rows[shifted.id]['zobrazuje']
-    assert_equal '2.2.2014', rows[ok.id]['navrh']
-    assert_equal '5.5.2014', rows[tz.id]['navrh']
-    assert_equal '19.6.2009', rows[tzsolv.id]['navrh']
-    assert_match(/\AROZHODNI/, rows[tzsolv.id]['duvod'])
-    assert_equal '11.2.2016', rows[badyear.id]['navrh']
-    assert_equal tzsolv.id.to_s, CSV.read(@file, col_sep: ';')[1][0]
+    rows = CSV.read(@file, headers: true)
+    assert_equal [tzsolv.id, other.id].sort, rows.map { |r| r['id'].to_i }.sort
+    row = rows.find { |r| r['id'].to_i == tzsolv.id }
+    assert_equal '19.6.2009', row['navrh']
+    assert_equal '18.6.2009', row['zobrazuje']
 
-    csv = CSV.read(@file, col_sep: ';')
-    csv.each { |r| r[7] = '6.6.2014' if r[0] == tz.id.to_s }
-    File.write(@file, csv.map { |r| r.to_csv(col_sep: ';') }.join)
+    csv = CSV.read(@file)
+    csv.each { |r| r[7] = '12.6.2009' if r[0] == tzsolv.id.to_s }
+    csv.each { |r| r[7] = '' if r[0] == other.id.to_s }
+    File.write(@file, csv.map(&:to_csv).join)
 
     out = capture_io { Rake::Task['act:birth_import'].invoke }.first
     assert_match '8 změn', out
@@ -57,8 +51,8 @@ class ActBirthCsvTaskTest < ActiveSupport::TestCase
     Rake::Task['act:birth_import'].reenable
     ENV['APPLY'] = '1'
     capture_io { Rake::Task['act:birth_import'].invoke }
-    assert_equal Time.utc(2014, 1, 1), shifted.reload.birth
-    assert_equal Time.utc(2014, 6, 6), tz.reload.birth
-    assert_equal Time.utc(2014, 2, 2), ok.reload.birth
+    { shifted => [2014, 1, 1], ok => [2014, 2, 2], tz => [2014, 5, 5], tzsolv => [2009, 6, 12], badyear => [2016, 2, 11],
+      kidyear => [2012, 2, 21], solvyear => [2008, 11, 24], plusone => [2018, 4, 29], swapped => [2014, 8, 9],
+      other => [2013, 12, 1] }.each { |par, ymd| assert_equal Time.utc(*ymd), par.reload.birth, par.email }
   end
 end
