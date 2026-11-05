@@ -36,6 +36,8 @@ class ActDisplayParticipantsTest < ActionController::TestCase
     assert_response :success
     assert_select 'button.toggle-vis.btn-primary', 2
     assert_select 'button.toggle-group.btn-primary[data-group="org"]', 0
+    assert_select 'a.download-csv[target="act_export"]'
+    assert_select 'a.download-pdf[target="act_export"]'
     rows = csv
     assert_equal %w[Příjmení Jméno], rows.first
     assert_equal %w[Cibulka Čermák Šimková], rows.drop(1).map(&:first)

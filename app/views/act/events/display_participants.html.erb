@@ -38,9 +38,9 @@
       <% end %>
     </span>
   </p>
-  <%= button_tag 'download CSV', :class=>'download-csv btn btn-primary', :href => "?fmt=csv", ico: 'fa-excel' %>
-  <%= button_tag 'download PDF', :class=>'download-pdf btn btn-primary', :href => "?fmt=pdf", ico: 'fa-pdf' %>
-  <%= button_tag 'download PDF landscape', :class=>'download-pdfl btn btn-primary', :href => "?fmt=pdfl", ico: 'fa-pdf' %>
+  <%= button_tag 'download CSV', :class=>'download-csv btn btn-primary', :href => "?fmt=csv", ico: 'fa-excel', target: 'act_export' %>
+  <%= button_tag 'download PDF', :class=>'download-pdf btn btn-primary', :href => "?fmt=pdf", ico: 'fa-pdf', target: 'act_export' %>
+  <%= button_tag 'download PDF landscape', :class=>'download-pdfl btn btn-primary', :href => "?fmt=pdfl", ico: 'fa-pdf', target: 'act_export' %>
   <br/><br/>
 </div>
 
