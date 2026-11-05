@@ -11,8 +11,8 @@
     – údaje o akci jsou vyplněné, údaje o dítěti doplň ručně.
   </p>
   <div class="alert alert-info">
-    <b>Když se přihlásíš a máš účastnický účet</b>, dokumenty ti předvyplníme – jméno, datum narození, rodné číslo,
-    adresu, kontakty na tebe i rodiče a zdravotní pojišťovnu. Stačí je pak jen vytisknout a podepsat.
+    <b>Když se přihlásíš a máš účastnický účet</b>, dokumenty ti předvyplníme<% if @paper_labels.any? %> – <%= @paper_labels.to_sentence(two_words_connector: ' a ', last_word_connector: ' a ') %><% end %>.
+    Stačí je pak jen vytisknout a podepsat.
     Údaje se vyplňují jednou a použijí se pro všechny další akce.
   </div>
   <p>

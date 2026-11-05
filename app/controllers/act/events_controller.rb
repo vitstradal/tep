@@ -117,13 +117,16 @@ class Act::EventsController < ActController
     @event_tab = 'docs'
     @breadcrumb = [ [ _breadcrumb_events ], [ _breadcrumb_event_category(@event.event_category) ], [ _breadcrumb_event(@event) ] ]
     @participant = Act::Participant.get_participant(current_user)
-    return if @event.paper_template.blank? || @participant.nil?
+    return if @event.paper_template.blank?
 
-    stash = _paper_stash(@event, @participant)
     used = _paper_used_keys(@event)
     used |= %i[name last_name] if used&.include?(:full_name)
-    @paper_rows = PAPER_FIELDS.select { |k, _| used.nil? || used.include?(k) }
-                              .map { |k, f| f.merge(key: k, value: stash[k].to_s) }
+    fields = PAPER_FIELDS.select { |k, _| used.nil? || used.include?(k) }
+    @paper_labels = fields.values.map { |f| f[:label].downcase }
+    return if @participant.nil?
+
+    stash = _paper_stash(@event, @participant)
+    @paper_rows = fields.map { |k, f| f.merge(key: k, value: stash[k].to_s) }
   end
 
   # údaje účastníka dosazované do papírů; fix: false = opravuje org

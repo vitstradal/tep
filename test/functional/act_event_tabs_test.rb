@@ -99,6 +99,7 @@ class ActEventDocumentsTest < ActionController::TestCase
   test "anonymous gets benefits and login/registration links" do
     get :documents, params: { event_id: @event.id }
     assert_match 'předvyplníme', response.body
+    assert_match 'jméno, příjmení', response.body
     assert_select 'a[href^="/users/sign_in"]'
     assert_select 'a[href="/act/participants/new_complet"]'
     assert_select "a[href=?]", "/act/events/#{@event.id}/papers_please/my"
