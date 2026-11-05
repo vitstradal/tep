@@ -39,6 +39,7 @@ ID
 <% unless @edit_participants %><th>Přezdívka</th><% end %>
 <% if @edit_participants %><th>Účast</th><% end %>
 <th>Poznámka</th>
+<% if current_user.org? %>
 <% if @event.spec_place %>
 <th>Nástup</th>
 <% end %>
@@ -53,6 +54,7 @@ ID
 <% end %>
 <% if @event.spec_mass %>
 <th>Mše</th>
+<% end %>
 <% end %>
 <% if @edit_participants %>
 <th colspan="4" style="text-align: center;">

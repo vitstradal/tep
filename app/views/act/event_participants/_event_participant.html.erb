@@ -142,61 +142,12 @@
   <%= event_participant.note %>
   </td>
 
-  <% if event_participant.event.spec_place %>
-    <% if current_user.org? || event_participant.participant.is_me?(current_user) %>
-      <td>
-      <%= event_participant.place %>
-      </td>
-    <% else %>
-      <td style="background-color:#dcdcdc;">
-      </td>
-    <% end %>
-  <% end %>
-
-  <% if event_participant.event.spec_place_return %>
-    <% if current_user.org? || event_participant.participant.is_me?(current_user) %>
-      <td>
-      <%= event_participant.place_return %>
-      </td>
-    <% else %>
-      <td style="background-color:#dcdcdc;">
-      </td>
-    <% end %>
-  <% end %>
-
-  <% if event_participant.event.spec_tshirt %>
-    <% if current_user.org? || event_participant.participant.is_me?(current_user) %>
-      <td>
-      <%= event_participant.tshirt %>
-      </td>
-    <% else %>
-      <td style="background-color:#dcdcdc;">
-      </td>
-    <% end %>
-  <% end %>
-
-  <% if event_participant.event.spec_participant %>
-    <% if current_user.org? || event_participant.participant.is_me?(current_user) %>
-      <td>
-      <%= event_participant.participant_info %>
-      </td>
-    <% else %>
-      <td style="background-color:#dcdcdc;">
-      </td>
-    <% end %>
-  <% end %>
-
-  <% if event_participant.event.spec_mass %>
-    <% if current_user.org? || event_participant.participant.is_me?(current_user) %>
-      <td>
-        <% if event_participant.mass %>
-          <span class="ace-icon fa fa-plus"></span>
-        <% end %>
-      </td>
-    <% else %>
-      <td style="background-color:#dcdcdc;">
-      </td>
-    <% end %>
+  <% if current_user.org? %>
+    <% if event_participant.event.spec_place %><td><%= event_participant.place %></td><% end %>
+    <% if event_participant.event.spec_place_return %><td><%= event_participant.place_return %></td><% end %>
+    <% if event_participant.event.spec_tshirt %><td><%= event_participant.tshirt %></td><% end %>
+    <% if event_participant.event.spec_participant %><td><%= event_participant.participant_info %></td><% end %>
+    <% if event_participant.event.spec_mass %><td><% if event_participant.mass %><span class="ace-icon fa fa-plus"></span><% end %></td><% end %>
   <% end %>
 <% end %>
 

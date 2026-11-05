@@ -37,8 +37,11 @@ class ActEventTabsTest < ActionController::TestCase
     assert_includes tab_hrefs, "/act/events/#{@event.id}/people"
     assert_includes tab_hrefs, "/act/events/#{@event.id}/documents"
 
+    @event.update_columns(spec_place: true, spec_mass: true)
     get :people, params: { event_id: @event.id }
     assert_match 'Přihlášení účastníci', response.body
+    assert_no_match 'Nástup', response.body
+    assert_no_match 'Mše', response.body
     assert_select 'li.active a[href=?]', "/act/events/#{@event.id}/people"
 
     get :documents, params: { event_id: @event.id }
@@ -54,6 +57,9 @@ class ActEventTabsTest < ActionController::TestCase
     sign_in @org
     get :show, params: { event_id: @event.id }
     assert_includes tab_hrefs, "/act/events/#{@event.id}/people"
+    @event.update_columns(spec_place: true)
+    get :people, params: { event_id: @event.id }
+    assert_match 'Nástup', response.body
   end
 
   test "enrollment disappears for participants a week after the end" do
