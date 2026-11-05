@@ -121,13 +121,13 @@ class Act::EventsController < ActController
 
     stash = _paper_stash(@event, @participant)
     used = _paper_used_keys(@event)
+    used |= %i[name last_name] if used&.include?(:full_name)
     @paper_rows = PAPER_FIELDS.select { |k, _| used.nil? || used.include?(k) }
                               .map { |k, f| f.merge(key: k, value: stash[k].to_s) }
   end
 
   # údaje účastníka dosazované do papírů; fix: false = opravuje org
   PAPER_FIELDS = {
-    full_name:        { label: 'Jméno a příjmení', fix: false },
     name:             { label: 'Jméno', fix: false },
     last_name:        { label: 'Příjmení', fix: false },
     nickname:         { label: 'Přezdívka', fix: true },
