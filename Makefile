@@ -150,3 +150,5 @@ gen-oidc-signing-key:
 adventomat:
 	rails runner -e production script/adventomat.rb
 
+pull:
+	git pull
