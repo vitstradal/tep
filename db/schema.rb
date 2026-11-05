@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 37) do
+ActiveRecord::Schema[7.2].define(version: 38) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -93,7 +93,7 @@ ActiveRecord::Schema[7.2].define(version: 37) do
     t.string "event_piki_url", default: ""
     t.string "event_sklep_url", default: ""
     t.boolean "spec_tshirt", default: false
-    t.string "spec_tshirt_detail", default: "116,128,140,152,164,XS,S,M,L,XL,XXL"
+    t.string "spec_tshirt_detail", default: "XS,S,M,L,XL,XXL,3XL"
   end
 
   create_table "act_participants", force: :cascade do |t|
