@@ -2,7 +2,11 @@
    <tr data-org="<%= participant.org? ? 1 : 0 %>"  data-status="<%= participant.status %>" data-chosen="<%= participant.chosen %>" bgcolor="<%= participant.status_color %>" >
    <% for attr in @attr_table do %>
      <td>
-       <%= participant.display_attr(attr[0]) %>
+       <% if attr[0] == :sex_sign %>
+         <span style="font-size:2em;line-height:1"><%= participant.display_attr(attr[0]) %></span>
+       <% else %>
+         <%= participant.display_attr(attr[0]) %>
+       <% end %>
      </td>
   <% end %>
   <% @view[:empty].times do %><td></td><% end %>

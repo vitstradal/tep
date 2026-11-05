@@ -588,7 +588,7 @@ class Act::EventsController < ActController
         pdf.font_families.update('symbols' => { normal: symbols })
         pdf.fallback_fonts(['symbols'])
       end
-      pdf.table(rows)
+      pdf.table(rows.map { |r| r.map { |c| %w[♂ ♀].include?(c) ? { content: c, size: 24, align: :center, padding: [0, 5, 1, 5] } : c } })
       send_data pdf.render,
         filename: "list.pdf",
         type: "application/pdf",
