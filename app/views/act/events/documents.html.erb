@@ -39,18 +39,20 @@
         <th><%= row[:label] %></th>
         <% if row[:value].blank? %>
           <td class="red"><i>nevyplněno</i></td>
+        <% elsif row[:fallback] %>
+          <td><%= row[:value] %> <small class="red">(náhradní – obec z tvé adresy neznáme)</small></td>
         <% else %>
           <td><%= row[:value] %></td>
         <% end %>
-        <td><%= row[:in_pdf] ? raw('<span class="green"><i class="fa fa-check"></i> předvyplněno</span>') : raw('<span class="grey">dopiš ručně</span>') %></td>
-        <td><small class="grey"><%= row[:fix] ? 'ty' : 'org' %></small></td>
+        <td><%= row[:in_pdf] ? raw('<span class="green"><i class="fa fa-check"></i> předvyplněno</span>') : raw('<span class="grey" title="Tyhle papíry tenhle údaj nepředvyplňují. Pokud ho formulář chce, dopiš ho ručně.">nepředvyplňuje se</span>') %></td>
+        <td><small class="grey"><%= row[:fix] ? ['ty', row[:via]].compact.join(' ') : 'org' %></small></td>
       </tr>
     <% end %>
   </table>
 
   <div class="alert alert-warning">
     Nesedí některý údaj? Oprav si ho v <%= link_to 'účastnickém účtu', act_participant_edit_path(@participant) %> a dokumenty si stáhni znovu.
-    Jméno, příjmení a datum narození ti opraví org – napiš na pikomat@mff.cuni.cz.
+    Jméno, příjmení, datum narození a náhradní místo podpisu ti opraví org – napiš na pikomat@mff.cuni.cz.
     Předvyplněné údaje lze případně upravit i přímo v PDF před tiskem.
   </div>
 <% end %>

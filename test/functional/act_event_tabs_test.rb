@@ -127,8 +127,14 @@ class ActEventDocumentsTest < ActionController::TestCase
     assert_select "a[href=?]", "/act/participants/#{p.id}/edit"
     @controller.define_singleton_method(:_paper_used_keys) { |_e| %i[full_name birth_date] }
     get :documents, params: { event_id: @event.id }
-    assert_match 'dopiš ručně', response.body
+    assert_match 'nepředvyplňuje se', response.body
     assert_match '777', response.body
+    assert_match 'ty přes adresu', response.body
+    assert_no_match 'obec z tvé adresy neznáme', response.body
+    p.update_column(:address, 'Ulice 1, Nexistujíčkov')
+    get :documents, params: { event_id: @event.id }
+    assert_match 'náhradní – obec z tvé adresy neznáme', response.body
+    assert_no_match 'ty přes adresu', response.body
     assert_select "a[href=?]", "/act/events/#{@event.id}/papers_please/my"
   end
 

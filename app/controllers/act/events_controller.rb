@@ -127,6 +127,8 @@ class Act::EventsController < ActController
 
     stash = _paper_stash(@event, @participant)
     @paper_rows = PAPER_FIELDS.map { |k, f| f.merge(key: k, value: stash[k].to_s, in_pdf: fields.key?(k)) }
+    place = @paper_rows.find { |r| r[:key] == :place }
+    place.merge!(fix: false, fallback: true) unless @participant.correct_address_lokativ?
   end
 
   # údaje účastníka dosazované do papírů; fix: false = opravuje org
@@ -137,7 +139,7 @@ class Act::EventsController < ActController
     birth_date:       { label: 'Datum narození', fix: false },
     rc:               { label: 'Rodné číslo', fix: true },
     address:          { label: 'Adresa', fix: true },
-    place:            { label: 'Místo podpisu (podle adresy)', fix: true },
+    place:            { label: 'Místo podpisu (podle adresy)', fix: true, via: 'přes adresu' },
     email:            { label: 'Email', fix: true },
     phone:            { label: 'Telefon', fix: true },
     parent_email:     { label: 'Email na zákonného zástupce', fix: true },
