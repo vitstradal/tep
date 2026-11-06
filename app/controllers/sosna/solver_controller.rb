@@ -233,6 +233,7 @@ class Sosna::SolverController < SosnaController
   # schooll::
   # solver::
   def new
+    @menu_url = sosna_solver_new_path
     load_config
     @school ||= flash[:school] || Sosna::School.new
     @solver ||= flash[:solver]
@@ -441,6 +442,7 @@ class Sosna::SolverController < SosnaController
     @solver = id ? Sosna::Solver.find(id) : Sosna::Solver.new
     @school = @solver.school
     if id
+     @breadcrumb_tail = [{ name: "#{@solver.name} #{@solver.last_name}", url: sosna_solver_path(id) }]
      @solutions = Sosna::Solution.where(:solver_id => id).all
     end
     load_config

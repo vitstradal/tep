@@ -149,7 +149,7 @@ module ApplicationHelper
     end
 
     @_menu_section[:sub] << { name: text, url: url } if @_menu_section && @_level == 2
-    if _my_current_page?(url)
+    if _my_current_page?(url) || (@menu_url && url == url_for(@menu_url))
       li_cls.push('active')
       @_active = true
       if @_menu_section && @_level == 2 && (@_menu_hit.nil? || url.size > @_menu_hit[:url].size)
@@ -171,7 +171,7 @@ module ApplicationHelper
     return nil if @_menu_hit.nil?
     sec = @_menu_hit[:section]
     crumbs = [[{ name: sec[:name], ico: sec[:ico], sub: sec[:sub] }], [{ name: @_menu_hit[:name], url: @_menu_hit[:url] }]]
-    crumbs + Array(@breadcrumb_tail).map { |c| [c] }
+    (crumbs + Array(@breadcrumb_tail).map { |c| [c] }).map { |part| part.map { |c| c.merge(raw: true) } }
   end
 
   def url_for_root(user = nil)

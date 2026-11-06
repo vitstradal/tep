@@ -144,4 +144,18 @@ class MenuBreadcrumbTest < ActionDispatch::IntegrationTest
     assert_select '#breadcrumbs ul.breadcrumb > li:first-child .dropdown-menu a', /Moje řešení/
     assert_select '#breadcrumbs ul.breadcrumb > li:last-child a[href="/users/edit"]', 'Změna hesla'
   end
+
+  test "detail pages extend the menu breadcrumb, aliases map to their menu item" do
+    admin = User.new(email: 'adm@x.cz', password: 'password123', roles: %i[org admin user])
+    admin.skip_confirmation!
+    admin.save!
+    sign_in admin
+    get "/user/#{admin.id}/show"
+    assert_select 'ul.breadcrumb > li', 3
+    assert_select 'ul.breadcrumb > li:nth-child(2) a', 'Uživatelé'
+    assert_select 'ul.breadcrumb > li:last-child a', 'adm@x.cz'
+    sign_out admin
+    get '/prihlaska'
+    assert_select 'ul.breadcrumb > li:last-child a[href="/sosna/solver/new"]', 'Nový řešitel'
+  end
 end

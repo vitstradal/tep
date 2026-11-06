@@ -314,16 +314,16 @@
                  <% if bread[:sub] %>
                    <div class="inline pos-rel">
                      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                     <%= bread[:name].to_s.upcase_first %>
+                     <%= bread[:raw] ? bread[:name] : bread[:name].to_s.upcase_first %>
                      <i class="fa fa-caret-down"></i></a>
                      <ul class="dropdown-menu dropdown-light dropdown-caret dropdown-closer">
                        <% bread[:sub].each do |bread2| %>
-                         <li><%=link_to  bread2[:name].to_s.upcase_first, bread2[:url] %></li>
+                         <li><%=link_to  bread[:raw] ? bread2[:name] : bread2[:name].to_s.upcase_first, bread2[:url] %></li>
                        <% end %>
                      </ul>
                    </div>
                  <% else %>
-                   <%=link_to  bread[:name].to_s.upcase_first, bread[:url] %>
+                   <%=link_to  bread[:raw] ? bread[:name] : bread[:name].to_s.upcase_first, bread[:url] %>
                  <% end %>
                </li>
              <% elsif bread[:name] !~  /^index$/i %>

@@ -84,6 +84,7 @@ class TepController < ApplicationController
     @tab = params[:tab] || 'config'
     @user = User.find(user_id);
     @solvers = Sosna::Solver.where(user_id: user_id)
+    @breadcrumb_tail = [{ name: @user.email, url: user_show_path(@user.id) }]
     @use_password_dictionary = true
   end
 
