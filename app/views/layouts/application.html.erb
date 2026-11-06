@@ -297,7 +297,8 @@
     #          sub: [ {name:"", url:""} , ...  ] # vyrolovaci menu
     #        }
     #%>
-  <% if @breadcrumb %>
+  <% crumbs = @breadcrumb || menu_breadcrumb %>
+  <% if crumbs %>
     <div id="breadcrumbs" class="breadcrumbs no-print">
 <%################################################################################## %>
 <%# akcni tlacitka %>
@@ -305,7 +306,7 @@
        <%= yield :action_buttons %>
        <%= render 'layouts/view_as' %>
        <ul class="breadcrumb">
-         <% @breadcrumb.each_with_index do |b, idx| %>
+         <% crumbs.each_with_index do |b, idx| %>
            <% b.each_with_index do |bread| %>
              <% if ! bread[:active] || true %>
                <li class="<%= idx == 0 ? 'tep-slash' : ''%>">
@@ -313,20 +314,20 @@
                  <% if bread[:sub] %>
                    <div class="inline pos-rel">
                      <a href="#" class="dropdown-toggle" data-toggle="dropdown">
-                     <%= bread[:name].capitalize %>
+                     <%= bread[:name].to_s.upcase_first %>
                      <i class="fa fa-caret-down"></i></a>
                      <ul class="dropdown-menu dropdown-light dropdown-caret dropdown-closer">
                        <% bread[:sub].each do |bread2| %>
-                         <li><%=link_to  bread2[:name].capitalize, bread2[:url] %></li>
+                         <li><%=link_to  bread2[:name].to_s.upcase_first, bread2[:url] %></li>
                        <% end %>
                      </ul>
                    </div>
                  <% else %>
-                   <%=link_to  bread[:name].capitalize, bread[:url] %>
+                   <%=link_to  bread[:name].to_s.upcase_first, bread[:url] %>
                  <% end %>
                </li>
              <% elsif bread[:name] !~  /^index$/i %>
-               <li> <%=  bread[:name].capitalize %></li>
+               <li> <%=  bread[:name].to_s.upcase_first %></li>
              <% end %>
            <% end %>
          <% end %>

@@ -137,18 +137,24 @@ module ApplicationHelper
       a_cls = "dropdown-toggle"
       a_extra = content_tag(:b, '', {:class => 'arrow fa fa-angle-down'} )
       @_level += 1
+      @_menu_section = { name: text, ico: opt[:ico], sub: [] }
       li_extra = \
           content_tag(:b, '', { :class=> "arrow" } )  +
           capture(&block)
+      @_menu_section = nil
       @_level -= 1
 
       li_cls.push('open active') if @_active
       @_active = false
     end
 
+    @_menu_section[:sub] << { name: text, url: url } if @_menu_section && @_level == 2
     if _my_current_page?(url)
       li_cls.push('active')
       @_active = true
+      if @_menu_section && @_level == 2 && (@_menu_hit.nil? || url.size > @_menu_hit[:url].size)
+        @_menu_hit = { section: @_menu_section, url: url, name: text }
+      end
     end
 
     content_tag(:li, { :class => li_cls.join(' ') } ) do
@@ -156,6 +162,16 @@ module ApplicationHelper
           ico_tag  + text_tag + a_extra
       end + li_extra
     end
+  end
+
+  ##
+  # Drobečky odvozené z bočního menu (sekce › položka › @breadcrumb_tail) pro stránky bez vlastního @breadcrumb;
+  # volat až po vykreslení menu.
+  def menu_breadcrumb
+    return nil if @_menu_hit.nil?
+    sec = @_menu_hit[:section]
+    crumbs = [[{ name: sec[:name], ico: sec[:ico], sub: sec[:sub] }], [{ name: @_menu_hit[:name], url: @_menu_hit[:url] }]]
+    crumbs + Array(@breadcrumb_tail).map { |c| [c] }
   end
 
   def url_for_root(user = nil)

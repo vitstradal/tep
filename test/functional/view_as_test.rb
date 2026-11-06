@@ -126,7 +126,22 @@ class ViewAsNoBreadcrumbTest < ActionDispatch::IntegrationTest
     post '/view_as/toggle'
     get '/users/edit'
     assert_response :success
-    assert_select '#breadcrumbs', 0
     assert_select 'select#view_as'
+  end
+end
+
+class MenuBreadcrumbTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
+
+  test "page without own breadcrumb gets section and item from the sidebar menu" do
+    u = User.new(email: 'u@x.cz', password: 'password123', roles: %i[user])
+    u.skip_confirmation!
+    u.save!
+    sign_in u
+    get '/users/edit'
+    assert_select '#breadcrumbs ul.breadcrumb > li', 2
+    assert_select '#breadcrumbs ul.breadcrumb > li:first-child .dropdown-toggle', /Uživatel/
+    assert_select '#breadcrumbs ul.breadcrumb > li:first-child .dropdown-menu a', /Moje řešení/
+    assert_select '#breadcrumbs ul.breadcrumb > li:last-child a[href="/users/edit"]', 'Změna hesla'
   end
 end
