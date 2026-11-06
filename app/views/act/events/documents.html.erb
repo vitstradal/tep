@@ -62,7 +62,11 @@
 
   <div class="alert alert-warning">
     Nesedí některý údaj? Oprav si ho v <%= link_to 'účastnickém účtu', act_participant_edit_path(@participant) %> a dokumenty si stáhni znovu.
-    Údaje, které opravuje org, mu napiš na <%= mail_to @org_email, @org_email, subject: "#{@event.title}: oprava údajů v dokumentech" %>.
+    <% org_rows = @paper_rows.reject { |r| r[:fix] }.map { |r| r[:fallback] ? 'náhradní místo podpisu' : r[:label].downcase } %>
+    <% if org_rows.any? %>
+      <%= org_rows.to_sentence(two_words_connector: ' a ', last_word_connector: ' a ').upcase_first %> ti opraví org –
+      napiš na <%= mail_to @org_email, @org_email, subject: "#{@event.title}: oprava údajů v dokumentech" %>.
+    <% end %>
     Předvyplněné údaje lze případně upravit i přímo v PDF před tiskem.
   </div>
 <% end %>
