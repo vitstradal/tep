@@ -593,17 +593,11 @@ module ApplicationHelper
     end
 
     if @is_event
-      if !(event = Act::Event .where(event_piki_url: request.path) .order(event_piki_url: :desc) .first).nil?
-        @event_tab = 'piki'
-        return event
-      end
-      if !(event = Act::Event .where(event_info_url: request.path) .order(event_info_url: :desc) .first).nil?
-        @event_tab = 'info'
-        return event
-      end
-      if !(event = Act::Event .where(event_photos_url: request.path) .order(event_photos_url: :desc) .first).nil?
-        @event_tab = 'foto'
-        return event
+      { piki: :event_piki_url, info: :event_info_url, foto: :event_photos_url }.each do |tab, field|
+        if (event = Act::Event.for_wiki_page(field, request.path))
+          @event_tab = tab.to_s
+          return event
+        end
       end
     end
     return nil

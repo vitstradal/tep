@@ -95,4 +95,24 @@ namespace :act do
     end
     puts apply ? "act:birth_import: nastaveno #{changed} dat narození" : "act:birth_import: #{changed} změn; nic neuloženo, uložíš s APPLY=1"
   end
+
+  desc 'Zkontroluj wiki stránky akcí (info, piki, fotky): existují a mají {{akce}}; FIX=1 doplní {{akce}}, ALL=1 i staré akce'
+  task wiki_check: :environment do
+    require 'act_wiki_check'
+    events = ENV['ALL'] == '1' ? Act::Event.all : Act::Event.where('event_end >= ?', Date.current - 365)
+    check = ActWikiCheck.new(events.order(event_start: :desc))
+    items = check.items
+    txt = { ok: 'v pořádku', no_macro: 'chybí {{akce}}', missing: 'stránka neexistuje', external: 'mimo web pikomatu', no_wiki: 'neznámá wiki' }
+    items.reject { |i| i.status == :ok && !i.shared }.each do |i|
+      note = i.shared ? ' (sdílí víc akcí, záložky ukážou jen nejnovější)' : ''
+      puts "  #{i.event.id} #{i.event.title} [#{i.kind}] #{i.url}: #{txt[i.status]}#{note}"
+    end
+    items.group_by(&:status).each { |st, l| puts "#{txt[st]}: #{l.size}" }
+    if ENV['FIX'] == '1'
+      fixed = check.fix!(items)
+      puts "act:wiki_check: {{akce}} doplněno na #{fixed.size} stránek"
+    elsif items.any? { |i| i.status == :no_macro }
+      puts 'act:wiki_check: nic neopraveno, {{akce}} doplníš s FIX=1'
+    end
+  end
 end

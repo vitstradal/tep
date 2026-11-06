@@ -165,6 +165,15 @@ class Act::Event < ActiveRecord::Base
     !!(user && user.org?) || event_participants.exists?
   end
 
+  # akce, jejíž odkaz (field) míří na wiki stránku path; odkaz může mít host a #kotvu
+  def self.for_wiki_page(field, path)
+    host = 'https://pikomat.mff.cuni.cz'
+    like = sanitize_sql_like(path)
+    where(field => [path, host + path])
+      .or(where("#{field} LIKE ? OR #{field} LIKE ?", "#{like}#%", "#{host}#{like}#%"))
+      .order(id: :desc).first
+  end
+
   def documents_visible?(_user)
     paper_template.present?
   end
