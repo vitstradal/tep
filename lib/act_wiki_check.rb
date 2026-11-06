@@ -128,7 +128,6 @@ class ActWikiCheck
       item.level = :warn
     elsif shown.id != item.event.id
       item.notes << "stránku sdílí víc akcí, záložky ukážou „#{shown.title}“ (##{shown.id})"
-      item.level = :warn
     end
   end
 

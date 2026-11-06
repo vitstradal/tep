@@ -46,6 +46,16 @@ class ActWikiCheckPageTest < ActionController::TestCase
     assert_select 'a[href=?]', act_events_wiki_check_path, /Kontrola wiki akcí/
   end
 
+  test "errors are listed first and fixable pages are not listed by path" do
+    Act::Event.create!(title: 'Stará', event_category: 'tabor', event_info_url: '/neni/tu',
+                       event_start: Date.current - 400, event_end: Date.current - 399)
+    sign_in @morg
+    get :wiki_check
+    rows = css_select('table tr')[1..]
+    assert_equal %w[danger warning], rows.map { |r| r['class'] }
+    assert_no_match 'tabor/2026.wiki', response.body
+  end
+
   test "plain org cannot run the check" do
     org = User.new(email: 'org@x.cz', password: 'password123')
     org.skip_confirmation!

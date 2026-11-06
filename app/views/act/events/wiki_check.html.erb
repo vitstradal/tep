@@ -24,7 +24,6 @@
                    data: { confirm: "Doplnit {{akce}} na #{@fixable.size} stránek?" } do %>
       <i class="ace-icon fa fa-wrench"></i> Doplnit {{akce}} na <%= @fixable.size %> stránek
     <% end %>
-    <span class="grey"><%= @fixable.map(&:page).join(', ') %></span>
   <% end %>
   <br>
 <% end %>

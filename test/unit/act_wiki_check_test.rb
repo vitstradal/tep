@@ -64,6 +64,7 @@ class ActWikiCheckTest < ActiveSupport::TestCase
     assert_equal :warn, list[@ext.id].level
     assert list[@podzim.id].problem?
     assert_match 'záložky ukážou „Http“', list[@tabor.id].notes.join
+    assert_equal :info, list[@tabor.id].level
     assert_includes list[http.id].notes, 'odkaz začíná http://, lepší je https://'
     assert_equal [http, :info], Act::Event.for_wiki_path('/tabor/2026')
   end

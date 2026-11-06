@@ -693,7 +693,9 @@ class Act::EventsController < ActController
     @items = ActWikiCheck.new(Act::Event.order(event_start: :desc, id: :desc)).items
     @counts = @items.group_by(&:level).transform_values(&:size)
     @fixable = @items.select { |i| i.status == :no_macro }.uniq { |i| [i.wiki.name, i.page] }
-    @shown = @show_all ? @items : @items.select(&:problem?)
+    order = %i[error warn info ok]
+    @shown = (@show_all ? @items : @items.select(&:problem?)).each_with_index
+                                                             .sort_by { |i, n| [order.index(i.level), n] }.map(&:first)
   end
 
   ##
@@ -704,7 +706,7 @@ class Act::EventsController < ActController
     require 'act_wiki_check'
     check = ActWikiCheck.new(Act::Event.all)
     fixed = check.fix!(check.items, current_user.full_email)
-    flash[:success] = ["{{akce}} doplněno na #{fixed.size} stránek#{fixed.any? ? ': ' + fixed.map(&:page).join(', ') : ''}"]
+    flash[:success] = ["{{akce}} doplněno na #{fixed.size} stránek"]
     redirect_to act_events_wiki_check_path
   end
 
