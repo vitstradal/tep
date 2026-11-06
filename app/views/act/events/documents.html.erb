@@ -40,7 +40,7 @@
         <% if row[:value].blank? %>
           <td class="red"><i>nevyplněno</i></td>
         <% elsif row[:fallback] %>
-          <td><%= row[:value] %> <small class="red">(náhradní – obec z tvé adresy neznáme)</small></td>
+          <td><%= row[:value] %> <small class="red">(náhradní – obec z tvé adresy neznáme, doplní ji org)</small></td>
         <% else %>
           <td><%= row[:value] %></td>
         <% end %>
@@ -51,7 +51,7 @@
             <% end %>
           <% else %>
             <%= mail_to @org_email, title: "Napiš orgovi (#{@org_email})",
-                        subject: "#{@event.title}: oprava údaje #{row[:label].downcase}" do %>
+                        subject: row[:fallback] ? "#{@event.title}: chybí lokativ obce #{@participant.address_strip_for_lokativ.presence || @participant.address} pro místo podpisu" : "#{@event.title}: oprava údaje #{row[:label].downcase}" do %>
               <i class="fa fa-envelope-o"></i> org
             <% end %>
           <% end %>

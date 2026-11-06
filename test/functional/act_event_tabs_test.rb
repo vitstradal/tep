@@ -161,6 +161,7 @@ class ActEventDocumentsTest < ActionController::TestCase
     sign_in kid.reload
     get :documents, params: { event_id: @event.id }
     assert_match 'náhradní – obec z tvé adresy neznáme', response.body
+    assert_select 'td a[href*="Nexistuj%C3%AD%C4%8Dkov"] i.fa-envelope-o'
     assert_match 'Jméno, příjmení, datum narození a náhradní místo podpisu ti opraví org', response.body
     assert_select '.alert a[href^="mailto:vedouci@x.cz"]', 'vedouci@x.cz'
     assert_no_match 'ty přes adresu', response.body
