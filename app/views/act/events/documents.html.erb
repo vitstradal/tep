@@ -29,11 +29,11 @@
 
   <p>
   Stáhni si <%= button_tag 'předvyplněné dokumenty', href: act_event_my_papers_please_path(@event.id), class: 'btn btn-primary btn-sm', ico: 'fa-file-pdf-o', target: 'act_export' %>,
-  vytiskni je a podepiš. Údaje z tvého účastnického účtu:
+  vytiskni je a podepiš. Do dokumentů předvyplníme z tvého účastnického účtu:
   </p>
 
   <table class="table table-condensed table-bordered" style="width:auto">
-    <tr><th>Údaj</th><th>Hodnota</th><th>V dokumentech</th><th>Opravu udělá</th></tr>
+    <tr><th>Údaj</th><th>Hodnota</th><th>Opravu udělá</th></tr>
     <% @paper_rows.each do |row| %>
       <tr>
         <th><%= row[:label] %></th>
@@ -44,15 +44,25 @@
         <% else %>
           <td><%= row[:value] %></td>
         <% end %>
-        <td><%= row[:in_pdf] ? raw('<span class="green"><i class="fa fa-check"></i> předvyplněno</span>') : raw('<span class="grey" title="Tyhle papíry tenhle údaj nepředvyplňují. Pokud ho formulář chce, dopiš ho ručně.">nepředvyplňuje se</span>') %></td>
-        <td><small class="grey"><%= row[:fix] ? ['ty', row[:via]].compact.join(' ') : 'org' %></small></td>
+        <td>
+          <% if row[:fix] %>
+            <%= link_to act_participant_edit_path(@participant), class: 'grey', title: ['Oprav v účastnickém účtu', row[:via]].compact.join(' ') do %>
+              <i class="fa fa-pencil"></i> ty<%= " #{row[:via]}" if row[:via] %>
+            <% end %>
+          <% else %>
+            <%= mail_to @org_email, class: 'grey', title: "Napiš orgovi (#{@org_email})",
+                        subject: "#{@event.title}: oprava údaje #{row[:label].downcase}" do %>
+              <i class="fa fa-envelope-o"></i> org
+            <% end %>
+          <% end %>
+        </td>
       </tr>
     <% end %>
   </table>
 
   <div class="alert alert-warning">
     Nesedí některý údaj? Oprav si ho v <%= link_to 'účastnickém účtu', act_participant_edit_path(@participant) %> a dokumenty si stáhni znovu.
-    Jméno, příjmení, datum narození a náhradní místo podpisu ti opraví org – napiš na pikomat@mff.cuni.cz.
+    Údaje, které opravuje org, mu napiš na <%= mail_to @org_email, @org_email, subject: "#{@event.title}: oprava údajů v dokumentech" %>.
     Předvyplněné údaje lze případně upravit i přímo v PDF před tiskem.
   </div>
 <% end %>

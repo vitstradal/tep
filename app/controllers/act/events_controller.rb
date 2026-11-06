@@ -137,9 +137,10 @@ class Act::EventsController < ActController
     return if @participant.nil?
 
     stash = _paper_stash(@event, @participant)
-    @paper_rows = PAPER_FIELDS.map { |k, f| f.merge(key: k, value: stash[k].to_s, in_pdf: fields.key?(k)) }
+    @paper_rows = fields.map { |k, f| f.merge(key: k, value: stash[k].to_s) }
     place = @paper_rows.find { |r| r[:key] == :place }
-    place.merge!(fix: false, fallback: true) unless @participant.correct_address_lokativ?
+    place&.merge!(fix: false, fallback: true) unless @participant.correct_address_lokativ?
+    @org_email = @event.bonz_org.to_s.split(/[\s,;]+/).find { |e| e.include?('@') } || 'pikomat@mff.cuni.cz'
   end
 
   # údaje účastníka dosazované do papírů; fix: false = opravuje org

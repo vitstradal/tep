@@ -145,12 +145,16 @@ class ActEventDocumentsTest < ActionController::TestCase
     assert_match 'nevyplněno', response.body
     assert_no_match 'Zdravotník', response.body
     assert_match '777', response.body
-    assert_match 'předvyplněno', response.body
-    assert_select "a[href=?]", "/act/participants/#{p.id}/edit"
-    @controller.define_singleton_method(:_paper_used_keys) { |_e| %i[full_name birth_date] }
+    assert_select "td a[href=?] i.fa-pencil", "/act/participants/#{p.id}/edit"
+    assert_select 'td a[href^="mailto:pikomat@mff.cuni.cz"] i.fa-envelope-o'
+    @controller.define_singleton_method(:_paper_used_keys) { |_e| %i[full_name birth_date place] }
+    @event.update_columns(bonz_org: 'vedouci@x.cz, druhy@x.cz')
     get :documents, params: { event_id: @event.id }
-    assert_match 'nepředvyplňuje se', response.body
-    assert_match '777', response.body
+    assert_no_match 'nepředvyplňuje se', response.body
+    assert_no_match '777', response.body
+    assert_no_match 'Rodné číslo', response.body
+    assert_match 'Datum narození', response.body
+    assert_select 'td a[href^="mailto:vedouci@x.cz"]'
     assert_match 'ty přes adresu', response.body
     assert_no_match 'obec z tvé adresy neznáme', response.body
     p.update_column(:address, 'Ulice 1, Nexistujíčkov')
