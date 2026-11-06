@@ -38,7 +38,7 @@ class ApplicationController < ActionController::Base
   VIEW_AS_ROLES = { 'morg' => %i[org morg user], 'org' => %i[org user], 'user' => %i[user], 'anon' => nil }.freeze
   VIEW_AS_TXT = { 'morg' => 'morg', 'org' => 'org', 'user' => 'účastník', 'anon' => 'nepřihlášený' }.freeze
 
-  helper_method :real_user, :view_as, :view_as_allowed?
+  helper_method :real_user, :view_as, :view_as_allowed?, :view_as_switch?
 
   def real_user
     warden.authenticate(scope: :user)
@@ -48,9 +48,13 @@ class ApplicationController < ActionController::Base
     !!(user && (user.admin? || user.morg?))
   end
 
+  def view_as_switch?
+    !!session[:view_as_switch] && view_as_allowed?
+  end
+
   def view_as
     level = session[:view_as]
-    level if VIEW_AS_ROLES.key?(level) && view_as_allowed?
+    level if VIEW_AS_ROLES.key?(level) && view_as_switch?
   end
 
   def current_user

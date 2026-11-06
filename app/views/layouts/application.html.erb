@@ -94,7 +94,24 @@
                 </a>
               </li>
             <% end %>
-            <li><%= ilink_to  current_user.email, '#', :ico => 'fa-user', :class=> 'label-user btn btn-primary tep-transparent' %> </li>
+            <% if view_as_allowed? %>
+              <li class="dropdown">
+                <a href="#" class="dropdown-toggle label-user btn btn-primary tep-transparent" data-toggle="dropdown">
+                  <i class="ace-icon fa fa-user"></i> <span class="hidden-xs"><%= real_user.email %></span> <i class="ace-icon fa fa-caret-down"></i>
+                </a>
+                <ul class="dropdown-menu dropdown-menu-right">
+                  <li>
+                    <%= form_tag view_as_toggle_path, method: :post, style: 'margin:0' do %>
+                      <button type="submit" class="btn btn-link" style="width:100%;text-align:left" title="Přepínač u drobečkové navigace: náhled stránky s menšími právy">
+                        <i class="ace-icon fa <%= view_as_switch? ? 'fa-check-square-o' : 'fa-square-o' %>"></i> Přepínač „Jak to vidí“
+                      </button>
+                    <% end %>
+                  </li>
+                </ul>
+              </li>
+            <% else %>
+              <li><%= ilink_to  current_user.email, '#', :ico => 'fa-user', :class=> 'label-user btn btn-primary tep-transparent' %> </li>
+            <% end %>
             <li><%= ilink_to  'Logout', :destroy_user_session , :ico => 'fa-sign-out', :class => 'btn tep-transparent' %></li>
             <script>window.tep_signed_in = true;</script>
           <% else %>
@@ -316,7 +333,7 @@
        </ul>
        <div style='padding-left:12px' id="page-content-top2"></div>
      </div><%#breadcrumb %>
-   <% elsif view_as_allowed? %>
+   <% elsif view_as_switch? %>
      <div class="clearfix no-print"><%= render 'layouts/view_as' %></div>
    <% end %>
 

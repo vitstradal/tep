@@ -78,6 +78,7 @@ Tep::Application.routes.draw do
   get  '/act/participant/tnx'                                      => 'act/participants#create_tnx',         :as => :act_participant_create_tnx
 
   post  '/view_as'                                                 => 'view_as#update',                      :as => :view_as
+  post  '/view_as/toggle'                                          => 'view_as#toggle',                      :as => :view_as_toggle
 
   # event_categories:
   get   '/act/event_categories'                                    => 'act/event_categories#index',          :as => :act_event_categories
