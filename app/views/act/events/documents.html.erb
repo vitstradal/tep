@@ -46,11 +46,11 @@
         <% end %>
         <td>
           <% if row[:fix] %>
-            <%= link_to act_participant_edit_path(@participant), class: 'grey', title: ['Oprav v účastnickém účtu', row[:via]].compact.join(' ') do %>
+            <%= link_to act_participant_edit_path(@participant), title: ['Oprav v účastnickém účtu', row[:via]].compact.join(' ') do %>
               <i class="fa fa-pencil"></i> ty<%= " #{row[:via]}" if row[:via] %>
             <% end %>
           <% else %>
-            <%= mail_to @org_email, class: 'grey', title: "Napiš orgovi (#{@org_email})",
+            <%= mail_to @org_email, title: "Napiš orgovi (#{@org_email})",
                         subject: "#{@event.title}: oprava údaje #{row[:label].downcase}" do %>
               <i class="fa fa-envelope-o"></i> org
             <% end %>
