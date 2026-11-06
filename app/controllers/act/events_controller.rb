@@ -109,6 +109,17 @@ class Act::EventsController < ActController
   end
 
   ##
+  # GET /act/events/:event_id/info
+  #
+  # Tab Informace pro akce bez vlastní informační stránky: stručný popis akce
+  def info
+    return unless _find_event(params[:event_id])
+    return redirect_to @event.event_info_url if @event.event_info_url.present?
+    @event_tab = 'info'
+    @breadcrumb = [ [ _breadcrumb_events ], [ _breadcrumb_event_category(@event.event_category) ], [ _breadcrumb_event(@event) ] ]
+  end
+
+  ##
   # GET /act/events/:event_id/documents
   #
   # Tab Dokumenty: odkaz na předvyplněné papíry k akci

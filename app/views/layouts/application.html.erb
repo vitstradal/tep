@@ -382,9 +382,7 @@
           <div class="tabbable">
             <ul id="myTab" class="nav nav-tabs">
                <%######################### tab Infromace -%>
-               <% if @event.event_info_url != "" -%>
-                  <li <%=class_active_if( @event_tab == 'info') %>> <%=ilink_to 'Informace', @event.event_info_url, ico: 'fa-book', title: 'Vidí každý, kdo vidí akci' %></li>
-               <% end -%>
+                  <li <%=class_active_if( @event_tab == 'info') %>> <%=ilink_to 'Informace', @event.event_info_url.presence || act_event_info_path(@event), ico: 'fa-book', title: 'Vidí každý, kdo vidí akci' %></li>
 
                <%######################### tab Přihlašování -%>
                <% if @event.enrollment_visible?(current_user) -%>

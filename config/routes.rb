@@ -114,6 +114,7 @@ Tep::Application.routes.draw do
   post '/act/events/:event_id/participants/:participant_id/role'   => 'act/event_participants#set_role',     :as => :act_event_set_participant_role
   get '/act/events/:event_id/display_participants'                 => 'act/events#display_participants',     :as => :act_event_display_participants
   get '/act/events/:event_id/people'                               => 'act/events#people',                   :as => :act_event_people
+  get '/act/events/:event_id/info' => 'act/events#info', as: :act_event_info
   get '/act/events/:event_id/documents'                            => 'act/events#documents',                :as => :act_event_documents
   get '/act/events/:event_id/history'                              => 'act/events#history',                  :as => :act_event_history
 

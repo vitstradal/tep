@@ -26,6 +26,26 @@ class ActEventTabsTest < ActionController::TestCase
     css_select('ul#myTab a').map { |a| a['href'] }
   end
 
+  test "info tab shows the brief description, or leads to the event's own info page" do
+    @event.update_columns(body: "Sraz v 9:00.\nS sebou svačinu.")
+    get :info, params: { event_id: @event.id }
+    assert_response :success
+    assert_select 'li.active a[href=?]', "/act/events/#{@event.id}/info"
+    assert_select 'p', /Sraz v 9:00/
+    assert_select 'br'
+    @event.update_columns(event_info_url: '/wiki/tabor')
+    get :info, params: { event_id: @event.id }
+    assert_redirected_to '/wiki/tabor'
+    get :show, params: { event_id: @event.id }
+    assert_includes tab_hrefs, '/wiki/tabor'
+  end
+
+  test "people page offers a login link to anonymous" do
+    Act::EventParticipant.create!(event_id: @event.id, participant_id: @p.id, status: 'yes', chosen: 'participant')
+    get :people, params: { event_id: @event.id }
+    assert_select "a[href=?]", "/users/sign_in?next=%2Fact%2Fevents%2F#{@event.id}%2Fpeople", 'přihlásit'
+  end
+
   test "enrollment tab holds the form, people and documents have own tabs" do
     @event.update_columns(paper_template: 'x')
     Act::EventParticipant.create!(event_id: @event.id, participant_id: @p.id, status: 'yes', chosen: 'participant')

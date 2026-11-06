@@ -1,0 +1,13 @@
+<h1><%= @event.title %></h1>
+
+<p><b>Datum: <%= @event.date_str %></b></p>
+
+<% if @event.body.present? %>
+  <%= simple_format(@event.body) %>
+<% else %>
+  <p class="grey"><i>K akci zatím nejsou další informace.</i></p>
+<% end %>
+
+<% if @event.limit_num_participants %>
+  <p>Na tuto akci může jet maximálně <b><%= @event.max_participants %></b> účastníků.</p>
+<% end %>

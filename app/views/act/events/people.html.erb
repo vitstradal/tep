@@ -41,5 +41,5 @@
 </table>
 </div>
 <% else %>
-  Pro zobrazení účastníků je potřeba se přihlásit.
+  Pro zobrazení účastníků je potřeba se <%= link_to 'přihlásit', new_user_session_path(next: request.path) %>.
 <% end %>
