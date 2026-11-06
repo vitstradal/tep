@@ -316,8 +316,8 @@
        </ul>
        <div style='padding-left:12px' id="page-content-top2"></div>
      </div><%#breadcrumb %>
-   <% elsif view_as %>
-     <%= render 'layouts/view_as' %>
+   <% elsif view_as_allowed? %>
+     <div class="clearfix no-print"><%= render 'layouts/view_as' %></div>
    <% end %>
 
 

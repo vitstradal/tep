@@ -87,3 +87,18 @@ class ViewAsControllerTest < ActionController::TestCase
     assert_nil session[:view_as]
   end
 end
+
+class ViewAsNoBreadcrumbTest < ActionDispatch::IntegrationTest
+  include Devise::Test::IntegrationHelpers
+
+  test "switch is shown also on pages without breadcrumb" do
+    morg = User.new(email: 'morg2@x.cz', password: 'password123', roles: %i[org morg])
+    morg.skip_confirmation!
+    morg.save!
+    sign_in morg
+    get '/users/edit'
+    assert_response :success
+    assert_select '#breadcrumbs', 0
+    assert_select 'select#view_as'
+  end
+end
