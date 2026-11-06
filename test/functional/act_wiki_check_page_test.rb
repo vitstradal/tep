@@ -40,6 +40,12 @@ class ActWikiCheckPageTest < ActionController::TestCase
     assert_select 'p', /Všechny stránky akcí jsou v pořádku/
   end
 
+  test "events overview has a button to the check for morg" do
+    sign_in @morg
+    get :index
+    assert_select 'a[href=?]', act_events_wiki_check_path, /Kontrola wiki akcí/
+  end
+
   test "plain org cannot run the check" do
     org = User.new(email: 'org@x.cz', password: 'password123')
     org.skip_confirmation!
@@ -47,6 +53,8 @@ class ActWikiCheckPageTest < ActionController::TestCase
     org.roles << :org
     org.save!
     sign_in org
+    get :index
+    assert_select 'a[href=?]', act_events_wiki_check_path, 0
     post :wiki_check_fix
     assert_equal "= Tábor =\n", @main.get_page('tabor/2026.wiki').first
   end

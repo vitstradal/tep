@@ -35,6 +35,12 @@ Pikomat je skupina, kterou nestmeluje pouze matematika, ale také přátelství 
      <span>Typy akcí</span>
   </a>
 <% end %>
+<% if can? :wiki_check, Act::Event %>
+  <a href=<%= act_events_wiki_check_path %> class="btn btn-primary">
+    <span class="ace-icon fa fa-stethoscope"></span>
+    <span>Kontrola wiki akcí</span>
+  </a>
+<% end %>
 <% if current_user && current_user.org? %>
   <a href=<%= act_events_jakna_path %> class="btn btn-primary" type="submit">
     <span class="ace-icon fa fa-print"></span>
