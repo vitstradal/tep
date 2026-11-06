@@ -116,8 +116,10 @@ class ActEventDocumentsTest < ActionController::TestCase
                                  user_id: kid.id, activated: 'full', phone: '777', parent_email: 'r@x.cz',
                                  parent_phone: '2', birth: Date.new(2014, 1, 1), address: 'Ulice 1, Praha', birth_number: '140101/1234',
                                  health_insurance: '111', sex: 'male')
+    p.update_column(:parent_phone, '')
     sign_in kid
     get :documents, params: { event_id: @event.id }
+    assert_no_match 'Přezdívka', response.body
     assert_match '140101/1234', response.body
     assert_match '1. 1. 2014', response.body
     assert_match 'nevyplněno', response.body
@@ -132,6 +134,7 @@ class ActEventDocumentsTest < ActionController::TestCase
     assert_match 'ty přes adresu', response.body
     assert_no_match 'obec z tvé adresy neznáme', response.body
     p.update_column(:address, 'Ulice 1, Nexistujíčkov')
+    sign_in kid.reload
     get :documents, params: { event_id: @event.id }
     assert_match 'náhradní – obec z tvé adresy neznáme', response.body
     assert_no_match 'ty přes adresu', response.body

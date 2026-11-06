@@ -135,7 +135,6 @@ class Act::EventsController < ActController
   PAPER_FIELDS = {
     name:             { label: 'Jméno', fix: false },
     last_name:        { label: 'Příjmení', fix: false },
-    nickname:         { label: 'Přezdívka', fix: true },
     birth_date:       { label: 'Datum narození', fix: false },
     rc:               { label: 'Rodné číslo', fix: true },
     address:          { label: 'Adresa', fix: true },
