@@ -183,6 +183,8 @@ class Ability
       can :display_participants, Act::Event
       can :edit_participants, Act::Event
       can :enroll_others, Act::Event
+      can :wiki_check, Act::Event
+      can :wiki_check_fix, Act::Event
     end
 
     if user.admin?

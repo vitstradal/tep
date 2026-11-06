@@ -683,6 +683,32 @@ class Act::EventsController < ActController
   end
 
   ##
+  # GET /act/events/wiki_check
+  #
+  # Kontrola wiki stránek všech akcí ({{akce}}, existence, záložky) s poznámkami
+  def wiki_check
+    require 'act_wiki_check'
+    @breadcrumb = [ [ _breadcrumb_events ], [ { name: 'Kontrola wiki stránek', url: act_events_wiki_check_path } ] ]
+    @show_all = params[:all] == '1'
+    @items = ActWikiCheck.new(Act::Event.order(event_start: :desc, id: :desc)).items
+    @counts = @items.group_by(&:level).transform_values(&:size)
+    @fixable = @items.select { |i| i.status == :no_macro }.uniq { |i| [i.wiki.name, i.page] }
+    @shown = @show_all ? @items : @items.select(&:problem?)
+  end
+
+  ##
+  # POST /act/events/wiki_check/fix
+  #
+  # Doplní {{akce}} na stránky akcí, kde chybí
+  def wiki_check_fix
+    require 'act_wiki_check'
+    check = ActWikiCheck.new(Act::Event.all)
+    fixed = check.fix!(check.items, current_user.full_email)
+    flash[:success] = ["{{akce}} doplněno na #{fixed.size} stránek#{fixed.any? ? ': ' + fixed.map(&:page).join(', ') : ''}"]
+    redirect_to act_events_wiki_check_path
+  end
+
+  ##
   #  GET /act/events/:event_id/papers_please/me
   #
   # pouze pro uzivatele, vraci pouze jeho papiry

@@ -1,0 +1,60 @@
+<h1>Kontrola wiki stránek akcí</h1>
+
+<p>
+  Projde info, piki a fotky všech akcí: stránka musí existovat a mít <code>{{akce}}</code>,
+  aby na ní byly záložky akce. Sklep se nekontroluje.
+</p>
+
+<p>
+  <span class="label label-danger">chyba <%= @counts[:error].to_i %></span>
+  <span class="label label-warning">varování <%= @counts[:warn].to_i %></span>
+  <span class="label label-info">poznámka <%= @counts[:info].to_i %></span>
+  <span class="label label-success">v pořádku <%= @counts[:ok].to_i %></span>
+  &nbsp;
+  <% if @show_all %>
+    <%= link_to 'Jen problémy', act_events_wiki_check_path %>
+  <% else %>
+    <%= link_to 'Ukázat vše', act_events_wiki_check_path(all: 1) %>
+  <% end %>
+</p>
+
+<% if @fixable.any? && can?(:wiki_check_fix, Act::Event) %>
+  <%= form_tag act_events_wiki_check_fix_path, class: 'form-inline' do %>
+    <%= button_tag type: 'submit', class: 'btn btn-primary btn-sm',
+                   data: { confirm: "Doplnit {{akce}} na #{@fixable.size} stránek?" } do %>
+      <i class="ace-icon fa fa-wrench"></i> Doplnit {{akce}} na <%= @fixable.size %> stránek
+    <% end %>
+    <span class="grey"><%= @fixable.map(&:page).join(', ') %></span>
+  <% end %>
+  <br>
+<% end %>
+
+<% if @shown.empty? %>
+  <p class="green"><b>Všechny stránky akcí jsou v pořádku.</b></p>
+<% else %>
+  <table class="table table-condensed table-bordered">
+    <tr>
+      <th>Akce</th>
+      <th>Stránka</th>
+      <th>Odkaz</th>
+      <th>Stav</th>
+      <th>Poznámky</th>
+    </tr>
+    <% cls = { error: 'danger', warn: 'warning', info: 'info', ok: 'success' } %>
+    <% @shown.each do |i| %>
+      <tr class="<%= cls[i.level] %>">
+        <td>
+          <%= link_to i.event.title, act_event_path(i.event) %>
+          <span class="grey">#<%= i.event.id %>, <%= i.event.event_start %></span>
+          <% if can? :edit, i.event %>
+            <%= link_to act_event_edit_path(i.event), title: 'Upravit akci' do %><i class="fa fa-pencil"></i><% end %>
+          <% end %>
+        </td>
+        <td><%= { info: 'info', piki: 'piki', foto: 'fotky' }[i.kind] %></td>
+        <td><%= i.url.present? ? link_to(i.url, i.url) : '–' %></td>
+        <td><%= ActWikiCheck::STATUS[i.status] %></td>
+        <td><%= safe_join(i.notes, tag.br) %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>

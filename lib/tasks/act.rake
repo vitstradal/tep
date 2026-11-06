@@ -102,10 +102,9 @@ namespace :act do
     events = ENV['ALL'] == '1' ? Act::Event.all : Act::Event.where('event_end >= ?', Date.current - 365)
     check = ActWikiCheck.new(events.order(event_start: :desc))
     items = check.items
-    txt = { ok: 'v pořádku', no_macro: 'chybí {{akce}}', missing: 'stránka neexistuje', external: 'mimo web pikomatu', no_wiki: 'neznámá wiki' }
-    items.reject { |i| i.status == :ok && !i.shared }.each do |i|
-      note = i.shared ? ' (sdílí víc akcí, záložky ukážou jen nejnovější)' : ''
-      puts "  #{i.event.id} #{i.event.title} [#{i.kind}] #{i.url}: #{txt[i.status]}#{note}"
+    txt = ActWikiCheck::STATUS
+    items.select(&:problem?).each do |i|
+      puts "  #{i.event.id} #{i.event.title} [#{i.kind}] #{i.url}: #{txt[i.status]}; #{i.notes.join('; ')}"
     end
     items.group_by(&:status).each { |st, l| puts "#{txt[st]}: #{l.size}" }
     if ENV['FIX'] == '1'

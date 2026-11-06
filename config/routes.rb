@@ -95,6 +95,8 @@ Tep::Application.routes.draw do
   get '/act/events/new'                                            => 'act/events#new',                      :as => :act_event_new
   post '/act/events/create'                                        => 'act/events#create',                   :as => :act_event_create
   post '/act/events/filter'                                        => 'act/events#filter',                   :as => :act_events_filter_helper
+  get  '/act/events/wiki_check' => 'act/events#wiki_check', as: :act_events_wiki_check
+  post '/act/events/wiki_check/fix' => 'act/events#wiki_check_fix', as: :act_events_wiki_check_fix
   get  '/act/event/jakna'                                          => 'act/events#jakna',                    :as => :act_events_jakna
   get '/act/events/filter/:event_category/:enroll_status'          => 'act/events#index',                    :as => :act_events_filter
   get '/act/events/:event_id'                                      => 'act/events#show',                     :as => :act_event

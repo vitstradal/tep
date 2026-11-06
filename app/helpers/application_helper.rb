@@ -593,11 +593,10 @@ module ApplicationHelper
     end
 
     if @is_event
-      { piki: :event_piki_url, info: :event_info_url, foto: :event_photos_url }.each do |tab, field|
-        if (event = Act::Event.for_wiki_page(field, request.path))
-          @event_tab = tab.to_s
-          return event
-        end
+      event, tab = Act::Event.for_wiki_path(request.path)
+      if event
+        @event_tab = tab.to_s
+        return event
       end
     end
     return nil

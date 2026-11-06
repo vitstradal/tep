@@ -214,6 +214,9 @@
           <% if can? :read, Act::EventCategory %>
             <%= menu_lii act_event_categories_path, 'Typy akcí' %>
           <% end %>
+          <% if can? :wiki_check, Act::Event %>
+            <%= menu_lii act_events_wiki_check_path, 'Kontrola wiki akcí' %>
+          <% end %>
         </ul>
       <% end %>
       <%= menu_li '/onas', 'Přihláška', ico: 'fa-plus-square' do %>

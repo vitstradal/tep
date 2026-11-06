@@ -165,13 +165,25 @@ class Act::Event < ActiveRecord::Base
     !!(user && user.org?) || event_participants.exists?
   end
 
+  WIKI_TABS = { piki: :event_piki_url, info: :event_info_url, foto: :event_photos_url }.freeze
+  WIKI_HOSTS = %w[https://pikomat.mff.cuni.cz http://pikomat.mff.cuni.cz].freeze
+
   # akce, jejíž odkaz (field) míří na wiki stránku path; odkaz může mít host a #kotvu
   def self.for_wiki_page(field, path)
-    host = 'https://pikomat.mff.cuni.cz'
     like = sanitize_sql_like(path)
-    where(field => [path, host + path])
-      .or(where("#{field} LIKE ? OR #{field} LIKE ?", "#{like}#%", "#{host}#{like}#%"))
+    likes = ["#{like}#%"] + WIKI_HOSTS.map { |h| "#{h}#{like}#%" }
+    where(field => [path] + WIKI_HOSTS.map { |h| h + path })
+      .or(where(likes.map { "#{field} LIKE ?" }.join(' OR '), *likes))
       .order(id: :desc).first
+  end
+
+  # [akce, záložka], kterou ukáže wiki stránka path s {{akce}}
+  def self.for_wiki_path(path)
+    WIKI_TABS.each do |tab, field|
+      event = for_wiki_page(field, path)
+      return [event, tab] if event
+    end
+    nil
   end
 
   def documents_visible?(_user)
