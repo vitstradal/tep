@@ -483,7 +483,7 @@ function init_adventomat_app($app) {
         if (day.state === 'solved') $m.find('.adventomat-msg').html('<p class="green"><i class="fa fa-star"></i> Tohle už máš vyřešené.</p>')
         $m.modal('show')
         $.ajax({ url: base + '/den/' + day.label, cache: false })
-         .done(function (j) { $m.find('.adventomat-text').html(j.html); typeset($m.find('.adventomat-text')) })
+         .done(function (j) { $m.find('.adventomat-text').html(j.html).find('img').css('max-width', '100%'); typeset($m.find('.adventomat-text')) })
          .fail(function (x) { $m.find('.adventomat-text').html('<p class="red">' + adv_esc((x.responseJSON || {}).error || 'Nepodařilo se načíst.') + '</p>') })
     }
 
