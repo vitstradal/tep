@@ -406,6 +406,7 @@ class GiwiController < ApplicationController
     return _template_calendar(env, argv) if tname == 'owncalendar'
     return _template_sign(env, argv) if tname == 'sign'
     return _template_random_string(env, argv) if tname == 'randomstring'
+    return _template_adventomat_kalendar(env, argv) if tname == 'adventomat_kalendar'
 
     part = 0
     if tname =~ /\A\//
@@ -439,6 +440,13 @@ class GiwiController < ApplicationController
       part -= 1
     end
   end
+  # usage: {{adventomat_kalendar 2026}} — kalendář vykreslí tep.js z /quiz/advent-2026/kalendar
+  def _template_adventomat_kalendar(env, argv)
+    year = (argv['0'] || argv['00']).to_s.strip
+    return 'adventomat_kalendar: chybí rok' unless year.match?(/\A\d{4}\z/)
+    "<div id=\"adventomat-app\" data-year=\"#{year}\"><p class=\"grey\">Načítám adventomat…</p></div>"
+  end
+
   # usage: {{randomstring}}
   # random string
   def _template_random_string(env, argv)

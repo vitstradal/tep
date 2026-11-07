@@ -241,6 +241,7 @@ var colorbox_params = {
       $('#cboxLoadingGraphic').append("<i class='ace-icon fa fa-spinner orange'></i>");
 
       $('#adventomat-modal').each(function() { init_adventomat() })
+      $('#adventomat-app').each(function() { init_adventomat_app($(this)) })
       init_friend_widget()
       $('#friend-widget-resend').click(function (ev) {
           ev.preventDefault()
@@ -355,6 +356,186 @@ function adventomat_set_button_solved(id) {
              console.log("setting solved", this)
            }
         })
+}
+
+/* ---- adventomat: kalendář z /quiz/advent-<rok>/kalendar (viz docs/superpowers/specs/2026-11-07-adventomat-design.md) ---- */
+
+function adv_esc(s) {
+    return $('<div/>').text(s == null ? '' : String(s)).html()
+}
+
+function adv_time(iso) {
+    var d = new Date(iso)
+    var mm = ('0' + d.getMinutes()).slice(-2)
+    return d.getDate() + '. ' + (d.getMonth() + 1) + '. v ' + d.getHours() + ':' + mm
+}
+
+function init_adventomat_app($app) {
+    var year = $app.data('year')
+    var base = '/quiz/advent-' + year
+    var store = 'adventomat-' + year
+    var state = { offset: 0, data: null, timer: null, day: null }
+
+    function cached() {
+        try { return JSON.parse(localStorage.getItem(store)) || [] } catch (e) { return [] }
+    }
+    function cache(list) {
+        try { localStorage.setItem(store, JSON.stringify(list)) } catch (e) {}
+    }
+    function server_now() { return new Date(Date.now() + state.offset) }
+
+    function load() {
+        $.ajax({ url: base + '/kalendar', data: { uuid: friend_get().uuid || '' }, cache: false })
+         .done(function (data) {
+             state.data = data
+             state.offset = new Date(data.now) - Date.now()
+             if (!data.debug) cache(data.days.filter(function (d) { return d.state === 'solved' }).map(function (d) { return d.no }))
+             render()
+         })
+         .fail(function () { $app.html('<p class="red">Adventomat se nepodařilo načíst.</p>') })
+    }
+
+    function render() {
+        var d = state.data
+        var html = ''
+        if (d.org) html += debug_bar(d)
+        html += '<div class="adventomat-countdown"></div><div class="adventomat-grid">'
+        d.days.forEach(function (day) {
+            var cls = { locked: 'btn-default', open: 'btn-warning', solved: 'btn-success', missing: 'btn-default' }[day.state]
+            var ico = { locked: 'lock', open: 'question', solved: 'star', missing: 'hourglass-half' }[day.state]
+            html += '<button type="button" class="adventomat-day btn btn-app ' + cls + '" data-no="' + day.no + '">' +
+                    '<i class="ace-icon fa fa-' + ico + ' bigger-230"></i> ' + adv_esc(day.label) + '</button> '
+        })
+        html += '</div>'
+        if (d.reward) html += '<div class="adventomat-reward well"></div>'
+        html += table(d)
+        $app.html(html)
+        if (d.reward) {
+            $.ajax({ url: base + '/odmena', data: { uuid: friend_get().uuid || '' }, cache: false })
+             .done(function (j) { $app.find('.adventomat-reward').html(j.html); typeset($app.find('.adventomat-reward')) })
+        }
+        $app.find('.adventomat-day').click(function (ev) {
+            ev.preventDefault()
+            open_day(parseInt($(this).data('no'), 10))
+        })
+        bind_debug()
+        tick()
+    }
+
+    function table(d) {
+        if (!d.table.length) return ''
+        var h = '<h4>' + (d.closed ? 'Pořadí k ' + adv_time(d.closes_at) + ' (řešit můžeš dál)' : 'Průběžné pořadí') + '</h4>'
+        h += '<table class="table table-condensed table-striped" style="width:auto">'
+        d.table.forEach(function (r) {
+            h += '<tr><td class="align-right">' + r.count + '</td><td>' + adv_esc(r.nick) +
+                 (r.verified ? ' <i class="fa fa-check green" title="ověřený přítel"></i>' : '') + '</td></tr>'
+        })
+        return h + '</table><p class="grey">V tabulce jsou ti, kdo vyřešili aspoň ' + d.min_table + ' příklady.</p>'
+    }
+
+    function tick() {
+        clearTimeout(state.timer)
+        var d = state.data
+        var $c = $app.find('.adventomat-countdown')
+        if (!d.next_open_at) { $c.html(''); return }
+        var left = Math.floor((new Date(d.next_open_at) - server_now()) / 1000)
+        if (left <= 0) { load(); return }
+        var dd = Math.floor(left / 86400), hh = Math.floor(left % 86400 / 3600)
+        var mi = Math.floor(left % 3600 / 60), ss = left % 60
+        var txt = (dd ? dd + ' d ' : '') + hh + ' h ' + ('0' + mi).slice(-2) + ' min ' + ('0' + ss).slice(-2) + ' s'
+        $c.html('<p><i class="fa fa-clock-o"></i> Další okénko se otevře ' + adv_time(d.next_open_at) +
+                ' – za <b>' + txt + '</b>.</p>')
+        state.timer = setTimeout(tick, 1000)
+    }
+
+    function modal() {
+        var $m = $('#adventomat-app-modal')
+        if ($m.length) return $m
+        $m = $('<div id="adventomat-app-modal" class="modal fade" tabindex="-1" role="dialog"><div class="modal-dialog"><div class="modal-content">' +
+               '<div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title"></h4></div>' +
+               '<div class="modal-body"><div class="adventomat-text"></div><div class="adventomat-form form-inline" style="margin-top:1em">' +
+               '<input type="text" inputmode="numeric" class="form-control adventomat-answer" placeholder="jen číslo"> ' +
+               '<button type="button" class="btn btn-primary adventomat-send">Odeslat</button></div>' +
+               '<div class="adventomat-msg" style="margin-top:1em"></div></div>' +
+               '<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Zavřít</button></div>' +
+               '</div></div></div>').appendTo('body')
+        $m.find('.adventomat-send').click(function (ev) { ev.preventDefault(); send() })
+        $m.find('.adventomat-answer').keypress(function (ev) { if (ev.which === 13) { ev.preventDefault(); send() } })
+        return $m
+    }
+
+    function open_day(no) {
+        var day = state.data.days.filter(function (x) { return x.no === no })[0]
+        var $m = modal()
+        state.day = day
+        $m.find('.modal-title').text(day.no === 25 ? 'Bonus' : 'Příklad na ' + day.no + '. 12.')
+        $m.find('.adventomat-msg').html('')
+        $m.find('.adventomat-answer').val('')
+        if (day.state === 'locked' || day.state === 'missing') {
+            $m.find('.adventomat-text').html(day.state === 'missing' ? '<p>Tohle okénko ještě připravujeme.</p>' :
+                                             '<p><i class="fa fa-lock"></i> Okénko se otevře ' + adv_time(day.opens_at) + '.</p>')
+            $m.find('.adventomat-form').hide()
+            $m.modal('show')
+            return
+        }
+        $m.find('.adventomat-text').html('<p class="grey">Načítám…</p>')
+        $m.find('.adventomat-form').toggle(true)
+        if (day.state === 'solved') $m.find('.adventomat-msg').html('<p class="green"><i class="fa fa-star"></i> Tohle už máš vyřešené.</p>')
+        $m.modal('show')
+        $.ajax({ url: base + '/den/' + day.label, cache: false })
+         .done(function (j) { $m.find('.adventomat-text').html(j.html); typeset($m.find('.adventomat-text')) })
+         .fail(function (x) { $m.find('.adventomat-text').html('<p class="red">' + adv_esc((x.responseJSON || {}).error || 'Nepodařilo se načíst.') + '</p>') })
+    }
+
+    function send() {
+        var $m = modal()
+        var answer = $m.find('.adventomat-answer').val()
+        var no = state.day.no
+        friend_ensure(function (f) {
+            if (!f) {
+                $m.find('.adventomat-msg').html('<p class="red">Bez přezdívky si vyřešené okénko nezapamatujeme.</p>')
+                return
+            }
+            $.post(base + '/answer', { uuid: f.uuid, question_no: no, answer: answer, authenticity_token: friend_csrf() })
+             .done(function (j) {
+                 if (j.correct) {
+                     $m.find('.adventomat-msg').html('<p class="green bigger-120"><i class="fa fa-star"></i> To je správně!' + (j.debug ? ' (debug, neukládá se)' : '') + '</p>')
+                     load()
+                 } else {
+                     $m.find('.adventomat-msg').html('<p class="red">To je bohužel špatně.' + (j.solved ? ' Okénko ale máš vyřešené z dřívějška.' : '') + '</p>')
+                 }
+             })
+             .fail(function (x) { $m.find('.adventomat-msg').html('<p class="red">' + adv_esc((x.responseJSON || {}).error || 'Chyba, zkus to znovu.') + '</p>') })
+        })
+    }
+
+    function typeset($el) {
+        if (typeof MathJax == 'object' && MathJax.Hub) MathJax.Hub.Queue(['Typeset', MathJax.Hub, $el[0]])
+    }
+
+    function debug_bar(d) {
+        var on = !!d.debug
+        var val = on ? d.debug.now.slice(0, 16) : (year + '-12-01T03:14')
+        return '<div class="alert ' + (on ? 'alert-danger' : 'alert-info') + ' adventomat-debug form-inline">' +
+               '<b><i class="fa fa-wrench"></i> ' + (on ? 'DEBUG – čas ' + adv_time(d.debug.now) + ', odpovědi se neukládají' : 'Debug pro orgy') + '</b> ' +
+               '<input type="datetime-local" class="form-control input-sm adventomat-debug-now" value="' + val + '"> ' +
+               '<button type="button" class="btn btn-sm btn-danger adventomat-debug-set">Nastavit čas</button> ' +
+               (on ? '<button type="button" class="btn btn-sm btn-default adventomat-debug-off">Skutečný čas</button> ' : '') +
+               '<a href="' + base + '/kontrola">kontrola dnů</a></div>'
+    }
+
+    function bind_debug() {
+        $app.find('.adventomat-debug-set').click(function () {
+            $.post(base + '/debug', { now: $app.find('.adventomat-debug-now').val(), authenticity_token: friend_csrf() }).always(load)
+        })
+        $app.find('.adventomat-debug-off').click(function () {
+            $.post(base + '/debug', { off: 1, authenticity_token: friend_csrf() }).always(load)
+        })
+    }
+
+    var quick = cached()
+    if (quick.length) $app.find('p.grey').text('Načítám adventomat… (vyřešeno ' + quick.length + ')')
+    load()
 }
 
 function _show(el_selector, want_show) {

@@ -17,13 +17,13 @@ class AdventomatController < ApplicationController
     now = _now
     solved = _solved_days
     render json: {
-      year: @game.year, title: @game.title, now: now.iso8601,
+      year: @game.year, title: @game.title, now: now.in_time_zone(Adventomat::ZONE).iso8601,
       next_open_at: @game.next_open_at(now)&.iso8601, closes_at: @game.closes_at.iso8601,
       closed: now > @game.closes_at, min_table: @game.min_table,
       days: @game.order.map { |n| _day_json(n, now, solved) },
       reward: _all_solved?(solved), table: _table,
       friend: (f = current_friend) && { nick: f.nick, uuid: f.uuid },
-      org: !!current_user&.org?, debug: _debug && { now: _debug_now.iso8601 },
+      org: !!current_user&.org?, debug: _debug && { now: _debug_now.in_time_zone(Adventomat::ZONE).iso8601 },
     }
   end
 
