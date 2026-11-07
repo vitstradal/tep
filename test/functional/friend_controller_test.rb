@@ -106,6 +106,21 @@ class FriendControllerTest < ActionController::TestCase
     assert_equal 'b', answers.last.answer   # kanonická odpověď vyhrává
   end
 
+  test "claim keeps a solved advent day from the guest" do
+    u = make_user('e@x.cz')
+    mine = Friend.create!(nick: 'Muj', user: u)
+    other = Friend.create!(nick: 'Host')
+    q = Quiz.create!(name: 'advent-2026', quiz_type: 'advent')
+    QuizAnswer.create!(quiz: q, friend: mine,  question_no: 1, answer: '5')
+    QuizAnswer.create!(quiz: q, friend: other, question_no: 1, answer: '13', data: { 'solved_at' => '2026-12-01T10:00:00+01:00' })
+    QuizAnswer.create!(quiz: q, friend: mine,  question_no: 2, answer: '14', data: { 'solved_at' => '2026-12-02T10:00:00+01:00' })
+    QuizAnswer.create!(quiz: q, friend: other, question_no: 2, answer: '99', data: { 'solved_at' => '2026-12-02T11:00:00+01:00' })
+    sign_in u
+    post :claim, params: { uuid: other.uuid }
+    answers = QuizAnswer.where(friend_id: mine.id).order(:question_no)
+    assert_equal %w[13 14], answers.map(&:answer)
+  end
+
   test "claim requires login" do
     f = Friend.create!(nick: 'Anonym')
     post :claim, params: { uuid: f.uuid }

@@ -197,6 +197,16 @@ Tep::Application.routes.draw do
   post '/friend/resend'         => 'friend#resend',        :as => :friend_resend
   get  '/friend/finish/:token'  => 'friend#finish',        :as => :friend_finish
   post '/friend/finish/:token'  => 'friend#do_finish',     :as => :friend_do_finish
+  scope '/quiz/:name', constraints: { name: /advent-\d{4}/ }, as: :adventomat do
+    get  'kalendar'          => 'adventomat#kalendar', :as => :kalendar
+    get  'den/:den'          => 'adventomat#den',      :as => :den
+    get  'obrazek/*soubor'   => 'adventomat#obrazek',  :as => :obrazek, :format => false
+    get  'odmena'            => 'adventomat#odmena',   :as => :odmena
+    get  'moje'              => 'adventomat#moje',     :as => :moje
+    post 'answer'            => 'adventomat#answer',   :as => :answer
+    post 'debug'             => 'adventomat#debug',    :as => :debug
+    get  'kontrola'          => 'adventomat#kontrola', :as => :kontrola
+  end
   post '/quiz/:name/answer'     => 'quiz#answer',          :as => :quiz_answer
   get  '/quiz/:name/vysledky'   => 'quiz#vysledky',        :as => :quiz_vysledky
   get  '/quiz/:name/answers'    => 'quiz#answers',         :as => :quiz_answers

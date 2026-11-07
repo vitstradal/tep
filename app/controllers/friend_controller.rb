@@ -182,16 +182,22 @@ class FriendController < ApplicationController
   end
 
   ##
-  # Přepoj odpovědi z other na mine (kolize vyhrává mine) a other smaž.
+  # Přepoj odpovědi z other na mine (kolize vyhrává mine, jen vyřešený den adventomatu vyhraje vždy) a other smaž.
   def merge_friends(mine, other)
     Friend.transaction do
       other.quiz_answers.each do |ans|
-        next if QuizAnswer.where(quiz_id: ans.quiz_id, question_no: ans.question_no,
-                                 friend_id: mine.id).exists?
+        have = QuizAnswer.find_by(quiz_id: ans.quiz_id, question_no: ans.question_no, friend_id: mine.id)
+        next if have && !(_solved?(ans) && !_solved?(have))
+        have&.destroy
         ans.update_columns(friend_id: mine.id)
       end
       other.reload.destroy
     end
+  end
+
+  # vyřešený den adventomatu (data.solved_at)
+  def _solved?(ans)
+    ans.data.is_a?(Hash) && ans.data['solved_at'].present?
   end
 
   def friend_json(friend)

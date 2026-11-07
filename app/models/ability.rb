@@ -39,6 +39,7 @@ class Ability
     can :answer,   :quiz
     can :vysledky, :quiz
     can :show,     :quiz
+    can %i[kalendar den obrazek odmena moje answer], :adventomat
 
     # tep
     can :index, :tep
@@ -93,6 +94,7 @@ class Ability
     if user.org?
       # kvízy: surové odpovědi pro kontrolu (vysledky řeší quiz#vysledky sám)
       can :answers, :quiz
+      can %i[debug kontrola], :adventomat
 
       can :index, Inform
       can :pokusy, :tep

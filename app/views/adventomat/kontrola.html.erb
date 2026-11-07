@@ -1,0 +1,43 @@
+<h1>Kontrola: <%= @game.title %></h1>
+
+<p>
+  <%= link_to "/piki/adventomat/#{@game.year}" do %><i class="fa fa-pencil"></i> zadání v piki<% end %> ·
+  <%= link_to "/adventomat/#{@game.year}" do %><i class="fa fa-calendar"></i> kalendář na webu<% end %>
+  (debug mód zapneš v liště pod kalendářem)
+</p>
+
+<% if @issues.empty? %>
+  <div class="alert alert-success">Všechny dny jsou v pořádku.</div>
+<% else %>
+  <table class="table table-condensed table-bordered" style="width:auto">
+    <tr><th>Den</th><th>Problém</th></tr>
+    <% @issues.each do |i| %>
+      <tr class="<%= i[:level] == :error ? 'danger' : 'warning' %>">
+        <td><%= i[:day] == Adventomat::BONUS ? 'bonus' : i[:day] == :reward ? 'odměna' : i[:day] || 'hlavička' %></td>
+        <td><%= i[:text] %></td>
+      </tr>
+    <% end %>
+  </table>
+<% end %>
+
+<table class="table table-condensed table-bordered">
+  <tr><th>Den</th><th>Otevře se</th><th>Zadání</th><th>Výsledek</th><th>Poznámka</th></tr>
+  <% (1..Adventomat::BONUS).each do |n| %>
+    <% day = @game.days[n] %>
+    <tr class="<%= 'danger' if day.nil? && n < Adventomat::BONUS %>">
+      <th><%= n == Adventomat::BONUS ? 'bonus' : n %></th>
+      <td style="white-space:nowrap"><%= l(@game.open_at(n), format: '%-d. %-m. %Y %H:%M') rescue @game.open_at(n).strftime('%-d. %-m. %Y %H:%M') %></td>
+      <% if day %>
+        <td><%= raw @game.day_html(n) %></td>
+        <td class="<%= 'red' if day.result.nil? %>"><%= day.result_raw %></td>
+        <td><%= day.note %></td>
+      <% else %>
+        <td colspan="3"><i><%= n == Adventomat::BONUS ? 'bez bonusu' : 'chybí' %></i></td>
+      <% end %>
+    </tr>
+  <% end %>
+  <tr>
+    <th>odměna</th><td></td>
+    <td colspan="3"><%= @game.reward ? raw(@game.reward_html) : content_tag(:i, 'bez odměny') %></td>
+  </tr>
+</table>
