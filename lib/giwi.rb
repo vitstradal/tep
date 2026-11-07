@@ -87,6 +87,12 @@ class Giwi
     return [ text, blob.oid]
   end
 
+  # raw bytes of a file (images), nil when missing
+  def get_blob(path)
+    blob = _get_path_obj(path)
+    blob && blob.type == :blob ? blob.content : nil
+  end
+
   def cache_killer?
     @name.to_sym == @templates.to_sym
   end
