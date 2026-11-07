@@ -392,7 +392,7 @@ function init_adventomat_app($app) {
              if (!data.debug) cache(data.days.filter(function (d) { return d.state === 'solved' }).map(function (d) { return d.no }))
              render()
          })
-         .fail(function () { $app.html('<p class="red">Adventomat se nepodařilo načíst.</p>') })
+         .fail(function (x) { $app.html('<p class="red">' + (x.status === 404 ? 'Adventomat ' + year + ' zatím není připravený.' : 'Adventomat se nepodařilo načíst.') + '</p>') })
     }
 
     function render() {
