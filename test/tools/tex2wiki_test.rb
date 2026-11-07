@@ -47,8 +47,13 @@ class Tex2WikiTest < Minitest::Test
 
   def test_junior_image_caption
     out = conv('\obrazky{obrazky/zad3.11|8cm|Obrázek s~trojúhelníky}', junior: true)
-    assert_includes out, '[[Image(archiv/rocnik41/junior/zad3.11.png,id=zad311)]]'
+    assert_includes out, '[[Image(archiv/rocnik41/junior/zad3.11.png,width=304,id=zad311)]]'
     assert_includes out, "**Obrázek s\u00a0trojúhelníky**"
+  end
+
+  def test_image_size_goes_to_web
+    out = conv('\\obrazky{3x3.mrizka|4cm|}', junior: true)
+    assert_includes out, '[[Image(archiv/rocnik41/junior/3x3.mrizka.png,width=152,id=3x3mrizka)]]'
   end
 
   def test_image_width_from_leaflet
@@ -87,7 +92,7 @@ class Tex2WikiTest < Minitest::Test
     out = c.convert("\\begin{table}[ht]\n\\centering\n\\begin{tabular}{c|c}\n2 & 7 \\\\\n\\hline\n9 & 5 \\\\\n\\end{tabular}\n\\end{table}\n" \
                     "\\begin{figure}\n\\includegraphics[width=0.5\\linewidth]{obrazky/vz1j-51.pdf}\n\\caption{}\n\\label{fig:x}\n\\end{figure}")
     assert_includes out, '|| 2 || 7 ||'
-    assert_includes out, '[[Image(archiv/rocnik42/junior/vz1j-51.png)]]'
+    assert_includes out, '[[Image(archiv/rocnik42/junior/vz1j-51.png,width=323)]]'
     assert_equal 8.5, c.image_cm('obrazky/vz1j-51')
     assert_empty c.warnings
   end

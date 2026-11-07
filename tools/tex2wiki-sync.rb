@@ -310,8 +310,6 @@ module Tex2Wiki
       out.force_encoding('UTF-8').scrub
     end
 
-    PX_PER_CM = 38
-    MAX_PX = 700
 
     # šířka PNG: velikost v letáku (nebo přirozená velikost PDF) * PX_PER_CM, nejvýš MAX_PX
     def image_px(pdf, cm)

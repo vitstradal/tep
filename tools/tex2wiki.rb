@@ -12,6 +12,10 @@
 require 'strscan'
 
 module Tex2Wiki
+  # obrázek na webu: 1 cm v letáku = PX_PER_CM px (CSS cm), nejvýš MAX_PX
+  PX_PER_CM = 38
+  MAX_PX = 700
+
   Macro = Struct.new(:name, :arity, :mode, :body, :opt)
 
   class Registry
@@ -429,11 +433,12 @@ module Tex2Wiki
 
     # položka \obrazky: "zad1.11|zad111" nebo "zad3.11|8cm|popisek"
     def label_for(item)
-      file, *rest = item.split('|').map(&:strip)
+      file, *rest = item.split('|', -1).map(&:strip)
       return nil if file.nil? || file.empty?
-      label = rest.size == 1 && rest[0] !~ /\A[\d.]+\s*(cm|mm|pt|em)\z/ ? rest[0] : File.basename(file).delete('.')
+      sized = rest[0].to_s.match?(/\A[\d.]+\s*(cm|mm|pt|em)\z/)
+      label = rest.size == 1 && !sized ? rest[0] : File.basename(file).delete('.')
       @labels[label] ||= @labels.size + 1
-      @image_cm[file.sub(/\.(pdf|png|jpe?g)\z/i, '')] ||= dimen_cm(rest[0]) if rest.size >= 2
+      @image_cm[file.sub(/\.(pdf|png|jpe?g)\z/i, '')] ||= dimen_cm(rest[0]) if sized
       [file, label, rest.size >= 2 ? rest[1..].join('|') : nil]
     end
 
@@ -447,7 +452,9 @@ module Tex2Wiki
       png = File.basename(file).sub(/\.(pdf|png|jpe?g)\z/i, '')
       ext = file =~ /\.(png|jpe?g)\z/i ? '' : '.png'
       id = label ? ",id=#{label}" : ''
-      "#{Converter.line("[[Image(#{fdir}/#{png}#{ext}#{id})]]")}\n"
+      cm = @image_cm[file.sub(/\.(pdf|png|jpe?g)\z/i, '')]
+      width = cm ? ",width=#{(cm * PX_PER_CM).round.clamp(40, MAX_PX)}" : ''
+      "#{Converter.line("[[Image(#{fdir}/#{png}#{ext}#{width}#{id})]]")}\n"
     end
 
     def obrazky(spec)
