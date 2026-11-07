@@ -399,6 +399,8 @@ function init_adventomat_app($app) {
         var d = state.data
         var html = ''
         if (d.org) html += debug_bar(d)
+        if (d.friend) html += '<p class="grey"><i class="fa fa-user"></i> Hraješ jako <b>' + adv_esc(d.friend.nick) + '</b>' +
+                              (window.tep_signed_in ? '' : ' – přihlas se, ať máš vyřešená okénka i na jiném počítači') + '.</p>'
         html += '<div class="adventomat-countdown"></div><div class="adventomat-grid">'
         d.days.forEach(function (day) {
             var cls = { locked: 'btn-default', open: 'btn-warning', solved: 'btn-success', missing: 'btn-default' }[day.state]
@@ -454,7 +456,9 @@ function init_adventomat_app($app) {
         $m = $('<div id="adventomat-app-modal" class="modal fade" tabindex="-1" role="dialog"><div class="modal-dialog"><div class="modal-content">' +
                '<div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title"></h4></div>' +
                '<div class="modal-body"><div class="adventomat-text"></div><div class="adventomat-form form-inline" style="margin-top:1em">' +
-               '<input type="text" inputmode="numeric" class="form-control adventomat-answer" placeholder="jen číslo"> ' +
+               '<p class="adventomat-who"></p>' +
+               '<input type="text" maxlength="40" class="form-control adventomat-nick" placeholder="tvoje jméno nebo přezdívka"> ' +
+               '<input type="text" inputmode="numeric" class="form-control adventomat-answer" placeholder="výsledek – jen číslo"> ' +
                '<button type="button" class="btn btn-primary adventomat-send">Odeslat</button></div>' +
                '<div class="adventomat-msg" style="margin-top:1em"></div></div>' +
                '<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Zavřít</button></div>' +
@@ -471,6 +475,11 @@ function init_adventomat_app($app) {
         $m.find('.modal-title').text(day.no === 25 ? 'Bonus' : 'Příklad na ' + day.no + '. 12.')
         $m.find('.adventomat-msg').html('')
         $m.find('.adventomat-answer').val('')
+        var f = friend_get()
+        var known = window.tep_signed_in || f.uuid
+        $m.find('.adventomat-nick').toggle(!known).val(f.nick || '')
+        $m.find('.adventomat-who').html(known ? 'Odpovídáš jako <b>' + adv_esc(f.nick || 'ty') + '</b>.' :
+                                        'Napiš své jméno nebo přezdívku – ukáže se v tabulce řešitelů.')
         if (day.state === 'locked' || day.state === 'missing') {
             $m.find('.adventomat-text').html(day.state === 'missing' ? '<p>Tohle okénko ještě připravujeme.</p>' :
                                              '<p><i class="fa fa-lock"></i> Okénko se otevře ' + adv_time(day.opens_at) + '.</p>')
@@ -491,11 +500,20 @@ function init_adventomat_app($app) {
         var $m = modal()
         var answer = $m.find('.adventomat-answer').val()
         var no = state.day.no
+        var nick = $.trim($m.find('.adventomat-nick:visible').val() || '')
+        if ($m.find('.adventomat-nick').is(':visible') && !nick) {
+            $m.find('.adventomat-msg').html('<p class="red">Napiš své jméno nebo přezdívku, ať si vyřešené okénko zapamatujeme.</p>')
+            $m.find('.adventomat-nick').focus()
+            return
+        }
+        if (nick) friend_set({ nick: nick })
         friend_ensure(function (f) {
             if (!f) {
                 $m.find('.adventomat-msg').html('<p class="red">Bez přezdívky si vyřešené okénko nezapamatujeme.</p>')
                 return
             }
+            $m.find('.adventomat-nick').hide()
+            $m.find('.adventomat-who').html('Odpovídáš jako <b>' + adv_esc(f.nick) + '</b>.')
             $.post(base + '/answer', { uuid: f.uuid, question_no: no, answer: answer, authenticity_token: friend_csrf() })
              .done(function (j) {
                  if (j.correct) {
