@@ -374,17 +374,21 @@ var ADV_BTN = { locked: 'btn-default', open: 'btn-warning', solved: 'btn-success
 var ADV_ICO = { locked: 'lock', open: 'question', solved: 'star', missing: 'hourglass-half' }
 
 var MARVIN_SVG =
-    '<svg viewBox="0 0 60 96" width="60" height="96" aria-hidden="true">' +
-    '<g stroke="#4a4f57" stroke-width="1.5" stroke-linecap="round">' +
-    '<rect x="22" y="74" width="6" height="19" rx="2" fill="#b9bec6"/><rect x="32" y="74" width="6" height="19" rx="2" fill="#b9bec6"/>' +
-    '<path d="M18 50 L10 70" stroke-width="4" fill="none"/><path d="M42 50 L55 56" stroke-width="4" fill="none"/>' +
-    '<rect x="17" y="44" width="26" height="32" rx="6" fill="#cfd3d9"/>' +
-    '<rect x="26" y="39" width="8" height="6" fill="#b9bec6"/>' +
-    '<circle cx="30" cy="21" r="19" fill="#e2e5e9"/>' +
-    '<ellipse cx="23" cy="20" rx="4.5" ry="3.5" fill="#2b2f36"/><ellipse cx="37" cy="20" rx="4.5" ry="3.5" fill="#2b2f36"/>' +
-    '<path d="M17.5 16.5 L28 18.5 M42.5 16.5 L32 18.5" stroke-width="2.2"/>' +
-    '<path d="M24 31 Q30 27.5 36 31" fill="none"/>' +
-    '<circle cx="23" cy="57" r="2" fill="#8fd18f"/><circle cx="30" cy="57" r="2" fill="#e8b14a"/>' +
+    '<svg viewBox="0 0 90 130" width="90" height="130" aria-hidden="true" style="overflow:visible">' +
+    '<defs><radialGradient id="adv-head-g" cx="36%" cy="30%" r="72%"><stop offset="0" stop-color="#fff"/>' +
+    '<stop offset=".55" stop-color="#d8dce1"/><stop offset="1" stop-color="#98a0a9"/></radialGradient>' +
+    '<linearGradient id="adv-body-g" x1="0" x2="1"><stop offset="0" stop-color="#e7eaed"/><stop offset="1" stop-color="#a5acb4"/></linearGradient></defs>' +
+    '<g class="adv-body" stroke="#596069" stroke-width="1.3">' +
+    '<g class="adv-leg adv-leg-l"><rect x="36" y="92" width="7" height="33" rx="3" fill="#b7bdc5"/><ellipse cx="38.5" cy="126" rx="7" ry="3" fill="#7c838b"/></g>' +
+    '<g class="adv-leg adv-leg-r"><rect x="47" y="92" width="7" height="33" rx="3" fill="#b7bdc5"/><ellipse cx="51.5" cy="126" rx="7" ry="3" fill="#7c838b"/></g>' +
+    '<g class="adv-arm adv-arm-l"><rect x="26" y="65" width="5" height="42" rx="2.5" fill="#b7bdc5"/><circle cx="28.5" cy="108" r="3.5" fill="#8a9199"/></g>' +
+    '<path d="M33 64 Q45 58 57 64 L55 94 Q45 98 35 94 Z" fill="url(#adv-body-g)"/>' +
+    '<rect x="42" y="55" width="6" height="9" fill="#a5acb4"/>' +
+    '<g class="adv-head"><circle cx="45" cy="31" r="29" fill="url(#adv-head-g)" stroke-width="1.5"/>' +
+    '<polygon class="adv-eye" points="27,31 40,27.5 35,36.5" fill="#3ddc5a" stroke="#0e7a26"/>' +
+    '<polygon class="adv-eye" points="63,31 50,27.5 55,36.5" fill="#3ddc5a" stroke="#0e7a26"/>' +
+    '<ellipse cx="35" cy="16" rx="7" ry="3.5" fill="#fff" stroke="none" opacity=".8"/></g>' +
+    '<g class="adv-arm adv-arm-r"><rect x="58" y="65" width="5" height="42" rx="2.5" fill="#c3c9d0"/><circle cx="60.5" cy="108" r="3.5" fill="#8a9199"/></g>' +
     '</g></svg>'
 
 var MARVIN_UNLOCK = ['Mozek velikosti planety, a já odemykám okénka.', 'Další okénko. Jako by na tom záleželo.', 'Odemčeno. Nečekej, že budu nadšený.']
@@ -397,15 +401,28 @@ function adv_reduced_motion() {
 function adv_css() {
     if ($('#adv-marvin-css').length) return
     $('<style id="adv-marvin-css">' +
-      '.adv-marvin{position:absolute;z-index:1060;width:60px;height:96px;pointer-events:none}' +
-      '.adv-marvin .adv-flipper{width:60px;height:96px}' +
+      '.adv-marvin{position:absolute;z-index:1060;width:90px;height:130px;pointer-events:none}' +
+      '.adv-marvin .adv-flipper{width:90px;height:130px}' +
       '.adv-marvin.adv-back .adv-flipper{transform:scaleX(-1)}' +
-      '.adv-marvin.adv-walk svg{animation:adv-bob .32s ease-in-out infinite alternate}' +
-      '@keyframes adv-bob{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(-4px) rotate(3deg)}}' +
-      '.adv-bubble{position:absolute;bottom:100%;left:-10px;margin-bottom:4px;white-space:nowrap;background:#fff;color:#333;' +
-      'border:1px solid #aaa;border-radius:8px;padding:2px 8px;font-size:12px;box-shadow:0 1px 3px rgba(0,0,0,.2)}' +
+      '.adv-marvin svg *{transform-box:fill-box}' +
+      '.adv-leg,.adv-arm{transform-origin:50% 0}' +
+      '.adv-head{transform-origin:50% 100%;transform:rotate(7deg);transition:transform .4s}' +
+      '.adv-arm-r{transition:transform .35s}' +
+      '.adv-eye{filter:drop-shadow(0 0 2px #5f5)}' +
+      '.adv-walk .adv-leg-l,.adv-walk .adv-arm-r{animation:adv-swing .62s ease-in-out infinite alternate}' +
+      '.adv-walk .adv-leg-r,.adv-walk .adv-arm-l{animation:adv-swing .62s ease-in-out infinite alternate-reverse}' +
+      '.adv-walk .adv-body{animation:adv-trudge .31s ease-in-out infinite alternate}' +
+      '@keyframes adv-swing{from{transform:rotate(-15deg)}to{transform:rotate(15deg)}}' +
+      '@keyframes adv-trudge{from{transform:translateY(0)}to{transform:translateY(-2px)}}' +
+      '.adv-sigh .adv-body{animation:adv-sigh 1.1s ease-in-out}' +
+      '@keyframes adv-sigh{35%{transform:translateY(-5px)}75%{transform:translateY(2px)}}' +
+      '.adv-sigh .adv-head{animation:adv-head-sigh 1.1s ease-in-out}' +
+      '@keyframes adv-head-sigh{35%{transform:rotate(-2deg)}75%{transform:rotate(16deg)}100%{transform:rotate(7deg)}}' +
+      '.adv-reach .adv-arm-r{transform:rotate(-75deg)}' +
+      '.adv-bubble{position:absolute;bottom:100%;left:0;margin-bottom:2px;white-space:nowrap;background:#fff;color:#333;' +
+      'border:1px solid #aaa;border-radius:10px;padding:3px 10px;font-size:13px;font-style:italic;box-shadow:0 1px 4px rgba(0,0,0,.25)}' +
       '.adv-item{position:absolute;z-index:1061;pointer-events:none;font-size:30px;line-height:1;' +
-      'transition:transform .35s ease,left .45s ease,top .45s ease,font-size .45s ease}' +
+      'transition:transform .45s ease,left .45s ease,top .45s ease,font-size .45s ease}' +
       '.adv-item.fa-key{color:#b8860b}.adv-item.fa-star{color:#f5c518;text-shadow:0 0 4px #fff,0 0 1px #000}' +
       '.adv-turn{transform:rotate(-90deg)}' +
       '.adventomat-day i{display:inline-block;transition:transform .2s}.adventomat-day i.adv-flip{transform:rotateY(90deg)}' +
@@ -413,32 +430,40 @@ function adv_css() {
       '</style>').appendTo('head')
 }
 
-/* Marvin dojde k tlačítku, provede act(hand, done) a odejde */
+/* Marvin se doploužá k tlačítku, povzdechne si, natáhne ruku, provede act(hand, done) a odploužá se */
 function marvin_visit($b, quotes, act) {
     var dfd = $.Deferred()
     if (!$b.length || !$b.is(':visible')) return dfd.resolve().promise()
     adv_css()
     var o = $b.offset()
-    var top = o.top + $b.outerHeight() - 96
-    var target = o.left - 50
-    var start = $(window).scrollLeft() - 70
+    var icon = $b.find('i').first()
+    var io = icon.offset()
+    var hand = { left: io.left + icon.outerWidth() / 2, top: io.top + icon.outerHeight() / 2 }
+    var top = hand.top - 77
+    var target = hand.left - 103
+    var start = $(window).scrollLeft() - 100
     var $m = $('<div class="adv-marvin adv-walk"><div class="adv-flipper">' + MARVIN_SVG + '</div></div>')
                 .css({ left: start, top: top }).appendTo('body')
-    var dur = function (a, b) { return Math.max(600, Math.abs(a - b) * 2.2) }
-    var center = { left: o.left + $b.outerWidth() / 2, top: o.top + $b.outerHeight() / 2 - 8 }
-    $m.animate({ left: target }, dur(start, target), 'linear', function () {
-        $m.removeClass('adv-walk')
-        act({ left: target + 54, top: top + 52 }, center, function () {
-            var q = quotes[Math.floor(Math.random() * quotes.length)]
-            var $q = $('<div class="adv-bubble"/>').text(q).appendTo($m)
+    var dur = Math.max(1400, Math.abs(target - start) * 4)
+    $m.animate({ left: target }, dur, 'linear', function () {
+        $m.removeClass('adv-walk').addClass('adv-sigh')
+        setTimeout(function () {
+            $m.removeClass('adv-sigh').addClass('adv-reach')
             setTimeout(function () {
-                $q.remove()
-                $m.addClass('adv-walk adv-back').animate({ left: start }, dur(start, target), 'linear', function () {
-                    $m.remove()
-                    dfd.resolve()
+                act(hand, function () {
+                    $m.removeClass('adv-reach')
+                    var q = quotes[Math.floor(Math.random() * quotes.length)]
+                    var $q = $('<div class="adv-bubble"/>').text(q).appendTo($m)
+                    setTimeout(function () {
+                        $q.remove()
+                        $m.addClass('adv-walk adv-back').animate({ left: start }, dur, 'linear', function () {
+                            $m.remove()
+                            dfd.resolve()
+                        })
+                    }, 2400)
                 })
-            }, 1600)
-        })
+            }, 380)
+        }, 1100)
     })
     return dfd.promise()
 }
@@ -454,21 +479,20 @@ function adv_set_btn($b, st) {
 }
 
 function marvin_unlock($b) {
-    return marvin_visit($b, MARVIN_UNLOCK, function (hand, center, done) {
-        var $k = $('<i class="fa fa-key adv-item"/>').css({ left: hand.left - 6, top: hand.top - 15 }).appendTo('body')
-        setTimeout(function () { $k.css({ left: center.left - 20, top: center.top - 15 }) }, 50)
-        setTimeout(function () { $k.addClass('adv-turn') }, 550)
-        setTimeout(function () { $k.remove(); adv_set_btn($b, 'open') }, 1050)
-        setTimeout(done, 1300)
+    return marvin_visit($b, MARVIN_UNLOCK, function (hand, done) {
+        var $k = $('<i class="fa fa-key adv-item"/>').css({ left: hand.left - 13, top: hand.top - 15 }).appendTo('body')
+        setTimeout(function () { $k.addClass('adv-turn') }, 350)
+        setTimeout(function () { $k.remove(); adv_set_btn($b, 'open') }, 950)
+        setTimeout(done, 1250)
     })
 }
 
 function marvin_star($b) {
-    return marvin_visit($b, MARVIN_STAR, function (hand, center, done) {
-        var $s = $('<i class="fa fa-star adv-item"/>').css({ left: hand.left - 6, top: hand.top - 15, fontSize: '22px' }).appendTo('body')
-        setTimeout(function () { $s.css({ left: center.left - 18, top: center.top - 18, fontSize: '40px' }) }, 50)
+    return marvin_visit($b, MARVIN_STAR, function (hand, done) {
+        var $s = $('<i class="fa fa-star adv-item"/>').css({ left: hand.left - 10, top: hand.top - 11, fontSize: '22px' }).appendTo('body')
+        setTimeout(function () { $s.css({ left: hand.left - 19, top: hand.top - 20, fontSize: '40px' }) }, 50)
         setTimeout(function () { $s.remove(); adv_set_btn($b, 'solved') }, 650)
-        setTimeout(done, 900)
+        setTimeout(done, 950)
     })
 }
 
