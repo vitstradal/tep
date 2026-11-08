@@ -377,18 +377,22 @@ var MARVIN_SVG =
     '<svg viewBox="0 0 90 130" width="90" height="130" aria-hidden="true" style="overflow:visible">' +
     '<defs><radialGradient id="adv-head-g" cx="36%" cy="30%" r="72%"><stop offset="0" stop-color="#fff"/>' +
     '<stop offset=".55" stop-color="#d8dce1"/><stop offset="1" stop-color="#98a0a9"/></radialGradient>' +
-    '<linearGradient id="adv-body-g" x1="0" x2="1"><stop offset="0" stop-color="#e7eaed"/><stop offset="1" stop-color="#a5acb4"/></linearGradient></defs>' +
+    '<linearGradient id="adv-body-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#eceff1"/><stop offset="1" stop-color="#9da4ac"/></linearGradient></defs>' +
+    '<g class="adv-drag adv-drag-key" fill="none" stroke="#a87c12" stroke-linecap="round">' +
+    '<circle cx="6" cy="113" r="5" stroke-width="3"/><path d="M2 115 L-34 124 M-30 123 L-30 129 M-25 122 L-25 127" stroke-width="3.5"/></g>' +
+    '<polygon class="adv-drag adv-drag-star" points="-4.3,105.6 -4.0,114.1 4.0,117.0 -4.0,119.9 -4.3,128.4 -9.5,121.8 -17.7,124.1 -13.0,117.0 -17.7,109.9 -9.5,112.2" ' +
+    'fill="#f5c518" stroke="#a67c00" stroke-width="1.2"/>' +
     '<g class="adv-body" stroke="#596069" stroke-width="1.3">' +
-    '<g class="adv-leg adv-leg-l"><rect x="36" y="92" width="7" height="33" rx="3" fill="#b7bdc5"/><ellipse cx="38.5" cy="126" rx="7" ry="3" fill="#7c838b"/></g>' +
-    '<g class="adv-leg adv-leg-r"><rect x="47" y="92" width="7" height="33" rx="3" fill="#b7bdc5"/><ellipse cx="51.5" cy="126" rx="7" ry="3" fill="#7c838b"/></g>' +
-    '<g class="adv-arm adv-arm-l"><rect x="26" y="65" width="5" height="42" rx="2.5" fill="#b7bdc5"/><circle cx="28.5" cy="108" r="3.5" fill="#8a9199"/></g>' +
-    '<path d="M33 64 Q45 58 57 64 L55 94 Q45 98 35 94 Z" fill="url(#adv-body-g)"/>' +
-    '<rect x="42" y="55" width="6" height="9" fill="#a5acb4"/>' +
-    '<g class="adv-head"><circle cx="45" cy="31" r="29" fill="url(#adv-head-g)" stroke-width="1.5"/>' +
-    '<polygon class="adv-eye" points="27,31 40,27.5 35,36.5" fill="#3ddc5a" stroke="#0e7a26"/>' +
-    '<polygon class="adv-eye" points="63,31 50,27.5 55,36.5" fill="#3ddc5a" stroke="#0e7a26"/>' +
-    '<ellipse cx="35" cy="16" rx="7" ry="3.5" fill="#fff" stroke="none" opacity=".8"/></g>' +
-    '<g class="adv-arm adv-arm-r"><rect x="58" y="65" width="5" height="42" rx="2.5" fill="#c3c9d0"/><circle cx="60.5" cy="108" r="3.5" fill="#8a9199"/></g>' +
+    '<g class="adv-leg adv-leg-l"><rect x="28" y="103" width="6" height="16" rx="3" fill="#b7bdc5"/><ellipse cx="33" cy="121" rx="7" ry="3" fill="#7c838b"/></g>' +
+    '<g class="adv-leg adv-leg-r"><rect x="39" y="103" width="6" height="16" rx="3" fill="#b7bdc5"/><ellipse cx="44" cy="121" rx="7" ry="3" fill="#7c838b"/></g>' +
+    '<path class="adv-arm-l" d="M27 85 L8 112" stroke="#8f969e" stroke-width="4.5" stroke-linecap="round"/><circle cx="8" cy="112" r="3.5" fill="#8a9199"/>' +
+    '<path d="M24 106 C16 96 15 82 27 76 C35 72 47 74 51 83 L49 105 Q37 110 24 106 Z" fill="url(#adv-body-g)"/>' +
+    '<path d="M42 80 L50 73" stroke-width="6" stroke="#9da4ac"/>' +
+    '<g class="adv-head"><circle cx="58" cy="58" r="25" fill="url(#adv-head-g)" stroke-width="1.5"/>' +
+    '<polygon class="adv-eye" points="40,58 52,54.5 47,63" fill="#3ddc5a" stroke="#0e7a26"/>' +
+    '<polygon class="adv-eye" points="76,58 64,54.5 69,63" fill="#3ddc5a" stroke="#0e7a26"/>' +
+    '<ellipse cx="50" cy="44" rx="6" ry="3" fill="#fff" stroke="none" opacity=".8"/></g>' +
+    '<g class="adv-arm adv-arm-r"><rect x="47" y="84" width="4.5" height="30" rx="2.2" fill="#c3c9d0"/><circle cx="49.2" cy="115" r="3.5" fill="#8a9199"/></g>' +
     '</g></svg>'
 
 var MARVIN_UNLOCK = ['Mozek velikosti planety, a já odemykám okénka.', 'Další okénko. Jako by na tom záleželo.', 'Odemčeno. Nečekej, že budu nadšený.']
@@ -405,20 +409,25 @@ function adv_css() {
       '.adv-marvin .adv-flipper{width:90px;height:130px}' +
       '.adv-marvin.adv-back .adv-flipper{transform:scaleX(-1)}' +
       '.adv-marvin svg *{transform-box:fill-box}' +
-      '.adv-leg,.adv-arm{transform-origin:50% 0}' +
-      '.adv-head{transform-origin:50% 100%;transform:rotate(7deg);transition:transform .4s}' +
+      '.adv-arm{transform-origin:50% 0}.adv-body{transform-origin:50% 100%}.adv-drag{transform-origin:100% 0;transition:opacity .2s}' +
+      '.adv-head{transform-origin:20% 90%;transform:rotate(5deg);transition:transform .4s}' +
+      '.adv-marvin .adv-drag-star,.adv-marvin.adv-star .adv-drag-key{display:none}.adv-marvin.adv-star .adv-drag-star{display:inline}' +
       '.adv-arm-r{transition:transform .35s}' +
       '.adv-eye{filter:drop-shadow(0 0 2px #5f5)}' +
-      '.adv-walk .adv-leg-l,.adv-walk .adv-arm-r{animation:adv-swing .62s ease-in-out infinite alternate}' +
-      '.adv-walk .adv-leg-r,.adv-walk .adv-arm-l{animation:adv-swing .62s ease-in-out infinite alternate-reverse}' +
-      '.adv-walk .adv-body{animation:adv-trudge .31s ease-in-out infinite alternate}' +
-      '@keyframes adv-swing{from{transform:rotate(-15deg)}to{transform:rotate(15deg)}}' +
-      '@keyframes adv-trudge{from{transform:translateY(0)}to{transform:translateY(-2px)}}' +
+      '.adv-walk .adv-body{animation:adv-waddle .46s ease-in-out infinite alternate}' +
+      '.adv-walk .adv-leg-l{animation:adv-step .46s ease-in-out infinite alternate}' +
+      '.adv-walk .adv-leg-r{animation:adv-step .46s ease-in-out infinite alternate-reverse}' +
+      '.adv-walk .adv-arm-r{animation:adv-dangle .46s ease-in-out infinite alternate}' +
+      '.adv-walk .adv-drag{animation:adv-scrape .23s linear infinite alternate}' +
+      '@keyframes adv-waddle{from{transform:rotate(-8deg)}to{transform:rotate(8deg)}}' +
+      '@keyframes adv-step{from{transform:translateY(0)}to{transform:translateY(-4px)}}' +
+      '@keyframes adv-dangle{from{transform:rotate(-6deg)}to{transform:rotate(10deg)}}' +
+      '@keyframes adv-scrape{from{transform:rotate(-2deg)}to{transform:rotate(3deg) translateY(1px)}}' +
       '.adv-sigh .adv-body{animation:adv-sigh 1.1s ease-in-out}' +
       '@keyframes adv-sigh{35%{transform:translateY(-5px)}75%{transform:translateY(2px)}}' +
       '.adv-sigh .adv-head{animation:adv-head-sigh 1.1s ease-in-out}' +
-      '@keyframes adv-head-sigh{35%{transform:rotate(-2deg)}75%{transform:rotate(16deg)}100%{transform:rotate(7deg)}}' +
-      '.adv-reach .adv-arm-r{transform:rotate(-75deg)}' +
+      '@keyframes adv-head-sigh{35%{transform:rotate(-3deg)}75%{transform:rotate(14deg)}100%{transform:rotate(5deg)}}' +
+      '.adv-reach .adv-arm-r{transform:rotate(-75deg)}.adv-reach .adv-drag{opacity:0}' +
       '.adv-bubble{position:absolute;bottom:100%;left:0;margin-bottom:2px;white-space:nowrap;background:#fff;color:#333;' +
       'border:1px solid #aaa;border-radius:10px;padding:3px 10px;font-size:13px;font-style:italic;box-shadow:0 1px 4px rgba(0,0,0,.25)}' +
       '.adv-item{position:absolute;z-index:1061;pointer-events:none;font-size:30px;line-height:1;' +
@@ -439,19 +448,19 @@ function marvin_visit($b, quotes, act) {
     var icon = $b.find('i').first()
     var io = icon.offset()
     var hand = { left: io.left + icon.outerWidth() / 2, top: io.top + icon.outerHeight() / 2 }
-    var top = hand.top - 77
-    var target = hand.left - 103
-    var start = $(window).scrollLeft() - 100
-    var $m = $('<div class="adv-marvin adv-walk"><div class="adv-flipper">' + MARVIN_SVG + '</div></div>')
+    var top = hand.top - 92
+    var target = hand.left - 78
+    var start = $(window).scrollLeft() - 130
+    var $m = $('<div class="adv-marvin adv-walk' + (quotes === MARVIN_STAR ? ' adv-star' : '') + '"><div class="adv-flipper">' + MARVIN_SVG + '</div></div>')
                 .css({ left: start, top: top }).appendTo('body')
-    var dur = Math.max(1400, Math.abs(target - start) * 4)
+    var dur = Math.max(1800, Math.abs(target - start) * 5)
     $m.animate({ left: target }, dur, 'linear', function () {
         $m.removeClass('adv-walk').addClass('adv-sigh')
         setTimeout(function () {
             $m.removeClass('adv-sigh').addClass('adv-reach')
             setTimeout(function () {
                 act(hand, function () {
-                    $m.removeClass('adv-reach')
+                    $m.removeClass('adv-reach').find('.adv-drag').remove()
                     var q = quotes[Math.floor(Math.random() * quotes.length)]
                     var $q = $('<div class="adv-bubble"/>').text(q).appendTo($m)
                     setTimeout(function () {
