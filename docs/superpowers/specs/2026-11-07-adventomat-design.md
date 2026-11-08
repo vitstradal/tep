@@ -183,7 +183,9 @@ API v tepu (před `GET /quiz/:name`, `name` = `advent-<rok>`):
 - Na stránce kalendáře vidí přihlášený org lištu „debug“.
 - **Posun času**: org nastaví datum a čas; server pak všude (otevírání,
   odpočet, tunel zadání i obrázků, odměna) počítá s tímto časem. Čas se drží
-  v session a uplatní se jen u přihlášeného orga. Tlačítko vrátí skutečný čas.
+  v session a uplatní se jen u přihlášeného orga. Nastavený čas dál běží.
+  Tlačítko „Další den“ skočí 10 s před otevření dalšího zavřeného okénka,
+  takže je vidět odpočet i animace odemčení. Tlačítko vrátí skutečný čas.
 - **Zkušební odpovědi**: v debug módu se odpověď zkontroluje stejně jako
   naostro, ale neuloží se do `quiz_answers`. Vyřešené dny v debug módu se
   drží v session a po vypnutí debugu zmizí.

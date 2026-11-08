@@ -186,6 +186,21 @@ class AdventomatControllerTest < ActionController::TestCase
     end
   end
 
+  test "debug next jumps 10 s before the next opening and debug time runs on" do
+    sign_in user('org@x.cz', org: true)
+    travel_to PRAGUE.local(2026, 12, 1, 12)
+    post :debug, params: { name: 'advent-2026', next: '1' }
+    assert_equal PRAGUE.local(2026, 12, 2, 3, 13, 50).iso8601, json['debug']['now']
+    get :den, params: { name: 'advent-2026', den: '2' }
+    assert_response :forbidden
+    travel 11.seconds
+    get :den, params: { name: 'advent-2026', den: '2' }
+    assert_response :success
+    post :debug, params: { name: 'advent-2026', now: '2026-12-25T00:00' }
+    post :debug, params: { name: 'advent-2026', next: '1' }
+    assert_response :unprocessable_entity
+  end
+
   test "debug and kontrola are for orgs only" do
     post :debug, params: { name: 'advent-2026', now: '2026-12-24T03:14' }
     assert_redirected_to %r{/users/sign_in}

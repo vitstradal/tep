@@ -370,11 +370,113 @@ function adv_time(iso) {
     return d.getDate() + '. ' + (d.getMonth() + 1) + '. v ' + d.getHours() + ':' + mm
 }
 
+var ADV_BTN = { locked: 'btn-default', open: 'btn-warning', solved: 'btn-success', missing: 'btn-default' }
+var ADV_ICO = { locked: 'lock', open: 'question', solved: 'star', missing: 'hourglass-half' }
+
+var MARVIN_SVG =
+    '<svg viewBox="0 0 60 96" width="60" height="96" aria-hidden="true">' +
+    '<g stroke="#4a4f57" stroke-width="1.5" stroke-linecap="round">' +
+    '<rect x="22" y="74" width="6" height="19" rx="2" fill="#b9bec6"/><rect x="32" y="74" width="6" height="19" rx="2" fill="#b9bec6"/>' +
+    '<path d="M18 50 L10 70" stroke-width="4" fill="none"/><path d="M42 50 L55 56" stroke-width="4" fill="none"/>' +
+    '<rect x="17" y="44" width="26" height="32" rx="6" fill="#cfd3d9"/>' +
+    '<rect x="26" y="39" width="8" height="6" fill="#b9bec6"/>' +
+    '<circle cx="30" cy="21" r="19" fill="#e2e5e9"/>' +
+    '<ellipse cx="23" cy="20" rx="4.5" ry="3.5" fill="#2b2f36"/><ellipse cx="37" cy="20" rx="4.5" ry="3.5" fill="#2b2f36"/>' +
+    '<path d="M17.5 16.5 L28 18.5 M42.5 16.5 L32 18.5" stroke-width="2.2"/>' +
+    '<path d="M24 31 Q30 27.5 36 31" fill="none"/>' +
+    '<circle cx="23" cy="57" r="2" fill="#8fd18f"/><circle cx="30" cy="57" r="2" fill="#e8b14a"/>' +
+    '</g></svg>'
+
+var MARVIN_UNLOCK = ['Mozek velikosti planety, a já odemykám okénka.', 'Další okénko. Jako by na tom záleželo.', 'Odemčeno. Nečekej, že budu nadšený.']
+var MARVIN_STAR = ['Hvězdička. Jak nesmírně vzrušující.', 'Správně. Gratuluju. Asi.', 'Lepím hvězdu. To je můj život.']
+
+function adv_reduced_motion() {
+    return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
+}
+
+function adv_css() {
+    if ($('#adv-marvin-css').length) return
+    $('<style id="adv-marvin-css">' +
+      '.adv-marvin{position:absolute;z-index:1060;width:60px;height:96px;pointer-events:none}' +
+      '.adv-marvin .adv-flipper{width:60px;height:96px}' +
+      '.adv-marvin.adv-back .adv-flipper{transform:scaleX(-1)}' +
+      '.adv-marvin.adv-walk svg{animation:adv-bob .32s ease-in-out infinite alternate}' +
+      '@keyframes adv-bob{from{transform:translateY(0) rotate(-3deg)}to{transform:translateY(-4px) rotate(3deg)}}' +
+      '.adv-bubble{position:absolute;bottom:100%;left:-10px;margin-bottom:4px;white-space:nowrap;background:#fff;color:#333;' +
+      'border:1px solid #aaa;border-radius:8px;padding:2px 8px;font-size:12px;box-shadow:0 1px 3px rgba(0,0,0,.2)}' +
+      '.adv-item{position:absolute;z-index:1061;pointer-events:none;font-size:30px;line-height:1;' +
+      'transition:transform .35s ease,left .45s ease,top .45s ease,font-size .45s ease}' +
+      '.adv-item.fa-key{color:#b8860b}.adv-item.fa-star{color:#f5c518;text-shadow:0 0 4px #fff,0 0 1px #000}' +
+      '.adv-turn{transform:rotate(-90deg)}' +
+      '.adventomat-day i{display:inline-block;transition:transform .2s}.adventomat-day i.adv-flip{transform:rotateY(90deg)}' +
+      '.adventomat-day.adv-pop{animation:adv-pop .5s}@keyframes adv-pop{50%{transform:scale(1.2)}}' +
+      '</style>').appendTo('head')
+}
+
+/* Marvin dojde k tlačítku, provede act(hand, done) a odejde */
+function marvin_visit($b, quotes, act) {
+    var dfd = $.Deferred()
+    if (!$b.length || !$b.is(':visible')) return dfd.resolve().promise()
+    adv_css()
+    var o = $b.offset()
+    var top = o.top + $b.outerHeight() - 96
+    var target = o.left - 50
+    var start = $(window).scrollLeft() - 70
+    var $m = $('<div class="adv-marvin adv-walk"><div class="adv-flipper">' + MARVIN_SVG + '</div></div>')
+                .css({ left: start, top: top }).appendTo('body')
+    var dur = function (a, b) { return Math.max(600, Math.abs(a - b) * 2.2) }
+    var center = { left: o.left + $b.outerWidth() / 2, top: o.top + $b.outerHeight() / 2 - 8 }
+    $m.animate({ left: target }, dur(start, target), 'linear', function () {
+        $m.removeClass('adv-walk')
+        act({ left: target + 54, top: top + 52 }, center, function () {
+            var q = quotes[Math.floor(Math.random() * quotes.length)]
+            var $q = $('<div class="adv-bubble"/>').text(q).appendTo($m)
+            setTimeout(function () {
+                $q.remove()
+                $m.addClass('adv-walk adv-back').animate({ left: start }, dur(start, target), 'linear', function () {
+                    $m.remove()
+                    dfd.resolve()
+                })
+            }, 1600)
+        })
+    })
+    return dfd.promise()
+}
+
+function adv_set_btn($b, st) {
+    var $i = $b.find('i').first()
+    $i.addClass('adv-flip')
+    setTimeout(function () {
+        $b.removeClass('btn-default btn-warning btn-success').addClass(ADV_BTN[st]).addClass('adv-pop')
+        $i.removeClass('fa-lock fa-question fa-star fa-hourglass-half').addClass('fa-' + ADV_ICO[st]).removeClass('adv-flip')
+        setTimeout(function () { $b.removeClass('adv-pop') }, 600)
+    }, 200)
+}
+
+function marvin_unlock($b) {
+    return marvin_visit($b, MARVIN_UNLOCK, function (hand, center, done) {
+        var $k = $('<i class="fa fa-key adv-item"/>').css({ left: hand.left - 6, top: hand.top - 15 }).appendTo('body')
+        setTimeout(function () { $k.css({ left: center.left - 20, top: center.top - 15 }) }, 50)
+        setTimeout(function () { $k.addClass('adv-turn') }, 550)
+        setTimeout(function () { $k.remove(); adv_set_btn($b, 'open') }, 1050)
+        setTimeout(done, 1300)
+    })
+}
+
+function marvin_star($b) {
+    return marvin_visit($b, MARVIN_STAR, function (hand, center, done) {
+        var $s = $('<i class="fa fa-star adv-item"/>').css({ left: hand.left - 6, top: hand.top - 15, fontSize: '22px' }).appendTo('body')
+        setTimeout(function () { $s.css({ left: center.left - 18, top: center.top - 18, fontSize: '40px' }) }, 50)
+        setTimeout(function () { $s.remove(); adv_set_btn($b, 'solved') }, 650)
+        setTimeout(done, 900)
+    })
+}
+
 function init_adventomat_app($app) {
     var year = $app.data('year')
     var base = '/quiz/advent-' + year
     var store = 'adventomat-' + year
-    var state = { offset: 0, data: null, timer: null, day: null }
+    var state = { offset: 0, data: null, timer: null, day: null, prev: null, star: null }
 
     function cached() {
         try { return JSON.parse(localStorage.getItem(store)) || [] } catch (e) { return [] }
@@ -395,16 +497,47 @@ function init_adventomat_app($app) {
          .fail(function (x) { $app.html('<p class="red">' + (x.status === 404 ? 'Adventomat ' + year + ' zatím není připravený.' : 'Adventomat se nepodařilo načíst.') + '</p>') })
     }
 
+    function seen_get() {
+        try { return JSON.parse(localStorage.getItem(store + '-seen')) } catch (e) { return null }
+    }
+    function seen_set(list) {
+        try { localStorage.setItem(store + '-seen', JSON.stringify(list)) } catch (e) {}
+    }
+
+    /* které dny se mají odemknout / ohvězdičkovat animací; do té doby se kreslí v předchozím stavu */
+    function plan_animations(d) {
+        var plan = { unlock: [], star: [], shown: {} }
+        var nos = function (list) { return list.map(function (x) { return x.no }).sort(function (a, b) { return a - b }) }
+        var open = d.days.filter(function (x) { return x.state === 'open' })
+        if (d.debug) {
+            if (state.prev) plan.unlock = nos(open.filter(function (x) { return state.prev[x.no] === 'locked' }))
+        } else {
+            var seen = seen_get()
+            plan.unlock = nos(open.filter(function (x) { return !seen || seen.indexOf(x.no) < 0 })).slice(seen ? -3 : -1)
+            seen_set(nos(d.days.filter(function (x) { return x.state !== 'locked' })))
+        }
+        d.days.forEach(function (x) { if (x.state === 'solved' && x.no === state.star) plan.star = [x.no] })
+        state.star = null
+        state.prev = {}
+        d.days.forEach(function (x) { state.prev[x.no] = x.state })
+        if (adv_reduced_motion()) return { unlock: [], star: [], shown: {} }
+        plan.unlock.forEach(function (no) { plan.shown[no] = 'locked' })
+        plan.star.forEach(function (no) { plan.shown[no] = 'open' })
+        return plan
+    }
+
     function render() {
         var d = state.data
+        var plan = plan_animations(d)
         var html = ''
         if (d.org) html += debug_bar(d)
         if (d.friend) html += '<p class="grey"><i class="fa fa-user"></i> Hraješ jako <b>' + adv_esc(d.friend.nick) + '</b>' +
                               (window.tep_signed_in ? '' : ' – přihlas se, ať máš vyřešená okénka i na jiném počítači') + '.</p>'
         html += '<div class="adventomat-countdown"></div><div class="adventomat-grid">'
         d.days.forEach(function (day) {
-            var cls = { locked: 'btn-default', open: 'btn-warning', solved: 'btn-success', missing: 'btn-default' }[day.state]
-            var ico = { locked: 'lock', open: 'question', solved: 'star', missing: 'hourglass-half' }[day.state]
+            var st = plan.shown[day.no] || day.state
+            var cls = ADV_BTN[st]
+            var ico = ADV_ICO[st]
             html += '<button type="button" class="adventomat-day btn btn-app ' + cls + '" data-no="' + day.no + '">' +
                     '<i class="ace-icon fa fa-' + ico + ' bigger-230"></i> ' + adv_esc(day.label) + '</button> '
         })
@@ -422,6 +555,10 @@ function init_adventomat_app($app) {
         })
         bind_debug()
         tick()
+        var btn = function (no) { return $app.find('.adventomat-day[data-no="' + no + '"]') }
+        var queue = $.Deferred().resolve().promise()
+        plan.unlock.forEach(function (no) { queue = queue.then(function () { return marvin_unlock(btn(no)) }) })
+        plan.star.forEach(function (no) { queue = queue.then(function () { return marvin_star(btn(no)) }) })
     }
 
     function table(d) {
@@ -518,7 +655,9 @@ function init_adventomat_app($app) {
              .done(function (j) {
                  if (j.correct) {
                      $m.find('.adventomat-msg').html('<p class="green bigger-120"><i class="fa fa-star"></i> To je správně!' + (j.debug ? ' (debug, neukládá se)' : '') + '</p>')
-                     load()
+                     if (state.day.state !== 'solved') state.star = no
+                     $m.one('hidden.bs.modal', load)
+                     setTimeout(function () { $m.modal('hide') }, 1200)
                  } else {
                      $m.find('.adventomat-msg').html('<p class="red">To je bohužel špatně.' + (j.solved ? ' Okénko ale máš vyřešené z dřívějška.' : '') + '</p>')
                  }
@@ -538,6 +677,7 @@ function init_adventomat_app($app) {
                '<b><i class="fa fa-wrench"></i> ' + (on ? 'DEBUG – čas ' + adv_time(d.debug.now) + ', odpovědi se neukládají' : 'Debug pro orgy') + '</b> ' +
                '<input type="datetime-local" class="form-control input-sm adventomat-debug-now" value="' + val + '"> ' +
                '<button type="button" class="btn btn-sm btn-danger adventomat-debug-set">Nastavit čas</button> ' +
+               '<button type="button" class="btn btn-sm btn-warning adventomat-debug-next" title="10 s před otevřením dalšího okénka">Další den <i class="fa fa-forward"></i></button> ' +
                (on ? '<button type="button" class="btn btn-sm btn-default adventomat-debug-off">Skutečný čas</button> ' : '') +
                '<a href="' + base + '/kontrola">kontrola dnů</a></div>'
     }
@@ -545,6 +685,11 @@ function init_adventomat_app($app) {
     function bind_debug() {
         $app.find('.adventomat-debug-set').click(function () {
             $.post(base + '/debug', { now: $app.find('.adventomat-debug-now').val(), authenticity_token: friend_csrf() }).always(load)
+        })
+        $app.find('.adventomat-debug-next').click(function () {
+            $.post(base + '/debug', { next: 1, authenticity_token: friend_csrf() })
+             .fail(function (x) { alert((x.responseJSON || {}).error || 'Nepovedlo se.') })
+             .always(load)
         })
         $app.find('.adventomat-debug-off').click(function () {
             $.post(base + '/debug', { off: 1, authenticity_token: friend_csrf() }).always(load)

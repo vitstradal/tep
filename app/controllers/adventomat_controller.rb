@@ -83,16 +83,22 @@ class AdventomatController < ApplicationController
     render json: { ok: true, uuid: friend.uuid, correct: correct, solved: _solved?(ans) }
   end
 
-  # POST /quiz/advent-<rok>/debug — org: off=1 vypne, jinak now=2026-12-24T03:14
+  # POST /quiz/advent-<rok>/debug — org: off=1 vypne, next=1 skočí 10 s před další otevření, jinak now=2026-12-24T03:14
   def debug
     if params[:off].present?
       session.delete(:adventomat_debug)
       return render json: { ok: true, debug: nil }
     end
-    now = Adventomat::ZONE.parse(params[:now].to_s) rescue nil
-    return render json: { ok: false, error: 'Nečitelný čas.' }, status: :unprocessable_entity if now.nil?
+    if params[:next].present?
+      nxt = @game.next_open_at(_now)
+      return render json: { ok: false, error: 'Všechna okénka už jsou otevřená.' }, status: :unprocessable_entity if nxt.nil?
+      now = nxt - 10.seconds
+    else
+      now = Adventomat::ZONE.parse(params[:now].to_s) rescue nil
+      return render json: { ok: false, error: 'Nečitelný čas.' }, status: :unprocessable_entity if now.nil?
+    end
     state = session[:adventomat_debug] || {}
-    session[:adventomat_debug] = state.merge('now' => now.iso8601, 'solved' => state['solved'] || {})
+    session[:adventomat_debug] = state.merge('now' => now.iso8601, 'set_at' => Time.current.iso8601, 'solved' => state['solved'] || {})
     render json: { ok: true, debug: { now: now.iso8601 } }
   end
 
@@ -181,7 +187,9 @@ class AdventomatController < ApplicationController
   end
 
   def _debug_now
-    Time.zone.parse(_debug['now'].to_s)
+    now = Time.zone.parse(_debug['now'].to_s)
+    set_at = _debug['set_at'] && Time.zone.parse(_debug['set_at'])
+    set_at ? now + (Time.current - set_at) : now
   end
 
   def _now
