@@ -373,37 +373,21 @@ function adv_time(iso) {
 var ADV_BTN = { locked: 'btn-default', open: 'btn-warning', solved: 'btn-success', missing: 'btn-default' }
 var ADV_ICO = { locked: 'lock', open: 'question', solved: 'star', missing: 'hourglass-half' }
 
-var MARVIN_SVG =
-    '<svg viewBox="0 0 90 130" width="90" height="130" aria-hidden="true" style="overflow:visible">' +
-    '<defs><radialGradient id="adv-head-g" cx="38%" cy="30%" r="75%"><stop offset="0" stop-color="#fff"/>' +
-    '<stop offset=".6" stop-color="#eef0f2"/><stop offset="1" stop-color="#b9bfc6"/></radialGradient>' +
-    '<linearGradient id="adv-body-g" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset="1" stop-color="#c3c8ce"/></linearGradient></defs>' +
-    '<g class="adv-drag adv-drag-key" fill="none" stroke="#a87c12" stroke-linecap="round">' +
-    '<circle cx="6" cy="113" r="5" stroke-width="3"/><path d="M2 115 L-34 124 M-30 123 L-30 129 M-25 122 L-25 127" stroke-width="3.5"/></g>' +
-    '<polygon class="adv-drag adv-drag-star" points="-4.3,105.6 -4.0,114.1 4.0,117.0 -4.0,119.9 -4.3,128.4 -9.5,121.8 -17.7,124.1 -13.0,117.0 -17.7,109.9 -9.5,112.2" ' +
-    'fill="#f5c518" stroke="#a67c00" stroke-width="1.2"/>' +
-    '<g class="adv-body" stroke="#33373d" stroke-width="1.3" stroke-linejoin="round">' +
-    '<g class="adv-leg adv-leg-l"><rect x="28" y="101" width="7" height="9" rx="2" fill="url(#adv-body-g)"/><circle cx="31.5" cy="111" r="2.4" fill="#4a4f57"/>' +
-    '<rect x="28.5" y="112" width="6" height="7" rx="2" fill="url(#adv-body-g)"/><path d="M27 118 h8 q6 0 7 5 h-15 z" fill="#3a3f46"/></g>' +
-    '<g class="adv-leg adv-leg-r"><rect x="39" y="101" width="7" height="9" rx="2" fill="url(#adv-body-g)"/><circle cx="42.5" cy="111" r="2.4" fill="#4a4f57"/>' +
-    '<rect x="39.5" y="112" width="6" height="7" rx="2" fill="url(#adv-body-g)"/><path d="M38 118 h8 q6 0 7 5 h-15 z" fill="#3a3f46"/></g>' +
-    '<path d="M27 85 L18 98 L8 112" fill="none" stroke="#33373d" stroke-width="6.5" stroke-linecap="round"/>' +
-    '<path d="M27 85 L18 98 L8 112" fill="none" stroke="#f2f4f6" stroke-width="4" stroke-linecap="round"/>' +
-    '<circle cx="18" cy="98" r="2.3" fill="#4a4f57"/><circle cx="8" cy="112" r="3.5" fill="#5a6068"/>' +
-    '<path d="M24 101 C17 92 17 80 28 76 C36 72 48 74 52 82 L50 101 Z" fill="url(#adv-body-g)"/>' +
-    '<path d="M26 88 Q38 84 50 89" fill="none" stroke-width="1"/>' +
-    '<path d="M24 96 Q37 99 50 96 L50 101 Q37 104 24 101 Z" fill="#4a4f57"/>' +
-    '<path d="M42 79 L49 71" stroke-width="7" stroke="#4a4f57"/>' +
-    '<g class="adv-head"><circle cx="56" cy="47" r="26" fill="url(#adv-head-g)" stroke-width="1.5"/>' +
-    '<ellipse cx="32.5" cy="46" rx="5" ry="10" fill="#e3e6e9"/><ellipse cx="32.5" cy="46" rx="2.3" ry="5.5" fill="#c7ccd2" stroke-width="1"/>' +
-    '<path d="M36 52 Q58 58 81 51" fill="none" stroke-width="1.2"/>' +
-    '<path d="M36.5 54 Q58 60 80.5 53 L79 60 Q58 67 38 61 Z" fill="#23262b"/>' +
-    '<polygon class="adv-eye" points="60,57.6 73,55.4 67.5,62.5" fill="#3ddc5a" stroke="none"/>' +
-    '<polygon class="adv-eye" points="43,57.6 52,58.4 48,62.6" fill="#3ddc5a" stroke="none"/>' +
-    '<ellipse cx="47" cy="31" rx="8" ry="4" fill="#fff" stroke="none" opacity=".9"/></g>' +
-    '<g class="adv-arm adv-arm-r"><rect x="47" y="84" width="5" height="14" rx="2.2" fill="url(#adv-body-g)"/><circle cx="49.5" cy="99.5" r="2.4" fill="#4a4f57"/>' +
-    '<rect x="47.2" y="101" width="4.6" height="11" rx="2" fill="url(#adv-body-g)"/><circle cx="49.5" cy="115" r="3.5" fill="#5a6068"/></g>' +
-    '</g></svg>'
+var MARVIN_URL = '/images/adventomat/marvin.svg?v=1'
+var marvin_svg_dfd = null
+
+function marvin_svg() {
+    if (!marvin_svg_dfd) marvin_svg_dfd = $.ajax({ url: MARVIN_URL, dataType: 'text' }).then(function (txt) {
+        var svg = new DOMParser().parseFromString(txt, 'image/svg+xml').documentElement
+        if (svg.nodeName !== 'svg') return $.Deferred().reject().promise()
+        svg.setAttribute('width', '90')
+        svg.setAttribute('height', '130')
+        svg.setAttribute('viewBox', '0 0 90 130')
+        svg.setAttribute('style', 'overflow:visible')
+        return svg
+    })
+    return marvin_svg_dfd
+}
 
 var MARVIN_UNLOCK = ['Mozek velikosti planety, a já odemykám okénka.', 'Další okénko. Jako by na tom záleželo.', 'Odemčeno. Nečekej, že budu nadšený.']
 var MARVIN_STAR = ['Hvězdička. Jak nesmírně vzrušující.', 'Správně. Gratuluju. Asi.', 'Lepím hvězdu. To je můj život.']
@@ -454,15 +438,25 @@ function marvin_visit($b, quotes, act) {
     var dfd = $.Deferred()
     if (!$b.length || !$b.is(':visible')) return dfd.resolve().promise()
     adv_css()
-    var o = $b.offset()
+    marvin_svg().then(function (svg) { marvin_walk($b, quotes, act, svg, dfd) },
+                      function () { act(adv_hand($b), function () { dfd.resolve() }) })
+    return dfd.promise()
+}
+
+function adv_hand($b) {
     var icon = $b.find('i').first()
     var io = icon.offset()
-    var hand = { left: io.left + icon.outerWidth() / 2, top: io.top + icon.outerHeight() / 2 }
+    return { left: io.left + icon.outerWidth() / 2, top: io.top + icon.outerHeight() / 2 }
+}
+
+function marvin_walk($b, quotes, act, svg, dfd) {
+    var hand = adv_hand($b)
     var top = hand.top - 92
     var target = hand.left - 78
     var start = $(window).scrollLeft() - 130
-    var $m = $('<div class="adv-marvin adv-walk' + (quotes === MARVIN_STAR ? ' adv-star' : '') + '"><div class="adv-flipper">' + MARVIN_SVG + '</div></div>')
+    var $m = $('<div class="adv-marvin adv-walk' + (quotes === MARVIN_STAR ? ' adv-star' : '') + '"><div class="adv-flipper"/></div>')
                 .css({ left: start, top: top }).appendTo('body')
+    $m.find('.adv-flipper').append(document.importNode(svg, true))
     var dur = Math.max(1800, Math.abs(target - start) * 5)
     $m.animate({ left: target }, dur, 'linear', function () {
         $m.removeClass('adv-walk').addClass('adv-sigh')
@@ -484,7 +478,6 @@ function marvin_visit($b, quotes, act) {
             }, 380)
         }, 1100)
     })
-    return dfd.promise()
 }
 
 function adv_set_btn($b, st) {

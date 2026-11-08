@@ -192,6 +192,19 @@ API v tepu (před `GET /quiz/:name`, `name` = `advent-<rok>`):
 - Debug je viditelně označený (lišta jinou barvou), aby org nezapomněl, že
   nehraje naostro.
 
+## Marvin (animace)
+
+- Odemčení okénka a správnou odpověď provází Marvin. Kresba je
+  `public/images/adventomat/marvin.svg` a dá se upravit v Inkscapu, uložit
+  jako „Prosté SVG“. Po úpravě je potřeba zvýšit `?v=` v `MARVIN_URL` v `tep.js`.
+- Animace hýbou skupinami podle tříd, které musí zůstat: `adv-body`,
+  `adv-head`, `adv-leg-l`, `adv-leg-r`, `adv-arm-r` (přední ruka),
+  `adv-drag-key` a `adv-drag-star` (vlečené předměty), `adv-eye`.
+- Plátno je 90×130. Rameno přední ruky je v bodě (49.5, 84), ruka měří
+  zhruba 31, vlečná ruka je v bodě (8, 112). Kam doputuje klíč, počítá
+  `marvin_walk` (`hand.top - 92`, `hand.left - 78`).
+- Když se kresba nenačte, okénko se přepne bez animace.
+
 ## Kontrola dnů (jen org)
 
 Stránka `/quiz/advent-<rok>/kontrola` (styl jako Kontrola wiki akcí): řádek na
