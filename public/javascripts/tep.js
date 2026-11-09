@@ -393,7 +393,7 @@ function adv_clock(dd, hh, mi, ss) {
         var t = ('0' + v).slice(-2)
         return '<div class="adv-grp"><div>' + adv_digit(+t[0]) + adv_digit(+t[1]) + '</div><span>' + lbl + '</span></div>'
     }
-    var colon = '<div class="adv-colon' + (ss % 2 ? '' : ' on') + '"><i></i><i></i></div>'
+    var colon = '<div class="adv-colon on"><i></i><i></i></div>'
     return '<div class="adv-clock" role="timer" aria-label="' + (dd ? dd + ' d ' : '') + hh + ' h ' + mi + ' min ' + ss + ' s">' +
            (dd ? grp(dd, 'dny') + '<div class="adv-gap"></div>' : '') +
            grp(hh, 'hodiny') + colon + grp(mi, 'minuty') + colon + grp(ss, 'sekundy') + '</div>'
