@@ -373,6 +373,32 @@ function adv_time(iso) {
 var ADV_BTN = { locked: 'btn-default', open: 'btn-warning', solved: 'btn-success', missing: 'btn-default' }
 var ADV_ICO = { locked: 'lock', open: 'question', solved: 'star', missing: 'hourglass-half' }
 
+var ADV_SEG_PTS = {
+    a: '12,2 48,2 54,8 48,14 12,14 6,8', g: '12,44 48,44 54,50 48,56 12,56 6,50', d: '12,86 48,86 54,92 48,98 12,98 6,92',
+    f: '6,11 12,17 12,43 6,49 0,43 0,17', b: '54,11 60,17 60,43 54,49 48,43 48,17',
+    e: '6,51 12,57 12,83 6,89 0,83 0,57', c: '54,51 60,57 60,83 54,89 48,83 48,57'
+}
+var ADV_SEG_ON = ['abcdef', 'bc', 'abged', 'abgcd', 'fgbc', 'afgcd', 'afgedc', 'abc', 'abcdefg', 'abcdfg']
+
+function adv_digit(n) {
+    var h = '<svg class="adv-digit" viewBox="-8 0 72 100"><g transform="skewX(-6)">'
+    $.each(ADV_SEG_PTS, function (k, pts) {
+        h += '<polygon class="' + (ADV_SEG_ON[n].indexOf(k) >= 0 ? 'on' : 'off') + '" points="' + pts + '"/>'
+    })
+    return h + '</g></svg>'
+}
+
+function adv_clock(dd, hh, mi, ss) {
+    function grp(v, lbl) {
+        var t = ('0' + v).slice(-2)
+        return '<div class="adv-grp"><div>' + adv_digit(+t[0]) + adv_digit(+t[1]) + '</div><span>' + lbl + '</span></div>'
+    }
+    var colon = '<div class="adv-colon' + (ss % 2 ? '' : ' on') + '"><i></i><i></i></div>'
+    return '<div class="adv-clock" role="timer" aria-label="' + (dd ? dd + ' d ' : '') + hh + ' h ' + mi + ' min ' + ss + ' s">' +
+           (dd ? grp(dd, 'dny') + '<div class="adv-gap"></div>' : '') +
+           grp(hh, 'hodiny') + colon + grp(mi, 'minuty') + colon + grp(ss, 'sekundy') + '</div>'
+}
+
 var MARVIN_URL = '/images/adventomat/marvin.svg?v=1'
 var marvin_svg_dfd = null
 
@@ -430,6 +456,15 @@ function adv_css() {
       '.adv-turn{transform:rotate(-90deg)}' +
       '.adventomat-day i{display:inline-block;transition:transform .2s}.adventomat-day i.adv-flip{transform:rotateY(90deg)}' +
       '.adventomat-day.adv-pop{animation:adv-pop .5s}@keyframes adv-pop{50%{transform:scale(1.2)}}' +
+      '.adv-clock{display:inline-flex;align-items:flex-start;gap:6px;max-width:100%;margin:0 0 18px;padding:14px 18px 8px;' +
+      'background:#120b0b;border:3px solid #2b2b2b;border-radius:10px;box-shadow:inset 0 0 18px #000,0 2px 6px rgba(0,0,0,.4)}' +
+      '.adv-grp{text-align:center}.adv-grp>div{display:flex;gap:4px}' +
+      '.adv-grp span{display:block;margin-top:4px;color:#8a5a55;font-size:11px;letter-spacing:.15em;text-transform:uppercase}' +
+      '.adv-digit{width:clamp(22px,7vw,52px);height:auto;overflow:visible}' +
+      '.adv-digit .on{fill:#ff3b2f;filter:drop-shadow(0 0 3px #ff2a1a)}.adv-digit .off{fill:#2a1513}' +
+      '.adv-colon{display:flex;flex-direction:column;justify-content:space-around;height:clamp(32px,10vw,74px);padding:0 2px}' +
+      '.adv-colon i{display:block;width:clamp(5px,1.4vw,10px);height:clamp(5px,1.4vw,10px);border-radius:2px;background:#2a1513}' +
+      '.adv-colon.on i{background:#ff3b2f;box-shadow:0 0 5px #ff2a1a}.adv-gap{width:clamp(8px,3vw,24px)}' +
       '</style>').appendTo('head')
 }
 
@@ -617,9 +652,9 @@ function init_adventomat_app($app) {
         if (left <= 0) { load(); return }
         var dd = Math.floor(left / 86400), hh = Math.floor(left % 86400 / 3600)
         var mi = Math.floor(left % 3600 / 60), ss = left % 60
-        var txt = (dd ? dd + ' d ' : '') + hh + ' h ' + ('0' + mi).slice(-2) + ' min ' + ('0' + ss).slice(-2) + ' s'
-        $c.html('<p><i class="fa fa-clock-o"></i> Další okénko se otevře ' + adv_time(d.next_open_at) +
-                ' – za <b>' + txt + '</b>.</p>')
+        adv_css()
+        $c.html('<p><i class="fa fa-clock-o"></i> Další okénko se otevře ' + adv_time(d.next_open_at) + '</p>' +
+                adv_clock(dd, hh, mi, ss))
         state.timer = setTimeout(tick, 1000)
     }
 
