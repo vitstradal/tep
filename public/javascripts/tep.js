@@ -399,62 +399,19 @@ function adv_clock(dd, hh, mi, ss) {
            grp(hh, 'hodiny') + colon + grp(mi, 'minuty') + colon + grp(ss, 'sekundy') + '</div>'
 }
 
-var MARVIN_URL = '/images/adventomat/marvin.svg?v=1'
-var marvin_svg_dfd = null
-
-function marvin_svg() {
-    if (!marvin_svg_dfd) marvin_svg_dfd = $.ajax({ url: MARVIN_URL, dataType: 'text' }).then(function (txt) {
-        var svg = new DOMParser().parseFromString(txt, 'image/svg+xml').documentElement
-        if (svg.nodeName !== 'svg') return $.Deferred().reject().promise()
-        svg.setAttribute('width', '90')
-        svg.setAttribute('height', '130')
-        svg.setAttribute('viewBox', '0 0 90 130')
-        svg.setAttribute('style', 'overflow:visible')
-        return svg
-    })
-    return marvin_svg_dfd
-}
-
-var MARVIN_UNLOCK = ['Mozek velikosti planety, a já odemykám okénka.', 'Další okénko. Jako by na tom záleželo.', 'Odemčeno. Nečekej, že budu nadšený.']
-var MARVIN_STAR = ['Hvězdička. Jak nesmírně vzrušující.', 'Správně. Gratuluju. Asi.', 'Lepím hvězdu. To je můj život.']
-
 function adv_reduced_motion() {
     return !!(window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches)
 }
 
 function adv_css() {
-    if ($('#adv-marvin-css').length) return
-    $('<style id="adv-marvin-css">' +
-      '.adv-marvin{position:absolute;z-index:1060;width:90px;height:130px;pointer-events:none}' +
-      '.adv-marvin .adv-flipper{width:90px;height:130px}' +
-      '.adv-marvin.adv-back .adv-flipper{transform:scaleX(-1)}' +
-      '.adv-marvin svg *{transform-box:fill-box}' +
-      '.adv-arm{transform-origin:50% 0}.adv-body{transform-origin:50% 100%}.adv-drag{transform-origin:100% 0;transition:opacity .2s}' +
-      '.adv-head{transform-origin:20% 90%;transform:rotate(5deg);transition:transform .4s}' +
-      '.adv-marvin .adv-drag-star,.adv-marvin.adv-star .adv-drag-key{display:none}.adv-marvin.adv-star .adv-drag-star{display:inline}' +
-      '.adv-arm-r{transition:transform .35s}' +
-      '.adv-eye{filter:drop-shadow(0 0 2px #5f5)}' +
-      '.adv-walk .adv-body{animation:adv-waddle .46s ease-in-out infinite alternate}' +
-      '.adv-walk .adv-leg-l{animation:adv-step .46s ease-in-out infinite alternate}' +
-      '.adv-walk .adv-leg-r{animation:adv-step .46s ease-in-out infinite alternate-reverse}' +
-      '.adv-walk .adv-arm-r{animation:adv-dangle .46s ease-in-out infinite alternate}' +
-      '.adv-walk .adv-drag{animation:adv-scrape .23s linear infinite alternate}' +
-      '@keyframes adv-waddle{from{transform:rotate(-8deg)}to{transform:rotate(8deg)}}' +
-      '@keyframes adv-step{from{transform:translateY(0)}to{transform:translateY(-4px)}}' +
-      '@keyframes adv-dangle{from{transform:rotate(-6deg)}to{transform:rotate(10deg)}}' +
-      '@keyframes adv-scrape{from{transform:rotate(-2deg)}to{transform:rotate(3deg) translateY(1px)}}' +
-      '.adv-sigh .adv-body{animation:adv-sigh 1.1s ease-in-out}' +
-      '@keyframes adv-sigh{35%{transform:translateY(-5px)}75%{transform:translateY(2px)}}' +
-      '.adv-sigh .adv-head{animation:adv-head-sigh 1.1s ease-in-out}' +
-      '@keyframes adv-head-sigh{35%{transform:rotate(-3deg)}75%{transform:rotate(14deg)}100%{transform:rotate(5deg)}}' +
-      '.adv-reach .adv-arm-r{transform:rotate(-75deg)}.adv-reach .adv-drag{opacity:0}' +
-      '.adv-bubble{position:absolute;bottom:100%;left:0;margin-bottom:2px;white-space:nowrap;background:#fff;color:#333;' +
-      'border:1px solid #aaa;border-radius:10px;padding:3px 10px;font-size:13px;font-style:italic;box-shadow:0 1px 4px rgba(0,0,0,.25)}' +
-      '.adv-item{position:absolute;z-index:1061;pointer-events:none;font-size:30px;line-height:1;' +
-      'transition:transform .45s ease,left .45s ease,top .45s ease,font-size .45s ease}' +
-      '.adv-item.fa-key{color:#b8860b}.adv-item.fa-star{color:#f5c518;text-shadow:0 0 4px #fff,0 0 1px #000}' +
-      '.adv-turn{transform:rotate(-90deg)}' +
-      '.adventomat-day i{display:inline-block;transition:transform .2s}.adventomat-day i.adv-flip{transform:rotateY(90deg)}' +
+    if ($('#adv-anim-css').length) return
+    $('<style id="adv-anim-css">' +
+      '.adv-key{position:absolute;z-index:1061;pointer-events:none;perspective:160px;transform:translateY(-50%)}' +
+      '.adv-key-spin{transition:transform .55s ease-in-out}.adv-key-turn .adv-key-spin{transform:rotateX(180deg)}' +
+      '.adv-key i{display:block;font-size:34px;line-height:1;color:#c9970e;text-shadow:0 1px 2px rgba(0,0,0,.45);transform:rotate(135deg)}' +
+      '.adv-lock-fly{position:absolute;z-index:1061;pointer-events:none;margin:0;animation:adv-lock-fly .9s ease-in forwards}' +
+      '@keyframes adv-lock-fly{25%{transform:translateY(-12px) rotate(-12deg)}100%{transform:translate(-50px,-220px) rotate(-260deg) scale(.4);opacity:0}}' +
+      '.adv-spark{position:absolute;z-index:1061;pointer-events:none;font-weight:bold;line-height:1;text-shadow:0 0 4px currentColor}' +
       '.adventomat-day.adv-pop{animation:adv-pop .5s}@keyframes adv-pop{50%{transform:scale(1.2)}}' +
       '.adv-clock{display:inline-flex;align-items:flex-start;gap:6px;max-width:100%;margin:0 0 18px;padding:14px 18px 8px;' +
       'background:#120b0b;border:3px solid #2b2b2b;border-radius:10px;box-shadow:inset 0 0 18px #000,0 2px 6px rgba(0,0,0,.4)}' +
@@ -469,78 +426,74 @@ function adv_css() {
 }
 
 /* Marvin se doploužá k tlačítku, povzdechne si, natáhne ruku, provede act(hand, done) a odploužá se */
-function marvin_visit($b, quotes, act) {
+function adv_center($b) {
+    var $i = $b.find('i').first()
+    var o = $i.offset()
+    return { left: o.left + $i.outerWidth() / 2, top: o.top + $i.outerHeight() / 2 }
+}
+
+function adv_swap($b, st) {
+    $b.removeClass('btn-default btn-warning btn-success').addClass(ADV_BTN[st]).addClass('adv-pop')
+    $b.find('i').first().removeClass('fa-lock fa-question fa-star fa-hourglass-half').addClass('fa-' + ADV_ICO[st]).css('visibility', '')
+    setTimeout(function () { $b.removeClass('adv-pop') }, 600)
+}
+
+/* klíč přiletí zprava, zasune se do zámku, otočí se kolem své osy a zámek odletí */
+function adv_unlock($b) {
     var dfd = $.Deferred()
     if (!$b.length || !$b.is(':visible')) return dfd.resolve().promise()
     adv_css()
-    marvin_svg().then(function (svg) { marvin_walk($b, quotes, act, svg, dfd) },
-                      function () { act(adv_hand($b), function () { dfd.resolve() }) })
+    var c = adv_center($b)
+    var $lock = $b.find('i').first()
+    var $k = $('<div class="adv-key"><div class="adv-key-spin"><i class="fa fa-key"></i></div></div>')
+              .css({ left: $(window).scrollLeft() + $(window).width() + 20, top: c.top }).appendTo('body')
+    $k.animate({ left: c.left + 2 }, 900, 'swing', function () {
+        $k.addClass('adv-key-turn')
+        setTimeout(function () {
+            var lo = $lock.offset()
+            $lock.clone().addClass('adv-lock-fly').css({ left: lo.left, top: lo.top }).appendTo('body')
+                 .on('animationend', function () { $(this).remove() })
+            $lock.css('visibility', 'hidden')
+            $k.fadeOut(250, function () { $k.remove() })
+            setTimeout(function () { adv_swap($b, 'open') }, 350)
+            setTimeout(function () { dfd.resolve() }, 900)
+        }, 650)
+    })
     return dfd.promise()
 }
 
-function adv_hand($b) {
-    var icon = $b.find('i').first()
-    var io = icon.offset()
-    return { left: io.left + icon.outerWidth() / 2, top: io.top + icon.outerHeight() / 2 }
-}
-
-function marvin_walk($b, quotes, act, svg, dfd) {
-    var hand = adv_hand($b)
-    var top = hand.top - 92
-    var target = hand.left - 78
-    var start = $(window).scrollLeft() - 130
-    var $m = $('<div class="adv-marvin adv-walk' + (quotes === MARVIN_STAR ? ' adv-star' : '') + '"><div class="adv-flipper"/></div>')
-                .css({ left: start, top: top }).appendTo('body')
-    $m.find('.adv-flipper').append(document.importNode(svg, true))
-    var dur = Math.max(1800, Math.abs(target - start) * 5)
-    $m.animate({ left: target }, dur, 'linear', function () {
-        $m.removeClass('adv-walk').addClass('adv-sigh')
-        setTimeout(function () {
-            $m.removeClass('adv-sigh').addClass('adv-reach')
-            setTimeout(function () {
-                act(hand, function () {
-                    $m.removeClass('adv-reach').find('.adv-drag').remove()
-                    var q = quotes[Math.floor(Math.random() * quotes.length)]
-                    var $q = $('<div class="adv-bubble"/>').text(q).appendTo($m)
-                    setTimeout(function () {
-                        $q.remove()
-                        $m.addClass('adv-walk adv-back').animate({ left: start }, dur, 'linear', function () {
-                            $m.remove()
-                            dfd.resolve()
-                        })
-                    }, 2400)
-                })
-            }, 380)
-        }, 1100)
-    })
-}
-
-function adv_set_btn($b, st) {
-    var $i = $b.find('i').first()
-    $i.addClass('adv-flip')
-    setTimeout(function () {
-        $b.removeClass('btn-default btn-warning btn-success').addClass(ADV_BTN[st]).addClass('adv-pop')
-        $i.removeClass('fa-lock fa-question fa-star fa-hourglass-half').addClass('fa-' + ADV_ICO[st]).removeClass('adv-flip')
-        setTimeout(function () { $b.removeClass('adv-pop') }, 600)
-    }, 200)
-}
-
-function marvin_unlock($b) {
-    return marvin_visit($b, MARVIN_UNLOCK, function (hand, done) {
-        var $k = $('<i class="fa fa-key adv-item"/>').css({ left: hand.left - 13, top: hand.top - 15 }).appendTo('body')
-        setTimeout(function () { $k.addClass('adv-turn') }, 350)
-        setTimeout(function () { $k.remove(); adv_set_btn($b, 'open') }, 950)
-        setTimeout(done, 1250)
-    })
-}
-
-function marvin_star($b) {
-    return marvin_visit($b, MARVIN_STAR, function (hand, done) {
-        var $s = $('<i class="fa fa-star adv-item"/>').css({ left: hand.left - 10, top: hand.top - 11, fontSize: '22px' }).appendTo('body')
-        setTimeout(function () { $s.css({ left: hand.left - 19, top: hand.top - 20, fontSize: '40px' }) }, 50)
-        setTimeout(function () { $s.remove(); adv_set_btn($b, 'solved') }, 650)
-        setTimeout(done, 950)
-    })
+/* otazník se rozprskne na malé otazníky jako ohňostroj a pod ním je zelená s hvězdou */
+function adv_burst($b) {
+    var dfd = $.Deferred()
+    if (!$b.length || !$b.is(':visible')) return dfd.resolve().promise()
+    adv_css()
+    var c = adv_center($b)
+    var colors = ['#f5c518', '#ff5a36', '#36b3ff', '#7ed957', '#ff6ad5', '#ffa62b']
+    var parts = []
+    for (var i = 0; i < 22; i++) {
+        var ang = -Math.PI / 2 + (Math.random() - 0.5) * Math.PI * 1.4, sp = 3 + Math.random() * 5
+        parts.push({ el: $('<span class="adv-spark">?</span>').css({ left: c.left, top: c.top, color: colors[i % colors.length],
+                                                                       fontSize: 11 + Math.random() * 12 }).appendTo('body'),
+                     x: 0, y: 0, vx: Math.cos(ang) * sp, vy: Math.sin(ang) * sp, r: 0, vr: (Math.random() - 0.5) * 24 })
+    }
+    $b.find('i').first().css('visibility', 'hidden')
+    setTimeout(function () { adv_swap($b, 'solved') }, 250)
+    var t0 = Date.now(), last = t0, life = 1500
+    function frame() {
+        var t = Date.now(), k = Math.min(3, (t - last) / 16.7), age = t - t0
+        last = t
+        parts.forEach(function (p) {
+            p.vy += 0.22 * k
+            p.x += p.vx * k; p.y += p.vy * k; p.r += p.vr * k
+            p.el.css({ transform: 'translate(-50%,-50%) translate(' + p.x + 'px,' + p.y + 'px) rotate(' + p.r + 'deg)',
+                       opacity: Math.max(0, 1 - age / life) })
+        })
+        if (age < life) return setTimeout(frame, 16)
+        parts.forEach(function (p) { p.el.remove() })
+        dfd.resolve()
+    }
+    frame()
+    return dfd.promise()
 }
 
 function init_adventomat_app($app) {
@@ -628,8 +581,8 @@ function init_adventomat_app($app) {
         tick()
         var btn = function (no) { return $app.find('.adventomat-day[data-no="' + no + '"]') }
         var queue = $.Deferred().resolve().promise()
-        plan.unlock.forEach(function (no) { queue = queue.then(function () { return marvin_unlock(btn(no)) }) })
-        plan.star.forEach(function (no) { queue = queue.then(function () { return marvin_star(btn(no)) }) })
+        plan.unlock.forEach(function (no) { queue = queue.then(function () { return adv_unlock(btn(no)) }) })
+        plan.star.forEach(function (no) { queue = queue.then(function () { return adv_burst(btn(no)) }) })
     }
 
     function table(d) {
