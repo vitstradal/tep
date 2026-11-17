@@ -109,10 +109,11 @@ systémech pak nevadí).
   `/prihlasit-zarizeni` jen přihlášený. Práva v `app/models/ability.rb`.
 - Odkaz pod formulářem v `app/views/devise/sessions/new.html.erb`.
 - Položka v menu pod uživatelem v `app/views/layouts/application.html.erb`:
-  dnes je e-mail rozbalovací jen pro orgy s „Jak to vidí“ (`view_as_allowed?`),
-  ostatním je to obyčejný štítek — udělat z něj dropdown pro všechny
-  (položka „Přihlásit na jiném zařízení“ pro každého, přepínač „Jak to vidí“
-  dál jen pro `view_as_allowed?`).
+  dnes je rozbalovací jen pro admin/morg (`view_as_allowed?`), ostatním je
+  to obyčejný štítek — udělat z něj dropdown pro všechny (položka „Přihlásit
+  na jiném zařízení“ pro každého, přepínač „Jak to vidí“ dál jen pro
+  `view_as_allowed?`). Zobrazovat `real_user.email`; na mobilu je e-mail
+  `hidden-xs`, menu je pod ikonou uživatele.
 - Dotazování: jQuery, JSON endpoint, `setTimeout` 2 s; zastaví se po
   koncovém stavu nebo vypršení.
 - Popis zařízení z User-Agent jednoduchým rozpoznáním (Android / iPhone /
@@ -121,6 +122,42 @@ systémech pak nevadí).
   neúspěchů, zrušení na obou stranách, kód nejde použít znovu, cizí
   prohlížeč (jiná cookie) nedostane přihlášení, remember podle volby,
   unikátnost kódů mezi platnými.
+
+## Detaily z revize (rozhodnuto při návrhu)
+
+- **CSRF**: vytvoření kódu, zadání kódu, Potvrdit, Ano i To nejsem já jsou
+  POST s authenticity tokenem; controller `protect_from_forgery with:
+  :exception`. Stránka nového zařízení se otevře GETem a kód vytvoří
+  automatickým POSTem z JS (náhledy odkazů, prefetch a reload bez JS
+  nevytvářejí záznamy).
+- **Vazba kroků**: Potvrdit posílá `id` záznamu (ne kód); UPDATE má
+  `id`, `state = 'pending'`, `expires_at > now`. Schvaluje `real_user`
+  (ne `current_user`, který může být kopie z „Jak to vidí“).
+- **Lhůta po schválení**: `approved_at`; Ano platí jen 2 min po schválení,
+  atomicky `UPDATE … SET state = 'done' WHERE id = ? AND device_digest = ?
+  AND state = 'approved' AND approved_at > now - 2 min`, `sign_in` jen když
+  změnil 1 řádek. Pak stránka nového zařízení přestane nabízet Ano.
+- **Cookie nového zařízení**: server vždy vygeneruje novou náhodnou
+  hodnotu (nikdy nepřevezme existující), jméno s prefixem `__Host-`,
+  `Secure`, `HttpOnly`, `SameSite=Lax`.
+- **Zahlcení kódy** (nepřihlášený může vytvářet kódy, překlep oběti by mohl
+  trefit útočníkův kód): globální strop platných `pending` záznamů (500 —
+  nad ním „zkus to za chvíli“), limit na IP (IPv6 podle /64) 30 / hod,
+  omezený počet pokusů o unikátní kód. Pravděpodobnost, že překlep trefí
+  cizí kód, je pak ≤ 0,15 %.
+- **Potvrzovací obrazovka** místo surové IP ukáže „Stejná síť jako ty:
+  ano / ne“ (porovnání IP schvalujícího a nového zařízení), systém +
+  prohlížeč, stáří kódu a zda zůstane přihlášený. User-Agent je jen
+  orientační (útočník ho ovládá).
+- **Limit neúspěchů**: nejdřív zapsat neúspěch, pak počítat (žádný souběh).
+- **Devise**: před `approved → done` zkontrolovat
+  `user.active_for_authentication?` (zamčený / nepotvrzený účet → hláška
+  na novém zařízení). Remember přes `remember_me(user)` po `sign_in`.
+  Hodnota `remember` se zafixuje při vytvoření záznamu.
+- **Stavový endpoint**: záznam jen podle cookie (žádné id v URL), jméno
+  uživatele vrací až ve stavu `approved`, `Cache-Control: no-store`.
+- **IP za proxy**: ověřit při nasazení, že `request.ip` vrací IP klienta
+  (nginx na stejném stroji → Rails důvěřuje loopbacku).
 
 ## Na stavitele
 
