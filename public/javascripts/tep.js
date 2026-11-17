@@ -766,7 +766,12 @@ function dl_clock(sec) {
 }
 
 function dl_error(x, fallback) {
+    if (x && x.status === 422) return 'Platnost stránky vypršela, obnov ji prosím.'
     return (x && x.responseJSON && x.responseJSON.error) || fallback
+}
+
+function dl_redirect(url) {
+    window.location = url
 }
 
 function init_device_login_new($el) {
@@ -847,11 +852,12 @@ function init_device_login_new($el) {
 
     function yes() {
         $msg.find('button').prop('disabled', true)
+        stop()
         var my = gen
         $.ajax({ url: urls.yes, type: 'POST', dataType: 'json', data: { authenticity_token: friend_csrf() } })
          .done(function (d) {
              if (my !== gen) return
-             if (d.ok) { stop(); $msg.html('<div class="alert alert-success">Přihlašuji…</div>'); window.location = d.url }
+             if (d.ok) { $msg.html('<div class="alert alert-success">Přihlašuji…</div>'); dl_redirect(d.url) }
              else finish(d.error || 'Přihlášení se nepovedlo.', 'alert-danger')
          })
          .fail(function (x) { if (my === gen) finish(dl_error(x, 'Přihlášení se nepovedlo, zkus to znovu.'), 'alert-danger') })
@@ -859,8 +865,11 @@ function init_device_login_new($el) {
 
     function no() {
         $msg.find('button').prop('disabled', true)
+        stop()
+        var my = gen
         $.ajax({ url: urls.no, type: 'POST', dataType: 'json', data: { authenticity_token: friend_csrf() } })
-         .always(function () { finish('Zrušeno, nikoho nepřihlašuji.') })
+         .done(function () { if (my === gen) finish('Zrušeno, nikoho nepřihlašuji.') })
+         .fail(function (x) { if (my === gen) finish(dl_error(x, 'Zrušení se nepovedlo, zkus to znovu.'), 'alert-danger') })
     }
 
     function create() {
