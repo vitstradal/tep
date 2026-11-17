@@ -165,6 +165,10 @@ opencv:
 	fi
 	@echo "$(OPENCV_SHA256)  $(OPENCV_JS)" | sha256sum -c --quiet - && echo "$(OPENCV_JS) OK"
 
+.PHONY: test-js
+test-js: opencv
+	node --test test/js/*_test.js
+
 release:
 	git push 
 	ssh pikomat.mff.cuni.cz make -C rails/tep pull opencv restart
