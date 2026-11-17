@@ -1,0 +1,43 @@
+<h2>Přihlásit na jiném zařízení</h2>
+
+<div id="device-login-keyboard"
+     data-code-url="<%= device_login_kod_path %>"
+     data-confirm-url="<%= device_login_potvrdit_path %>"
+     data-cancel-url="<%= device_login_zrusit_path %>">
+  <p class="device-login-help">Na novém zařízení dej na přihlašovací stránce „Přihlásit pomocí jiného zařízení“ a sem zadej 4 obrázky, které se ti tam ukážou.</p>
+
+  <div class="device-login-slots">
+    <% 4.times do %>
+      <span class="device-login-slot"></span>
+    <% end %>
+    <button type="button" class="btn btn-default device-login-clear">Smazat</button>
+  </div>
+
+  <div class="device-login-grid">
+    <% DeviceLogin::ICONS.each_slice(4).with_index do |row, r| %>
+      <div class="device-login-row">
+        <% row.each_with_index do |(emoji, name), c| %>
+          <button type="button" class="btn btn-default device-login-key" data-i="<%= r * 4 + c %>">
+            <span class="device-login-emoji"><%= emoji %></span>
+            <span class="device-login-name"><%= name %></span>
+          </button>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <div class="device-login-message"></div>
+
+  <div class="device-login-confirm hide">
+    <p class="device-login-device"></p>
+    <p class="device-login-network"></p>
+    <p class="device-login-age"></p>
+    <p><strong>Potvrď, jen pokud to zařízení máš před sebou.</strong></p>
+    <button type="button" class="btn btn-primary device-login-approve">Potvrdit</button>
+    <button type="button" class="btn btn-default device-login-cancel">Zrušit</button>
+  </div>
+</div>
+
+<noscript>
+  <div class="alert alert-warning">Přihlášení na jiném zařízení potřebuje zapnutý JavaScript.</div>
+</noscript>

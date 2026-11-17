@@ -193,6 +193,10 @@ Tep::Application.routes.draw do
   get  '/prihlasit-zarizenim/stav'           => 'device_login#stav',            :as => :device_login_stav
   post '/prihlasit-zarizenim/ano'            => 'device_login#ano',             :as => :device_login_ano
   post '/prihlasit-zarizenim/ne'             => 'device_login#ne',              :as => :device_login_ne
+  get  '/prihlasit-zarizeni'                 => 'device_login#klavesnice',      :as => :device_login_klavesnice
+  post '/prihlasit-zarizeni/kod'             => 'device_login#kod',             :as => :device_login_kod
+  post '/prihlasit-zarizeni/potvrdit'        => 'device_login#potvrdit',        :as => :device_login_potvrdit
+  post '/prihlasit-zarizeni/zrusit'          => 'device_login#zrusit',          :as => :device_login_zrusit
 
   # friend + quiz (kvízy, adventomat — viz navrh-kvizy-a-pratele.md)
   post '/friend/hello'          => 'friend#hello',         :as => :friend_hello

@@ -36,6 +36,29 @@ class ViewAsTest < ActionController::TestCase
     assert_select 'form[action="/view_as/toggle"]', 0
   end
 
+  test "user menu offers sign in on another device to everyone, view as toggle only to morg" do
+    u = make_user('u@x.cz', [:user])
+    sign_in u
+    get :show, params: { event_id: @event.id }
+    assert_select 'li.dropdown .dropdown-toggle .hidden-xs', 'u@x.cz'
+    assert_select 'li.dropdown .dropdown-menu a[href="/prihlasit-zarizeni"]', /Přihlásit na jiném zařízení/
+    assert_select 'li.dropdown .dropdown-menu a[href="/prihlasit-zarizeni"] i.fa-mobile'
+    assert_select 'form[action="/view_as/toggle"]', 0
+    sign_out u
+    sign_in @org
+    get :show, params: { event_id: @event.id }
+    assert_select 'li.dropdown .dropdown-menu a[href="/prihlasit-zarizeni"]'
+    assert_select 'form[action="/view_as/toggle"]', 0
+    sign_out @org
+    sign_in @morg
+    session[:view_as_switch] = true
+    session[:view_as] = 'user'
+    get :show, params: { event_id: @event.id }
+    assert_select 'li.dropdown .dropdown-toggle .hidden-xs', 'morg@x.cz'
+    assert_select 'li.dropdown .dropdown-menu a[href="/prihlasit-zarizeni"]'
+    assert_select 'li.dropdown .dropdown-menu form[action="/view_as/toggle"]'
+  end
+
   test "view as without enabled switch is ignored" do
     sign_in @morg
     session[:view_as] = 'org'

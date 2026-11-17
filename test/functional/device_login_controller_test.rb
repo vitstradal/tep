@@ -458,4 +458,235 @@ class DeviceLoginControllerTest < ActionController::TestCase
     assert_equal true, json['ok']
     assert_equal 'pending', rec.reload.state
   end
+
+  def code_of(rec)
+    rec.code.split('-')
+  end
+
+  test "klavesnice anonymously redirects to sign in" do
+    get :klavesnice
+    assert_redirected_to new_user_session_path(next: '/prihlasit-zarizeni')
+  end
+
+  test "klavesnice shows 24 icons, 4 slots and endpoint urls" do
+    sign_in user('u@example.com')
+    get :klavesnice
+    assert_response :success
+    assert_select '#device-login-keyboard [data-i]', 24
+    DeviceLogin::ICONS.each_with_index do |(emoji, name), i|
+      assert_select "#device-login-keyboard [data-i='#{i}']", text: /#{emoji}.*#{name}/m
+    end
+    assert_select '#device-login-keyboard .device-login-slot', 4
+    assert_select '#device-login-keyboard .device-login-clear', 'Smazat'
+    assert_select '#device-login-keyboard[data-code-url=?]', '/prihlasit-zarizeni/kod'
+    assert_select '#device-login-keyboard[data-confirm-url=?]', '/prihlasit-zarizeni/potvrdit'
+    assert_select '#device-login-keyboard[data-cancel-url=?]', '/prihlasit-zarizeni/zrusit'
+    assert_select '#device-login-keyboard .device-login-confirm.hide'
+    assert_match 'Na novém zařízení dej na přihlašovací stránce „Přihlásit pomocí jiného zařízení“ a sem zadej 4 obrázky, které se ti tam ukážou.', response.body
+  end
+
+  test "klavesnice works for an org-only account" do
+    sign_in user('o@example.com', roles: [:org])
+    get :klavesnice
+    assert_response :success
+    assert_select '#device-login-keyboard [data-i]', 24
+  end
+
+  test "klavesnice works in view as anon" do
+    sign_in user('m@example.com', roles: %i[org morg])
+    session[:view_as_switch] = true
+    session[:view_as] = 'anon'
+    get :klavesnice
+    assert_response :success
+    assert_select '#device-login-keyboard [data-i]', 24
+  end
+
+  test "kod finds the pending record and describes the device" do
+    u = user('u@example.com')
+    sign_in u
+    freeze_time
+    rec = pending
+    @request.remote_addr = '10.0.0.1'
+    travel 42.seconds
+    post :kod, params: { code: code_of(rec) }
+    assert_response :success
+    assert_equal true, json['ok']
+    assert_equal rec.id, json['id']
+    assert_equal 'iPhone · Safari', json['device']
+    assert_equal true, json['same_network']
+    assert_equal 42, json['age']
+    assert_equal 'pending', rec.reload.state
+    assert_nil rec.user_id
+    assert_equal [true], DeviceLoginAttempt.where(user_id: u.id).pluck(:ok)
+  end
+
+  test "kod from another network reports same_network false" do
+    sign_in user('u@example.com')
+    rec = pending
+    @request.remote_addr = '192.168.5.5'
+    post :kod, params: { code: code_of(rec) }
+    assert_equal true, json['ok']
+    assert_equal false, json['same_network']
+  end
+
+  test "kod wrong code fails and counts as a failed attempt" do
+    u = user('u@example.com')
+    sign_in u
+    rec = pending
+    wrong = rec.code.split('-').map(&:to_i).tap { |c| c[0] = (c[0] + 1) % 24 }
+    post :kod, params: { code: wrong }
+    assert_response :success
+    assert_equal({ 'ok' => false, 'error' => 'Kód neplatí nebo vypršel.' }, json)
+    assert_equal [false], DeviceLoginAttempt.where(user_id: u.id).pluck(:ok)
+  end
+
+  test "kod rejects malformed codes without error" do
+    sign_in user('u@example.com')
+    [%w[1 2 3], %w[1 2 3 x], %w[1 2 3 24], %w[1 2 3 -1], '1-2-3-4'].each do |code|
+      post :kod, params: { code: code }
+      assert_response :success
+      assert_equal false, json['ok'], code.inspect
+    end
+  end
+
+  test "kod sixth wrong code within a minute is throttled even when right" do
+    sign_in user('u@example.com')
+    rec = pending
+    wrong = rec.code.split('-').map(&:to_i).tap { |c| c[0] = (c[0] + 1) % 24 }
+    5.times do
+      post :kod, params: { code: wrong }
+      assert_response :success
+      assert_equal false, json['ok']
+    end
+    post :kod, params: { code: wrong }
+    assert_response 429
+    assert_equal({ 'ok' => false, 'error' => 'Moc pokusů, zkus to za chvíli.' }, json)
+    post :kod, params: { code: code_of(rec) }
+    assert_response 429
+    assert_nil json['id']
+  end
+
+  test "kod of an expired code fails" do
+    sign_in user('u@example.com')
+    rec = pending
+    travel_to(rec.expires_at + 1.second) do
+      post :kod, params: { code: code_of(rec) }
+    end
+    assert_response :success
+    assert_equal({ 'ok' => false, 'error' => 'Kód neplatí nebo vypršel.' }, json)
+  end
+
+  test "kod of a code cancelled by the new device fails" do
+    sign_in user('u@example.com')
+    rec = pending
+    assert rec.cancel!
+    post :kod, params: { code: code_of(rec) }
+    assert_response :success
+    assert_equal({ 'ok' => false, 'error' => 'Kód neplatí nebo vypršel.' }, json)
+  end
+
+  test "kod anonymously is 401" do
+    rec = pending
+    post :kod, params: { code: code_of(rec) }
+    assert_response 401
+    assert_equal({ 'ok' => false }, json)
+    assert_equal 0, DeviceLoginAttempt.count
+  end
+
+  test "potvrdit approves as the signed in user, only once" do
+    u = user('u@example.com')
+    sign_in u
+    rec = pending
+    post :potvrdit, params: { id: rec.id }
+    assert_equal({ 'ok' => true }, json)
+    rec.reload
+    assert_equal 'approved', rec.state
+    assert_equal u.id, rec.user_id
+    assert rec.approved_at.present?
+    post :potvrdit, params: { id: rec.id }
+    assert_equal({ 'ok' => false }, json)
+    assert_equal u.id, rec.reload.user_id
+  end
+
+  test "potvrdit cannot take over a record approved by someone else" do
+    other = user('other@example.com')
+    rec = approved(other)
+    sign_in user('u@example.com')
+    post :potvrdit, params: { id: rec.id }
+    assert_equal({ 'ok' => false }, json)
+    assert_equal other.id, rec.reload.user_id
+  end
+
+  test "potvrdit of an expired or cancelled record fails" do
+    sign_in user('u@example.com')
+    rec = pending
+    travel_to(rec.expires_at + 1.second) do
+      post :potvrdit, params: { id: rec.id }
+    end
+    assert_equal({ 'ok' => false }, json)
+    assert_equal 'pending', rec.reload.state
+    assert_nil rec.user_id
+    rec2 = pending('tok-2')
+    rec2.cancel!
+    post :potvrdit, params: { id: rec2.id }
+    assert_equal({ 'ok' => false }, json)
+    assert_equal 'cancelled', rec2.reload.state
+    post :potvrdit, params: { id: 0 }
+    assert_equal({ 'ok' => false }, json)
+  end
+
+  test "potvrdit in view as anon approves as the real user" do
+    morg = user('m@example.com', roles: %i[org morg])
+    sign_in morg
+    session[:view_as_switch] = true
+    session[:view_as] = 'anon'
+    rec = pending
+    post :potvrdit, params: { id: rec.id }
+    assert_equal({ 'ok' => true }, json)
+    rec.reload
+    assert_equal 'approved', rec.state
+    assert_equal morg.id, rec.user_id
+  end
+
+  test "potvrdit anonymously is 401 and changes nothing" do
+    rec = pending
+    post :potvrdit, params: { id: rec.id }
+    assert_response 401
+    assert_equal({ 'ok' => false }, json)
+    assert_equal 'pending', rec.reload.state
+  end
+
+  test "zrusit cancels a pending record" do
+    sign_in user('u@example.com')
+    rec = pending
+    post :zrusit, params: { id: rec.id }
+    assert_equal({ 'ok' => true }, json)
+    assert_equal 'cancelled', rec.reload.state
+  end
+
+  test "zrusit leaves an approved record alone" do
+    other = user('other@example.com')
+    rec = approved(other)
+    sign_in user('u@example.com')
+    post :zrusit, params: { id: rec.id }
+    assert_equal({ 'ok' => true }, json)
+    assert_equal 'approved', rec.reload.state
+  end
+
+  test "zrusit anonymously is 401 and changes nothing" do
+    rec = pending
+    post :zrusit, params: { id: rec.id }
+    assert_response 401
+    assert_equal 'pending', rec.reload.state
+  end
+
+  test "kod without csrf token is rejected when forgery protection is on" do
+    sign_in user('u@example.com')
+    rec = pending
+    ActionController::Base.allow_forgery_protection = true
+    assert_raises(ActionController::InvalidAuthenticityToken) { post :kod, params: { code: code_of(rec) } }
+    assert_equal 0, DeviceLoginAttempt.count
+  ensure
+    ActionController::Base.allow_forgery_protection = false
+  end
 end

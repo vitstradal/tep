@@ -1,9 +1,12 @@
 # Přihlášení pomocí jiného zařízení, strana nového zařízení.
 class DeviceLoginController < ApplicationController
-  authorize_resource class: false
+  SIGNED_IN = %i[klavesnice kod potvrdit zrusit].freeze
+
+  authorize_resource class: false, except: SIGNED_IN
   protect_from_forgery with: :exception
 
-  before_action :_no_store, except: :novy
+  before_action :_no_store, except: %i[novy klavesnice]
+  before_action :_require_real_user, only: SIGNED_IN
 
   def novy
     session[:device_login_return_to] =
@@ -73,7 +76,47 @@ class DeviceLoginController < ApplicationController
     render json: { ok: true }
   end
 
+  def klavesnice; end
+
+  def kod
+    attempt = DeviceLoginAttempt.begin!(real_user)
+    return render(json: { ok: false, error: 'Moc pokusů, zkus to za chvíli.' }, status: 429) unless attempt
+
+    record = DeviceLogin.find_pending(_code_param)
+    return render(json: { ok: false, error: 'Kód neplatí nebo vypršel.' }) unless record
+
+    attempt.succeed!
+    render json: { ok: true, id: record.id, device: record.device_label,
+                   same_network: record.same_network?(request.remote_ip),
+                   age: (Time.current - record.created_at).to_i }
+  end
+
+  def potvrdit
+    render json: { ok: !!DeviceLogin.find_by(id: params[:id])&.approve!(real_user) }
+  end
+
+  def zrusit
+    DeviceLogin.find_by(id: params[:id])&.cancel!(from: %w[pending])
+    render json: { ok: true }
+  end
+
   private
+
+  def _require_real_user
+    unless real_user
+      return redirect_to(new_user_session_path(next: request.path)) if request.get?
+
+      return render(json: { ok: false }, status: 401)
+    end
+    Ability.new(real_user).authorize!(action_name.to_sym, :device_login)
+  end
+
+  def _code_param
+    code = params[:code]
+    return nil unless code.is_a?(Array) && code.all? { |c| c.is_a?(String) && c.match?(/\A\d{1,2}\z/) }
+
+    code.map(&:to_i)
+  end
 
   def _cookie_name
     request.ssl? ? '__Host-tep_dl' : 'tep_dl'

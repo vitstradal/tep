@@ -41,6 +41,7 @@ class Ability
     can :show,     :quiz
     can %i[kalendar den obrazek odmena moje answer], :adventomat
     can %i[novy vytvor stav ano ne], :device_login
+    can %i[klavesnice kod potvrdit zrusit], :device_login if user.persisted?
 
     # tep
     can :index, :tep
