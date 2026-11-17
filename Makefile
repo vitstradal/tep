@@ -153,6 +153,18 @@ adventomat:
 pull:
 	git pull
 
+OPENCV_VERSION = 4.13.0
+OPENCV_SHA256 = 63366510248adf3a7eddf3e793dd825404efb7df3749f4d6f8557c7fa4ca8aa0
+OPENCV_JS = public/javascripts/opencv-$(OPENCV_VERSION).js
+
+opencv:
+	@if [ ! -f $(OPENCV_JS) ]; then \
+		curl -fsSL -o $(OPENCV_JS).tmp https://docs.opencv.org/$(OPENCV_VERSION)/opencv.js && \
+		echo "$(OPENCV_SHA256)  $(OPENCV_JS).tmp" | sha256sum -c --quiet - || { rm -f $(OPENCV_JS).tmp; exit 1; }; \
+		mv $(OPENCV_JS).tmp $(OPENCV_JS); \
+	fi
+	@echo "$(OPENCV_SHA256)  $(OPENCV_JS)" | sha256sum -c --quiet - && echo "$(OPENCV_JS) OK"
+
 release:
 	git push 
-	ssh pikomat.mff.cuni.cz make -C rails/tep pull restart
+	ssh pikomat.mff.cuni.cz make -C rails/tep pull opencv restart
