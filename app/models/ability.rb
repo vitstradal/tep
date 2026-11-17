@@ -40,6 +40,7 @@ class Ability
     can :vysledky, :quiz
     can :show,     :quiz
     can %i[kalendar den obrazek odmena moje answer], :adventomat
+    can %i[novy vytvor stav ano ne], :device_login
 
     # tep
     can :index, :tep

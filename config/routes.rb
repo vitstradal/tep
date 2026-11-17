@@ -188,6 +188,12 @@ Tep::Application.routes.draw do
 
   get  '/csrf'                               => 'tep#csrf',                     :as => :csrf
 
+  get  '/prihlasit-zarizenim'                => 'device_login#novy',            :as => :device_login_novy
+  post '/prihlasit-zarizenim'                => 'device_login#vytvor',          :as => :device_login_vytvor
+  get  '/prihlasit-zarizenim/stav'           => 'device_login#stav',            :as => :device_login_stav
+  post '/prihlasit-zarizenim/ano'            => 'device_login#ano',             :as => :device_login_ano
+  post '/prihlasit-zarizenim/ne'             => 'device_login#ne',              :as => :device_login_ne
+
   # friend + quiz (kvízy, adventomat — viz navrh-kvizy-a-pratele.md)
   post '/friend/hello'          => 'friend#hello',         :as => :friend_hello
   get  '/friend/status'         => 'friend#status',        :as => :friend_status

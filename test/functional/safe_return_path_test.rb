@@ -40,4 +40,9 @@ class SafeReturnPathTest < ActionController::TestCase
     login
     assert_redirected_to '/oauth/authorize?client_id=x'
   end
+
+  test 'login page links to device login keeping next' do
+    get :new, params: { next: '/sosna' }
+    assert_select 'a[href=?]', '/prihlasit-zarizenim?next=%2Fsosna', 'Přihlásit pomocí jiného zařízení'
+  end
 end

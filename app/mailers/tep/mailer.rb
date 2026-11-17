@@ -46,6 +46,17 @@ class Tep::Mailer < Devise::Mailer
   end
 
   ##
+  # *Tempate* app/views/tep/mailer/device_login_email.html.erb
+  #
+  # *Params*
+  # user, device_label, at:: komu, popis nového zařízení a čas přihlášení
+  def device_login_email(user, device_label, at)
+    @device_label = device_label
+    @at = at.in_time_zone('Europe/Prague')
+    mail(to: user.email, from: 'tep@pikomat.mff.cuni.cz', subject: 'PIKOMAT: přihlášení na jiném zařízení')
+  end
+
+  ##
   # *Tempate* app/views/tep/mailer/wiki_edit_modify.html.erb
   #
   # *Params*

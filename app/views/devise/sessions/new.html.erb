@@ -38,6 +38,8 @@
   </div>
 <% end %>
 
+<p><%= link_to "Přihlásit pomocí jiného zařízení", device_login_novy_path(next: params[:next]) %></p>
+
 <%= render :partial => "devise/shared/links" %>
 
 
