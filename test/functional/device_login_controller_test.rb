@@ -537,6 +537,13 @@ class DeviceLoginControllerTest < ActionController::TestCase
     assert_select 'script[src^=?]', '/javascripts/qrcode.js?v='
   end
 
+  test "klavesnice ends with a link back to the home page and a retry button" do
+    sign_in user('u@example.com')
+    get :klavesnice
+    assert_select '#device-login-keyboard a.device-login-home.hide[href=?]', '/', text: 'Zpět na hlavní stránku'
+    assert_select '#device-login-keyboard button.device-login-again.hide', text: 'Zkusit znovu'
+  end
+
   test "klavesnice works for an org-only account" do
     sign_in user('o@example.com', roles: [:org])
     get :klavesnice

@@ -909,7 +909,7 @@ function init_device_login_keyboard($el) {
     dl_css()
     var urls = { code: $el.data('code-url'), confirm: $el.data('confirm-url'), cancel: $el.data('cancel-url'), state: $el.data('state-url') }
     var $slots = $el.find('.device-login-slot'), $msg = $el.find('.device-login-message'), $confirm = $el.find('.device-login-confirm')
-    var $wait = $el.find('.device-login-wait'), $again = $el.find('.device-login-again')
+    var $wait = $el.find('.device-login-wait'), $again = $el.find('.device-login-again'), $home = $el.find('.device-login-home')
     var $input = $el.find('.device-login-link, .device-login-help, .device-login-slots, .device-login-grid')
     var code = [], busy = false, id = null, device = '', gen = 0, poll_timer = null
 
@@ -956,6 +956,7 @@ function init_device_login_keyboard($el) {
         $confirm.addClass('hide')
         $wait.addClass('hide')
         $again.addClass('hide')
+        $home.addClass('hide')
         $input.show()
         $el.find('.device-login-key, .device-login-clear').prop('disabled', false)
     }
@@ -966,7 +967,8 @@ function init_device_login_keyboard($el) {
         $confirm.addClass('hide')
         $wait.addClass('hide')
         say(text, cls)
-        $again.removeClass('hide')
+        $home.removeClass('hide')
+        $again.toggleClass('hide', cls === 'alert-success')
     }
 
     function on_state(d, my, after_cancel) {
