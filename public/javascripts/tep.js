@@ -918,8 +918,8 @@ function init_device_login_keyboard($el) {
         var qr = qrcode(0, 'M')
         qr.addData(String($(this).data('url')))
         qr.make()
-        $(this).html(qr.createSvgTag({ cellSize: 4, margin: 2 }))
-        $(this).find('svg').css({ width: 160, height: 160 })
+        $(this).html(qr.createSvgTag({ cellSize: 5, margin: 20 }))
+        $(this).find('svg').css('shape-rendering', 'crispEdges')
     })
 
     function key(i) { return $el.find('.device-login-key[data-i="' + i + '"]') }
