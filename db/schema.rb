@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.2].define(version: 40) do
+ActiveRecord::Schema[7.2].define(version: 41) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "plpgsql"
 
@@ -117,6 +117,31 @@ ActiveRecord::Schema[7.2].define(version: 40) do
     t.timestamptz "created_at"
     t.timestamptz "updated_at"
     t.string "tshirt", default: ""
+  end
+
+  create_table "device_login_attempts", force: :cascade do |t|
+    t.integer "user_id", null: false
+    t.boolean "ok", default: false, null: false
+    t.timestamptz "created_at", null: false
+    t.index ["user_id", "created_at"], name: "index_device_login_attempts_on_user_id_and_created_at"
+  end
+
+  create_table "device_logins", force: :cascade do |t|
+    t.string "code", null: false
+    t.string "state", default: "pending", null: false
+    t.integer "user_id"
+    t.string "device_digest", null: false
+    t.text "user_agent"
+    t.string "ip"
+    t.string "ip_bucket"
+    t.text "return_to"
+    t.timestamptz "approved_at"
+    t.timestamptz "expires_at", null: false
+    t.timestamptz "created_at", null: false
+    t.timestamptz "updated_at", null: false
+    t.index ["code", "state"], name: "index_device_logins_on_code_and_state"
+    t.index ["device_digest"], name: "index_device_logins_on_device_digest"
+    t.index ["ip_bucket", "created_at"], name: "index_device_logins_on_ip_bucket_and_created_at"
   end
 
   create_table "friends", force: :cascade do |t|
