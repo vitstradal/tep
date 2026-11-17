@@ -81,7 +81,7 @@ po kliknutí ukáže.
 - Kód = 4 ikony z poolu 24, opakování povoleno; mezi platnými `pending`
   záznamy unikátní (při kolizi vylosovat znovu).
 - Staré záznamy (> 1 den) se mažou při vytváření nového.
-- Limit vytváření kódů: 20 / hod na IP.
+- Limit vytváření kódů: 30 / hod na IP (IPv6 /64).
 
 ## Data
 
@@ -182,3 +182,7 @@ systémech pak nevadí).
 
 - Přesný vzhled stránek (Bootstrap 3 / ace jako zbytek tepu).
 - Texty hlášek.
+
+## Stav
+
+Implementováno (commity dc2b962..HEAD na master); migrace 041 vyžaduje `make prod-migrate`.

@@ -135,7 +135,7 @@ Tabulky:
 **Interfaces:**
 - Consumes: `DeviceLogin.create_for!`, `.for_device`, `#icons`, `#finish!`, `#cancel!`, `#expires_in`, `#device_label`, `#return_to`, `DeviceLogin::Busy`; `safe_return_path` (Task 1).
 - Produces:
-  - `DeviceLoginController::COOKIE` = `'__Host-tep_dl'` v produkci, jinak `'tep_dl'`; cookie `httponly: true, same_site: :lax, secure: Rails.env.production?, path: '/'`, hodnota `SecureRandom.urlsafe_base64(32)`, vždy nová při `vytvor`.
+  - název cookie se řídí `request.ssl?` (`'__Host-tep_dl'` secure / `'tep_dl'`); cookie `httponly: true, same_site: :lax, secure: request.ssl?, path: '/'`, hodnota `SecureRandom.urlsafe_base64(32)`, vždy nová při `vytvor`.
   - `novy`: uloží do `session[:device_login_return_to]` `safe_return_path(params[:next]) || safe_return_path(stored_location_for(:user))`; view má `<div id="device-login-new">` s daty pro JS (URL endpointů).
   - `vytvor` JSON: `{icons: [[emoji, název]×4], expires_in:}`; při `Busy` status 429 `{error: 'Teď to nejde, zkus to za chvíli.'}`.
   - `stav` JSON (`Cache-Control: no-store`): `{state:, expires_in:}` a jen při `approved` navíc `name:` (`user.full_name` nebo e-mail, když je prázdné); bez cookie / záznamu `{state: 'none'}`.
