@@ -21,12 +21,9 @@ class ApplicationController < ActionController::Base
   include ApplicationHelper
 
   ##
-  # po nalogování se přesměru na URL danou parametrem `next`
+  # po nalogování na lokální cestu z `next`, jinak na uloženou adresu, jinak na root
   def after_sign_in_path_for(user)
-     ret_url = params[:next] || url_for_root(user)
-     #password = params[:user][:password]
-     #_jabber_auth(user.jabber, password) if user.jabber? && !user.jabber.nil?
-     return ret_url
+    safe_return_path(params[:next]) || safe_return_path(stored_location_for(user)) || url_for_root(user)
   end
 
 #  rescue_from StandardError do |exception|
@@ -78,6 +75,13 @@ class ApplicationController < ActionController::Base
       else
         _error(exception)
       end
+  end
+
+  protected
+
+  # jen lokální cesta (začíná `/`, ne `//` ani `/\`), jinak nil
+  def safe_return_path(path)
+    path if path.is_a?(String) && path.start_with?('/') && !path.start_with?('//', '/\\')
   end
 
   private
