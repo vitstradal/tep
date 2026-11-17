@@ -88,6 +88,7 @@ class DeviceLoginTest < ActiveSupport::TestCase
     assert_not_equal DeviceLogin.ip_bucket('2001:db8:1:2::5'), DeviceLogin.ip_bucket('2001:db8:1:3::5')
     assert_equal 'nesmysl', DeviceLogin.ip_bucket('nesmysl')
     assert_equal '', DeviceLogin.ip_bucket(nil)
+    assert_equal '1.2.3.4', DeviceLogin.ip_bucket('::ffff:1.2.3.4')
   end
 
   test 'same_network?' do
@@ -182,6 +183,54 @@ class DeviceLoginTest < ActiveSupport::TestCase
     assert dl2.cancel!(from: %w[approved])
   end
 
+  test 'finish! bez schválení selže' do
+    dl = create(token: 'tok')
+    assert_not dl.finish!('tok')
+    assert_equal 'pending', dl.reload.state
+    dl.cancel!
+    assert_not dl.finish!('tok')
+    assert_equal 'cancelled', dl.reload.state
+  end
+
+  test 'approve! na zrušeném a dokončeném selže' do
+    user = make_user
+    cancelled = create(token: 'a').tap(&:cancel!)
+    assert_not cancelled.approve!(user)
+    assert_equal 'cancelled', cancelled.reload.state
+    done = create(token: 'b')
+    done.approve!(user)
+    done.finish!('b')
+    assert_not done.approve!(user)
+    assert_not done.cancel!
+    assert_equal 'done', done.reload.state
+  end
+
+  test 'Busy nezruší předchozí pending téhož zařízení' do
+    old = create(token: 'same')
+    insert_pending(500, expires_at: 5.minutes.from_now)
+    assert_raises(DeviceLogin::Busy) { create(token: 'same') }
+    assert_equal 'pending', old.reload.state
+  end
+
+  test 'strop pustí 500. platný pending' do
+    insert_pending(499, expires_at: 5.minutes.from_now)
+    assert_equal 'pending', create.state
+    assert_raises(DeviceLogin::Busy) { create(token: 'dalsi') }
+  end
+
+  test 'IP limit pustí 30. záznam' do
+    insert_pending(29, expires_at: 5.minutes.from_now, ip_bucket: '1.2.3.4')
+    assert_equal 'pending', create.state
+    assert_raises(DeviceLogin::Busy) { create(token: 'dalsi') }
+  end
+
+  test 'IPv6 adresy v jedné /64 sdílí IP limit' do
+    15.times { |i| create(token: "a#{i}", ip: '2001:db8:1:2::5') }
+    15.times { |i| create(token: "b#{i}", ip: '2001:db8:1:2::9') }
+    assert_raises(DeviceLogin::Busy) { create(token: 'c', ip: '2001:db8:1:2::abcd') }
+    assert_equal 'pending', create(token: 'd', ip: '2001:db8:1:3::5').state
+  end
+
   test 'expires_in není záporné' do
     dl = travel_to(Time.zone.local(2026, 11, 17, 12, 0, 0)) { create }
     travel_to(Time.zone.local(2026, 11, 17, 12, 10, 0)) { assert_equal 0, dl.expires_in }
@@ -221,6 +270,7 @@ class DeviceLoginAttemptTest < ActiveSupport::TestCase
       travel_to(Time.zone.local(2026, 11, 17, 12, i * 2, 0)) { assert DeviceLoginAttempt.begin!(user) }
     end
     travel_to(Time.zone.local(2026, 11, 17, 12, 45, 0)) { assert_nil DeviceLoginAttempt.begin!(user) }
+    travel_to(Time.zone.local(2026, 11, 17, 13, 3, 0)) { assert DeviceLoginAttempt.begin!(user) }
   end
 
   test 'úspěšné se nepočítají' do

@@ -25,7 +25,7 @@ class DeviceLogin < ActiveRecord::Base
   end
 
   def self.ip_bucket(ip)
-    addr = IPAddr.new(ip.to_s)
+    addr = IPAddr.new(ip.to_s).native
     addr.ipv6? ? "#{addr.mask(64)}/64" : addr.to_s
   rescue IPAddr::Error
     ip.to_s
@@ -37,13 +37,13 @@ class DeviceLogin < ActiveRecord::Base
     bucket = ip_bucket(ip)
 
     where('created_at < ?', now - 1.day).delete_all
-    where(device_digest: device_digest, state: 'pending').update_all(state: 'cancelled', updated_at: now)
-
     raise Busy if valid_pending.count >= MAX_PENDING
     raise Busy if where(ip_bucket: bucket).where('created_at > ?', now - 1.hour).count >= IP_LIMIT
 
     code = CODE_ATTEMPTS.times.lazy.map { random_code }.find { |c| !valid_pending.exists?(code: c) }
     raise Busy unless code
+
+    where(device_digest: device_digest, state: 'pending').update_all(state: 'cancelled', updated_at: now)
 
     create!(code: code, state: 'pending', device_digest: device_digest, user_agent: user_agent,
             ip: ip, ip_bucket: bucket, return_to: return_to, expires_at: now + TTL)
