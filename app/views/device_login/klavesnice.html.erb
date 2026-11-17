@@ -13,6 +13,8 @@
     <button type="button" class="btn btn-default device-login-clear">Smazat</button>
   </div>
 
+  <div class="device-login-message"></div>
+
   <div class="device-login-grid">
     <% DeviceLogin::ICONS.each_slice(4).with_index do |row, r| %>
       <div class="device-login-row">
@@ -25,8 +27,6 @@
       </div>
     <% end %>
   </div>
-
-  <div class="device-login-message"></div>
 
   <div class="device-login-confirm hide">
     <p class="device-login-device"></p>

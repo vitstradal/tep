@@ -242,6 +242,8 @@ var colorbox_params = {
 
       $('#adventomat-modal').each(function() { init_adventomat() })
       $('#adventomat-app').each(function() { init_adventomat_app($(this)) })
+      $('#device-login-new').each(function() { init_device_login_new($(this)) })
+      $('#device-login-keyboard').each(function() { init_device_login_keyboard($(this)) })
       init_friend_widget()
       $('#friend-widget-resend').click(function (ev) {
           ev.preventDefault()
@@ -723,6 +725,252 @@ function init_adventomat_app($app) {
     var quick = cached()
     if (quick.length) $app.find('p.grey').text('Načítám adventomat… (vyřešeno ' + quick.length + ')')
     load()
+}
+
+/* ---- přihlášení jiným zařízením (viz docs/superpowers/specs/2026-11-17-prihlaseni-v-mobilu-design.md) ---- */
+
+function dl_css() {
+    if ($('#dl-css').length) return
+    $('<style id="dl-css">' +
+      '.device-login-icons{display:flex;gap:10px;margin:18px 0 6px;max-width:520px}' +
+      '.device-login-icon{flex:1 1 0;min-width:0;padding:10px 4px 8px;border:2px solid #d5e3ef;border-radius:10px;background:#f7fbff;text-align:center}' +
+      '.device-login-icon .device-login-emoji{display:block;font-size:52px;line-height:1.15}' +
+      '.device-login-icon .device-login-name{display:block;margin-top:4px;font-size:16px;font-weight:bold;overflow:hidden;text-overflow:ellipsis}' +
+      '.device-login-countdown{font-size:15px;color:#555}' +
+      '.device-login-message{margin:10px 0;max-width:520px}.device-login-message:empty{display:none}' +
+      '.device-login-ask{font-size:20px;margin:16px 0 12px}' +
+      '.device-login-ask .btn{margin:0 6px 6px 0}' +
+      '.device-login-slots{display:flex;align-items:center;gap:8px;margin:14px 0}' +
+      '.device-login-slot{width:68px;height:68px;border:2px dashed #b9c9d6;border-radius:10px;text-align:center;overflow:hidden;flex:0 0 auto}' +
+      '.device-login-slot.filled{border-style:solid;border-color:#6fb3e0;background:#f7fbff}' +
+      '.device-login-slot .device-login-emoji{display:block;font-size:30px;line-height:1.3;margin-top:4px}' +
+      '.device-login-slot .device-login-name{display:block;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px}' +
+      '.device-login-clear{margin-left:4px}' +
+      '.device-login-grid{max-width:520px}' +
+      '.device-login-row{display:flex;gap:6px;margin-bottom:6px}' +
+      '.device-login-key.btn{flex:1 1 0;min-width:0;padding:6px 2px;white-space:normal;background:#fff !important;border:1px solid #c8d6e2 !important;color:#333 !important;text-shadow:none}' +
+      '.device-login-key.btn:hover,.device-login-key.btn:focus{background:#eaf3fb !important;border-color:#6fb3e0 !important}' +
+      '.device-login-key .device-login-emoji{display:block;font-size:30px;line-height:1.2}' +
+      '.device-login-key .device-login-name{display:block;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
+      '.device-login-confirm{max-width:520px;padding:12px 16px;border:2px solid #6fb3e0;border-radius:10px;background:#f7fbff;font-size:15px}' +
+      '.device-login-confirm .btn{margin:0 6px 4px 0}' +
+      '@media (max-width:420px){.device-login-slot{width:56px;height:60px}.device-login-slot .device-login-emoji{font-size:24px}' +
+      '.device-login-slot .device-login-name{font-size:10px;padding:0}' +
+      '.device-login-icon{padding:8px 2px 6px}.device-login-icon .device-login-emoji{font-size:40px}.device-login-icon .device-login-name{font-size:13px}.device-login-icons{gap:6px}}' +
+      '</style>').appendTo('head')
+}
+
+function dl_clock(sec) {
+    sec = Math.max(0, Math.ceil(sec))
+    return Math.floor(sec / 60) + ':' + ('0' + sec % 60).slice(-2)
+}
+
+function dl_error(x, fallback) {
+    return (x && x.responseJSON && x.responseJSON.error) || fallback
+}
+
+function init_device_login_new($el) {
+    dl_css()
+    var urls = { create: $el.data('create-url'), state: $el.data('state-url'), yes: $el.data('yes-url'), no: $el.data('no-url') }
+    var $icons = $el.find('.device-login-icons'), $help = $el.find('.device-login-help')
+    var $count = $el.find('.device-login-countdown'), $msg = $el.find('.device-login-message'), $renew = $el.find('.device-login-renew')
+    var gen = 0, deadline = 0, phase = null, poll_timer = null, tick_timer = null
+
+    function stop() {
+        gen++
+        clearTimeout(poll_timer)
+        clearTimeout(tick_timer)
+        phase = null
+        $count.text('')
+    }
+
+    function finish(text, cls) {
+        stop()
+        $icons.empty()
+        $help.hide()
+        $msg.html('<div class="alert ' + (cls || 'alert-warning') + '">' + adv_esc(text) + '</div>')
+        $renew.show().prop('disabled', false)
+    }
+
+    function set_deadline(sec) { deadline = Date.now() + sec * 1000 }
+
+    function show_count() {
+        $count.text((phase === 'approved' ? 'Potvrď do ' : 'Kód platí ještě ') + dl_clock((deadline - Date.now()) / 1000) + '.')
+    }
+
+    function tick() {
+        if (deadline <= Date.now()) return finish(phase === 'approved' ? 'Potvrzení vypršelo, začni znovu.' : 'Kód vypršel.')
+        show_count()
+        tick_timer = setTimeout(tick, 1000)
+    }
+
+    function poll(my) {
+        poll_timer = setTimeout(function () {
+            $.ajax({ url: urls.state, dataType: 'json', cache: false })
+             .done(function (d) { if (my === gen) on_state(d, my) })
+             .fail(function () { if (my === gen) poll(my) })
+        }, 2000)
+    }
+
+    function on_state(d, my) {
+        if (d.state === 'pending') {
+            set_deadline(d.expires_in)
+        } else if (d.state === 'approved') {
+            set_deadline(d.expires_in)
+            if (phase !== 'approved') ask(d.name)
+            show_count()
+        } else if (d.state === 'done') {
+            return finish('Přihlášení už proběhlo.', 'alert-success')
+        } else if (d.state === 'cancelled') {
+            return finish('Přihlášení bylo zrušeno.')
+        } else if (d.state === 'expired') {
+            return finish(phase === 'approved' ? 'Potvrzení vypršelo, začni znovu.' : 'Kód vypršel.')
+        } else {
+            return finish('Kód už neplatí.')
+        }
+        poll(my)
+    }
+
+    function ask(name) {
+        phase = 'approved'
+        $icons.empty()
+        $help.hide()
+        $renew.hide()
+        $msg.html('<div class="device-login-ask">Přihlásit jako <b>' + adv_esc(name) + '</b>?</div>')
+        var $ask = $msg.find('.device-login-ask')
+        $('<div/>').appendTo($ask)
+          .append('<button type="button" class="btn btn-primary device-login-yes">Ano</button>')
+          .append('<button type="button" class="btn btn-default device-login-no">To nejsem já</button>')
+        $ask.find('.device-login-yes').click(yes)
+        $ask.find('.device-login-no').click(no)
+    }
+
+    function yes() {
+        $msg.find('button').prop('disabled', true)
+        var my = gen
+        $.ajax({ url: urls.yes, type: 'POST', dataType: 'json', data: { authenticity_token: friend_csrf() } })
+         .done(function (d) {
+             if (my !== gen) return
+             if (d.ok) { stop(); $msg.html('<div class="alert alert-success">Přihlašuji…</div>'); window.location = d.url }
+             else finish(d.error || 'Přihlášení se nepovedlo.', 'alert-danger')
+         })
+         .fail(function (x) { if (my === gen) finish(dl_error(x, 'Přihlášení se nepovedlo, zkus to znovu.'), 'alert-danger') })
+    }
+
+    function no() {
+        $msg.find('button').prop('disabled', true)
+        $.ajax({ url: urls.no, type: 'POST', dataType: 'json', data: { authenticity_token: friend_csrf() } })
+         .always(function () { finish('Zrušeno, nikoho nepřihlašuji.') })
+    }
+
+    function create() {
+        stop()
+        var my = gen
+        $renew.prop('disabled', true)
+        $msg.empty()
+        $.ajax({ url: urls.create, type: 'POST', dataType: 'json', data: { authenticity_token: friend_csrf() } })
+         .done(function (d) {
+             if (my !== gen) return
+             $icons.html($.map(d.icons, function (ic) {
+                 return '<div class="device-login-icon"><span class="device-login-emoji">' + adv_esc(ic[0]) +
+                        '</span><span class="device-login-name">' + adv_esc(ic[1]) + '</span></div>'
+             }).join(''))
+             $help.show()
+             $renew.show().prop('disabled', false)
+             phase = 'pending'
+             set_deadline(d.expires_in)
+             tick()
+             poll(my)
+         })
+         .fail(function (x) { if (my === gen) finish(dl_error(x, 'Kód se nepodařilo vytvořit, zkus to znovu.'), 'alert-danger') })
+    }
+
+    $renew.click(create)
+    create()
+}
+
+function init_device_login_keyboard($el) {
+    dl_css()
+    var urls = { code: $el.data('code-url'), confirm: $el.data('confirm-url'), cancel: $el.data('cancel-url') }
+    var $slots = $el.find('.device-login-slot'), $msg = $el.find('.device-login-message'), $confirm = $el.find('.device-login-confirm')
+    var $input = $el.find('.device-login-slots, .device-login-grid')
+    var code = [], busy = false, id = null
+
+    function key(i) { return $el.find('.device-login-key[data-i="' + i + '"]') }
+
+    function render() {
+        $slots.each(function (n) {
+            var $s = $(this)
+            if (n < code.length) {
+                var $k = key(code[n])
+                $s.addClass('filled').html('<span class="device-login-emoji">' + adv_esc($k.find('.device-login-emoji').text()) +
+                                           '</span><span class="device-login-name">' + adv_esc($k.find('.device-login-name').text()) + '</span>')
+            } else {
+                $s.removeClass('filled').empty()
+            }
+        })
+    }
+
+    function say(text, cls) {
+        $msg.html(text ? '<div class="alert ' + cls + '">' + adv_esc(text) + '</div>' : '')
+    }
+
+    function reset() {
+        code = []
+        busy = false
+        id = null
+        render()
+        $confirm.addClass('hide')
+        $input.show()
+        $el.find('.device-login-key, .device-login-clear').prop('disabled', false)
+    }
+
+    function submit() {
+        busy = true
+        $el.find('.device-login-key, .device-login-clear').prop('disabled', true)
+        $.ajax({ url: urls.code, type: 'POST', dataType: 'json', data: { code: code, authenticity_token: friend_csrf() } })
+         .done(function (d) {
+             if (!d.ok) { reset(); return say(d.error || 'Kód neplatí nebo vypršel.', 'alert-danger') }
+             id = d.id
+             $confirm.find('.device-login-device').html('Přihlásit <b>' + adv_esc(d.device) + '</b>?')
+             $confirm.find('.device-login-network').text('Stejná síť jako ty: ' + (d.same_network ? 'ano' : 'ne'))
+             $confirm.find('.device-login-age').text('Kód vytvořen před ' + d.age + ' s.')
+             $confirm.find('button').prop('disabled', false)
+             $input.hide()
+             $confirm.removeClass('hide')
+         })
+         .fail(function (x) {
+             reset()
+             say(x.status === 401 ? 'Nejsi přihlášený, obnov stránku.' : dl_error(x, 'Chyba, zkus to znovu.'), 'alert-danger')
+         })
+    }
+
+    function answer(url, ok_text, fail_text, ok_cls) {
+        $confirm.find('button').prop('disabled', true)
+        $.ajax({ url: url, type: 'POST', dataType: 'json', data: { id: id, authenticity_token: friend_csrf() } })
+         .done(function (d) { reset(); say(d.ok ? ok_text : fail_text, d.ok ? ok_cls : 'alert-danger') })
+         .fail(function (x) { reset(); say(dl_error(x, fail_text), 'alert-danger') })
+    }
+
+    $el.find('.device-login-key').click(function () {
+        if (busy || code.length >= 4) return
+        say('')
+        code.push(String($(this).data('i')))
+        render()
+        if (code.length === 4) submit()
+    })
+    $el.find('.device-login-clear').click(function () {
+        if (busy) return
+        code.pop()
+        render()
+    })
+    $el.find('.device-login-approve').click(function () {
+        answer(urls.confirm, 'Hotovo, na druhém zařízení klikni Ano.', 'Potvrzení se nepovedlo, kód mezitím vypršel nebo byl zrušen.', 'alert-success')
+    })
+    $el.find('.device-login-cancel').click(function () {
+        answer(urls.cancel, 'Zrušeno.', 'Zrušení se nepovedlo, kód mezitím vypršel.', 'alert-info')
+    })
+    reset()
 }
 
 function _show(el_selector, want_show) {
