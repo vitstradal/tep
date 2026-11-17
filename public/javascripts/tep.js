@@ -969,17 +969,21 @@ function init_device_login_keyboard($el) {
         $again.removeClass('hide')
     }
 
-    function on_state(d, my) {
-        if (d.state === 'pending' || d.state === 'approved') return poll(my, 2000)
+    function on_state(d, my, after_cancel) {
+        if (d.state === 'pending' || d.state === 'approved') {
+            if (after_cancel) say('Zrušení se nepovedlo, zkus to znovu.', 'alert-danger')
+            return poll(my, 2000)
+        }
         if (d.state === 'done') return finish('Hotovo, zařízení je přihlášené.', 'alert-success')
         if (d.state === 'cancelled') return finish('Přihlášení bylo zrušeno.', 'alert-info')
-        finish('Kód vypršel.', 'alert-warning')
+        if (d.state === 'expired') return finish('Kód vypršel.', 'alert-warning')
+        finish('Stav přihlášení se ztratil, zkus to znovu.', 'alert-warning')
     }
 
-    function poll(my, delay) {
+    function poll(my, delay, after_cancel) {
         poll_timer = setTimeout(function () {
-            $.ajax({ url: urls.state, dataType: 'json', cache: false })
-             .done(function (d) { if (my === gen) on_state(d, my) })
+            $.ajax({ url: urls.state, data: { id: id }, dataType: 'json', cache: false })
+             .done(function (d) { if (my === gen) on_state(d, my, after_cancel) })
              .fail(function (x) {
                  if (my !== gen) return
                  if (x.status === 401) return finish('Nejsi přihlášený, obnov stránku.', 'alert-danger')
@@ -1050,7 +1054,7 @@ function init_device_login_keyboard($el) {
         render()
     }
 
-    $el.find('.device-login-key').click(function () { add($(this).data('i')) })
+    $el.find('.device-login-key').click(function () { $(this).blur(); add($(this).data('i')) })
     $el.find('.device-login-clear').click(erase)
     $(document).on('keydown', function (e) {
         var o = e.originalEvent || e
@@ -1080,7 +1084,7 @@ function init_device_login_keyboard($el) {
         post(urls.cancel, $wait, function (ok, my) {
             if (ok) return finish('Přihlášení bylo zrušeno.', 'alert-info')
             $wait.find('button').prop('disabled', false)
-            poll(my, 0)
+            poll(my, 0, true)
         })
     })
     $again.click(function () { reset(); say('') })

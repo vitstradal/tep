@@ -165,7 +165,7 @@ systémech pak nevadí).
   nad ním „zkus to za chvíli“), limit na IP (IPv6 podle /64) 30 / hod,
   omezený počet pokusů o unikátní kód. Pravděpodobnost, že překlep trefí
   cizí kód, je pak ≤ 0,15 %.
-- **Potvrzovací obrazovka** místo surové IP ukáže „Stejná síť jako ty:
+- **Potvrzovací obrazovka** místo surové IP ukáže „Stejná wifi/síť jako ty:
   ano / ne“ (porovnání IP schvalujícího a nového zařízení), systém +
   prohlížeč a stáří kódu. User-Agent je jen
   orientační (útočník ho ovládá).
@@ -207,7 +207,7 @@ Tyto body mají přednost před starším textem výše.
      schválí (`approve!`), přihlášená strana ukáže „Potvrďte přihlášení na
      novém zařízení (<systém · prohlížeč>)“ a tlačítko Zrušit (zruší
      `approved` záznam, nové zařízení pak dostane `cancelled`).
-   - **Jiná síť**: zůstává panel s popisem zařízení, „Stejná síť jako ty:
+   - **Jiná síť**: zůstává panel s popisem zařízení, „Stejná wifi/síť jako ty:
      ne“, varováním a Potvrdit / Zrušit (ochrana proti phishingu); po
      Potvrdit totéž „Potvrďte přihlášení na novém zařízení“ + Zrušit.
    - Přihlášená strana se dotazuje stavu záznamu (jen svého, podle session

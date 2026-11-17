@@ -487,6 +487,10 @@ class DeviceLoginControllerTest < ActionController::TestCase
     assert_equal 'pending', rec.reload.state
   end
 
+  def kod_ids
+    Array(session[:device_login_kod_ids])
+  end
+
   def code_of(rec)
     rec.code.split('-')
   end
@@ -562,7 +566,7 @@ class DeviceLoginControllerTest < ActionController::TestCase
                    'age' => 42, 'approved' => false }, json)
     assert_equal 'pending', rec.reload.state
     assert_nil rec.user_id
-    assert_equal rec.id, session[:device_login_kod_id]
+    assert_equal [rec.id], kod_ids
     assert_equal [true], DeviceLoginAttempt.where(user_id: u.id).pluck(:ok)
   end
 
@@ -579,7 +583,7 @@ class DeviceLoginControllerTest < ActionController::TestCase
     assert_equal 'approved', rec.state
     assert_equal u.id, rec.user_id
     assert rec.approved_at.present?
-    assert_equal rec.id, session[:device_login_kod_id]
+    assert_equal [rec.id], kod_ids
   end
 
   test "kod from the same network whose approval loses a race fails without binding the session" do
@@ -591,7 +595,7 @@ class DeviceLoginControllerTest < ActionController::TestCase
       DeviceLogin.stub(:find_pending, loser) { post :kod, params: { code: code_of(rec) } }
     end
     assert_equal({ 'ok' => false, 'error' => 'Kód neplatí nebo vypršel.' }, json)
-    assert_nil session[:device_login_kod_id]
+    assert_equal [], kod_ids
     assert_equal 'pending', rec.reload.state
   end
 
@@ -646,7 +650,7 @@ class DeviceLoginControllerTest < ActionController::TestCase
     post :kod, params: { code: %w[1 2 3 22] }
     assert_response :success
     assert_equal({ 'ok' => false, 'error' => 'Kód neplatí nebo vypršel.' }, json)
-    assert_nil session[:device_login_kod_id]
+    assert_equal [], kod_ids
   end
 
   test "kod sixth wrong code within a minute is throttled even when right" do
@@ -704,14 +708,14 @@ class DeviceLoginControllerTest < ActionController::TestCase
     sign_in u
     rec = pending
     entered(rec)
-    assert_equal rec.id, session[:device_login_kod_id]
+    assert_equal [rec.id], kod_ids
     post :potvrdit, params: { id: rec.id }
     assert_equal({ 'ok' => true }, json)
     rec.reload
     assert_equal 'approved', rec.state
     assert_equal u.id, rec.user_id
     assert rec.approved_at.present?
-    assert_equal rec.id, session[:device_login_kod_id]
+    assert_equal [rec.id], kod_ids
     post :potvrdit, params: { id: rec.id }
     assert_equal({ 'ok' => false }, json)
     assert_equal u.id, rec.reload.user_id
@@ -737,7 +741,7 @@ class DeviceLoginControllerTest < ActionController::TestCase
     assert_equal 'pending', b.reload.state
     assert_nil b.user_id
     assert_equal 'pending', a.reload.state
-    assert_equal a.id, session[:device_login_kod_id]
+    assert_equal [a.id], kod_ids
     post :potvrdit, params: { id: a.id }
     assert_equal({ 'ok' => true }, json)
     assert_equal 'approved', a.reload.state
@@ -747,7 +751,7 @@ class DeviceLoginControllerTest < ActionController::TestCase
     other = user('other@example.com')
     rec = approved(other)
     sign_in user('u@example.com')
-    session[:device_login_kod_id] = rec.id
+    session[:device_login_kod_ids] = [rec.id]
     post :potvrdit, params: { id: rec.id }
     assert_equal({ 'ok' => false }, json)
     assert_equal other.id, rec.reload.user_id
@@ -788,7 +792,7 @@ class DeviceLoginControllerTest < ActionController::TestCase
 
   test "potvrdit anonymously is 401 and changes nothing" do
     rec = pending
-    session[:device_login_kod_id] = rec.id
+    session[:device_login_kod_ids] = [rec.id]
     post :potvrdit, params: { id: rec.id }
     assert_response 401
     assert_equal({ 'ok' => false }, json)
@@ -802,7 +806,7 @@ class DeviceLoginControllerTest < ActionController::TestCase
     post :zrusit, params: { id: rec.id }
     assert_equal({ 'ok' => true }, json)
     assert_equal 'cancelled', rec.reload.state
-    assert_nil session[:device_login_kod_id]
+    assert_equal [], kod_ids
   end
 
   test "zrusit of an id never returned by kod changes nothing" do
@@ -828,7 +832,7 @@ class DeviceLoginControllerTest < ActionController::TestCase
     other = user('other@example.com')
     rec = approved(other)
     sign_in user('u@example.com')
-    session[:device_login_kod_id] = rec.id
+    session[:device_login_kod_ids] = [rec.id]
     post :zrusit, params: { id: rec.id }
     assert_equal({ 'ok' => false }, json)
     assert_equal 'approved', rec.reload.state
@@ -845,7 +849,7 @@ class DeviceLoginControllerTest < ActionController::TestCase
     post :zrusit, params: { id: rec.id }
     assert_equal({ 'ok' => true }, json)
     assert_equal 'cancelled', rec.reload.state
-    assert_nil session[:device_login_kod_id]
+    assert_equal [], kod_ids
     cookies['tep_dl'] = 'tok-new'
     get :stav
     assert_equal 'cancelled', json['state']
@@ -864,7 +868,7 @@ class DeviceLoginControllerTest < ActionController::TestCase
     post :zrusit, params: { id: rec.id }
     assert_equal({ 'ok' => true }, json)
     assert_equal 'cancelled', rec.reload.state
-    assert_nil session[:device_login_kod_id]
+    assert_equal [], kod_ids
     cookies['tep_dl'] = 'tok-new'
     post :ano
     assert_equal false, json['ok']
@@ -884,7 +888,7 @@ class DeviceLoginControllerTest < ActionController::TestCase
 
   test "zrusit anonymously is 401 and changes nothing" do
     rec = pending
-    session[:device_login_kod_id] = rec.id
+    session[:device_login_kod_ids] = [rec.id]
     post :zrusit, params: { id: rec.id }
     assert_response 401
     assert_equal 'pending', rec.reload.state
@@ -902,8 +906,8 @@ class DeviceLoginControllerTest < ActionController::TestCase
 
   test "stav_moje without a session key is none and uncached" do
     sign_in user('u@example.com')
-    pending
-    get :stav_moje
+    rec = pending
+    get :stav_moje, params: { id: rec.id }
     assert_response :success
     assert_equal({ 'state' => 'none' }, json)
     assert_equal 'no-store', response.headers['Cache-Control']
@@ -916,44 +920,48 @@ class DeviceLoginControllerTest < ActionController::TestCase
     assert rec_a.approve!(a)
     sign_in user('b@example.com')
     entered(rec_b)
-    get :stav_moje
+    get :stav_moje, params: { id: rec_b.id }
     assert_equal({ 'state' => 'pending' }, json)
+    get :stav_moje, params: { id: rec_a.id }
+    assert_equal({ 'state' => 'none' }, json)
     assert rec_a.finish!('tok-a')
-    get :stav_moje
+    get :stav_moje, params: { id: rec_a.id }
+    assert_equal({ 'state' => 'none' }, json)
+    get :stav_moje, params: { id: rec_b.id }
     assert_equal({ 'state' => 'pending' }, json)
-    assert_equal rec_b.id, session[:device_login_kod_id]
+    assert_equal [rec_b.id], kod_ids
     assert rec_b.cancel!
-    get :stav_moje
+    get :stav_moje, params: { id: rec_b.id }
     assert_equal({ 'state' => 'cancelled' }, json)
     assert_equal 'done', rec_a.reload.state
   end
 
   test "stav_moje with a key of a deleted record is none and drops the key" do
     sign_in user('u@example.com')
-    session[:device_login_kod_id] = 999_999
-    get :stav_moje
+    session[:device_login_kod_ids] = [999_999]
+    get :stav_moje, params: { id: 999_999 }
     assert_equal({ 'state' => 'none' }, json)
-    assert_nil session[:device_login_kod_id]
+    assert_equal [], kod_ids
   end
 
   test "stav_moje follows pending, approved and done and then forgets the key" do
     sign_in user('u@example.com')
     rec = pending
     entered(rec)
-    get :stav_moje
+    get :stav_moje, params: { id: rec.id }
     assert_equal({ 'state' => 'pending' }, json)
     assert_equal 'no-store', response.headers['Cache-Control']
     post :potvrdit, params: { id: rec.id }
-    get :stav_moje
+    get :stav_moje, params: { id: rec.id }
     assert_equal({ 'state' => 'approved' }, json)
-    assert_equal rec.id, session[:device_login_kod_id]
+    assert_equal [rec.id], kod_ids
     cookies['tep_dl'] = 'tok-new'
     post :ano
     assert_equal true, json['ok']
-    get :stav_moje
+    get :stav_moje, params: { id: rec.id }
     assert_equal({ 'state' => 'done' }, json)
-    assert_nil session[:device_login_kod_id]
-    get :stav_moje
+    assert_equal [], kod_ids
+    get :stav_moje, params: { id: rec.id }
     assert_equal({ 'state' => 'none' }, json)
   end
 
@@ -962,7 +970,7 @@ class DeviceLoginControllerTest < ActionController::TestCase
     rec = pending
     @request.remote_addr = '10.0.0.1'
     post :kod, params: { code: code_of(rec) }
-    get :stav_moje
+    get :stav_moje, params: { id: rec.id }
     assert_equal({ 'state' => 'approved' }, json)
   end
 
@@ -973,9 +981,9 @@ class DeviceLoginControllerTest < ActionController::TestCase
     post :potvrdit, params: { id: rec.id }
     cookies['tep_dl'] = 'tok-new'
     post :ne
-    get :stav_moje
+    get :stav_moje, params: { id: rec.id }
     assert_equal({ 'state' => 'cancelled' }, json)
-    assert_nil session[:device_login_kod_id]
+    assert_equal [], kod_ids
   end
 
   test "stav_moje reports an expired pending code and forgets the key" do
@@ -983,14 +991,14 @@ class DeviceLoginControllerTest < ActionController::TestCase
     rec = pending
     entered(rec)
     travel_to(rec.expires_at - 1.second) do
-      get :stav_moje
+      get :stav_moje, params: { id: rec.id }
       assert_equal({ 'state' => 'pending' }, json)
     end
     travel_to(rec.expires_at + 1.second) do
-      get :stav_moje
+      get :stav_moje, params: { id: rec.id }
       assert_equal({ 'state' => 'expired' }, json)
     end
-    assert_nil session[:device_login_kod_id]
+    assert_equal [], kod_ids
     assert_equal 'pending', rec.reload.state
   end
 
@@ -1001,21 +1009,82 @@ class DeviceLoginControllerTest < ActionController::TestCase
     post :potvrdit, params: { id: rec.id }
     approved_at = rec.reload.approved_at
     travel_to(approved_at + DeviceLogin::APPROVE_TTL - 1.second) do
-      get :stav_moje
+      get :stav_moje, params: { id: rec.id }
       assert_equal({ 'state' => 'approved' }, json)
     end
     travel_to(approved_at + DeviceLogin::APPROVE_TTL + 1.second) do
-      get :stav_moje
+      get :stav_moje, params: { id: rec.id }
       assert_equal({ 'state' => 'expired' }, json)
     end
-    assert_nil session[:device_login_kod_id]
+    assert_equal [], kod_ids
   end
 
   test "stav_moje anonymously is 401" do
     rec = pending
-    session[:device_login_kod_id] = rec.id
-    get :stav_moje
+    session[:device_login_kod_ids] = [rec.id]
+    get :stav_moje, params: { id: rec.id }
     assert_response 401
     assert_equal({ 'ok' => false }, json)
+  end
+
+  test "two tabs keep their own entered codes" do
+    u = user('u@example.com')
+    sign_in u
+    a = pending('tok-a')
+    b = pending('tok-b')
+    @request.remote_addr = '10.0.0.1'
+    post :kod, params: { code: code_of(a) }
+    assert_equal true, json['approved']
+    post :kod, params: { code: code_of(b) }
+    assert_equal true, json['approved']
+    assert_equal [a.id, b.id], kod_ids
+    get :stav_moje, params: { id: a.id }
+    assert_equal({ 'state' => 'approved' }, json)
+    post :zrusit, params: { id: a.id }
+    assert_equal({ 'ok' => true }, json)
+    assert_equal 'cancelled', a.reload.state
+    assert_equal 'approved', b.reload.state
+    assert_equal u.id, b.user_id
+    assert_equal [b.id], kod_ids
+    get :stav_moje, params: { id: a.id }
+    assert_equal({ 'state' => 'none' }, json)
+    get :stav_moje, params: { id: b.id }
+    assert_equal({ 'state' => 'approved' }, json)
+  end
+
+  test "entered codes keep only the newest five" do
+    sign_in user('u@example.com')
+    recs = Array.new(6) { |i| pending("tok-#{i}") }
+    recs.each { |r| entered(r) }
+    assert_equal recs.drop(1).map(&:id), kod_ids
+    get :stav_moje, params: { id: recs.first.id }
+    assert_equal({ 'state' => 'none' }, json)
+    post :zrusit, params: { id: recs.first.id }
+    assert_equal({ 'ok' => false }, json)
+    assert_equal 'pending', recs.first.reload.state
+  end
+
+  test "entering the same code twice keeps one entry" do
+    sign_in user('u@example.com')
+    rec = pending
+    entered(rec)
+    entered(rec)
+    assert_equal [rec.id], kod_ids
+  end
+
+  test "zrusit in view as anon cancels a same-network approval of the real user" do
+    morg = user('m@example.com', roles: %i[org morg])
+    sign_in morg
+    session[:view_as_switch] = true
+    session[:view_as] = 'anon'
+    rec = pending
+    @request.remote_addr = '10.0.0.1'
+    post :kod, params: { code: code_of(rec) }
+    assert_equal true, json['approved']
+    assert_equal morg.id, rec.reload.user_id
+    post :zrusit, params: { id: rec.id }
+    assert_equal({ 'ok' => true }, json)
+    assert_equal 'cancelled', rec.reload.state
+    assert_equal [], kod_ids
   end
 end

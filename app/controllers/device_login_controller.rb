@@ -1,6 +1,7 @@
 # Přihlášení pomocí jiného zařízení, strana nového zařízení.
 class DeviceLoginController < ApplicationController
   SIGNED_IN = %i[klavesnice kod potvrdit zrusit stav_moje].freeze
+  ENTERED_MAX = 5
 
   authorize_resource class: false, except: SIGNED_IN
   protect_from_forgery with: :exception
@@ -89,7 +90,7 @@ class DeviceLoginController < ApplicationController
     same = record.same_network?(request.remote_ip)
     return render(json: { ok: false, error: 'Kód neplatí nebo vypršel.' }) if same && !record.approve!(real_user)
 
-    session[:device_login_kod_id] = record.id
+    session[:device_login_kod_ids] = (_entered_ids - [record.id] + [record.id]).last(ENTERED_MAX)
     reply = { ok: true, id: record.id, device: record.device_label, same_network: same, approved: same }
     reply[:age] = (Time.current - record.created_at).to_i unless same
     render json: reply
@@ -103,15 +104,15 @@ class DeviceLoginController < ApplicationController
   def zrusit
     record = _entered_record
     ok = !!record&.cancel!(from: %w[pending approved], by: real_user)
-    session.delete(:device_login_kod_id) if ok
+    _forget(record.id) if ok
     render json: { ok: ok }
   end
 
   def stav_moje
-    id = session[:device_login_kod_id]
+    id = _entered_id
     record = id && DeviceLogin.find_by(id: id)
     state = record ? _my_state(record) : 'none'
-    session.delete(:device_login_kod_id) unless %w[pending approved].include?(state)
+    _forget(id) if id && !%w[pending approved].include?(state)
     render json: { state: state }
   end
 
@@ -126,12 +127,22 @@ class DeviceLoginController < ApplicationController
     Ability.new(real_user).authorize!(action_name.to_sym, :device_login)
   end
 
-  # jen záznam, jehož kód tahle session zadala přes `kod`
-  def _entered_record
-    id = session[:device_login_kod_id]
-    return nil unless id && params[:id].to_s == id.to_s
+  def _entered_ids
+    Array(session[:device_login_kod_ids])
+  end
 
-    DeviceLogin.find_by(id: id)
+  # jen id záznamu, jehož kód tahle session zadala přes `kod`
+  def _entered_id
+    _entered_ids.find { |id| id.to_s == params[:id].to_s }
+  end
+
+  def _entered_record
+    id = _entered_id
+    id && DeviceLogin.find_by(id: id)
+  end
+
+  def _forget(id)
+    session[:device_login_kod_ids] = _entered_ids - [id]
   end
 
   def _my_state(record)
