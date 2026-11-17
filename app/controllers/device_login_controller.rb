@@ -86,18 +86,20 @@ class DeviceLoginController < ApplicationController
     return render(json: { ok: false, error: 'Kód neplatí nebo vypršel.' }) unless record
 
     attempt.succeed!
+    session[:device_login_kod_id] = record.id
     render json: { ok: true, id: record.id, device: record.device_label,
                    same_network: record.same_network?(request.remote_ip),
                    age: (Time.current - record.created_at).to_i }
   end
 
   def potvrdit
-    render json: { ok: !!DeviceLogin.find_by(id: params[:id])&.approve!(real_user) }
+    record = _entered_record
+    render json: { ok: !!record&.approve!(real_user) }
   end
 
   def zrusit
-    DeviceLogin.find_by(id: params[:id])&.cancel!(from: %w[pending])
-    render json: { ok: true }
+    record = _entered_record
+    render json: { ok: !!record&.cancel!(from: %w[pending]) }
   end
 
   private
@@ -109,6 +111,15 @@ class DeviceLoginController < ApplicationController
       return render(json: { ok: false }, status: 401)
     end
     Ability.new(real_user).authorize!(action_name.to_sym, :device_login)
+  end
+
+  # jen záznam, jehož kód tahle session zadala přes `kod`; klíč se spotřebuje
+  def _entered_record
+    id = session[:device_login_kod_id]
+    return nil unless id && params[:id].to_s == id.to_s
+
+    session.delete(:device_login_kod_id)
+    DeviceLogin.find_by(id: id)
   end
 
   def _code_param

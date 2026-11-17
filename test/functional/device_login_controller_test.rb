@@ -593,33 +593,70 @@ class DeviceLoginControllerTest < ActionController::TestCase
     assert_equal 0, DeviceLoginAttempt.count
   end
 
-  test "potvrdit approves as the signed in user, only once" do
+  def entered(rec)
+    post :kod, params: { code: code_of(rec) }
+    assert_equal true, json['ok']
+    assert_equal rec.id, json['id']
+  end
+
+  test "potvrdit approves the code entered via kod, only once" do
     u = user('u@example.com')
     sign_in u
     rec = pending
+    entered(rec)
+    assert_equal rec.id, session[:device_login_kod_id]
     post :potvrdit, params: { id: rec.id }
     assert_equal({ 'ok' => true }, json)
     rec.reload
     assert_equal 'approved', rec.state
     assert_equal u.id, rec.user_id
     assert rec.approved_at.present?
+    assert_nil session[:device_login_kod_id]
     post :potvrdit, params: { id: rec.id }
     assert_equal({ 'ok' => false }, json)
     assert_equal u.id, rec.reload.user_id
+  end
+
+  test "potvrdit of an id never returned by kod changes nothing" do
+    sign_in user('u@example.com')
+    foreign = pending('tok-foreign')
+    post :potvrdit, params: { id: foreign.id }
+    assert_equal({ 'ok' => false }, json)
+    foreign.reload
+    assert_equal 'pending', foreign.state
+    assert_nil foreign.user_id
+  end
+
+  test "potvrdit after kod for one record cannot approve another" do
+    sign_in user('u@example.com')
+    a = pending('tok-a')
+    b = pending('tok-b')
+    entered(a)
+    post :potvrdit, params: { id: b.id }
+    assert_equal({ 'ok' => false }, json)
+    assert_equal 'pending', b.reload.state
+    assert_nil b.user_id
+    assert_equal 'pending', a.reload.state
+    assert_equal a.id, session[:device_login_kod_id]
+    post :potvrdit, params: { id: a.id }
+    assert_equal({ 'ok' => true }, json)
+    assert_equal 'approved', a.reload.state
   end
 
   test "potvrdit cannot take over a record approved by someone else" do
     other = user('other@example.com')
     rec = approved(other)
     sign_in user('u@example.com')
+    session[:device_login_kod_id] = rec.id
     post :potvrdit, params: { id: rec.id }
     assert_equal({ 'ok' => false }, json)
     assert_equal other.id, rec.reload.user_id
   end
 
-  test "potvrdit of an expired or cancelled record fails" do
+  test "potvrdit of a code that expired or was cancelled after kod fails" do
     sign_in user('u@example.com')
     rec = pending
+    entered(rec)
     travel_to(rec.expires_at + 1.second) do
       post :potvrdit, params: { id: rec.id }
     end
@@ -627,12 +664,12 @@ class DeviceLoginControllerTest < ActionController::TestCase
     assert_equal 'pending', rec.reload.state
     assert_nil rec.user_id
     rec2 = pending('tok-2')
-    rec2.cancel!
+    entered(rec2)
+    assert rec2.cancel!
     post :potvrdit, params: { id: rec2.id }
     assert_equal({ 'ok' => false }, json)
     assert_equal 'cancelled', rec2.reload.state
-    post :potvrdit, params: { id: 0 }
-    assert_equal({ 'ok' => false }, json)
+    assert_nil rec2.user_id
   end
 
   test "potvrdit in view as anon approves as the real user" do
@@ -641,6 +678,7 @@ class DeviceLoginControllerTest < ActionController::TestCase
     session[:view_as_switch] = true
     session[:view_as] = 'anon'
     rec = pending
+    entered(rec)
     post :potvrdit, params: { id: rec.id }
     assert_equal({ 'ok' => true }, json)
     rec.reload
@@ -650,31 +688,55 @@ class DeviceLoginControllerTest < ActionController::TestCase
 
   test "potvrdit anonymously is 401 and changes nothing" do
     rec = pending
+    session[:device_login_kod_id] = rec.id
     post :potvrdit, params: { id: rec.id }
     assert_response 401
     assert_equal({ 'ok' => false }, json)
     assert_equal 'pending', rec.reload.state
   end
 
-  test "zrusit cancels a pending record" do
+  test "zrusit cancels the code entered via kod" do
     sign_in user('u@example.com')
     rec = pending
+    entered(rec)
     post :zrusit, params: { id: rec.id }
     assert_equal({ 'ok' => true }, json)
     assert_equal 'cancelled', rec.reload.state
+    assert_nil session[:device_login_kod_id]
+  end
+
+  test "zrusit of an id never returned by kod changes nothing" do
+    sign_in user('u@example.com')
+    foreign = pending('tok-foreign')
+    post :zrusit, params: { id: foreign.id }
+    assert_equal({ 'ok' => false }, json)
+    assert_equal 'pending', foreign.reload.state
+  end
+
+  test "zrusit after kod for one record cannot cancel another" do
+    sign_in user('u@example.com')
+    a = pending('tok-a')
+    b = pending('tok-b')
+    entered(a)
+    post :zrusit, params: { id: b.id }
+    assert_equal({ 'ok' => false }, json)
+    assert_equal 'pending', b.reload.state
+    assert_equal 'pending', a.reload.state
   end
 
   test "zrusit leaves an approved record alone" do
     other = user('other@example.com')
     rec = approved(other)
     sign_in user('u@example.com')
+    session[:device_login_kod_id] = rec.id
     post :zrusit, params: { id: rec.id }
-    assert_equal({ 'ok' => true }, json)
+    assert_equal({ 'ok' => false }, json)
     assert_equal 'approved', rec.reload.state
   end
 
   test "zrusit anonymously is 401 and changes nothing" do
     rec = pending
+    session[:device_login_kod_id] = rec.id
     post :zrusit, params: { id: rec.id }
     assert_response 401
     assert_equal 'pending', rec.reload.state
