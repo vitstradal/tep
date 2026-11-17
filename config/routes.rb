@@ -194,6 +194,7 @@ Tep::Application.routes.draw do
   post '/prihlasit-zarizenim/ano'            => 'device_login#ano',             :as => :device_login_ano
   post '/prihlasit-zarizenim/ne'             => 'device_login#ne',              :as => :device_login_ne
   get  '/prihlasit-zarizeni'                 => 'device_login#klavesnice',      :as => :device_login_klavesnice
+  get  '/prihlasit-zarizeni/stav'            => 'device_login#stav_moje',       :as => :device_login_stav_moje
   post '/prihlasit-zarizeni/kod'             => 'device_login#kod',             :as => :device_login_kod
   post '/prihlasit-zarizeni/potvrdit'        => 'device_login#potvrdit',        :as => :device_login_potvrdit
   post '/prihlasit-zarizeni/zrusit'          => 'device_login#zrusit',          :as => :device_login_zrusit

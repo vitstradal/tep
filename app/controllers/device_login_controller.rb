@@ -1,6 +1,6 @@
 # Přihlášení pomocí jiného zařízení, strana nového zařízení.
 class DeviceLoginController < ApplicationController
-  SIGNED_IN = %i[klavesnice kod potvrdit zrusit].freeze
+  SIGNED_IN = %i[klavesnice kod potvrdit zrusit stav_moje].freeze
 
   authorize_resource class: false, except: SIGNED_IN
   protect_from_forgery with: :exception
@@ -86,10 +86,13 @@ class DeviceLoginController < ApplicationController
     return render(json: { ok: false, error: 'Kód neplatí nebo vypršel.' }) unless record
 
     attempt.succeed!
+    same = record.same_network?(request.remote_ip)
+    return render(json: { ok: false, error: 'Kód neplatí nebo vypršel.' }) if same && !record.approve!(real_user)
+
     session[:device_login_kod_id] = record.id
-    render json: { ok: true, id: record.id, device: record.device_label,
-                   same_network: record.same_network?(request.remote_ip),
-                   age: (Time.current - record.created_at).to_i }
+    reply = { ok: true, id: record.id, device: record.device_label, same_network: same, approved: same }
+    reply[:age] = (Time.current - record.created_at).to_i unless same
+    render json: reply
   end
 
   def potvrdit
@@ -99,27 +102,45 @@ class DeviceLoginController < ApplicationController
 
   def zrusit
     record = _entered_record
-    render json: { ok: !!record&.cancel!(from: %w[pending]) }
+    ok = !!record && [nil, real_user.id].include?(record.user_id) && record.cancel!(from: %w[pending approved])
+    session.delete(:device_login_kod_id) if ok
+    render json: { ok: ok }
+  end
+
+  def stav_moje
+    id = session[:device_login_kod_id]
+    record = id && DeviceLogin.find_by(id: id)
+    state = record ? _my_state(record) : 'none'
+    session.delete(:device_login_kod_id) unless %w[pending approved].include?(state)
+    render json: { state: state }
   end
 
   private
 
   def _require_real_user
     unless real_user
-      return redirect_to(new_user_session_path(next: request.path)) if request.get?
+      return redirect_to(new_user_session_path(next: request.path)) if action_name == 'klavesnice'
 
       return render(json: { ok: false }, status: 401)
     end
     Ability.new(real_user).authorize!(action_name.to_sym, :device_login)
   end
 
-  # jen záznam, jehož kód tahle session zadala přes `kod`; klíč se spotřebuje
+  # jen záznam, jehož kód tahle session zadala přes `kod`
   def _entered_record
     id = session[:device_login_kod_id]
     return nil unless id && params[:id].to_s == id.to_s
 
-    session.delete(:device_login_kod_id)
     DeviceLogin.find_by(id: id)
+  end
+
+  def _my_state(record)
+    case record.state
+    when 'pending' then record.expires_in.positive? ? 'pending' : 'expired'
+    when 'approved' then record.approve_expires_in.positive? ? 'approved' : 'expired'
+    when 'done', 'cancelled' then record.state
+    else 'expired'
+    end
   end
 
   def _code_param

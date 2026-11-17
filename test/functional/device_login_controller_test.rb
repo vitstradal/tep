@@ -517,6 +517,7 @@ class DeviceLoginControllerTest < ActionController::TestCase
     assert_select '#device-login-keyboard[data-code-url=?]', '/prihlasit-zarizeni/kod'
     assert_select '#device-login-keyboard[data-confirm-url=?]', '/prihlasit-zarizeni/potvrdit'
     assert_select '#device-login-keyboard[data-cancel-url=?]', '/prihlasit-zarizeni/zrusit'
+    assert_select '#device-login-keyboard[data-state-url=?]', '/prihlasit-zarizeni/stav'
     assert_select '#device-login-keyboard .device-login-confirm.hide'
     assert_match 'Na novém zařízení dej na přihlašovací stránce „Přihlásit pomocí jiného zařízení“ a sem zadej 4 obrázky, které se ti tam ukážou.', response.body
   end
@@ -537,32 +538,61 @@ class DeviceLoginControllerTest < ActionController::TestCase
     assert_select '#device-login-keyboard [data-i]', 22
   end
 
-  test "kod finds the pending record and describes the device" do
+  test "kod from another network describes the device and leaves the record pending" do
     u = user('u@example.com')
     sign_in u
     freeze_time
     rec = pending
-    @request.remote_addr = '10.0.0.1'
+    @request.remote_addr = '192.168.5.5'
     travel 42.seconds
     post :kod, params: { code: code_of(rec) }
     assert_response :success
-    assert_equal true, json['ok']
-    assert_equal rec.id, json['id']
-    assert_equal 'iPhone · Safari', json['device']
-    assert_equal true, json['same_network']
-    assert_equal 42, json['age']
+    assert_equal({ 'ok' => true, 'id' => rec.id, 'device' => 'iPhone · Safari', 'same_network' => false,
+                   'age' => 42, 'approved' => false }, json)
     assert_equal 'pending', rec.reload.state
     assert_nil rec.user_id
+    assert_equal rec.id, session[:device_login_kod_id]
     assert_equal [true], DeviceLoginAttempt.where(user_id: u.id).pluck(:ok)
   end
 
-  test "kod from another network reports same_network false" do
-    sign_in user('u@example.com')
+  test "kod from the same network approves at once as the real user" do
+    u = user('u@example.com')
+    sign_in u
     rec = pending
-    @request.remote_addr = '192.168.5.5'
+    @request.remote_addr = '10.0.0.1'
     post :kod, params: { code: code_of(rec) }
-    assert_equal true, json['ok']
-    assert_equal false, json['same_network']
+    assert_response :success
+    assert_equal({ 'ok' => true, 'id' => rec.id, 'device' => 'iPhone · Safari', 'same_network' => true,
+                   'approved' => true }, json)
+    rec.reload
+    assert_equal 'approved', rec.state
+    assert_equal u.id, rec.user_id
+    assert rec.approved_at.present?
+    assert_equal rec.id, session[:device_login_kod_id]
+  end
+
+  test "kod from the same network in view as anon approves as the real user" do
+    morg = user('m@example.com', roles: %i[org morg])
+    sign_in morg
+    session[:view_as_switch] = true
+    session[:view_as] = 'anon'
+    rec = pending
+    @request.remote_addr = '10.0.0.1'
+    post :kod, params: { code: code_of(rec) }
+    assert_equal true, json['approved']
+    assert_equal 'approved', rec.reload.state
+    assert_equal morg.id, rec.user_id
+  end
+
+  test "kod from the same ipv6 /64 approves at once" do
+    u = user('u@example.com')
+    sign_in u
+    rec = DeviceLogin.create_for!(token: 'tok-new', user_agent: UA, ip: '2001:db8:1:2::10', return_to: nil)
+    @request.remote_addr = '2001:db8:1:2:aaaa::1'
+    post :kod, params: { code: code_of(rec) }
+    assert_equal true, json['same_network']
+    assert_equal true, json['approved']
+    assert_equal 'approved', rec.reload.state
   end
 
   test "kod wrong code fails and counts as a failed attempt" do
@@ -657,7 +687,7 @@ class DeviceLoginControllerTest < ActionController::TestCase
     assert_equal 'approved', rec.state
     assert_equal u.id, rec.user_id
     assert rec.approved_at.present?
-    assert_nil session[:device_login_kod_id]
+    assert_equal rec.id, session[:device_login_kod_id]
     post :potvrdit, params: { id: rec.id }
     assert_equal({ 'ok' => false }, json)
     assert_equal u.id, rec.reload.user_id
@@ -770,7 +800,7 @@ class DeviceLoginControllerTest < ActionController::TestCase
     assert_equal 'pending', a.reload.state
   end
 
-  test "zrusit leaves an approved record alone" do
+  test "zrusit leaves a record approved by someone else alone" do
     other = user('other@example.com')
     rec = approved(other)
     sign_in user('u@example.com')
@@ -778,6 +808,54 @@ class DeviceLoginControllerTest < ActionController::TestCase
     post :zrusit, params: { id: rec.id }
     assert_equal({ 'ok' => false }, json)
     assert_equal 'approved', rec.reload.state
+    assert_equal other.id, rec.user_id
+  end
+
+  test "zrusit after immediate same-network approval cancels it for the new device" do
+    u = user('u@example.com')
+    sign_in u
+    rec = pending
+    @request.remote_addr = '10.0.0.1'
+    post :kod, params: { code: code_of(rec) }
+    assert_equal true, json['approved']
+    post :zrusit, params: { id: rec.id }
+    assert_equal({ 'ok' => true }, json)
+    assert_equal 'cancelled', rec.reload.state
+    assert_nil session[:device_login_kod_id]
+    cookies['tep_dl'] = 'tok-new'
+    get :stav
+    assert_equal 'cancelled', json['state']
+    assert_no_enqueued_emails { post :ano }
+    assert_equal false, json['ok']
+    assert_equal 'cancelled', rec.reload.state
+  end
+
+  test "zrusit after potvrdit cancels the approval" do
+    u = user('u@example.com')
+    sign_in u
+    rec = pending
+    entered(rec)
+    post :potvrdit, params: { id: rec.id }
+    assert_equal({ 'ok' => true }, json)
+    post :zrusit, params: { id: rec.id }
+    assert_equal({ 'ok' => true }, json)
+    assert_equal 'cancelled', rec.reload.state
+    assert_nil session[:device_login_kod_id]
+    cookies['tep_dl'] = 'tok-new'
+    post :ano
+    assert_equal false, json['ok']
+  end
+
+  test "zrusit of a finished login fails and keeps it done" do
+    u = user('u@example.com')
+    sign_in u
+    rec = pending
+    entered(rec)
+    post :potvrdit, params: { id: rec.id }
+    assert rec.reload.finish!('tok-new')
+    post :zrusit, params: { id: rec.id }
+    assert_equal({ 'ok' => false }, json)
+    assert_equal 'done', rec.reload.state
   end
 
   test "zrusit anonymously is 401 and changes nothing" do
@@ -796,5 +874,119 @@ class DeviceLoginControllerTest < ActionController::TestCase
     assert_equal 0, DeviceLoginAttempt.count
   ensure
     ActionController::Base.allow_forgery_protection = false
+  end
+
+  test "stav_moje without a session key is none and uncached" do
+    sign_in user('u@example.com')
+    pending
+    get :stav_moje
+    assert_response :success
+    assert_equal({ 'state' => 'none' }, json)
+    assert_equal 'no-store', response.headers['Cache-Control']
+  end
+
+  test "stav_moje of another user's login is none without the session key" do
+    other = user('other@example.com')
+    sign_in other
+    rec = pending
+    entered(rec)
+    post :potvrdit, params: { id: rec.id }
+    assert_equal({ 'ok' => true }, json)
+    sign_out other
+    session.delete(:device_login_kod_id)
+    sign_in user('u@example.com')
+    get :stav_moje
+    assert_equal({ 'state' => 'none' }, json)
+  end
+
+  test "stav_moje with a key of a deleted record is none and drops the key" do
+    sign_in user('u@example.com')
+    session[:device_login_kod_id] = 999_999
+    get :stav_moje
+    assert_equal({ 'state' => 'none' }, json)
+    assert_nil session[:device_login_kod_id]
+  end
+
+  test "stav_moje follows pending, approved and done and then forgets the key" do
+    sign_in user('u@example.com')
+    rec = pending
+    entered(rec)
+    get :stav_moje
+    assert_equal({ 'state' => 'pending' }, json)
+    assert_equal 'no-store', response.headers['Cache-Control']
+    post :potvrdit, params: { id: rec.id }
+    get :stav_moje
+    assert_equal({ 'state' => 'approved' }, json)
+    assert_equal rec.id, session[:device_login_kod_id]
+    cookies['tep_dl'] = 'tok-new'
+    post :ano
+    assert_equal true, json['ok']
+    get :stav_moje
+    assert_equal({ 'state' => 'done' }, json)
+    assert_nil session[:device_login_kod_id]
+    get :stav_moje
+    assert_equal({ 'state' => 'none' }, json)
+  end
+
+  test "stav_moje is approved right after a same-network kod" do
+    sign_in user('u@example.com')
+    rec = pending
+    @request.remote_addr = '10.0.0.1'
+    post :kod, params: { code: code_of(rec) }
+    get :stav_moje
+    assert_equal({ 'state' => 'approved' }, json)
+  end
+
+  test "stav_moje reports cancelled by the new device and forgets the key" do
+    sign_in user('u@example.com')
+    rec = pending
+    entered(rec)
+    post :potvrdit, params: { id: rec.id }
+    cookies['tep_dl'] = 'tok-new'
+    post :ne
+    get :stav_moje
+    assert_equal({ 'state' => 'cancelled' }, json)
+    assert_nil session[:device_login_kod_id]
+  end
+
+  test "stav_moje reports an expired pending code and forgets the key" do
+    sign_in user('u@example.com')
+    rec = pending
+    entered(rec)
+    travel_to(rec.expires_at - 1.second) do
+      get :stav_moje
+      assert_equal({ 'state' => 'pending' }, json)
+    end
+    travel_to(rec.expires_at + 1.second) do
+      get :stav_moje
+      assert_equal({ 'state' => 'expired' }, json)
+    end
+    assert_nil session[:device_login_kod_id]
+    assert_equal 'pending', rec.reload.state
+  end
+
+  test "stav_moje reports an approval past its time as expired and forgets the key" do
+    sign_in user('u@example.com')
+    rec = pending
+    entered(rec)
+    post :potvrdit, params: { id: rec.id }
+    approved_at = rec.reload.approved_at
+    travel_to(approved_at + DeviceLogin::APPROVE_TTL - 1.second) do
+      get :stav_moje
+      assert_equal({ 'state' => 'approved' }, json)
+    end
+    travel_to(approved_at + DeviceLogin::APPROVE_TTL + 1.second) do
+      get :stav_moje
+      assert_equal({ 'state' => 'expired' }, json)
+    end
+    assert_nil session[:device_login_kod_id]
+  end
+
+  test "stav_moje anonymously is 401" do
+    rec = pending
+    session[:device_login_kod_id] = rec.id
+    get :stav_moje
+    assert_response 401
+    assert_equal({ 'ok' => false }, json)
   end
 end

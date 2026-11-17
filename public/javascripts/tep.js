@@ -756,8 +756,9 @@ function dl_css() {
       '.device-login-key .device-login-letter{font-size:15px;left:5px}' +
       '.device-login-key .device-login-emoji{display:block;font-size:30px;line-height:1.2}' +
       '.device-login-key .device-login-name{display:block;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
-      '.device-login-confirm{max-width:520px;padding:12px 16px;border:2px solid #6fb3e0;border-radius:10px;background:#f7fbff;font-size:15px}' +
-      '.device-login-confirm .btn{margin:0 6px 4px 0}' +
+      '.device-login-confirm,.device-login-wait{max-width:520px;padding:12px 16px;border:2px solid #6fb3e0;border-radius:10px;background:#f7fbff;font-size:15px}' +
+      '.device-login-confirm .btn,.device-login-wait .btn{margin:0 6px 4px 0}' +
+      '.device-login-wait-text{font-size:17px}' +
       '@media (max-width:420px){.device-login-slot{width:56px;height:60px}.device-login-slot .device-login-emoji{font-size:24px}' +
       '.device-login-slot .device-login-name{font-size:10px;padding:0}' +
       '.device-login-icon .device-login-letter{font-size:17px;left:4px}' +
@@ -906,10 +907,11 @@ function init_device_login_new($el) {
 
 function init_device_login_keyboard($el) {
     dl_css()
-    var urls = { code: $el.data('code-url'), confirm: $el.data('confirm-url'), cancel: $el.data('cancel-url') }
+    var urls = { code: $el.data('code-url'), confirm: $el.data('confirm-url'), cancel: $el.data('cancel-url'), state: $el.data('state-url') }
     var $slots = $el.find('.device-login-slot'), $msg = $el.find('.device-login-message'), $confirm = $el.find('.device-login-confirm')
-    var $input = $el.find('.device-login-slots, .device-login-grid')
-    var code = [], busy = false, id = null
+    var $wait = $el.find('.device-login-wait'), $again = $el.find('.device-login-again')
+    var $input = $el.find('.device-login-help, .device-login-slots, .device-login-grid')
+    var code = [], busy = false, id = null, device = '', gen = 0, poll_timer = null
 
     function key(i) { return $el.find('.device-login-key[data-i="' + i + '"]') }
 
@@ -931,14 +933,61 @@ function init_device_login_keyboard($el) {
         $msg.html(text ? '<div class="alert ' + cls + '">' + adv_esc(text) + '</div>' : '')
     }
 
+    function stop() {
+        gen++
+        clearTimeout(poll_timer)
+    }
+
     function reset() {
+        stop()
         code = []
         busy = false
         id = null
         render()
         $confirm.addClass('hide')
+        $wait.addClass('hide')
+        $again.addClass('hide')
         $input.show()
         $el.find('.device-login-key, .device-login-clear').prop('disabled', false)
+    }
+
+    function finish(text, cls) {
+        stop()
+        $input.hide()
+        $confirm.addClass('hide')
+        $wait.addClass('hide')
+        say(text, cls)
+        $again.removeClass('hide')
+    }
+
+    function on_state(d, my) {
+        if (d.state === 'pending' || d.state === 'approved') return poll(my, 2000)
+        if (d.state === 'done') return finish('Hotovo, zařízení je přihlášené.', 'alert-success')
+        if (d.state === 'cancelled') return finish('Přihlášení bylo zrušeno.', 'alert-info')
+        finish('Kód vypršel.', 'alert-warning')
+    }
+
+    function poll(my, delay) {
+        poll_timer = setTimeout(function () {
+            $.ajax({ url: urls.state, dataType: 'json', cache: false })
+             .done(function (d) { if (my === gen) on_state(d, my) })
+             .fail(function (x) {
+                 if (my !== gen) return
+                 if (x.status === 401) return finish('Nejsi přihlášený, obnov stránku.', 'alert-danger')
+                 poll(my, 2000)
+             })
+        }, delay)
+    }
+
+    function wait() {
+        stop()
+        $input.hide()
+        $confirm.addClass('hide')
+        say('')
+        $wait.find('.device-login-wait-text').html('Potvrďte přihlášení na novém zařízení (<b>' + adv_esc(device) + '</b>).')
+        $wait.find('button').prop('disabled', false)
+        $wait.removeClass('hide')
+        poll(gen, 2000)
     }
 
     function submit() {
@@ -948,6 +997,8 @@ function init_device_login_keyboard($el) {
          .done(function (d) {
              if (!d.ok) { reset(); return say(d.error || 'Kód neplatí nebo vypršel.', 'alert-danger') }
              id = d.id
+             device = d.device
+             if (d.approved) return wait()
              $confirm.find('.device-login-device').html('Přihlásit <b>' + adv_esc(d.device) + '</b>?')
              $confirm.find('.device-login-network').text('Stejná wifi/síť jako ty: ' + (d.same_network ? 'ano' : 'ne'))
              $confirm.find('.device-login-age').text('Kód vytvořen před ' + d.age + ' s.')
@@ -961,11 +1012,19 @@ function init_device_login_keyboard($el) {
          })
     }
 
-    function answer(url, ok_text, fail_text, ok_cls) {
-        $confirm.find('button').prop('disabled', true)
+    function post(url, $panel, done) {
+        $panel.find('button').prop('disabled', true)
+        stop()
+        var my = gen
         $.ajax({ url: url, type: 'POST', dataType: 'json', data: { id: id, authenticity_token: friend_csrf() } })
-         .done(function (d) { reset(); say(d.ok ? ok_text : fail_text, d.ok ? ok_cls : 'alert-danger') })
-         .fail(function (x) { reset(); say(dl_error(x, fail_text), 'alert-danger') })
+         .done(function (d) { if (my === gen) done(d.ok, my) })
+         .fail(function (x) {
+             if (my !== gen) return
+             if (x.status === 401) return finish('Nejsi přihlášený, obnov stránku.', 'alert-danger')
+             $panel.find('button').prop('disabled', false)
+             say(dl_error(x, 'Chyba, zkus to znovu.'), 'alert-danger')
+             if ($panel.is($wait)) poll(my, 2000)
+         })
     }
 
     function add(i) {
@@ -985,8 +1044,10 @@ function init_device_login_keyboard($el) {
     $el.find('.device-login-key').click(function () { add($(this).data('i')) })
     $el.find('.device-login-clear').click(erase)
     $(document).on('keydown', function (e) {
-        if (e.ctrlKey || e.altKey || e.metaKey || $(e.target).is('input, textarea, select, [contenteditable]')) return
-        if (!$input.is(':visible')) return
+        var o = e.originalEvent || e
+        if (o.repeat || o.isComposing || e.ctrlKey || e.altKey || e.metaKey) return
+        if ($(e.target).is('input, textarea, select, [contenteditable]')) return
+        if (!$el.find('.device-login-grid').is(':visible')) return
         if (e.key === 'Backspace') { e.preventDefault(); return erase() }
         if (!e.key || e.key.length !== 1) return
         var $k = $el.find('.device-login-key[data-letter="' + e.key.toUpperCase().replace(/[^A-Z]/g, '') + '"]')
@@ -994,12 +1055,26 @@ function init_device_login_keyboard($el) {
         e.preventDefault()
         add($k.data('i'))
     })
-    $el.find('.device-login-approve').click(function () {
-        answer(urls.confirm, 'Hotovo, na druhém zařízení klikni Ano.', 'Potvrzení se nepovedlo, kód mezitím vypršel nebo byl zrušen.', 'alert-success')
+    $confirm.find('.device-login-approve').click(function () {
+        post(urls.confirm, $confirm, function (ok) {
+            if (ok) wait()
+            else finish('Potvrzení se nepovedlo, kód mezitím vypršel nebo byl zrušen.', 'alert-danger')
+        })
     })
-    $el.find('.device-login-cancel').click(function () {
-        answer(urls.cancel, 'Zrušeno.', 'Zrušení se nepovedlo, kód mezitím vypršel.', 'alert-info')
+    $confirm.find('.device-login-cancel').click(function () {
+        post(urls.cancel, $confirm, function (ok) {
+            if (ok) finish('Přihlášení bylo zrušeno.', 'alert-info')
+            else finish('Kód mezitím vypršel.', 'alert-warning')
+        })
     })
+    $wait.find('.device-login-cancel').click(function () {
+        post(urls.cancel, $wait, function (ok, my) {
+            if (ok) return finish('Přihlášení bylo zrušeno.', 'alert-info')
+            $wait.find('button').prop('disabled', false)
+            poll(my, 0)
+        })
+    })
+    $again.click(function () { reset(); say('') })
     reset()
 }
 
