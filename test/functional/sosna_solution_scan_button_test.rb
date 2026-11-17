@@ -32,12 +32,13 @@ class SosnaSolutionScanButtonTest < ActionController::TestCase
     assert_response :success
 
     assert_select 'button.solution-scan', 2
-    [[@p1, 'Krokodýl'], [@p2, 'Žirafa "dlouhá"']].each do |problem, title|
+    [[@p1, 'Krokodýl', 'Úloha 1'], [@p2, 'Žirafa "dlouhá"', 'Úloha 2']].each do |problem, title, filename|
       form_id = "edit_sosna_solution_#{solution_for(solver, problem).id}"
       assert_select "form##{form_id} input[type=file][name='sosna_solution[solution_file][]']", 1
       assert_select "button.solution-scan[data-form='##{form_id}']", 1 do |buttons|
         button = buttons.first
         assert_equal title, button['data-title']
+        assert_equal filename, button['data-filename']
         assert_equal 'button', button['type']
         assert_equal SolutionScan::OPENCV_JS, button['data-opencv']
         assert_equal SolutionScan.scanner_js, button['data-scanner']
@@ -46,6 +47,21 @@ class SosnaSolutionScanButtonTest < ActionController::TestCase
       assert_select "form##{form_id} button.solution-scan[type=button]", 1
     end
     assert_select '#solution-scan-modal', 1
+    assert_select '#solution-scan-modal .modal-footer', 0
+    assert_select 'li', text: /naskenovat mobilem/
+    assert_select "li a[href='/device_login/approve']", text: 'Přihlásit na jiném zařízení'
+    assert_select '#solution-scan-modal .solution-scan-live .solution-scan-actions' do
+      assert_select 'button[data-dismiss=modal] i.fa-arrow-left', 1
+      assert_select 'button.solution-scan-shot i.fa-camera', 1
+      assert_select 'button.solution-scan-send i.fa-upload', 1
+    end
+  end
+
+  test "bonusova uloha ma v nazvu souboru B" do
+    Sosna::Problem.create!(annual: 99, level: 'pi', round: 1, problem_no: Sosna::Problem::BONUS_ROUND_NUM, title: 'Bonus')
+    login([:user])
+    get :user_index, params: { roc: '99', level: 'pi', se: '1' }
+    assert_select "button.solution-scan[data-filename='Úloha B']", 1
   end
 
   test "cesty ke knihovnam skeneru" do

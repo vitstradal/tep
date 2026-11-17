@@ -85,7 +85,7 @@
                          </div>
                          <%= f.submit :class => 'btn btn-primary', :value => '<' %>
                          <button type="button" class="btn btn-default solution-scan hide" title="Skenovat fotoaparátem"
-                                 data-form="#<%= dom_id(sol, :edit) %>" data-title="<%= p.title %>"
+                                 data-form="#<%= dom_id(sol, :edit) %>" data-title="<%= p.title %>" data-filename="Úloha <%= p.short_name %>"
                                  data-opencv="<%= SolutionScan::OPENCV_JS %>" data-scanner="<%= SolutionScan.scanner_js %>"><i class="fa fa-camera"></i></button>
                 <% end %>
              <% end %>
@@ -172,8 +172,10 @@
             <video autoplay muted playsinline></video>
             <canvas class="solution-scan-overlay"></canvas>
           </div>
-          <div>
-            <button type="button" class="btn btn-primary solution-scan-shot"><i class="fa fa-camera"></i> Skenovat stránku</button>
+          <div class="solution-scan-actions">
+            <button type="button" class="btn btn-default" data-dismiss="modal"><i class="fa fa-arrow-left"></i> Zrušit</button>
+            <button type="button" class="btn btn-primary solution-scan-shot"><i class="fa fa-camera"></i> Skenovat</button>
+            <button type="button" class="btn btn-success solution-scan-send" disabled><i class="fa fa-upload"></i> Odeslat</button>
           </div>
         </div>
         <div class="solution-scan-preview hide">
@@ -188,10 +190,6 @@
           </div>
         </div>
         <div class="solution-scan-pages"></div>
-      </div>
-      <div class="modal-footer">
-        <button type="button" class="btn btn-default" data-dismiss="modal">Zrušit</button>
-        <button type="button" class="btn btn-success solution-scan-send" disabled>Odeslat 0 stránek</button>
       </div>
     </div>
   </div>
@@ -220,6 +218,14 @@
   <li>Pokud nahráváš řešení s obrázkem (JPG nebo PNG) a řešení má více stránek
       nahraj všechny stránky zároveň. Zpětným stažením výsledného PDF si ověř,
       že jsi nahrál všechny stránky.</li>
+  <li>Řešení můžeš i naskenovat mobilem: klikni u úlohy na <button type="button" class="btn btn-xs btn-default"><i class="fa fa-camera"></i></button>,
+      namiř fotoaparát na list (zelený obrys ukazuje nalezenou stránku) a dej <i>Skenovat</i>.
+      Stránku zkontroluj, případně posuň rohy, a dej <i>Použít</i>. Takhle přidej všechny stránky
+      a nakonec dej <i>Odeslat</i> – z nich se složí jedno PDF. Tlačítko se ukáže jen v prohlížeči,
+      který umí použít fotoaparát.</li>
+  <li>Na mobilu se nemusíš přihlašovat heslem: otevři na něm přihlášení a zvol <i>Přihlásit pomocí jiného zařízení</i>.
+      Ukážou se ti 4 obrázky, ty pak zadej tady na počítači v <%= link_to 'Přihlásit na jiném zařízení', device_login_approve_path %>
+      (taky v menu pod tvým jménem).</li>
   <li>Pokud omylem nahraješ řešení ke špatné úloze nebo v něm najdeš později
       chybu, můžeš úlohu nahrát znovu (nesmí však být již po termínu
       odevzdání).</li>

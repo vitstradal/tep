@@ -49,10 +49,12 @@ stránek najednou.
    nebo nahraj fotky tlačítkem vedle.“).
 4. Živý náhled: zhruba 5× za sekundu se v menší kopii snímku hledá list a
    jeho obrys se kreslí přes video (zeleně, když je nalezen stabilně).
-5. „Skenovat stránku“ → snímek v plném rozlišení → zpracování (níže) →
+5. „Skenovat“ (v řádku „← Zrušit / 📷 Skenovat / ⬆ Odeslat“ pod kamerou,
+   nad miniaturami) → snímek v plném rozlišení → zpracování (níže) →
    náhled výsledku s rohy, které jde tažením doladit, a tlačítky „Použít“ /
    „Znovu“. Po „Použít“ přibude dole miniatura stránky (s ✕ pro smazání).
-6. „Odeslat N stránek“ → stránky jako JPEG `strana-1.jpg … strana-N.jpg`
+6. „Odeslat“ → stránky jako JPEG `Úloha 2.jpg`, `Úloha 2 – strana 2.jpg`, …
+   (server pojmenuje PDF podle první: `Úloha 2.pdf`)
    přes stávající upload (víc obrázků → PDF na serveru, nahradí dosavadní
    řešení). Po odeslání se stránka obnoví (zobrazí se flash ze serveru).
    „Zrušit“ zavře modal, zastaví kameru a zahodí stránky.

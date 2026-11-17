@@ -2192,7 +2192,7 @@ function scan_css() {
       '.solution-scan-camera{position:relative;display:inline-block;max-width:100%;vertical-align:top;background:#000}' +
       '.solution-scan-camera video{display:block;max-width:100%;max-height:60vh}' +
       '.solution-scan-overlay{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}' +
-      '.solution-scan-shot{margin-top:10px}' +
+      '.solution-scan-actions{margin-top:10px}.solution-scan-actions .btn{margin:0 3px 6px}' +
       '.solution-scan-preview-row{display:flex;gap:10px;justify-content:center;align-items:flex-start}' +
       '.solution-scan-preview-row>div{flex:1 1 0;min-width:0}' +
       '.solution-scan-preview-row canvas{display:block;max-width:100%;max-height:60vh;margin:0 auto;border:1px solid #ccc}' +
@@ -2284,7 +2284,7 @@ function scan_show(s, part) {
 function scan_open($modal, $btn) {
     scan_close()
     var s = scan_state = {
-        $modal: $modal, form: $($btn.attr('data-form'))[0], pages: [], stream: null, cv: null,
+        $modal: $modal, form: $($btn.attr('data-form'))[0], filename: $btn.attr('data-filename') || 'reseni', pages: [], stream: null, cv: null,
         live: false, live_timer: null, live_canvas: document.createElement('canvas'), live_prev: null, live_stable: 0,
         frame: null, frame_view: null, corners: null, rotated: false, result_ok: false, busy: false, closed: false
     }
@@ -2401,8 +2401,7 @@ function scan_path(ctx, corners) {
 
 function scan_update_buttons(s) {
     var n = s.pages.length, $m = s.$modal
-    var word = n === 1 ? 'stránku' : (n >= 2 && n <= 4 ? 'stránky' : 'stránek')
-    $m.find('.solution-scan-send').text('Odeslat ' + n + ' ' + word).prop('disabled', s.busy || n === 0)
+    $m.find('.solution-scan-send').prop('disabled', s.busy || n === 0)
     $m.find('.solution-scan-shot').prop('disabled', s.busy || n >= SCAN_MAX_PAGES || !s.video.videoWidth)
     $m.find('.solution-scan-retry, .solution-scan-rotate').prop('disabled', s.busy)
     $m.find('.solution-scan-use').prop('disabled', s.busy || !s.result_ok)
@@ -2642,6 +2641,11 @@ function scan_render_pages(s) {
     scan_update_buttons(s)
 }
 
+// Server pojmenuje PDF podle první stránky.
+function scan_page_filename(base, i) {
+    return base + (i ? ' – strana ' + (i + 1) : '') + '.jpg'
+}
+
 function scan_send(s) {
     if (!s || s.busy || !s.pages.length) return
     if (s.pages.length > SCAN_MAX_PAGES) return scan_message(s, SCAN_TXT.too_many, 'warning')
@@ -2650,7 +2654,7 @@ function scan_send(s) {
     var input = s.form && s.form.querySelector('input[type=file]')
     if (!dt || !dt.items || !input) return scan_message(s, SCAN_TXT.no_datatransfer, 'danger')
     s.pages.forEach(function (p, i) {
-        dt.items.add(new File([p.blob], 'strana-' + (i + 1) + '.jpg', {type: 'image/jpeg'}))
+        dt.items.add(new File([p.blob], scan_page_filename(s.filename, i), {type: 'image/jpeg'}))
     })
     input.files = dt.files
     if (!input.files || input.files.length !== s.pages.length) return scan_message(s, SCAN_TXT.no_datatransfer, 'danger')
