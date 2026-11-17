@@ -14,8 +14,8 @@
   var EDGE_INSET = 2;
   var POLY_EPSILONS = [0.02, 0.035, 0.05];
   var BG_SCALE = 4;
-  var BG_DILATE = 1 / 60;
-  var BG_BLUR = 1 / 20;
+  var BG_CLOSE = 1 / 15;
+  var BG_BLUR = 1 / 60;
   var BLACK_PERCENTILE = 0.005;
   var GAMMA = 1.4;
 
@@ -177,11 +177,11 @@
   function enhance(cv, gray) {
     var small = resized(cv, gray, 1 / BG_SCALE, cv.INTER_AREA);
     var longSide = Math.max(small.cols, small.rows);
-    var kernel = cv.getStructuringElement(cv.MORPH_ELLIPSE, new cv.Size(odd(longSide * BG_DILATE), odd(longSide * BG_DILATE)));
+    var kernel = cv.getStructuringElement(cv.MORPH_RECT, new cv.Size(odd(longSide * BG_CLOSE), odd(longSide * BG_CLOSE)));
     var bg = new cv.Mat();
     var out = new cv.Mat();
     try {
-      cv.dilate(small, small, kernel);
+      cv.morphologyEx(small, small, cv.MORPH_CLOSE, kernel, new cv.Point(-1, -1), 1, cv.BORDER_REPLICATE);
       var blur = odd(longSide * BG_BLUR);
       cv.GaussianBlur(small, small, new cv.Size(blur, blur), 0, 0, cv.BORDER_REPLICATE);
       cv.resize(small, bg, new cv.Size(gray.cols, gray.rows), 0, 0, cv.INTER_LINEAR);

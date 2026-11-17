@@ -123,6 +123,12 @@ function frameWithPage(corners, { rotateCcw = false, seed = 1 } = {}) {
   });
 }
 
+function diffMat(a, b) {
+  const d = new cv.Mat();
+  cv.absdiff(a, b, d);
+  return d;
+}
+
 function regionMean(gray, x, y, w, h) {
   const roi = gray.roi(new cv.Rect(x, y, w, h));
   const m = cv.mean(roi)[0];
@@ -259,6 +265,15 @@ test('scanPage bez rohů a bez nalezeného listu zpracuje celý snímek', () => 
     const frame = t(frameWithPage([[800, 300], [1100, 300], [1100, 700], [800, 700]]));
     const out = t(S.scanPage(cv, frame, null));
     assertPage(out);
+    const full = t(S.scanPage(cv, frame, S.fullFrame(FRAME_W, FRAME_H)));
+    assert.equal(cv.countNonZero(t(diffMat(out, full))), 0, 'výstup je shodný se zpracováním celého snímku');
+    // Snímek naležato se otočí: bod (x, y) snímku padne na (PAGE_W·(1 − y/H), PAGE_H·x/W).
+    const fx = 800 + (MARK.x * 300) / S.PAGE_W;
+    const fy = 300 + (MARK.y * 400) / S.PAGE_H;
+    const markX = Math.round(S.PAGE_W * (1 - fy / (FRAME_H - 1)));
+    const markY = Math.round((S.PAGE_H * fx) / (FRAME_W - 1));
+    assert.ok(regionMean(out, markX - 5, markY - 5, 10, 10) < 100, `značka malého listu na ${markX},${markY}`);
+    assert.ok(regionMedian(out, markX - 60, markY + 40, 120, 60) > 200, 'pod značkou papír malého listu');
   });
 });
 
@@ -416,5 +431,63 @@ test('enhance prázdného papíru nevyrobí šum ani skvrny', () => {
     let min = 255;
     for (let i = 0; i < out.data.length; i++) min = Math.min(min, out.data[i]);
     assert.ok(min > 200, `nejtmavší pixel ${min}`);
+  });
+});
+
+function blankPage(paper) {
+  return new cv.Mat(S.PAGE_H, S.PAGE_W, cv.CV_8UC1, new cv.Scalar(paper));
+}
+
+test('enhance nechá plnou tmavou plochu tmavou i uprostřed', () => {
+  withMats((t) => {
+    const page = t(blankPage(220));
+    cv.rectangle(page, new cv.Point(300, 500), new cv.Point(400, 600), new cv.Scalar(60), -1);
+    const out = t(S.enhance(cv, page));
+    const centre = regionMean(out, 340, 540, 20, 20);
+    assert.ok(centre < 100, `střed plochy 100×100 tmavý: ${centre.toFixed(1)}`);
+    assert.ok(regionMedian(out, 600, 500, 100, 100) > 230, 'papír vedle bílý');
+  });
+});
+
+test('enhance nechá vystínovanou plochu tužkou šedou i uprostřed', () => {
+  withMats((t) => {
+    const page = t(blankPage(220));
+    cv.rectangle(page, new cv.Point(300, 600), new cv.Point(400, 700), new cv.Scalar(150), -1);
+    const out = t(S.enhance(cv, page));
+    const centre = regionMean(out, 340, 640, 20, 20);
+    assert.ok(centre > 40 && centre < 200, `střed stínování 100×100 šedý: ${centre.toFixed(1)}`);
+    assert.ok(regionMedian(out, 800, 600, 100, 300) > 230, 'papír vedle bílý');
+  });
+});
+
+test('enhance nevyrobí tmavý lem podél ostré hrany stínu', () => {
+  const EDGE = 620;
+  withMats((t) => {
+    const page = t(blankPage(235));
+    cv.rectangle(page, new cv.Point(EDGE, 0), new cv.Point(S.PAGE_W - 1, S.PAGE_H - 1), new cv.Scalar(150), -1);
+    const out = t(S.enhance(cv, page));
+    const left = regionMedian(out, EDGE - 40, 0, 40, S.PAGE_H);
+    const right = regionMedian(out, EDGE, 0, 40, S.PAGE_H);
+    assert.ok(left > 200, `papír před hranou světlý: ${left}`);
+    assert.ok(right > 200, `papír za hranou světlý: ${right}`);
+  });
+});
+
+test('enhance vybělí měkký kulatý stín (ruka, telefon)', () => {
+  withMats((t) => {
+    const page = t(blankPage(235));
+    const d = page.data;
+    for (let y = 0; y < S.PAGE_H; y++) {
+      for (let x = 0; x < S.PAGE_W; x++) {
+        const r2 = (x - 620) ** 2 + (y - 877) ** 2;
+        d[y * S.PAGE_W + x] = Math.round(235 * (1 - 0.4 * Math.exp(-r2 / (2 * 150 * 150))));
+      }
+    }
+    assert.ok(page.ucharAt(877, 620) < 145, 'vstup ve středu stínu tmavý');
+    const out = t(S.enhance(cv, page));
+    for (const [x, y] of [[620, 877], [470, 877], [620, 1027], [770, 727]]) {
+      const m = regionMedian(out, x - 20, y - 20, 40, 40);
+      assert.ok(m > 200, `papír ve stínu ${x},${y} světlý: ${m}`);
+    }
   });
 });
