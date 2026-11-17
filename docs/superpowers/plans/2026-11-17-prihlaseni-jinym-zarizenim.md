@@ -223,3 +223,49 @@ Chování:
 
 - [ ] Doplnit do specu sekci „Stav: implementováno“ s odkazem na commity (jedna věta).
 - [ ] Připomenout Vítovi kontrolu HTTPS/cookies (paměť `tep-https-cookies-todo`) a upozornit, že nasazení potřebuje `make prod-migrate` (migrace 041).
+
+---
+
+## Úpravy po prvním vyzkoušení (spec sekce „Úpravy po prvním vyzkoušení“)
+
+### Task 7: Písmenkové obrázky
+
+**Files:** `app/models/device_login.rb`, `test/models/device_login_test.rb`, `test/functional/device_login_controller_test.rb`, `app/views/device_login/klavesnice.html.erb`, `app/views/device_login/novy.html.erb`, `public/javascripts/tep.js`, layout `tep.js?v=` +1.
+
+**Interfaces:**
+- `DeviceLogin::ICONS` = 22 trojic `[písmeno, emoji, název]` v pořadí ze specu (A 🚗 auto … Z 🦓 zebra). `ICONS.size` nahrazuje všechna místa, kde je dnes natvrdo 24 (náhodný kód, validace indexů v modelu i `_code_param` v controlleru).
+- `#icons` a JSON `vytvor.icons` vrací trojice `[písmeno, emoji, název]`.
+- Klávesnice: 22 tlačítek v abecedním pořadí, na každém velké písmeno + emoji + název; `data-i` = index, `data-letter` = písmeno.
+- JS klávesnice: stisk písmene na fyzické klávesnici (malé i velké, bez háčků) přidá odpovídající obrázek, Backspace maže poslední; ignorovat, když je fokus v inputu/textarea nebo jsou stisknuté Ctrl/Alt/Meta.
+- Nové zařízení: u každého obrázku i velké písmeno.
+
+- [ ] Testy: `ICONS.size == 22`, `ICONS.first == ['A','🚗','auto']`, `ICONS.last == ['Z','🦓','zebra']`, písmena unikátní a bez Q/W/X/Y; `find_pending` odmítne index 22; `kod` s indexem 22 → `ok:false`; `vytvor` vrací trojice; klávesnice má 22 tlačítek s `data-letter`.
+- [ ] Vizuální kontrola v harnessu (900 a 380 px) a ověření psaní písmeny (DOM dump po simulovaném keydown).
+- [ ] Commit `přihlášení jiným zařízením: obrázky podle písmen A–Z, psaní kódu z klávesnice`.
+
+### Task 8: Okamžité schválení ve stejné síti a čekání na potvrzení
+
+**Files:** `app/controllers/device_login_controller.rb`, `config/routes.rb`, `app/models/ability.rb`, `test/functional/device_login_controller_test.rb`, `app/views/device_login/klavesnice.html.erb`, `public/javascripts/tep.js`, layout `tep.js?v=` +1.
+
+**Interfaces:**
+- `kod` úspěch: `session[:device_login_kod_id] = record.id`; když `record.same_network?(request.remote_ip)` → hned `record.approve!(real_user)` a JSON `{ok:true, id:, device:, same_network:true, approved:true}`; jinak `{ok:true, id:, device:, same_network:false, age:, approved:false}` (beze změny stavu).
+- `potvrdit` (jen jiná síť): beze změny chování, ale **nemaže** session klíč (potřebuje ho stav a Zrušit); `{ok:}`.
+- `zrusit`: zruší záznam ze session ve stavu `pending` **nebo** `approved` (`cancel!(from: %w[pending approved])`), pak smaže session klíč; `{ok: bool}`.
+- Nový `GET /prihlasit-zarizeni/stav` → `#stav_moje` (`device_login_stav_moje`), jen přihlášený (`real_user`), záznam jen ze session klíče: `{state:}` kde state ∈ `pending|approved|done|cancelled|expired|none`; `Cache-Control: no-store`. Klíč se maže, když je stav koncový.
+- JS přihlášené strany: po úspěšném `kod` klávesnice zmizí. `approved:true` → „Potvrďte přihlášení na novém zařízení (<device>)“ + Zrušit, dotaz `stav_moje` po 2 s. `approved:false` → stávající panel s varováním a Potvrdit / Zrušit; po Potvrdit totéž „Potvrďte přihlášení…“. `done` → „Hotovo, zařízení je přihlášené.“; `cancelled` → „Přihlášení bylo zrušeno.“; `expired`/`none` → „Kód vypršel.“ U koncových stavů tlačítko „Přihlásit další zařízení“ (obnoví klávesnici).
+
+- [ ] Testy: stejná síť → záznam `approved`, `user_id == real_user.id`, JSON `approved:true`; jiná síť → zůstává `pending`, `approved:false`; zrusit po okamžitém schválení → `cancelled` a nové zařízení pak `ano` → `ok:false`; `stav_moje` vrací správné stavy včetně `done` po `ano` a `none` bez session; cizí uživatel bez session klíče → `none`; anonym → 401; kod pro záznam A a pak potvrdit s id B → `ok:false` (zůstává).
+- [ ] Vizuální kontrola obou větví v harnessu.
+- [ ] Commit `přihlášení jiným zařízením: ve stejné síti schválení hned, čekání na potvrzení na novém zařízení`.
+
+### Task 9: Odkaz a QR na přihlášené straně
+
+**Files:** `public/javascripts/qrcode.js` (vendored qrcode-generator, MIT, s hlavičkou licence), `app/views/device_login/klavesnice.html.erb`, `public/javascripts/tep.js`, layout (načtení `qrcode.js` jen na této stránce nebo globálně s verzí), testy controlleru.
+
+**Interfaces:**
+- Na stránce klávesnice nad návodem: „Na novém zařízení otevři:“ + absolutní odkaz `device_login_novy_url` (klikatelný, kopírovatelný) a QR kód téhož odkazu (bez tajemství), velikost ~160 px, vykreslený JS z `data-url`.
+- Knihovna: stáhnout `qrcode-generator` (npm, poslední 1.x) z `https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js` do scratchpadu, zkontrolovat obsah, uložit do `public/javascripts/qrcode.js` beze změn.
+
+- [ ] Test: stránka klávesnice obsahuje `device_login_novy_url` (absolutní) v `data-url` i jako text odkazu.
+- [ ] Vizuální kontrola: QR je čitelný (ověřit dekódováním, pokud je k dispozici `zbarimg`; jinak aspoň vizuálně) a odkaz je vidět na 380 px.
+- [ ] Commit `přihlášení jiným zařízením: odkaz a QR na stránku přihlášení na přihlášené straně`.
