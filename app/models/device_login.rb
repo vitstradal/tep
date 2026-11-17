@@ -33,7 +33,6 @@ class DeviceLogin < ActiveRecord::Base
 
   def self.create_for!(token:, user_agent:, ip:, return_to:)
     now = Time.current
-    device_digest = digest(token)
     bucket = ip_bucket(ip)
 
     where('created_at < ?', now - 1.day).delete_all
@@ -43,9 +42,7 @@ class DeviceLogin < ActiveRecord::Base
     code = CODE_ATTEMPTS.times.lazy.map { random_code }.find { |c| !valid_pending.exists?(code: c) }
     raise Busy unless code
 
-    where(device_digest: device_digest, state: 'pending').update_all(state: 'cancelled', updated_at: now)
-
-    create!(code: code, state: 'pending', device_digest: device_digest, user_agent: user_agent,
+    create!(code: code, state: 'pending', device_digest: digest(token), user_agent: user_agent,
             ip: ip, ip_bucket: bucket, return_to: return_to, expires_at: now + TTL)
   end
 

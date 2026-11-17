@@ -35,6 +35,14 @@ class SafeReturnPathTest < ActionController::TestCase
     refute_match(/evil/, response.location)
   end
 
+  {"tab" => "/\t/evil.example", "newline" => "/\n/evil.example", "carriage return" => "/\r/evil.example",
+   "space" => "/ /evil.example", "nul" => "/\u0000/evil.example"}.each do |name, path|
+    test "next with #{name} inside is ignored" do
+      login(next: path)
+      assert_redirected_to '/sosna/solutions/user'
+    end
+  end
+
   test 'stored location is used' do
     session['user_return_to'] = '/oauth/authorize?client_id=x'
     login

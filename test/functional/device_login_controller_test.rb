@@ -102,6 +102,31 @@ class DeviceLoginControllerTest < ActionController::TestCase
     assert_equal '/kam', second.return_to
   end
 
+  test "busy second vytvor leaves the previous code pending" do
+    post :vytvor
+    first = DeviceLogin.order(:id).last
+    DeviceLogin.stub(:create_for!, ->(**) { raise DeviceLogin::Busy }) do
+      post :vytvor
+    end
+    assert_response 429
+    assert_equal 'pending', first.reload.state
+    assert_equal 1, DeviceLogin.count
+  end
+
+  test "novy ignores next with control characters" do
+    get :novy, params: { next: "/\t/evil.example" }
+    assert_nil session[:device_login_return_to]
+    post :vytvor
+    assert_nil DeviceLogin.order(:id).last.return_to
+  end
+
+  test "novy keeps devise user_return_to in the session" do
+    session['user_return_to'] = '/oauth/authorize?client_id=x'
+    get :novy
+    assert_equal '/oauth/authorize?client_id=x', session['user_return_to']
+    assert_equal '/oauth/authorize?client_id=x', session[:device_login_return_to]
+  end
+
   test "vytvor when busy answers 429 and creates nothing" do
     DeviceLogin.stub(:create_for!, ->(**) { raise DeviceLogin::Busy }) do
       post :vytvor

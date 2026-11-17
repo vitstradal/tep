@@ -10,7 +10,7 @@ class DeviceLoginController < ApplicationController
 
   def novy
     session[:device_login_return_to] =
-      safe_return_path(params[:next]) || safe_return_path(stored_location_for(:user))
+      safe_return_path(params[:next]) || safe_return_path(session['user_return_to'])
   end
 
   def vytvor

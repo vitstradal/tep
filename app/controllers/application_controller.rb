@@ -81,7 +81,7 @@ class ApplicationController < ActionController::Base
 
   # jen lokální cesta (začíná `/`, ne `//` ani `/\`), jinak nil
   def safe_return_path(path)
-    path if path.is_a?(String) && path.start_with?('/') && !path.start_with?('//', '/\\')
+    path if path.is_a?(String) && path.start_with?('/') && !path.start_with?('//', '/\\') && !path.match?(/[\x00-\x1F\x7F\s]/)
   end
 
   private

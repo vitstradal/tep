@@ -97,17 +97,6 @@ class DeviceLoginTest < ActiveSupport::TestCase
     assert_not dl.same_network?('2001:db8:1:3::5')
   end
 
-  test 'nový create_for! téhož tokenu zruší předchozí pending' do
-    old = create(token: 'same')
-    other = create(token: 'jiny')
-    new = create(token: 'same')
-    assert_equal 'cancelled', old.reload.state
-    assert_equal 'pending', other.reload.state
-    assert_equal 'pending', new.state
-    assert_equal new, DeviceLogin.for_device('same')
-    assert_nil DeviceLogin.for_device('nikdo')
-  end
-
   test 'create_for! smaže záznamy starší 1 dne' do
     old = travel_to(Time.zone.local(2026, 11, 15, 12, 0, 0)) { create(token: 'stary') }
     travel_to Time.zone.local(2026, 11, 17, 12, 0, 0) do
@@ -205,13 +194,6 @@ class DeviceLoginTest < ActiveSupport::TestCase
     assert_equal 'done', done.reload.state
   end
 
-  test 'Busy nezruší předchozí pending téhož zařízení' do
-    old = create(token: 'same')
-    insert_pending(500, expires_at: 5.minutes.from_now)
-    assert_raises(DeviceLogin::Busy) { create(token: 'same') }
-    assert_equal 'pending', old.reload.state
-  end
-
   test 'strop pustí 500. platný pending' do
     insert_pending(499, expires_at: 5.minutes.from_now)
     assert_equal 'pending', create.state
@@ -280,6 +262,18 @@ class DeviceLoginAttemptTest < ActiveSupport::TestCase
     end
     travel_to(Time.zone.local(2026, 11, 17, 12, 45, 0)) { assert_nil DeviceLoginAttempt.begin!(user) }
     travel_to(Time.zone.local(2026, 11, 17, 13, 3, 0)) { assert DeviceLoginAttempt.begin!(user) }
+  end
+
+  test 'begin! smaže pokusy starší 1 dne' do
+    user = make_user
+    old = travel_to(Time.zone.local(2026, 11, 15, 12, 0, 0)) { DeviceLoginAttempt.begin!(user) }
+    fresh = travel_to(Time.zone.local(2026, 11, 16, 13, 0, 0)) { DeviceLoginAttempt.begin!(user) }
+    travel_to Time.zone.local(2026, 11, 16, 14, 0, 0) do
+      newest = DeviceLoginAttempt.begin!(user)
+      assert_nil DeviceLoginAttempt.find_by(id: old.id)
+      assert DeviceLoginAttempt.find_by(id: fresh.id)
+      assert DeviceLoginAttempt.find_by(id: newest.id)
+    end
   end
 
   test 'úspěšné se nepočítají' do
