@@ -83,12 +83,13 @@ timestamps. Token sám se neukládá.
 
 ## Emoji (pool 24, Unicode ≤ 9, bez obličejů, vlajek a VS16)
 
-🍎 jablko, 🍌 banán, 🍇 hrozny, 🍉 meloun, 🥕 mrkev, 🍕 pizza, 🍄 houba,
+🍎 jablko, 🍌 banán, 🍇 hrozny, 🍉 meloun, 🥕 mrkev, 🍕 pizza, 🇨🇿 vlajka,
 🌵 kaktus, 🌻 slunečnice, 🌙 měsíc, ⭐ hvězda, 🔥 oheň, 🐘 slon, 🐟 ryba,
 🐢 želva, 🐝 včela, 🐧 tučňák, 🦋 motýl, 🚗 auto, 🚲 kolo, 🚀 raketa,
 ⚽ míč, 🎸 kytara, 🔑 klíč.
 
-Na obou stranách se pod emoji ukazuje český název (rozdílné kreslení na
+Vlajka se kreslí jako inline SVG (Windows vlajková emoji neumí, ukázal by
+„CZ“), ostatní jako emoji. Na obou stranách se pod emoji ukazuje český název (rozdílné kreslení na
 různých systémech pak nevadí).
 
 ## Technika
