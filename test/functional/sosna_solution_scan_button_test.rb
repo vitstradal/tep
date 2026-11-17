@@ -39,13 +39,21 @@ class SosnaSolutionScanButtonTest < ActionController::TestCase
         button = buttons.first
         assert_equal title, button['data-title']
         assert_equal 'button', button['type']
-        assert_equal '/javascripts/opencv-4.13.0.js', button['data-opencv']
-        assert_match %r{\A/javascripts/scanner\.js\?v=\S+\z}, button['data-scanner']
+        assert_equal SolutionScan::OPENCV_JS, button['data-opencv']
+        assert_equal SolutionScan.scanner_js, button['data-scanner']
         assert_includes button['class'].split, 'hide'
       end
       assert_select "form##{form_id} button.solution-scan[type=button]", 1
     end
     assert_select '#solution-scan-modal', 1
+  end
+
+  test "cesty ke knihovnam skeneru" do
+    assert_match %r{\A/javascripts/opencv-\d+\.\d+\.\d+\.js\z}, SolutionScan::OPENCV_JS
+    makefile = File.read(Rails.root.join('Makefile'))
+    assert_equal "/javascripts/opencv-#{makefile[/^OPENCV_VERSION = (\S+)$/, 1]}.js", SolutionScan::OPENCV_JS
+    mtime = File.mtime(Rails.public_path.join('javascripts', 'scanner.js')).to_i
+    assert_equal "/javascripts/scanner.js?v=#{mtime}", SolutionScan.scanner_js
   end
 
   test "u ulohy jen pro mladsi neni formular ani tlacitko" do

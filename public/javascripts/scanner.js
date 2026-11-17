@@ -38,6 +38,17 @@
     return [[0, 0], [w - 1, 0], [w - 1, h - 1], [0, h - 1]];
   }
 
+  // Šířka fotky z rozsahu {min, max, step}, aby delší strana byla aspoň maxSide (aspect = šířka / výška).
+  function photoWidth(range, aspect, maxSide) {
+    if (!range || !isFinite(range.min) || !isFinite(range.max) || range.max <= 0 || range.max < range.min) return null;
+    if (!isFinite(aspect) || aspect <= 0) return null;
+    var step = range.step > 0 ? range.step : 0;
+    var target = Math.max(range.min, maxSide * Math.min(1, aspect));
+    var w = step ? range.min + Math.ceil((target - range.min) / step) * step : Math.ceil(target);
+    if (w > range.max) w = step ? range.min + Math.floor((range.max - range.min) / step) * step : range.max;
+    return w;
+  }
+
   function clampCorners(corners, w, h) {
     return corners.map(function (p) {
       return [Math.min(w - 1, Math.max(0, p[0])), Math.min(h - 1, Math.max(0, p[1]))];
@@ -226,6 +237,7 @@
     orderCorners: orderCorners,
     fullFrame: fullFrame,
     clampCorners: clampCorners,
+    photoWidth: photoWidth,
     warpToPage: warpToPage,
     enhance: enhance,
     scanPage: scanPage

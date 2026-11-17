@@ -82,7 +82,7 @@ staviteli; měřítkem je čitelnost tužky a pera na testovacích fotkách.
 - OpenCV.js 4.x (oficiální build `opencv.js`, Apache 2.0) jako
   `public/javascripts/opencv-<verze>.js` — **není v gitu** (`.gitignore`),
   stahuje ho `make opencv` (jen když chybí, ověří SHA-256); `make release`
-  na serveru spouští `pull opencv restart`. Prohlížeč ho načítá z tepu
+  na serveru spouští `pull restart opencv`. Prohlížeč ho načítá z tepu
   (žádné CDN) dynamicky `<script>` až při prvním otevření skeneru; verze v
   názvu → cachovatelné natrvalo (při nasazení ověřit cache hlavičky Apache
   pro `/javascripts/`). Testy (`make test-js`) potřebují soubor stažený.

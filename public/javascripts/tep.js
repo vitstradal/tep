@@ -2167,6 +2167,7 @@ var SCAN_LIVE_SIZE = 640
 var SCAN_VIEW_SIZE = 1000
 var SCAN_PHOTO_TIMEOUT_MS = 8000
 var SCAN_LIBS_TIMEOUT_MS = 30000
+var SCAN_SCRIPT_TIMEOUT_MS = 60000
 var SCAN_MAX_SIDE = 3000
 var SCAN_JPEG_QUALITY = 0.85
 var SCAN_TXT = {
@@ -2176,10 +2177,12 @@ var SCAN_TXT = {
     not_found: 'List nenalezen – použije se celý snímek, rohy můžeš posunout.',
     too_many: 'Víc než 20 stránek odeslat nejde.',
     scan_failed: 'Sken se nepovedl, zkus to znovu.',
+    save_failed: 'Uložení stránky se nepovedlo, zkus to znovu.',
     no_datatransfer: 'Tenhle prohlížeč neumí naskenované stránky odeslat. Nahraj fotky tlačítkem vedle.',
     sending: 'Odesílám…'
 }
 var scan_libs = null
+var scan_scripts = {}
 var scan_state = null
 
 function scan_css() {
@@ -2229,20 +2232,31 @@ function init_solution_scan() {
     })
 }
 
+// Skript, který se ještě stahuje, se při opakování nepřidává znovu, jen se na něj dál čeká.
 function scan_load_script(src) {
-    return new Promise(function (resolve, reject) {
-        var el = document.createElement('script')
-        el.src = src
-        el.onload = function () { resolve() }
-        el.onerror = function () { reject(new Error('nelze načíst ' + src)) }
-        document.head.appendChild(el)
-    })
+    if (!scan_scripts[src]) {
+        scan_scripts[src] = new Promise(function (resolve, reject) {
+            var el = document.createElement('script')
+            el.src = src
+            el.onload = function () { resolve() }
+            el.onerror = function () {
+                delete scan_scripts[src]
+                el.parentNode.removeChild(el)
+                reject(new Error('nelze načíst ' + src))
+            }
+            document.head.appendChild(el)
+        })
+    }
+    return scan_with_timeout(scan_scripts[src], SCAN_SCRIPT_TIMEOUT_MS)
 }
 
 // OpenCV modul je thenable (resolve(cv) by se zacyklil), proto se předává jako {cv: cv}.
 function scan_load_libs(opencv_src, scanner_src) {
     if (!scan_libs) {
-        scan_libs = Promise.all([scan_load_script(opencv_src), scan_load_script(scanner_src)]).then(function () {
+        scan_libs = Promise.all([
+            window.cv ? Promise.resolve() : scan_load_script(opencv_src),
+            window.TepScanner ? Promise.resolve() : scan_load_script(scanner_src)
+        ]).then(function () {
             return scan_with_timeout(new Promise(function (resolve) {
                 var cv = window.cv
                 if (cv.Mat) resolve({cv: cv})
@@ -2421,7 +2435,7 @@ function scan_grab(s) {
     var track = s.stream && s.stream.getVideoTracks()[0]
     if (!window.ImageCapture || !window.createImageBitmap || !track) return Promise.resolve(from_video())
     var photo
-    try { photo = new ImageCapture(track).takePhoto() } catch (e) { return Promise.resolve(from_video()) }
+    try { photo = scan_take_photo(new ImageCapture(track)) } catch (e) { return Promise.resolve(from_video()) }
     return scan_with_timeout(photo, SCAN_PHOTO_TIMEOUT_MS).then(function (blob) {
         return createImageBitmap(blob)
     }).then(function (bmp) {
@@ -2432,6 +2446,20 @@ function scan_grab(s) {
         console.log('skener: takePhoto', e)
         return from_video()
     })
+}
+
+// Fotka s delší stranou kolem SCAN_MAX_SIDE, ať se nedekódují desítky megapixelů; bez rozsahu výchozí rozlišení.
+function scan_take_photo(capture) {
+    if (!capture.getPhotoCapabilities) return capture.takePhoto()
+    return capture.getPhotoCapabilities().then(function (caps) {
+        var w = caps && caps.imageWidth, h = caps && caps.imageHeight
+        var width = w && h ? TepScanner.photoWidth(w, w.max / h.max, SCAN_MAX_SIDE) : null
+        if (!width) return capture.takePhoto()
+        return capture.takePhoto({imageWidth: width}).catch(function (e) {
+            console.log('skener: takePhoto s šířkou ' + width, e)
+            return capture.takePhoto()
+        })
+    }, function () { return capture.takePhoto() })
 }
 
 function scan_shoot(s) {
@@ -2586,7 +2614,7 @@ function scan_use(s) {
     s.$modal.find('.solution-scan-result')[0].toBlob(function (blob) {
         scan_set_busy(s, false)
         if (s.closed) return
-        if (!blob) return console.log('skener: JPEG se nepovedl')
+        if (!blob) return scan_message(s, SCAN_TXT.save_failed, 'danger')
         s.pages.push({blob: blob, url: URL.createObjectURL(blob)})
         scan_render_pages(s)
         scan_message(s, s.pages.length >= SCAN_MAX_PAGES ? SCAN_TXT.too_many : '', 'warning')

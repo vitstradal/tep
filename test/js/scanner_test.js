@@ -184,6 +184,27 @@ test('orderCorners zvládne list pootočený o 30°', () => {
   assert.deepEqual(S.orderCorners([ordered[2], ordered[0], ordered[3], ordered[1]]), ordered);
 });
 
+test('photoWidth vybere nejmenší podporovanou šířku fotky pro delší stranu 3000', () => {
+  const range = { min: 640, max: 8160, step: 16 };
+  assert.equal(S.photoWidth(range, 4 / 3, 3000), 3008, 'naležato: šířka je delší strana, zaokrouhleno nahoru na krok');
+  assert.equal(S.photoWidth(range, 3 / 4, 3000), 2256, 'na výšku: šířka = 3000 · 3/4');
+  assert.equal(S.photoWidth({ min: 640, max: 8160, step: 1 }, 16 / 9, 3000), 3000);
+  assert.equal(S.photoWidth({ min: 1000, max: 4000, step: 1000 }, 4 / 3, 3000), 3000);
+  assert.equal(S.photoWidth({ min: 500, max: 4000, step: 1000 }, 4 / 3, 3000), 3500, 'krok se počítá od min');
+  assert.equal(S.photoWidth({ min: 640, max: 2000, step: 1 }, 4 / 3, 3000), 2000, 'víc fotoaparát neumí');
+  assert.equal(S.photoWidth({ min: 4000, max: 8000, step: 1 }, 4 / 3, 3000), 4000, 'méně fotoaparát neumí');
+  assert.equal(S.photoWidth({ min: 640, max: 8160, step: 0 }, 4 / 3, 3000), 3000, 'krok 0 = libovolná šířka');
+});
+
+test('photoWidth bez použitelného rozsahu vrátí null', () => {
+  for (const range of [undefined, null, {}, { min: 0, max: 0, step: 0 }, { min: 640, max: NaN, step: 1 }, { min: 5000, max: 4000, step: 1 }]) {
+    assert.equal(S.photoWidth(range, 4 / 3, 3000), null, JSON.stringify(range));
+  }
+  for (const aspect of [0, NaN, Infinity, -1, undefined]) {
+    assert.equal(S.photoWidth({ min: 640, max: 8160, step: 1 }, aspect, 3000), null, `poměr ${aspect}`);
+  }
+});
+
 test('fullFrame vrátí rohy celého obrázku', () => {
   assert.deepEqual(S.fullFrame(1920, 1080), [[0, 0], [1919, 0], [1919, 1079], [0, 1079]]);
 });

@@ -153,6 +153,7 @@ adventomat:
 pull:
 	git pull
 
+# Verze musí odpovídat SolutionScan::OPENCV_JS v config/initializers/solution_scan.rb.
 OPENCV_VERSION = 4.13.0
 OPENCV_SHA256 = 63366510248adf3a7eddf3e793dd825404efb7df3749f4d6f8557c7fa4ca8aa0
 OPENCV_JS = public/javascripts/opencv-$(OPENCV_VERSION).js
@@ -171,4 +172,4 @@ test-js: opencv
 
 release:
 	git push 
-	ssh pikomat.mff.cuni.cz make -C rails/tep pull opencv restart
+	ssh pikomat.mff.cuni.cz make -C rails/tep pull restart opencv

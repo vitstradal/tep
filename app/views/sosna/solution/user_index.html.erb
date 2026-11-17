@@ -86,7 +86,7 @@
                          <%= f.submit :class => 'btn btn-primary', :value => '<' %>
                          <button type="button" class="btn btn-default solution-scan hide" title="Skenovat fotoaparátem"
                                  data-form="#<%= dom_id(sol, :edit) %>" data-title="<%= p.title %>"
-                                 data-opencv="/javascripts/opencv-4.13.0.js" data-scanner="/javascripts/scanner.js?v=1"><i class="fa fa-camera"></i></button>
+                                 data-opencv="<%= SolutionScan::OPENCV_JS %>" data-scanner="<%= SolutionScan.scanner_js %>"><i class="fa fa-camera"></i></button>
                 <% end %>
              <% end %>
          </td>
