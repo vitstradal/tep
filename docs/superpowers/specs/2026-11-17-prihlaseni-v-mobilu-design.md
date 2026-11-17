@@ -50,15 +50,15 @@ zařízení“, nepřihlášená strana „Přihlásit pomocí jiného zařízen
 název je sám o sobě trochu mlhavý, vyjasní ho text na stránce, která se
 po kliknutí ukáže.
 
-1. **Nové zařízení**: na přihlašovací stránce odkaz „Přihlásit pomocí
-   jiného zařízení“ → `/prihlasit-zarizenim`. Vytvoří záznam a ukáže
+1. **Nové zařízení**: na přihlašovací stránce pod formulářem (pod
+   tlačítkem Přihlásit) odkaz „Přihlásit pomocí jiného zařízení“ → `/prihlasit-zarizenim`. Vytvoří záznam a ukáže
    4 ikony s názvy (velké, dobře čitelné) a text „Zadej tyto 4 obrázky na
    zařízení, kde jsi přihlášený, v menu „Přihlásit na jiném zařízení“.“
    Odpočet platnosti, „Nový kód“. Zaškrtávátko „Zůstat přihlášený“ —
    výchozí zapnuto pro mobilní prohlížeč, vypnuto pro počítač (sdílené
    počítače).
-2. **Přihlášené zařízení**: v uživatelském menu (vedle Logout) „Přihlásit
-   na jiném zařízení“ → `/prihlasit-zarizeni`. Klávesnice 24 ikon (mřížka
+2. **Přihlášené zařízení**: v rozbalovacím menu pod uživatelem (e-mail
+   v horní liště) položka „Přihlásit na jiném zařízení“ → `/prihlasit-zarizeni`. Klávesnice 24 ikon (mřížka
    4×6, ikona + název), 4 pole, „Smazat“. Po 4. ikoně se odešle.
    Nad klávesnicí text: „Na novém zařízení dej na přihlašovací stránce
    „Přihlásit pomocí jiného zařízení“ a sem zadej 4 obrázky, které se ti
@@ -107,8 +107,12 @@ systémech pak nevadí).
 - Controller `DeviceLoginController`. `/prihlasit-zarizenim` a jeho
   stavový/potvrzovací endpoint anonymní s kontrolou cookie;
   `/prihlasit-zarizeni` jen přihlášený. Práva v `app/models/ability.rb`.
-- Odkaz na přihlašovací stránce Devise (`app/views/devise/sessions/new`),
-  položka v uživatelském menu v `app/views/layouts/application.html.erb`.
+- Odkaz pod formulářem v `app/views/devise/sessions/new.html.erb`.
+- Položka v menu pod uživatelem v `app/views/layouts/application.html.erb`:
+  dnes je e-mail rozbalovací jen pro orgy s „Jak to vidí“ (`view_as_allowed?`),
+  ostatním je to obyčejný štítek — udělat z něj dropdown pro všechny
+  (položka „Přihlásit na jiném zařízení“ pro každého, přepínač „Jak to vidí“
+  dál jen pro `view_as_allowed?`).
 - Dotazování: jQuery, JSON endpoint, `setTimeout` 2 s; zastaví se po
   koncovém stavu nebo vypršení.
 - Popis zařízení z User-Agent jednoduchým rozpoznáním (Android / iPhone /
