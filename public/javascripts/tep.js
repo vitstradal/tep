@@ -2166,6 +2166,8 @@ var SCAN_LIVE_MS = 200
 var SCAN_LIVE_SIZE = 640
 var SCAN_VIEW_SIZE = 1000
 var SCAN_PHOTO_TIMEOUT_MS = 8000
+var SCAN_LIBS_TIMEOUT_MS = 30000
+var SCAN_MAX_SIDE = 3000
 var SCAN_JPEG_QUALITY = 0.85
 var SCAN_TXT = {
     loading: 'Připravuji skener…',
@@ -2173,6 +2175,7 @@ var SCAN_TXT = {
     no_camera: 'Bez přístupu ke kameře skenovat nejde. Povol kameru v prohlížeči, nebo nahraj fotky tlačítkem vedle.',
     not_found: 'List nenalezen – použije se celý snímek, rohy můžeš posunout.',
     too_many: 'Víc než 20 stránek odeslat nejde.',
+    scan_failed: 'Sken se nepovedl, zkus to znovu.',
     no_datatransfer: 'Tenhle prohlížeč neumí naskenované stránky odeslat. Nahraj fotky tlačítkem vedle.',
     sending: 'Odesílám…'
 }
@@ -2219,6 +2222,11 @@ function init_solution_scan() {
         scan_remove_page(scan_state, $(this).closest('.solution-scan-page').index())
     })
     scan_init_drag($modal.find('.solution-scan-frame')[0])
+    window.addEventListener('pageshow', function (ev) {
+        if (!ev.persisted) return
+        scan_close()
+        $modal.modal('hide')
+    })
 }
 
 function scan_load_script(src) {
@@ -2235,12 +2243,12 @@ function scan_load_script(src) {
 function scan_load_libs(opencv_src, scanner_src) {
     if (!scan_libs) {
         scan_libs = Promise.all([scan_load_script(opencv_src), scan_load_script(scanner_src)]).then(function () {
-            return new Promise(function (resolve) {
+            return scan_with_timeout(new Promise(function (resolve) {
                 var cv = window.cv
                 if (cv.Mat) resolve({cv: cv})
                 else if (typeof cv.then === 'function') cv.then(function (ready) { resolve({cv: ready}) })
                 else cv.onRuntimeInitialized = function () { resolve({cv: cv}) }
-            })
+            }), SCAN_LIBS_TIMEOUT_MS)
         })
         scan_libs.catch(function () { scan_libs = null })
     }
@@ -2262,18 +2270,18 @@ function scan_show(s, part) {
 function scan_open($modal, $btn) {
     scan_close()
     var s = scan_state = {
-        $modal: $modal, form: $($btn.data('form'))[0], pages: [], stream: null, cv: null,
+        $modal: $modal, form: $($btn.attr('data-form'))[0], pages: [], stream: null, cv: null,
         live: false, live_timer: null, live_canvas: document.createElement('canvas'), live_prev: null, live_stable: 0,
-        frame: null, frame_view: null, corners: null, rotated: false, busy: false, closed: false
+        frame: null, frame_view: null, corners: null, rotated: false, result_ok: false, busy: false, closed: false
     }
     s.video = $modal.find('video')[0]
-    $modal.find('.modal-title').text('Skenovat řešení: ' + $btn.data('title'))
+    $modal.find('.modal-title').text('Skenovat řešení: ' + $btn.attr('data-title'))
     scan_show(s, null)
     scan_render_pages(s)
     scan_message(s, SCAN_TXT.loading)
     $modal.modal('show')
     var stage = 'libs'
-    scan_load_libs($btn.data('opencv'), $btn.data('scanner')).then(function (libs) {
+    scan_load_libs($btn.attr('data-opencv'), $btn.attr('data-scanner')).then(function (libs) {
         if (s.closed) return
         s.cv = libs.cv
         stage = 'camera'
@@ -2318,6 +2326,7 @@ function scan_free_frame(s) {
     s.frame = null
     s.frame_view = null
     s.corners = null
+    s.result_ok = false
 }
 
 function scan_to_live(s) {
@@ -2381,7 +2390,8 @@ function scan_update_buttons(s) {
     var word = n === 1 ? 'stránku' : (n >= 2 && n <= 4 ? 'stránky' : 'stránek')
     $m.find('.solution-scan-send').text('Odeslat ' + n + ' ' + word).prop('disabled', s.busy || n === 0)
     $m.find('.solution-scan-shot').prop('disabled', s.busy || n >= SCAN_MAX_PAGES || !s.video.videoWidth)
-    $m.find('.solution-scan-use, .solution-scan-retry, .solution-scan-rotate').prop('disabled', s.busy)
+    $m.find('.solution-scan-retry, .solution-scan-rotate').prop('disabled', s.busy)
+    $m.find('.solution-scan-use').prop('disabled', s.busy || !s.result_ok)
 }
 
 function scan_set_busy(s, busy) {
@@ -2397,13 +2407,14 @@ function scan_with_timeout(promise, ms) {
     })
 }
 
-// Snímek v plném rozlišení jako canvas: ImageCapture.takePhoto(), jinak aktuální snímek videa.
+// Snímek jako canvas (delší strana nejvýš SCAN_MAX_SIDE): ImageCapture.takePhoto(), jinak snímek videa.
 function scan_grab(s) {
     function from_source(src, w, h) {
+        var scale = Math.min(1, SCAN_MAX_SIDE / Math.max(w, h))
         var c = document.createElement('canvas')
-        c.width = w
-        c.height = h
-        c.getContext('2d').drawImage(src, 0, 0, w, h)
+        c.width = Math.round(w * scale)
+        c.height = Math.round(h * scale)
+        c.getContext('2d').drawImage(src, 0, 0, c.width, c.height)
         return c
     }
     function from_video() { return from_source(s.video, s.video.videoWidth, s.video.videoHeight) }
@@ -2453,7 +2464,10 @@ function scan_shoot(s) {
         scan_set_busy(s, false)
     }).catch(function (e) {
         console.log('skener:', e)
-        scan_set_busy(s, false)
+        if (s.closed) return
+        s.busy = false
+        scan_to_live(s)
+        scan_message(s, SCAN_TXT.scan_failed, 'danger')
     })
 }
 
@@ -2481,7 +2495,24 @@ function scan_draw_frame(s) {
     })
 }
 
+// Znovuzpracování v náhledu; při chybě zůstane náhled a Použít je neaktivní.
+function scan_reprocess(s) {
+    try {
+        scan_process(s)
+        scan_update_buttons(s)
+        scan_message(s, '')
+        return true
+    } catch (e) {
+        console.log('skener:', e)
+        s.result_ok = false
+        scan_update_buttons(s)
+        scan_message(s, SCAN_TXT.scan_failed, 'danger')
+        return false
+    }
+}
+
 function scan_process(s) {
+    s.result_ok = false
     var cv = s.cv, page = TepScanner.scanPage(cv, s.frame, s.corners), rgba = new cv.Mat()
     try {
         if (s.rotated) cv.rotate(page, page, cv.ROTATE_180)
@@ -2490,6 +2521,7 @@ function scan_process(s) {
         canvas.width = rgba.cols
         canvas.height = rgba.rows
         canvas.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(rgba.data), rgba.cols, rgba.rows), 0, 0)
+        s.result_ok = true
     } finally {
         page.delete()
         rgba.delete()
@@ -2529,8 +2561,7 @@ function scan_init_drag(canvas) {
         if (drag === null) return
         drag = null
         if (!s || !s.frame) return
-        scan_message(s, '')
-        scan_process(s)
+        scan_reprocess(s)
     }
     canvas.addEventListener('pointerup', end)
     canvas.addEventListener('pointercancel', end)
@@ -2539,7 +2570,7 @@ function scan_init_drag(canvas) {
 function scan_rotate(s) {
     if (!s || !s.frame || s.busy) return
     s.rotated = !s.rotated
-    scan_process(s)
+    if (!scan_reprocess(s)) s.rotated = !s.rotated
 }
 
 function scan_retry(s) {
@@ -2549,7 +2580,7 @@ function scan_retry(s) {
 }
 
 function scan_use(s) {
-    if (!s || !s.frame || s.busy) return
+    if (!s || !s.frame || s.busy || !s.result_ok) return
     if (s.pages.length >= SCAN_MAX_PAGES) return scan_message(s, SCAN_TXT.too_many, 'warning')
     scan_set_busy(s, true)
     s.$modal.find('.solution-scan-result')[0].toBlob(function (blob) {
