@@ -45,19 +45,24 @@ Na pořadí nezáleží: uživatel může začít na kterékoli straně. Kód vz
 až otevřením stránky na novém zařízení, klávesnice na přihlášeném
 zařízení nic nevytváří ani nečeká.
 
+Názvy stran (rozhodnuto): přihlášená strana „Přihlásit na jiném
+zařízení“, nepřihlášená strana „Přihlásit pomocí jiného zařízení“ —
+název je sám o sobě trochu mlhavý, vyjasní ho text na stránce, která se
+po kliknutí ukáže.
+
 1. **Nové zařízení**: na přihlašovací stránce odkaz „Přihlásit pomocí
-   přihlášeného zařízení“ → `/prihlasit-zarizenim`. Vytvoří záznam a ukáže
-   4 ikony s názvy (velké, dobře čitelné) a návod „Na zařízení, kde jsi
-   v tepu přihlášený, otevři menu → Přihlásit jiné zařízení a zadej tyto
-   ikony.“ Odpočet platnosti, „Nový kód“. Zaškrtávátko „Zůstat
-   přihlášený“ — výchozí zapnuto pro mobilní prohlížeč, vypnuto pro
-   počítač (sdílené počítače).
+   jiného zařízení“ → `/prihlasit-zarizenim`. Vytvoří záznam a ukáže
+   4 ikony s názvy (velké, dobře čitelné) a text „Zadej tyto 4 obrázky na
+   zařízení, kde jsi přihlášený, v menu „Přihlásit na jiném zařízení“.“
+   Odpočet platnosti, „Nový kód“. Zaškrtávátko „Zůstat přihlášený“ —
+   výchozí zapnuto pro mobilní prohlížeč, vypnuto pro počítač (sdílené
+   počítače).
 2. **Přihlášené zařízení**: v uživatelském menu (vedle Logout) „Přihlásit
-   jiné zařízení“ → `/prihlasit-zarizeni`. Klávesnice 24 ikon (mřížka
+   na jiném zařízení“ → `/prihlasit-zarizeni`. Klávesnice 24 ikon (mřížka
    4×6, ikona + název), 4 pole, „Smazat“. Po 4. ikoně se odešle.
-   Nad klávesnicí návod: „Na novém zařízení otevři tep → Přihlásit →
-   Přihlásit pomocí přihlášeného zařízení a sem zadej ikony, které se
-   ti tam ukážou.“
+   Nad klávesnicí text: „Na novém zařízení dej na přihlašovací stránce
+   „Přihlásit pomocí jiného zařízení“ a sem zadej 4 obrázky, které se ti
+   tam ukážou.“
 3. Server najde platný záznam ve stavu `pending` s tímto kódem.
    Nenalezen → „Kód neplatí nebo vypršel“, počítá se jako neúspěch do
    limitu. Nalezen → ukáže popis nového zařízení + Potvrdit / Zrušit.
