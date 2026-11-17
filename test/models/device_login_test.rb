@@ -20,10 +20,27 @@ class DeviceLoginTest < ActiveSupport::TestCase
   end
 
   test 'ikony' do
-    assert_equal 24, DeviceLogin::ICONS.size
-    assert_equal ['🍄', 'houba'], DeviceLogin::ICONS[6]
-    assert_equal ['🍎', 'jablko'], DeviceLogin::ICONS[0]
-    assert_equal ['🔑', 'klíč'], DeviceLogin::ICONS[23]
+    assert_equal 22, DeviceLogin::ICONS.size
+    assert_equal ['A', '🚗', 'auto'], DeviceLogin::ICONS.first
+    assert_equal ['H', '🍄', 'houba'], DeviceLogin::ICONS[7]
+    assert_equal ['R', '🚀', 'raketa'], DeviceLogin::ICONS[16]
+    assert_equal ['Z', '🦓', 'zebra'], DeviceLogin::ICONS.last
+    letters = DeviceLogin::ICONS.map(&:first)
+    assert_equal letters.sort, letters
+    assert_equal letters.uniq, letters
+    assert_equal ('A'..'Z').to_a - %w[Q W X Y], letters
+    DeviceLogin::ICONS.each do |letter, emoji, name|
+      assert_equal letter, name[0].upcase, name
+      assert emoji.present?
+    end
+    assert_equal 22, DeviceLogin::ICONS.map { |i| i[1] }.uniq.size
+  end
+
+  test 'random_code losuje z celého poolu' do
+    seen = []
+    code = SecureRandom.stub(:random_number, ->(n) { seen << n; 21 }) { DeviceLogin.random_code }
+    assert_equal [22, 22, 22, 22], seen
+    assert_equal '21-21-21-21', code
   end
 
   test 'create_for! vytvoří pending s kódem' do
@@ -31,7 +48,7 @@ class DeviceLoginTest < ActiveSupport::TestCase
       dl = create
       assert_equal 'pending', dl.state
       assert_match(/\A\d+-\d+-\d+-\d+\z/, dl.code)
-      assert dl.code.split('-').map(&:to_i).all? { |i| (0..23).cover?(i) }
+      assert dl.code.split('-').map(&:to_i).all? { |i| (0..21).cover?(i) }
       assert_in_delta (Time.current + 5.minutes).to_f, dl.expires_at.to_f, 1
       assert_equal DeviceLogin.digest('tok'), dl.device_digest
       assert_equal 64, dl.device_digest.size
@@ -54,7 +71,7 @@ class DeviceLoginTest < ActiveSupport::TestCase
   def insert_pending(n, expires_at:, ip_bucket: 'x')
     now = Time.current
     rows = Array.new(n) do |i|
-      { code: "0-0-#{i / 24}-#{i % 24}", state: 'pending', device_digest: "d#{i}", ip_bucket: ip_bucket,
+      { code: "0-0-#{i / DeviceLogin::ICONS.size}-#{i % DeviceLogin::ICONS.size}", state: 'pending', device_digest: "d#{i}", ip_bucket: ip_bucket,
         expires_at: expires_at, created_at: now, updated_at: now }
     end
     DeviceLogin.insert_all(rows)
@@ -107,17 +124,19 @@ class DeviceLoginTest < ActiveSupport::TestCase
 
   test 'find_pending' do
     travel_to Time.zone.local(2026, 11, 17, 12, 0, 0) do
-      dl = stub_random([3, 17, 0, 22]) { create }
-      assert_equal '3-17-0-22', dl.code
-      assert_equal dl, DeviceLogin.find_pending([3, 17, 0, 22])
-      assert_nil DeviceLogin.find_pending([3, 17, 0, 21])
+      dl = stub_random([3, 17, 0, 21]) { create }
+      assert_equal '3-17-0-21', dl.code
+      assert_equal dl, DeviceLogin.find_pending([3, 17, 0, 21])
+      assert_nil DeviceLogin.find_pending([3, 17, 0, 20])
       assert_nil DeviceLogin.find_pending([1, 2, 3])
-      assert_nil DeviceLogin.find_pending([1, 2, 3, 24])
+      DeviceLogin.where(id: dl.id).update_all(code: '3-17-0-22')
+      assert_nil DeviceLogin.find_pending([3, 17, 0, 22])
+      DeviceLogin.where(id: dl.id).update_all(code: '3-17-0-21')
       assert_nil DeviceLogin.find_pending(['a', 1, 2, 3])
       assert_nil DeviceLogin.find_pending(nil)
     end
     travel_to Time.zone.local(2026, 11, 17, 12, 5, 0) do
-      assert_nil DeviceLogin.find_pending([3, 17, 0, 22])
+      assert_nil DeviceLogin.find_pending([3, 17, 0, 21])
     end
   end
 

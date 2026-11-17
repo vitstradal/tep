@@ -4,10 +4,11 @@ class DeviceLogin < ActiveRecord::Base
   class Busy < StandardError; end
 
   ICONS = [
-    ['🍎', 'jablko'], ['🍌', 'banán'], ['🍇', 'hrozny'], ['🍉', 'meloun'], ['🥕', 'mrkev'], ['🍕', 'pizza'],
-    ['🍄', 'houba'], ['🌵', 'kaktus'], ['🌻', 'slunečnice'], ['🌙', 'měsíc'], ['⭐', 'hvězda'], ['🔥', 'oheň'],
-    ['🐘', 'slon'], ['🐟', 'ryba'], ['🐢', 'želva'], ['🐝', 'včela'], ['🐧', 'tučňák'], ['🦋', 'motýl'],
-    ['🚗', 'auto'], ['🚲', 'kolo'], ['🚀', 'raketa'], ['⚽', 'míč'], ['🎸', 'kytara'], ['🔑', 'klíč']
+    ['A', '🚗', 'auto'], ['B', '🍌', 'banán'], ['C', '🍋', 'citron'], ['D', '🐬', 'delfín'], ['E', '💶', 'euro'],
+    ['F', '📷', 'foťák'], ['G', '🦍', 'gorila'], ['H', '🍄', 'houba'], ['I', '💉', 'injekce'], ['J', '🍎', 'jablko'],
+    ['K', '🔑', 'klíč'], ['L', '🦁', 'lev'], ['M', '🍉', 'meloun'], ['N', '📰', 'noviny'], ['O', '🔥', 'oheň'],
+    ['P', '🍕', 'pizza'], ['R', '🚀', 'raketa'], ['S', '🐘', 'slon'], ['T', '🐧', 'tučňák'], ['U', '🛸', 'ufo'],
+    ['V', '🐝', 'včela'], ['Z', '🦓', 'zebra']
   ].freeze
 
   TTL = 5.minutes

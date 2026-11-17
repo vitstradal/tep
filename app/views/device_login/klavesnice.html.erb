@@ -18,8 +18,9 @@
   <div class="device-login-grid">
     <% DeviceLogin::ICONS.each_slice(4).with_index do |row, r| %>
       <div class="device-login-row">
-        <% row.each_with_index do |(emoji, name), c| %>
-          <button type="button" class="btn btn-default device-login-key" data-i="<%= r * 4 + c %>">
+        <% row.each_with_index do |(letter, emoji, name), c| %>
+          <button type="button" class="btn btn-default device-login-key" data-i="<%= r * 4 + c %>" data-letter="<%= letter %>">
+            <span class="device-login-letter"><%= letter %></span>
             <span class="device-login-emoji"><%= emoji %></span>
             <span class="device-login-name"><%= name %></span>
           </button>

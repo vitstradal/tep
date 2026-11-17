@@ -733,7 +733,9 @@ function dl_css() {
     if ($('#dl-css').length) return
     $('<style id="dl-css">' +
       '.device-login-icons{display:flex;gap:10px;margin:18px 0 6px;max-width:520px}' +
-      '.device-login-icon{flex:1 1 0;min-width:0;padding:10px 4px 8px;border:2px solid #d5e3ef;border-radius:10px;background:#f7fbff;text-align:center}' +
+      '.device-login-icon{position:relative;flex:1 1 0;min-width:0;padding:10px 4px 8px;border:2px solid #d5e3ef;border-radius:10px;background:#f7fbff;text-align:center}' +
+      '.device-login-letter{position:absolute;top:2px;left:6px;font-weight:bold;color:#2a6496;line-height:1.2}' +
+      '.device-login-icon .device-login-letter{font-size:22px}' +
       '.device-login-icon .device-login-emoji{display:block;font-size:52px;line-height:1.15}' +
       '.device-login-icon .device-login-name{display:block;margin-top:4px;font-size:16px;font-weight:bold;overflow:hidden;text-overflow:ellipsis}' +
       '.device-login-countdown{font-size:15px;color:#555}' +
@@ -741,21 +743,24 @@ function dl_css() {
       '.device-login-ask{font-size:20px;margin:16px 0 12px}' +
       '.device-login-ask .btn{margin:0 6px 6px 0}' +
       '.device-login-slots{display:flex;align-items:center;gap:8px;margin:14px 0}' +
-      '.device-login-slot{width:68px;height:68px;border:2px dashed #b9c9d6;border-radius:10px;text-align:center;overflow:hidden;flex:0 0 auto}' +
+      '.device-login-slot{position:relative;width:68px;height:68px;border:2px dashed #b9c9d6;border-radius:10px;text-align:center;overflow:hidden;flex:0 0 auto}' +
       '.device-login-slot.filled{border-style:solid;border-color:#6fb3e0;background:#f7fbff}' +
+      '.device-login-slot .device-login-letter{font-size:12px;left:4px;top:1px}' +
       '.device-login-slot .device-login-emoji{display:block;font-size:30px;line-height:1.3;margin-top:4px}' +
       '.device-login-slot .device-login-name{display:block;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px}' +
       '.device-login-clear{margin-left:4px}' +
       '.device-login-grid{max-width:520px}' +
       '.device-login-row{display:flex;gap:6px;margin-bottom:6px}' +
-      '.device-login-key.btn{flex:1 1 0;min-width:0;padding:6px 2px;white-space:normal;background:#fff !important;border:1px solid #c8d6e2 !important;color:#333 !important;text-shadow:none}' +
+      '.device-login-key.btn{position:relative;flex:0 0 calc(25% - 4.5px);min-width:0;padding:6px 2px;white-space:normal;background:#fff !important;border:1px solid #c8d6e2 !important;color:#333 !important;text-shadow:none}' +
       '.device-login-key.btn:hover,.device-login-key.btn:focus{background:#eaf3fb !important;border-color:#6fb3e0 !important}' +
+      '.device-login-key .device-login-letter{font-size:15px;left:5px}' +
       '.device-login-key .device-login-emoji{display:block;font-size:30px;line-height:1.2}' +
       '.device-login-key .device-login-name{display:block;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}' +
       '.device-login-confirm{max-width:520px;padding:12px 16px;border:2px solid #6fb3e0;border-radius:10px;background:#f7fbff;font-size:15px}' +
       '.device-login-confirm .btn{margin:0 6px 4px 0}' +
       '@media (max-width:420px){.device-login-slot{width:56px;height:60px}.device-login-slot .device-login-emoji{font-size:24px}' +
       '.device-login-slot .device-login-name{font-size:10px;padding:0}' +
+      '.device-login-icon .device-login-letter{font-size:17px;left:4px}' +
       '.device-login-icon{padding:8px 2px 6px}.device-login-icon .device-login-emoji{font-size:40px}.device-login-icon .device-login-name{font-size:13px}.device-login-icons{gap:6px}}' +
       '</style>').appendTo('head')
 }
@@ -881,8 +886,9 @@ function init_device_login_new($el) {
          .done(function (d) {
              if (my !== gen) return
              $icons.html($.map(d.icons, function (ic) {
-                 return '<div class="device-login-icon"><span class="device-login-emoji">' + adv_esc(ic[0]) +
-                        '</span><span class="device-login-name">' + adv_esc(ic[1]) + '</span></div>'
+                 return '<div class="device-login-icon"><span class="device-login-letter">' + adv_esc(ic[0]) +
+                        '</span><span class="device-login-emoji">' + adv_esc(ic[1]) +
+                        '</span><span class="device-login-name">' + adv_esc(ic[2]) + '</span></div>'
              }).join(''))
              $help.show()
              $renew.show().prop('disabled', false)
@@ -912,7 +918,8 @@ function init_device_login_keyboard($el) {
             var $s = $(this)
             if (n < code.length) {
                 var $k = key(code[n])
-                $s.addClass('filled').html('<span class="device-login-emoji">' + adv_esc($k.find('.device-login-emoji').text()) +
+                $s.addClass('filled').html('<span class="device-login-letter">' + adv_esc($k.data('letter')) +
+                                           '</span><span class="device-login-emoji">' + adv_esc($k.find('.device-login-emoji').text()) +
                                            '</span><span class="device-login-name">' + adv_esc($k.find('.device-login-name').text()) + '</span>')
             } else {
                 $s.removeClass('filled').empty()
@@ -942,7 +949,7 @@ function init_device_login_keyboard($el) {
              if (!d.ok) { reset(); return say(d.error || 'Kód neplatí nebo vypršel.', 'alert-danger') }
              id = d.id
              $confirm.find('.device-login-device').html('Přihlásit <b>' + adv_esc(d.device) + '</b>?')
-             $confirm.find('.device-login-network').text('Stejná síť jako ty: ' + (d.same_network ? 'ano' : 'ne'))
+             $confirm.find('.device-login-network').text('Stejná wifi/síť jako ty: ' + (d.same_network ? 'ano' : 'ne'))
              $confirm.find('.device-login-age').text('Kód vytvořen před ' + d.age + ' s.')
              $confirm.find('button').prop('disabled', false)
              $input.hide()
@@ -961,17 +968,31 @@ function init_device_login_keyboard($el) {
          .fail(function (x) { reset(); say(dl_error(x, fail_text), 'alert-danger') })
     }
 
-    $el.find('.device-login-key').click(function () {
+    function add(i) {
         if (busy || code.length >= 4) return
         say('')
-        code.push(String($(this).data('i')))
+        code.push(String(i))
         render()
         if (code.length === 4) submit()
-    })
-    $el.find('.device-login-clear').click(function () {
+    }
+
+    function erase() {
         if (busy) return
         code.pop()
         render()
+    }
+
+    $el.find('.device-login-key').click(function () { add($(this).data('i')) })
+    $el.find('.device-login-clear').click(erase)
+    $(document).on('keydown', function (e) {
+        if (e.ctrlKey || e.altKey || e.metaKey || $(e.target).is('input, textarea, select, [contenteditable]')) return
+        if (!$input.is(':visible')) return
+        if (e.key === 'Backspace') { e.preventDefault(); return erase() }
+        if (!e.key || e.key.length !== 1) return
+        var $k = $el.find('.device-login-key[data-letter="' + e.key.toUpperCase().replace(/[^A-Z]/g, '') + '"]')
+        if ($k.length !== 1) return
+        e.preventDefault()
+        add($k.data('i'))
     })
     $el.find('.device-login-approve').click(function () {
         answer(urls.confirm, 'Hotovo, na druhém zařízení klikni Ano.', 'Potvrzení se nepovedlo, kód mezitím vypršel nebo byl zrušen.', 'alert-success')

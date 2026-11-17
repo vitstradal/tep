@@ -63,7 +63,10 @@ class DeviceLoginControllerTest < ActionController::TestCase
     assert token.present?
     assert_operator token.length, :>=, 40
     assert_equal 4, json['icons'].size
-    json['icons'].each { |icon| assert_includes DeviceLogin::ICONS, icon }
+    json['icons'].each do |icon|
+      assert_equal 3, icon.size
+      assert_includes DeviceLogin::ICONS, icon
+    end
     assert_equal 300, json['expires_in']
     rec = DeviceLogin.order(:id).last
     assert_equal 'pending', rec.state
@@ -493,13 +496,21 @@ class DeviceLoginControllerTest < ActionController::TestCase
     assert_redirected_to new_user_session_path(next: '/prihlasit-zarizeni')
   end
 
-  test "klavesnice shows 24 icons, 4 slots and endpoint urls" do
+  test "klavesnice shows 22 lettered icons, 4 slots and endpoint urls" do
     sign_in user('u@example.com')
     get :klavesnice
     assert_response :success
-    assert_select '#device-login-keyboard [data-i]', 24
-    DeviceLogin::ICONS.each_with_index do |(emoji, name), i|
-      assert_select "#device-login-keyboard [data-i='#{i}']", text: /#{emoji}.*#{name}/m
+    assert_select '#device-login-keyboard [data-i]', 22
+    assert_select '#device-login-keyboard [data-letter]', 22
+    assert_equal (0..21).map(&:to_s), css_select('#device-login-keyboard .device-login-key').map { |b| b['data-i'] }
+    assert_equal DeviceLogin::ICONS.map(&:first),
+                 css_select('#device-login-keyboard .device-login-key').map { |b| b['data-letter'] }
+    DeviceLogin::ICONS.each_with_index do |(letter, emoji, name), i|
+      assert_select "#device-login-keyboard [data-i='#{i}'][data-letter='#{letter}']" do
+        assert_select '.device-login-letter', letter
+        assert_select '.device-login-emoji', emoji
+        assert_select '.device-login-name', name
+      end
     end
     assert_select '#device-login-keyboard .device-login-slot', 4
     assert_select '#device-login-keyboard .device-login-clear', 'Smazat'
@@ -514,7 +525,7 @@ class DeviceLoginControllerTest < ActionController::TestCase
     sign_in user('o@example.com', roles: [:org])
     get :klavesnice
     assert_response :success
-    assert_select '#device-login-keyboard [data-i]', 24
+    assert_select '#device-login-keyboard [data-i]', 22
   end
 
   test "klavesnice works in view as anon" do
@@ -523,7 +534,7 @@ class DeviceLoginControllerTest < ActionController::TestCase
     session[:view_as] = 'anon'
     get :klavesnice
     assert_response :success
-    assert_select '#device-login-keyboard [data-i]', 24
+    assert_select '#device-login-keyboard [data-i]', 22
   end
 
   test "kod finds the pending record and describes the device" do
@@ -558,7 +569,7 @@ class DeviceLoginControllerTest < ActionController::TestCase
     u = user('u@example.com')
     sign_in u
     rec = pending
-    wrong = rec.code.split('-').map(&:to_i).tap { |c| c[0] = (c[0] + 1) % 24 }
+    wrong = rec.code.split('-').map(&:to_i).tap { |c| c[0] = (c[0] + 1) % DeviceLogin::ICONS.size }
     post :kod, params: { code: wrong }
     assert_response :success
     assert_equal({ 'ok' => false, 'error' => 'Kód neplatí nebo vypršel.' }, json)
@@ -567,17 +578,27 @@ class DeviceLoginControllerTest < ActionController::TestCase
 
   test "kod rejects malformed codes without error" do
     sign_in user('u@example.com')
-    [%w[1 2 3], %w[1 2 3 x], %w[1 2 3 24], %w[1 2 3 -1], '1-2-3-4'].each do |code|
+    [%w[1 2 3], %w[1 2 3 x], %w[1 2 3 22], %w[1 2 3 -1], '1-2-3-4'].each do |code|
       post :kod, params: { code: code }
       assert_response :success
       assert_equal false, json['ok'], code.inspect
     end
   end
 
+  test "kod rejects index 22 even when a record has that code" do
+    sign_in user('u@example.com')
+    rec = pending
+    rec.update_columns(code: '1-2-3-22')
+    post :kod, params: { code: %w[1 2 3 22] }
+    assert_response :success
+    assert_equal({ 'ok' => false, 'error' => 'Kód neplatí nebo vypršel.' }, json)
+    assert_nil session[:device_login_kod_id]
+  end
+
   test "kod sixth wrong code within a minute is throttled even when right" do
     sign_in user('u@example.com')
     rec = pending
-    wrong = rec.code.split('-').map(&:to_i).tap { |c| c[0] = (c[0] + 1) % 24 }
+    wrong = rec.code.split('-').map(&:to_i).tap { |c| c[0] = (c[0] + 1) % DeviceLogin::ICONS.size }
     5.times do
       post :kod, params: { code: wrong }
       assert_response :success
