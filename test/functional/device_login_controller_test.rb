@@ -571,6 +571,19 @@ class DeviceLoginControllerTest < ActionController::TestCase
     assert_equal rec.id, session[:device_login_kod_id]
   end
 
+  test "kod from the same network whose approval loses a race fails without binding the session" do
+    sign_in user('u@example.com')
+    rec = pending
+    @request.remote_addr = '10.0.0.1'
+    loser = DeviceLogin.find(rec.id)
+    loser.stub(:approve!, false) do
+      DeviceLogin.stub(:find_pending, loser) { post :kod, params: { code: code_of(rec) } }
+    end
+    assert_equal({ 'ok' => false, 'error' => 'Kód neplatí nebo vypršel.' }, json)
+    assert_nil session[:device_login_kod_id]
+    assert_equal 'pending', rec.reload.state
+  end
+
   test "kod from the same network in view as anon approves as the real user" do
     morg = user('m@example.com', roles: %i[org morg])
     sign_in morg
@@ -885,18 +898,23 @@ class DeviceLoginControllerTest < ActionController::TestCase
     assert_equal 'no-store', response.headers['Cache-Control']
   end
 
-  test "stav_moje of another user's login is none without the session key" do
-    other = user('other@example.com')
-    sign_in other
-    rec = pending
-    entered(rec)
-    post :potvrdit, params: { id: rec.id }
-    assert_equal({ 'ok' => true }, json)
-    sign_out other
-    session.delete(:device_login_kod_id)
-    sign_in user('u@example.com')
+  test "stav_moje follows only the record of its own session key, never another user's" do
+    a = user('a@example.com')
+    rec_a = pending('tok-a')
+    rec_b = pending('tok-b')
+    assert rec_a.approve!(a)
+    sign_in user('b@example.com')
+    entered(rec_b)
     get :stav_moje
-    assert_equal({ 'state' => 'none' }, json)
+    assert_equal({ 'state' => 'pending' }, json)
+    assert rec_a.finish!('tok-a')
+    get :stav_moje
+    assert_equal({ 'state' => 'pending' }, json)
+    assert_equal rec_b.id, session[:device_login_kod_id]
+    assert rec_b.cancel!
+    get :stav_moje
+    assert_equal({ 'state' => 'cancelled' }, json)
+    assert_equal 'done', rec_a.reload.state
   end
 
   test "stav_moje with a key of a deleted record is none and drops the key" do

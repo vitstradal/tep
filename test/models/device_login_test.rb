@@ -180,6 +180,21 @@ class DeviceLoginTest < ActiveSupport::TestCase
     end
   end
 
+  test 'cancel! by a user only touches unowned or own records' do
+    a = make_user('a@example.com')
+    b = make_user('b@example.com')
+    approved = create(token: 'x').tap { |r| assert r.approve!(b) }
+    assert_not approved.cancel!(from: %w[pending approved], by: a)
+    assert_equal 'approved', approved.reload.state
+    assert_equal b.id, approved.user_id
+    assert approved.cancel!(from: %w[pending approved], by: b)
+    assert_equal 'cancelled', approved.reload.state
+    pending = create(token: 'y')
+    assert pending.cancel!(from: %w[pending approved], by: a)
+    assert_equal 'cancelled', pending.reload.state
+    assert_nil pending.user_id
+  end
+
   test 'cancel!' do
     dl = create
     assert dl.cancel!

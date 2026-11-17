@@ -79,8 +79,10 @@ class DeviceLogin < ActiveRecord::Base
     transition(scope, state: 'done', updated_at: now)
   end
 
-  def cancel!(from: %w[pending approved])
-    transition(self.class.where(state: from), state: 'cancelled', updated_at: Time.current)
+  def cancel!(from: %w[pending approved], by: nil)
+    scope = self.class.where(state: from)
+    scope = scope.where(user_id: [nil, by.id]) if by
+    transition(scope, state: 'cancelled', updated_at: Time.current)
   end
 
   def device_label

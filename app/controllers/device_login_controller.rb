@@ -102,7 +102,7 @@ class DeviceLoginController < ApplicationController
 
   def zrusit
     record = _entered_record
-    ok = !!record && [nil, real_user.id].include?(record.user_id) && record.cancel!(from: %w[pending approved])
+    ok = !!record&.cancel!(from: %w[pending approved], by: real_user)
     session.delete(:device_login_kod_id) if ok
     render json: { ok: ok }
   end
