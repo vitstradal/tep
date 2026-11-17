@@ -517,7 +517,10 @@ class DeviceLoginControllerTest < ActionController::TestCase
       end
     end
     assert_select '#device-login-keyboard .device-login-slot', 4
-    assert_select '#device-login-keyboard .device-login-clear', 'Smazat'
+    assert_select '#device-login-keyboard .device-login-clear[title=?]', 'Smazat poslední obrázek' do
+      assert_select 'svg.device-login-backspace[aria-hidden=true]', 1
+    end
+    assert_select '#device-login-keyboard .device-login-clear', text: 'Smazat'
     assert_select '#device-login-keyboard[data-code-url=?]', '/device_login/approve/code'
     assert_select '#device-login-keyboard[data-confirm-url=?]', '/device_login/approve/confirm'
     assert_select '#device-login-keyboard[data-cancel-url=?]', '/device_login/approve/cancel'

@@ -749,7 +749,7 @@ function dl_css() {
       '.device-login-slot .device-login-letter{font-size:12px;left:4px;top:1px}' +
       '.device-login-slot .device-login-emoji{display:block;font-size:30px;line-height:1.3;margin-top:4px}' +
       '.device-login-slot .device-login-name{display:block;font-size:11px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;padding:0 2px}' +
-      '.device-login-clear{margin-left:4px}' +
+      '.device-login-clear{margin-left:4px}.device-login-backspace{width:1.4em;height:1.05em;vertical-align:-0.15em}' +
       '.device-login-grid{max-width:520px}' +
       '.device-login-row{display:flex;gap:6px;margin-bottom:6px}' +
       '.device-login-key.btn{position:relative;flex:0 0 calc(25% - 4.5px);min-width:0;padding:6px 2px;white-space:normal;background:#fff !important;border:1px solid #c8d6e2 !important;color:#333 !important;text-shadow:none}' +
