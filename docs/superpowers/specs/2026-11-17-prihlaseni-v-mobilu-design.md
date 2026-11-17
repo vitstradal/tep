@@ -215,5 +215,7 @@ Tyto body mají přednost před starším textem výše.
      `cancelled`/vypršení odpovídající hlášku.
 3. **Odkaz a QR na přihlášené straně.** Stránka „Přihlásit na jiném
    zařízení“ ukáže absolutní URL `/prihlasit-zarizenim` a QR kód téhož
-   odkazu (bez tajemství). QR jako SVG na serveru gemem `rqrcode`
-   (schválená nová závislost).
+   odkazu (bez tajemství). QR kreslí v prohlížeči knihovna
+   qrcode-generator (MIT) uložená v `public/javascripts/` — ne gem, protože
+   `make release` na serveru nespouští `bundle install` a chybějící gem by
+   shodil celý tep.
