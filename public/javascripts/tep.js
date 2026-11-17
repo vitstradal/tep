@@ -245,6 +245,7 @@ var colorbox_params = {
       $('#device-login-new').each(function() { init_device_login_new($(this)) })
       $('#device-login-keyboard').each(function() { init_device_login_keyboard($(this)) })
       init_friend_widget()
+      init_solution_scan()
       $('#friend-widget-resend').click(function (ev) {
           ev.preventDefault()
           $.post('/friend/resend', {uuid: friend_get().uuid, authenticity_token: friend_csrf()},
@@ -2155,4 +2156,448 @@ function init_school_city_filter() {
         city.val(known.length ? known.val() : 'jine')
         if (known.length) rebuild(known.val(), 'jina')
     }
+}
+
+// ---------------------------------------------------------------------------
+// skenování řešení fotoaparátem (#solution-scan-modal, public/javascripts/scanner.js)
+
+var SCAN_MAX_PAGES = 20
+var SCAN_LIVE_MS = 200
+var SCAN_LIVE_SIZE = 640
+var SCAN_VIEW_SIZE = 1000
+var SCAN_PHOTO_TIMEOUT_MS = 8000
+var SCAN_JPEG_QUALITY = 0.85
+var SCAN_TXT = {
+    loading: 'Připravuji skener…',
+    load_failed: 'Skener se nepodařilo načíst. Zkus to znovu, nebo nahraj fotky tlačítkem vedle.',
+    no_camera: 'Bez přístupu ke kameře skenovat nejde. Povol kameru v prohlížeči, nebo nahraj fotky tlačítkem vedle.',
+    not_found: 'List nenalezen – použije se celý snímek, rohy můžeš posunout.',
+    too_many: 'Víc než 20 stránek odeslat nejde.',
+    no_datatransfer: 'Tenhle prohlížeč neumí naskenované stránky odeslat. Nahraj fotky tlačítkem vedle.',
+    sending: 'Odesílám…'
+}
+var scan_libs = null
+var scan_state = null
+
+function scan_css() {
+    if ($('#solution-scan-css').length) return
+    $('<style id="solution-scan-css">' +
+      '#solution-scan-modal .modal-body{padding:10px}' +
+      '.solution-scan-camera{position:relative;display:inline-block;max-width:100%;vertical-align:top;background:#000}' +
+      '.solution-scan-camera video{display:block;max-width:100%;max-height:60vh}' +
+      '.solution-scan-overlay{position:absolute;left:0;top:0;width:100%;height:100%;pointer-events:none}' +
+      '.solution-scan-shot{margin-top:10px}' +
+      '.solution-scan-preview-row{display:flex;gap:10px;justify-content:center;align-items:flex-start}' +
+      '.solution-scan-preview-row>div{flex:1 1 0;min-width:0}' +
+      '.solution-scan-preview-row canvas{display:block;max-width:100%;max-height:60vh;margin:0 auto;border:1px solid #ccc}' +
+      '.solution-scan-frame{touch-action:none;cursor:crosshair}' +
+      '@media (max-width:767px){.solution-scan-preview-row.wide{flex-wrap:wrap}.solution-scan-preview-row.wide>div:first-child{flex-basis:100%}' +
+      '.solution-scan-preview-row.wide .solution-scan-result{max-height:50vh}}' +
+      '.solution-scan-preview-buttons{margin-top:10px}.solution-scan-preview-buttons .btn{margin:0 4px 6px}' +
+      '.solution-scan-pages{display:flex;flex-wrap:wrap;gap:8px;margin-top:10px}.solution-scan-pages:empty{display:none}' +
+      '.solution-scan-page{position:relative;width:72px}' +
+      '.solution-scan-page img{display:block;width:100%;border:1px solid #bbb}' +
+      '.solution-scan-page-no{position:absolute;left:3px;bottom:2px;font-size:12px;font-weight:bold;background:rgba(255,255,255,.85);padding:0 4px;border-radius:3px}' +
+      '.solution-scan-page-remove{position:absolute;right:2px;top:2px;padding:0 6px;line-height:20px;border-radius:50%}' +
+      '</style>').appendTo('head')
+}
+
+function init_solution_scan() {
+    var $modal = $('#solution-scan-modal')
+    if (!$modal.length) return
+    if (!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)) return
+    scan_css()
+    $('.solution-scan').removeClass('hide').click(function () { scan_open($modal, $(this)) })
+    $modal.on('hide.bs.modal', function () { scan_close() })
+    $modal.find('.solution-scan-shot').click(function () { scan_shoot(scan_state) })
+    $modal.find('video').on('loadeddata playing', function () { if (scan_state) scan_update_buttons(scan_state) })
+    $modal.find('.solution-scan-use').click(function () { scan_use(scan_state) })
+    $modal.find('.solution-scan-retry').click(function () { scan_retry(scan_state) })
+    $modal.find('.solution-scan-rotate').click(function () { scan_rotate(scan_state) })
+    $modal.find('.solution-scan-send').click(function () { scan_send(scan_state) })
+    $modal.find('.solution-scan-pages').on('click', '.solution-scan-page-remove', function () {
+        scan_remove_page(scan_state, $(this).closest('.solution-scan-page').index())
+    })
+    scan_init_drag($modal.find('.solution-scan-frame')[0])
+}
+
+function scan_load_script(src) {
+    return new Promise(function (resolve, reject) {
+        var el = document.createElement('script')
+        el.src = src
+        el.onload = function () { resolve() }
+        el.onerror = function () { reject(new Error('nelze načíst ' + src)) }
+        document.head.appendChild(el)
+    })
+}
+
+// OpenCV modul je thenable (resolve(cv) by se zacyklil), proto se předává jako {cv: cv}.
+function scan_load_libs(opencv_src, scanner_src) {
+    if (!scan_libs) {
+        scan_libs = Promise.all([scan_load_script(opencv_src), scan_load_script(scanner_src)]).then(function () {
+            return new Promise(function (resolve) {
+                var cv = window.cv
+                if (cv.Mat) resolve({cv: cv})
+                else if (typeof cv.then === 'function') cv.then(function (ready) { resolve({cv: ready}) })
+                else cv.onRuntimeInitialized = function () { resolve({cv: cv}) }
+            })
+        })
+        scan_libs.catch(function () { scan_libs = null })
+    }
+    return scan_libs
+}
+
+function scan_message(s, text, kind) {
+    s.$modal.find('.solution-scan-message')
+        .removeClass('hide alert-info alert-warning alert-danger')
+        .addClass(text ? 'alert-' + (kind || 'info') : 'hide')
+        .text(text || '')
+}
+
+function scan_show(s, part) {
+    s.$modal.find('.solution-scan-live').toggleClass('hide', part !== 'live')
+    s.$modal.find('.solution-scan-preview').toggleClass('hide', part !== 'preview')
+}
+
+function scan_open($modal, $btn) {
+    scan_close()
+    var s = scan_state = {
+        $modal: $modal, form: $($btn.data('form'))[0], pages: [], stream: null, cv: null,
+        live: false, live_timer: null, live_canvas: document.createElement('canvas'), live_prev: null, live_stable: 0,
+        frame: null, frame_view: null, corners: null, rotated: false, busy: false, closed: false
+    }
+    s.video = $modal.find('video')[0]
+    $modal.find('.modal-title').text('Skenovat řešení: ' + $btn.data('title'))
+    scan_show(s, null)
+    scan_render_pages(s)
+    scan_message(s, SCAN_TXT.loading)
+    $modal.modal('show')
+    var stage = 'libs'
+    scan_load_libs($btn.data('opencv'), $btn.data('scanner')).then(function (libs) {
+        if (s.closed) return
+        s.cv = libs.cv
+        stage = 'camera'
+        return navigator.mediaDevices.getUserMedia({
+            audio: false,
+            video: {facingMode: 'environment', width: {ideal: 3840}, height: {ideal: 2160}}
+        }).then(function (stream) {
+            if (s.closed) return scan_stop_stream(stream)
+            s.stream = stream
+            s.video.srcObject = stream
+            var played = s.video.play()
+            if (played && played.catch) played.catch(function () {})
+            scan_message(s, '')
+            scan_to_live(s)
+        })
+    }).catch(function (err) {
+        if (s.closed) return
+        console.log('skener:', err)
+        scan_message(s, stage === 'libs' ? SCAN_TXT.load_failed : SCAN_TXT.no_camera, 'danger')
+    })
+}
+
+function scan_stop_stream(stream) {
+    if (stream) stream.getTracks().forEach(function (t) { t.stop() })
+}
+
+function scan_close() {
+    var s = scan_state
+    if (!s || s.closed) return
+    s.closed = true
+    scan_stop_live(s)
+    scan_stop_stream(s.stream)
+    s.video.srcObject = null
+    scan_free_frame(s)
+    s.pages.forEach(function (p) { URL.revokeObjectURL(p.url) })
+    s.pages = []
+    scan_render_pages(s)
+}
+
+function scan_free_frame(s) {
+    if (s.frame) s.frame.delete()
+    s.frame = null
+    s.frame_view = null
+    s.corners = null
+}
+
+function scan_to_live(s) {
+    scan_free_frame(s)
+    scan_show(s, 'live')
+    scan_update_buttons(s)
+    s.live = true
+    s.live_prev = null
+    s.live_stable = 0
+    scan_live_tick(s)
+}
+
+function scan_stop_live(s) {
+    s.live = false
+    clearTimeout(s.live_timer)
+    s.live_timer = null
+}
+
+function scan_live_tick(s) {
+    if (!s.live || s.closed) return
+    var v = s.video, overlay = s.$modal.find('.solution-scan-overlay')[0]
+    if (v.readyState >= 2 && v.videoWidth) {
+        var scale = Math.min(1, SCAN_LIVE_SIZE / Math.max(v.videoWidth, v.videoHeight))
+        var w = Math.round(v.videoWidth * scale), h = Math.round(v.videoHeight * scale)
+        var c = s.live_canvas
+        if (c.width !== w || c.height !== h) { c.width = w; c.height = h }
+        var ctx = c.getContext('2d', {willReadFrequently: true})
+        ctx.drawImage(v, 0, 0, w, h)
+        var corners = null, mat = s.cv.matFromImageData(ctx.getImageData(0, 0, w, h))
+        try { corners = TepScanner.findSheet(s.cv, mat) } catch (e) { console.log('skener:', e) } finally { mat.delete() }
+        scan_draw_live(s, overlay, w, h, corners)
+    }
+    s.live_timer = setTimeout(function () { scan_live_tick(s) }, SCAN_LIVE_MS)
+}
+
+function scan_draw_live(s, overlay, w, h, corners) {
+    if (overlay.width !== w || overlay.height !== h) { overlay.width = w; overlay.height = h }
+    var ctx = overlay.getContext('2d')
+    ctx.clearRect(0, 0, w, h)
+    var prev = s.live_prev, tolerance = 0.03 * Math.max(w, h)
+    var steady = corners && prev && corners.every(function (p, i) {
+        return Math.hypot(p[0] - prev[i][0], p[1] - prev[i][1]) < tolerance
+    })
+    s.live_stable = steady ? s.live_stable + 1 : 0
+    s.live_prev = corners
+    if (!corners) return
+    scan_path(ctx, corners)
+    ctx.lineWidth = Math.max(3, w / 160)
+    ctx.strokeStyle = s.live_stable >= 2 ? '#3fbf3f' : '#f0ad4e'
+    ctx.stroke()
+}
+
+function scan_path(ctx, corners) {
+    ctx.beginPath()
+    corners.forEach(function (p, i) { if (i) ctx.lineTo(p[0], p[1]); else ctx.moveTo(p[0], p[1]) })
+    ctx.closePath()
+}
+
+function scan_update_buttons(s) {
+    var n = s.pages.length, $m = s.$modal
+    var word = n === 1 ? 'stránku' : (n >= 2 && n <= 4 ? 'stránky' : 'stránek')
+    $m.find('.solution-scan-send').text('Odeslat ' + n + ' ' + word).prop('disabled', s.busy || n === 0)
+    $m.find('.solution-scan-shot').prop('disabled', s.busy || n >= SCAN_MAX_PAGES || !s.video.videoWidth)
+    $m.find('.solution-scan-use, .solution-scan-retry, .solution-scan-rotate').prop('disabled', s.busy)
+}
+
+function scan_set_busy(s, busy) {
+    s.busy = busy
+    scan_update_buttons(s)
+}
+
+function scan_with_timeout(promise, ms) {
+    return new Promise(function (resolve, reject) {
+        var timer = setTimeout(function () { reject(new Error('timeout')) }, ms)
+        promise.then(function (x) { clearTimeout(timer); resolve(x) },
+                     function (e) { clearTimeout(timer); reject(e) })
+    })
+}
+
+// Snímek v plném rozlišení jako canvas: ImageCapture.takePhoto(), jinak aktuální snímek videa.
+function scan_grab(s) {
+    function from_source(src, w, h) {
+        var c = document.createElement('canvas')
+        c.width = w
+        c.height = h
+        c.getContext('2d').drawImage(src, 0, 0, w, h)
+        return c
+    }
+    function from_video() { return from_source(s.video, s.video.videoWidth, s.video.videoHeight) }
+    var track = s.stream && s.stream.getVideoTracks()[0]
+    if (!window.ImageCapture || !window.createImageBitmap || !track) return Promise.resolve(from_video())
+    var photo
+    try { photo = new ImageCapture(track).takePhoto() } catch (e) { return Promise.resolve(from_video()) }
+    return scan_with_timeout(photo, SCAN_PHOTO_TIMEOUT_MS).then(function (blob) {
+        return createImageBitmap(blob)
+    }).then(function (bmp) {
+        var c = from_source(bmp, bmp.width, bmp.height)
+        if (bmp.close) bmp.close()
+        return c
+    }).catch(function (e) {
+        console.log('skener: takePhoto', e)
+        return from_video()
+    })
+}
+
+function scan_shoot(s) {
+    if (!s || s.busy || !s.live || !s.video.videoWidth || s.pages.length >= SCAN_MAX_PAGES) return
+    scan_set_busy(s, true)
+    scan_grab(s).then(function (canvas) {
+        if (s.closed) return
+        scan_stop_live(s)
+        var cv = s.cv
+        s.frame = cv.matFromImageData(canvas.getContext('2d').getImageData(0, 0, canvas.width, canvas.height))
+        var scale = Math.min(1, SCAN_VIEW_SIZE / Math.max(canvas.width, canvas.height))
+        var view = document.createElement('canvas')
+        view.width = Math.round(canvas.width * scale)
+        view.height = Math.round(canvas.height * scale)
+        view.getContext('2d').drawImage(canvas, 0, 0, view.width, view.height)
+        canvas.width = canvas.height = 0
+        s.frame_view = view
+        s.$modal.find('.solution-scan-preview-row').toggleClass('wide', view.width > view.height)
+        s.frame_scale = scale
+        s.rotated = false
+        s.corners = TepScanner.findSheet(cv, s.frame)
+        if (s.corners) scan_message(s, '')
+        else {
+            s.corners = TepScanner.fullFrame(s.frame.cols, s.frame.rows)
+            scan_message(s, SCAN_TXT.not_found, 'warning')
+        }
+        scan_show(s, 'preview')
+        scan_draw_frame(s)
+        scan_process(s)
+        scan_set_busy(s, false)
+    }).catch(function (e) {
+        console.log('skener:', e)
+        scan_set_busy(s, false)
+    })
+}
+
+function scan_draw_frame(s) {
+    var canvas = s.$modal.find('.solution-scan-frame')[0], view = s.frame_view
+    if (!view) return
+    if (canvas.width !== view.width || canvas.height !== view.height) {
+        canvas.width = view.width
+        canvas.height = view.height
+    }
+    var ctx = canvas.getContext('2d'), k = s.frame_scale
+    var pts = s.corners.map(function (p) { return [p[0] * k, p[1] * k] })
+    var px = canvas.width / (canvas.getBoundingClientRect().width || canvas.width)
+    ctx.drawImage(view, 0, 0)
+    scan_path(ctx, pts)
+    ctx.lineWidth = 2 * px
+    ctx.strokeStyle = '#3fbf3f'
+    ctx.stroke()
+    pts.forEach(function (p) {
+        ctx.beginPath()
+        ctx.arc(p[0], p[1], 12 * px, 0, 2 * Math.PI)
+        ctx.fillStyle = 'rgba(63,191,63,0.35)'
+        ctx.fill()
+        ctx.stroke()
+    })
+}
+
+function scan_process(s) {
+    var cv = s.cv, page = TepScanner.scanPage(cv, s.frame, s.corners), rgba = new cv.Mat()
+    try {
+        if (s.rotated) cv.rotate(page, page, cv.ROTATE_180)
+        cv.cvtColor(page, rgba, cv.COLOR_GRAY2RGBA)
+        var canvas = s.$modal.find('.solution-scan-result')[0]
+        canvas.width = rgba.cols
+        canvas.height = rgba.rows
+        canvas.getContext('2d').putImageData(new ImageData(new Uint8ClampedArray(rgba.data), rgba.cols, rgba.rows), 0, 0)
+    } finally {
+        page.delete()
+        rgba.delete()
+    }
+}
+
+// Tažení rohů v náhledu (Pointer Events: myš i dotyk), po puštění se stránka znovu zpracuje.
+function scan_init_drag(canvas) {
+    var drag = null
+    function point(ev) {
+        var s = scan_state, r = canvas.getBoundingClientRect(), k = s.frame_scale
+        return [(ev.clientX - r.left) * canvas.width / r.width / k, (ev.clientY - r.top) * canvas.height / r.height / k]
+    }
+    canvas.addEventListener('pointerdown', function (ev) {
+        var s = scan_state
+        if (!s || !s.corners || s.busy) return
+        var p = point(ev), r = canvas.getBoundingClientRect()
+        var reach = 40 * canvas.width / r.width / s.frame_scale, best = -1, best_d = Infinity
+        s.corners.forEach(function (c, i) {
+            var d = Math.hypot(c[0] - p[0], c[1] - p[1])
+            if (d < best_d) { best_d = d; best = i }
+        })
+        if (best_d > reach) return
+        drag = best
+        canvas.setPointerCapture(ev.pointerId)
+        ev.preventDefault()
+    })
+    canvas.addEventListener('pointermove', function (ev) {
+        var s = scan_state
+        if (drag === null || !s || !s.frame) return
+        s.corners[drag] = TepScanner.clampCorners([point(ev)], s.frame.cols, s.frame.rows)[0]
+        scan_draw_frame(s)
+        ev.preventDefault()
+    })
+    function end() {
+        var s = scan_state
+        if (drag === null) return
+        drag = null
+        if (!s || !s.frame) return
+        scan_message(s, '')
+        scan_process(s)
+    }
+    canvas.addEventListener('pointerup', end)
+    canvas.addEventListener('pointercancel', end)
+}
+
+function scan_rotate(s) {
+    if (!s || !s.frame || s.busy) return
+    s.rotated = !s.rotated
+    scan_process(s)
+}
+
+function scan_retry(s) {
+    if (!s || s.busy) return
+    scan_message(s, '')
+    scan_to_live(s)
+}
+
+function scan_use(s) {
+    if (!s || !s.frame || s.busy) return
+    if (s.pages.length >= SCAN_MAX_PAGES) return scan_message(s, SCAN_TXT.too_many, 'warning')
+    scan_set_busy(s, true)
+    s.$modal.find('.solution-scan-result')[0].toBlob(function (blob) {
+        scan_set_busy(s, false)
+        if (s.closed) return
+        if (!blob) return console.log('skener: JPEG se nepovedl')
+        s.pages.push({blob: blob, url: URL.createObjectURL(blob)})
+        scan_render_pages(s)
+        scan_message(s, s.pages.length >= SCAN_MAX_PAGES ? SCAN_TXT.too_many : '', 'warning')
+        scan_to_live(s)
+    }, 'image/jpeg', SCAN_JPEG_QUALITY)
+}
+
+function scan_remove_page(s, index) {
+    if (!s || s.busy || index < 0 || index >= s.pages.length) return
+    URL.revokeObjectURL(s.pages[index].url)
+    s.pages.splice(index, 1)
+    if (s.pages.length < SCAN_MAX_PAGES && s.$modal.find('.solution-scan-message').text() === SCAN_TXT.too_many) scan_message(s, '')
+    scan_render_pages(s)
+}
+
+function scan_render_pages(s) {
+    var $list = s.$modal.find('.solution-scan-pages').empty()
+    s.pages.forEach(function (p, i) {
+        $('<div class="solution-scan-page">')
+            .append($('<img>').attr({src: p.url, alt: 'strana ' + (i + 1)}))
+            .append($('<span class="solution-scan-page-no">').text(i + 1))
+            .append($('<button type="button" class="btn btn-xs btn-danger solution-scan-page-remove" title="Smazat stránku">✕</button>'))
+            .appendTo($list)
+    })
+    scan_update_buttons(s)
+}
+
+function scan_send(s) {
+    if (!s || s.busy || !s.pages.length) return
+    if (s.pages.length > SCAN_MAX_PAGES) return scan_message(s, SCAN_TXT.too_many, 'warning')
+    var dt = null
+    try { dt = new DataTransfer() } catch (e) { dt = null }
+    var input = s.form && s.form.querySelector('input[type=file]')
+    if (!dt || !dt.items || !input) return scan_message(s, SCAN_TXT.no_datatransfer, 'danger')
+    s.pages.forEach(function (p, i) {
+        dt.items.add(new File([p.blob], 'strana-' + (i + 1) + '.jpg', {type: 'image/jpeg'}))
+    })
+    input.files = dt.files
+    if (!input.files || input.files.length !== s.pages.length) return scan_message(s, SCAN_TXT.no_datatransfer, 'danger')
+    scan_set_busy(s, true)
+    scan_stop_live(s)
+    scan_stop_stream(s.stream)
+    scan_message(s, SCAN_TXT.sending)
+    s.form.submit()
 }

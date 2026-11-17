@@ -84,6 +84,9 @@
                                    'max-size' => max_size  %>
                          </div>
                          <%= f.submit :class => 'btn btn-primary', :value => '<' %>
+                         <button type="button" class="btn btn-default solution-scan hide" title="Skenovat fotoaparátem"
+                                 data-form="#<%= dom_id(sol, :edit) %>" data-title="<%= p.title %>"
+                                 data-opencv="/javascripts/opencv-4.13.0.js" data-scanner="/javascripts/scanner.js?v=1"><i class="fa fa-camera"></i></button>
                 <% end %>
              <% end %>
          </td>
@@ -153,6 +156,47 @@
   <% end %>
   </table>
 </div>
+
+<% if show_nahrat || show_nahrat_admin %>
+<div class="modal fade" id="solution-scan-modal" tabindex="-1" role="dialog" aria-labelledby="solution-scan-title" aria-hidden="true" data-backdrop="static">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content">
+      <div class="modal-header">
+        <button type="button" class="close" data-dismiss="modal" aria-label="Zavřít"><span aria-hidden="true">&times;</span></button>
+        <h4 class="modal-title" id="solution-scan-title">Skenovat řešení</h4>
+      </div>
+      <div class="modal-body">
+        <div class="solution-scan-message alert hide"></div>
+        <div class="solution-scan-live text-center hide">
+          <div class="solution-scan-camera">
+            <video autoplay muted playsinline></video>
+            <canvas class="solution-scan-overlay"></canvas>
+          </div>
+          <div>
+            <button type="button" class="btn btn-primary solution-scan-shot"><i class="fa fa-camera"></i> Skenovat stránku</button>
+          </div>
+        </div>
+        <div class="solution-scan-preview hide">
+          <div class="solution-scan-preview-row">
+            <div><canvas class="solution-scan-frame"></canvas></div>
+            <div><canvas class="solution-scan-result"></canvas></div>
+          </div>
+          <div class="solution-scan-preview-buttons text-center">
+            <button type="button" class="btn btn-default solution-scan-rotate"><i class="fa fa-repeat"></i> Otočit o 180°</button>
+            <button type="button" class="btn btn-default solution-scan-retry"><i class="fa fa-undo"></i> Znovu</button>
+            <button type="button" class="btn btn-primary solution-scan-use"><i class="fa fa-check"></i> Použít</button>
+          </div>
+        </div>
+        <div class="solution-scan-pages"></div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-default" data-dismiss="modal">Zrušit</button>
+        <button type="button" class="btn btn-success solution-scan-send" disabled>Odeslat 0 stránek</button>
+      </div>
+    </div>
+  </div>
+</div>
+<% end %>
 
 <% if current_user.admin? %>
 <b>Legenda</b>:
