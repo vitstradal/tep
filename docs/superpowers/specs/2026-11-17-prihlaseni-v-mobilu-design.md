@@ -10,7 +10,7 @@ Stejný princip jako přihlášení televize k Netflixu/YouTube.
 ## Cíle a ne-cíle
 
 - Cíl: nové zařízení ukáže 4 ikony, uživatel je zadá na už přihlášeném
-  zařízení a nové zařízení se přihlásí.
+  zařízení a nové zařízení se přihlásí (do zavření prohlížeče).
 - Cíl: jednoduchost. Uživatel vědomě akceptuje zbytková rizika níže.
 - Ne-cíl: QR kód, seznam přihlášených zařízení, odhlášení na dálku,
   nativní aplikace, websockety.
@@ -54,9 +54,8 @@ po kliknutí ukáže.
    tlačítkem Přihlásit) odkaz „Přihlásit pomocí jiného zařízení“ → `/prihlasit-zarizenim`. Vytvoří záznam a ukáže
    4 ikony s názvy (velké, dobře čitelné) a text „Zadej tyto 4 obrázky na
    zařízení, kde jsi přihlášený, v menu „Přihlásit na jiném zařízení“.“
-   Odpočet platnosti, „Nový kód“. Zaškrtávátko „Zůstat přihlášený“ —
-   výchozí zapnuto pro mobilní prohlížeč, vypnuto pro počítač (sdílené
-   počítače).
+   Odpočet platnosti, „Nový kód“. Odkaz přenese `next` / uloženou
+   adresu (Devise `stored_location_for`), aby se po přihlášení šlo zpět.
 2. **Přihlášené zařízení**: v rozbalovacím menu pod uživatelem (e-mail
    v horní liště) položka „Přihlásit na jiném zařízení“ → `/prihlasit-zarizeni`. Klávesnice 24 ikon (mřížka
    4×6, ikona + název), 4 pole, „Smazat“. Po 4. ikoně se odešle.
@@ -71,8 +70,9 @@ po kliknutí ukáže.
    Zrušit → `cancelled`.
 5. **Nové zařízení** (dotaz po 2 s, identifikace httponly cookie, v DB
    jen SHA-256) při `approved` ukáže „Přihlásit jako <jméno>?“:
-   Ano → `sign_in` (remember podle zaškrtávátka), stav `done`,
-   přesměrování na titulní stránku. To nejsem já → `cancelled`.
+   Ano → `sign_in` **bez remember me** (session do zavření prohlížeče, pro
+   všechny — rozhodnuto), stav `done`, mail vlastníkovi účtu (níže),
+   přesměrování tam, kam uživatel mířil (níže). To nejsem já → `cancelled`.
    Byl-li prohlížeč přihlášený za někoho jiného, nejdřív odhlásit.
 
 ## Platnost a kódy
@@ -88,7 +88,8 @@ po kliknutí ukáže.
 Nová tabulka `device_logins`: `code` (string, 4 indexy do poolu, např.
 `3-17-0-22`), `state` (`pending` / `approved` / `done` / `cancelled`),
 `user_id` (při potvrzení), `device_digest` (SHA-256 cookie nového
-zařízení), `user_agent`, `ip`, `remember` (bool), `expires_at`,
+zařízení), `user_agent`, `ip`, `return_to` (lokální cesta nebo NULL), `approved_at`,
+`expires_at`,
 timestamps. Neúspěšná zadání kódu pro limit: tabulka
 `device_login_failures` (`user_id`, `created_at`) nebo ekvivalent v DB.
 
@@ -120,8 +121,27 @@ systémech pak nevadí).
   Windows / Mac / Linux + Chrome / Firefox / Safari / Edge), bez gemu.
 - Testy (functional): celý průběh, neplatný/vypršelý kód, limit
   neúspěchů, zrušení na obou stranách, kód nejde použít znovu, cizí
-  prohlížeč (jiná cookie) nedostane přihlášení, remember podle volby,
+  prohlížeč (jiná cookie) nedostane přihlášení, žádná remember cookie,
+  návrat na `return_to`, mail odeslán,
   unikátnost kódů mezi platnými.
+
+## Návrat a upozornění (rozhodnuto)
+
+- **Kam po přihlášení**: na `return_to` = `params[:next]` nebo Devise
+  `stored_location_for(:user)` (tam ho ukládá OIDC re-login, takže se
+  rovnou pokračuje do klepu/sklepu/preklepu), jen lokální cesta začínající
+  `/` (ne `//`); jinak titulní stránka. Když se vracíme, hláška „Jsi
+  přihlášený, pokračuješ tam, kam jsi mířil“; kdyby návrat nešel, hláška
+  „Jsi přihlášený — to, co jsi dělal předtím, zopakuj“.
+- Stejnou bezpečnou logiku použít i v `after_sign_in_path_for` (dnes
+  ignoruje `stored_location_for`, takže se ztrácí návrat z OIDC i při
+  přihlášení heslem, a `params[:next]` nekontroluje — otevřené
+  přesměrování).
+- **Mail** při každém přihlášení přes jiné zařízení: „Přihlásil ses na
+  <systém · prohlížeč> <čas>. Pokud jsi to nebyl ty, změň si heslo.“
+- **Bez remember me pro všechny**: nové zařízení zůstane přihlášené jen do
+  zavření prohlížeče. (Mobilní prohlížeče se zavírají zřídka, v praxi to
+  často vydrží dny.)
 
 ## Detaily z revize (rozhodnuto při návrhu)
 
@@ -147,13 +167,12 @@ systémech pak nevadí).
   cizí kód, je pak ≤ 0,15 %.
 - **Potvrzovací obrazovka** místo surové IP ukáže „Stejná síť jako ty:
   ano / ne“ (porovnání IP schvalujícího a nového zařízení), systém +
-  prohlížeč, stáří kódu a zda zůstane přihlášený. User-Agent je jen
+  prohlížeč a stáří kódu. User-Agent je jen
   orientační (útočník ho ovládá).
 - **Limit neúspěchů**: nejdřív zapsat neúspěch, pak počítat (žádný souběh).
 - **Devise**: před `approved → done` zkontrolovat
   `user.active_for_authentication?` (zamčený / nepotvrzený účet → hláška
-  na novém zařízení). Remember přes `remember_me(user)` po `sign_in`.
-  Hodnota `remember` se zafixuje při vytvoření záznamu.
+  na novém zařízení).
 - **Stavový endpoint**: záznam jen podle cookie (žádné id v URL), jméno
   uživatele vrací až ve stavu `approved`, `Cache-Control: no-store`.
 - **IP za proxy**: ověřit při nasazení, že `request.ip` vrací IP klienta
