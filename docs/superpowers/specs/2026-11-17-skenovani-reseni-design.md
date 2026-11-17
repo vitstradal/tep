@@ -86,7 +86,7 @@ staviteli; měřítkem je čitelnost tužky a pera na testovacích fotkách.
   (žádné CDN) dynamicky `<script>` až při prvním otevření skeneru; verze v
   názvu → cachovatelné natrvalo (při nasazení ověřit cache hlavičky Apache
   pro `/javascripts/`). Testy (`make test-js`) potřebují soubor stažený.
-- OpenCV.js verze 4.10.0 (`https://docs.opencv.org/4.10.0/opencv.js`),
+- OpenCV.js verze 4.13.0 (`https://docs.opencv.org/4.13.0/opencv.js`),
   inicializace přes `cv.onRuntimeInitialized`.
 - Kód skeneru v samostatném `public/javascripts/scanner.js` (UMD: v
   prohlížeči `window.TepScanner`, v Node `module.exports`): čisté funkce nad
