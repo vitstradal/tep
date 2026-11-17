@@ -236,6 +236,15 @@ class DeviceLoginTest < ActiveSupport::TestCase
     travel_to(Time.zone.local(2026, 11, 17, 12, 10, 0)) { assert_equal 0, dl.expires_in }
   end
 
+  test 'approve_expires_in počítá 2 min od schválení, jinak 0' do
+    dl = travel_to(Time.zone.local(2026, 11, 17, 12, 0, 0)) { create }
+    assert_equal 0, dl.approve_expires_in
+    travel_to(Time.zone.local(2026, 11, 17, 12, 1, 0)) { assert dl.approve!(make_user) }
+    travel_to(Time.zone.local(2026, 11, 17, 12, 1, 0)) { assert_equal 120, dl.approve_expires_in }
+    travel_to(Time.zone.local(2026, 11, 17, 12, 2, 30)) { assert_equal 30, dl.approve_expires_in }
+    travel_to(Time.zone.local(2026, 11, 17, 12, 10, 0)) { assert_equal 0, dl.approve_expires_in }
+  end
+
   test 'device_label' do
     assert_equal 'Android · Chrome', DeviceLogin.new(user_agent: ANDROID_CHROME).device_label
     assert_equal 'iPhone · Safari', DeviceLogin.new(user_agent: IPHONE_SAFARI).device_label

@@ -1,35 +1,29 @@
-##
-# Přihlášení pomocí jiného zařízení — strana nového zařízení
-# (viz docs/superpowers/specs/2026-11-17-prihlaseni-v-mobilu-design.md).
+# Přihlášení pomocí jiného zařízení, strana nového zařízení.
 class DeviceLoginController < ApplicationController
   authorize_resource class: false
   protect_from_forgery with: :exception
 
-  COOKIE = Rails.env.production? ? '__Host-tep_dl' : 'tep_dl'
-
   before_action :_no_store, except: :novy
 
-  # GET /prihlasit-zarizenim
   def novy
     session[:device_login_return_to] =
       safe_return_path(params[:next]) || safe_return_path(stored_location_for(:user))
   end
 
-  # POST /prihlasit-zarizenim
   def vytvor
     old = _record
+    return_to = session.key?(:device_login_return_to) ? session[:device_login_return_to] : old&.return_to
     token = SecureRandom.urlsafe_base64(32)
     record = DeviceLogin.create_for!(token: token, user_agent: request.user_agent, ip: request.remote_ip,
-                                     return_to: session[:device_login_return_to] || old&.return_to)
+                                     return_to: return_to)
     session.delete(:device_login_return_to)
     old&.cancel!
-    cookies[COOKIE] = { value: token, httponly: true, same_site: :lax, secure: Rails.env.production?, path: '/' }
+    cookies[_cookie_name] = { value: token, httponly: true, same_site: :lax, secure: request.ssl?, path: '/' }
     render json: { icons: record.icons, expires_in: record.expires_in }
   rescue DeviceLogin::Busy
     render json: { error: 'Teď to nejde, zkus to za chvíli.' }, status: 429
   end
 
-  # GET /prihlasit-zarizenim/stav
   def stav
     record = _record
     return render(json: { state: 'none' }) unless record
@@ -39,7 +33,7 @@ class DeviceLoginController < ApplicationController
       left = record.expires_in
       render json: { state: left.positive? ? 'pending' : 'expired', expires_in: left }
     when 'approved'
-      left = _approve_left(record)
+      left = record.approve_expires_in
       return render(json: { state: 'expired', expires_in: 0 }) unless left.positive?
       render json: { state: 'approved', expires_in: left, name: record.user.full_name.presence || record.user.email }
     else
@@ -47,7 +41,6 @@ class DeviceLoginController < ApplicationController
     end
   end
 
-  # POST /prihlasit-zarizenim/ano
   def ano
     record = _record
     return render(json: { ok: false, error: 'Potvrzení vypršelo, začni znovu.' }) unless record && record.user
@@ -57,12 +50,14 @@ class DeviceLoginController < ApplicationController
       record.cancel!
       return render(json: { ok: false, error: I18n.t("devise.failure.#{user.inactive_message}") })
     end
-    return render(json: { ok: false, error: 'Potvrzení vypršelo, začni znovu.' }) unless record.finish!(cookies[COOKIE])
+    return render(json: { ok: false, error: 'Potvrzení vypršelo, začni znovu.' }) unless record.finish!(cookies[_cookie_name])
 
     sign_out(:user) if warden.authenticated?(:user)
     sign_in(:user, user)
+    %i[view_as view_as_switch device_login_return_to].each { |key| session.delete(key) }
+    session.delete('user_return_to')
     Tep::Mailer.device_login_email(user, record.device_label, Time.current).deliver_later
-    cookies.delete(COOKIE, path: '/')
+    cookies.delete(_cookie_name, path: '/', secure: request.ssl?)
     if record.return_to.present?
       add_success 'Jsi přihlášený, pokračuješ tam, kam jsi mířil.'
       url = record.return_to
@@ -73,7 +68,6 @@ class DeviceLoginController < ApplicationController
     render json: { ok: true, url: url }
   end
 
-  # POST /prihlasit-zarizenim/ne
   def ne
     _record&.cancel!(from: %w[approved])
     render json: { ok: true }
@@ -81,13 +75,13 @@ class DeviceLoginController < ApplicationController
 
   private
 
-  def _record
-    token = cookies[COOKIE]
-    token.present? ? DeviceLogin.for_device(token) : nil
+  def _cookie_name
+    request.ssl? ? '__Host-tep_dl' : 'tep_dl'
   end
 
-  def _approve_left(record)
-    [(record.approved_at + DeviceLogin::APPROVE_TTL - Time.current).ceil, 0].max
+  def _record
+    token = cookies[_cookie_name]
+    token.present? ? DeviceLogin.for_device(token) : nil
   end
 
   def _no_store

@@ -97,6 +97,12 @@ class DeviceLogin < ActiveRecord::Base
     [(expires_at - Time.current).ceil, 0].max
   end
 
+  def approve_expires_in
+    return 0 unless state == 'approved' && approved_at
+
+    [(approved_at + APPROVE_TTL - Time.current).ceil, 0].max
+  end
+
   private
 
   def transition(scope, changes)

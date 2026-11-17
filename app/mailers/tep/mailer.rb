@@ -45,11 +45,6 @@ class Tep::Mailer < Devise::Mailer
     mail(to: to, from: 'tep@pikomat.mff.cuni.cz', subject: subj)
   end
 
-  ##
-  # *Tempate* app/views/tep/mailer/device_login_email.html.erb
-  #
-  # *Params*
-  # user, device_label, at:: komu, popis nového zařízení a čas přihlášení
   def device_login_email(user, device_label, at)
     @device_label = device_label
     @at = at.in_time_zone('Europe/Prague')

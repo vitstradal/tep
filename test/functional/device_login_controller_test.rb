@@ -364,4 +364,98 @@ class DeviceLoginControllerTest < ActionController::TestCase
     assert_equal u, @controller.current_user
     assert_equal 'done', rec.reload.state
   end
+
+  test "vytvor over https sets a secure __Host- cookie" do
+    @request.env['HTTPS'] = 'on'
+    post :vytvor
+    assert_response :success
+    set_cookie = response.headers['Set-Cookie'].to_s
+    assert_match(/__Host-tep_dl=/, set_cookie)
+    assert_match(/;\s*secure/i, set_cookie)
+    assert_match(/;\s*httponly/i, set_cookie)
+    assert_match(/path=\//i, set_cookie)
+    refute_match(/(^|\n)tep_dl=/, set_cookie)
+    token = cookies['__Host-tep_dl']
+    assert_equal DeviceLogin.digest(token), DeviceLogin.order(:id).last.device_digest
+  end
+
+  test "vytvor over http sets a plain non-secure cookie" do
+    post :vytvor
+    set_cookie = response.headers['Set-Cookie'].to_s
+    assert_match(/(^|\n)tep_dl=/, set_cookie)
+    refute_match(/__Host-/, set_cookie)
+    refute_match(/;\s*secure/i, set_cookie)
+  end
+
+  test "over https only the __Host- cookie is read" do
+    @request.env['HTTPS'] = 'on'
+    pending
+    cookies['tep_dl'] = 'tok-new'
+    get :stav
+    assert_equal 'none', json['state']
+    cookies['__Host-tep_dl'] = 'tok-new'
+    get :stav
+    assert_equal 'pending', json['state']
+  end
+
+  test "ano over https signs in by the __Host- cookie and deletes it securely" do
+    @request.env['HTTPS'] = 'on'
+    u = user('u@example.com')
+    rec = approved(u)
+    cookies['__Host-tep_dl'] = 'tok-new'
+    post :ano
+    assert_equal true, json['ok']
+    assert_equal u, @controller.current_user
+    assert_equal 'done', rec.reload.state
+    deletion = response.headers['Set-Cookie'].to_s.split("\n").find { |c| c.start_with?('__Host-tep_dl=') }
+    assert deletion, 'expected __Host- cookie deletion'
+    assert_match(/max-age=0|expires=Thu, 01 Jan 1970/i, deletion)
+    assert_match(/;\s*secure/i, deletion)
+    assert_match(/path=\//i, deletion)
+  end
+
+  test "novy without next after an old targeted code gives a new code without target" do
+    session[:device_login_return_to] = '/stary-cil'
+    post :vytvor
+    assert_equal '/stary-cil', DeviceLogin.order(:id).last.return_to
+    get :novy
+    assert session.key?(:device_login_return_to)
+    post :vytvor
+    assert_response :success
+    assert_nil DeviceLogin.order(:id).last.return_to
+  end
+
+  test "ano clears view_as and stored return targets" do
+    u = user('u@example.com')
+    approved(u, return_to: '/kam')
+    session[:view_as] = 'user'
+    session[:view_as_switch] = true
+    session['user_return_to'] = '/jinam'
+    session[:device_login_return_to] = '/jeste-jinam'
+    cookies['tep_dl'] = 'tok-new'
+    post :ano
+    assert_equal true, json['ok']
+    assert_equal '/kam', json['url']
+    assert_nil session[:view_as]
+    assert_nil session[:view_as_switch]
+    assert_nil session['user_return_to']
+    assert_nil session[:device_login_return_to]
+    assert_equal u, @controller.current_user
+  end
+
+  test "vytvor without csrf token is rejected when forgery protection is on" do
+    ActionController::Base.allow_forgery_protection = true
+    assert_raises(ActionController::InvalidAuthenticityToken) { post :vytvor }
+    assert_equal 0, DeviceLogin.count
+  ensure
+    ActionController::Base.allow_forgery_protection = false
+  end
+
+  test "ne leaves a pending record pending" do
+    rec = pending
+    cookies['tep_dl'] = 'tok-new'
+    post :ne
+    assert_equal true, json['ok']
+    assert_equal 'pending', rec.reload.state
+  end
 end
