@@ -186,3 +186,34 @@ systémech pak nevadí).
 ## Stav
 
 Implementováno (commity dc2b962..HEAD na master); migrace 041 vyžaduje `make prod-migrate`.
+
+## Úpravy po prvním vyzkoušení (rozhodnuto s uživatelem)
+
+Tyto body mají přednost před starším textem výše.
+
+1. **Obrázky podle písmen.** Pool je 22 obrázků, každý začíná jiným
+   písmenem (bez Q, W, X, Y a bez háčků), v abecedním pořadí, index =
+   pořadí v tabulce:
+   A 🚗 auto, B 🍌 banán, C 🍋 citron, D 🐬 delfín, E 💶 euro, F 📷 foťák,
+   G 🦍 gorila, H 🍄 houba, I 💉 injekce, J 🍎 jablko, K 🔑 klíč, L 🦁 lev,
+   M 🍉 meloun, N 📰 noviny, O 🔥 oheň, P 🍕 pizza, R 🚀 raketa, S 🐘 slon,
+   T 🐧 tučňák, U 🛸 ufo, V 🐝 včela, Z 🦓 zebra.
+   U každého obrázku se ukazuje i velké písmeno. Na klávesnici přihlášené
+   strany jde kód psát i písmeny z fyzické klávesnice (malá i velká,
+   Backspace maže). 22⁴ ≈ 234 000 kódů; strop 500 → překlep trefí cizí kód
+   s pravděpodobností ≤ 0,2 %.
+2. **Po zadání kódu zmizí klávesnice.**
+   - Nové zařízení ve **stejné síti** (`same_network?`): kód se rovnou
+     schválí (`approve!`), přihlášená strana ukáže „Potvrďte přihlášení na
+     novém zařízení (<systém · prohlížeč>)“ a tlačítko Zrušit (zruší
+     `approved` záznam, nové zařízení pak dostane `cancelled`).
+   - **Jiná síť**: zůstává panel s popisem zařízení, „Stejná síť jako ty:
+     ne“, varováním a Potvrdit / Zrušit (ochrana proti phishingu); po
+     Potvrdit totéž „Potvrďte přihlášení na novém zařízení“ + Zrušit.
+   - Přihlášená strana se dotazuje stavu záznamu (jen svého, podle session
+     id z `kod`) a po `done` ukáže „Hotovo, zařízení je přihlášené“, po
+     `cancelled`/vypršení odpovídající hlášku.
+3. **Odkaz a QR na přihlášené straně.** Stránka „Přihlásit na jiném
+   zařízení“ ukáže absolutní URL `/prihlasit-zarizenim` a QR kód téhož
+   odkazu (bez tajemství). QR jako SVG na serveru gemem `rqrcode`
+   (schválená nová závislost).
