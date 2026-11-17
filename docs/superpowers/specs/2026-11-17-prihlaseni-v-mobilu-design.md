@@ -51,13 +51,13 @@ název je sám o sobě trochu mlhavý, vyjasní ho text na stránce, která se
 po kliknutí ukáže.
 
 1. **Nové zařízení**: na přihlašovací stránce pod formulářem (pod
-   tlačítkem Přihlásit) odkaz „Přihlásit pomocí jiného zařízení“ → `/prihlasit-zarizenim`. Vytvoří záznam a ukáže
+   tlačítkem Přihlásit) odkaz „Přihlásit pomocí jiného zařízení“ → `/device_login`. Vytvoří záznam a ukáže
    4 ikony s názvy (velké, dobře čitelné) a text „Zadej tyto 4 obrázky na
    zařízení, kde jsi přihlášený, v menu „Přihlásit na jiném zařízení“.“
    Odpočet platnosti, „Nový kód“. Odkaz přenese `next` / uloženou
    adresu (Devise `stored_location_for`), aby se po přihlášení šlo zpět.
 2. **Přihlášené zařízení**: v rozbalovacím menu pod uživatelem (e-mail
-   v horní liště) položka „Přihlásit na jiném zařízení“ → `/prihlasit-zarizeni`. Klávesnice 24 ikon (mřížka
+   v horní liště) položka „Přihlásit na jiném zařízení“ → `/device_login/approve`. Klávesnice 24 ikon (mřížka
    4×6, ikona + název), 4 pole, „Smazat“. Po 4. ikoně se odešle.
    Nad klávesnicí text: „Na novém zařízení dej na přihlašovací stránce
    „Přihlásit pomocí jiného zařízení“ a sem zadej 4 obrázky, které se ti
@@ -105,9 +105,9 @@ systémech pak nevadí).
 
 ## Technika
 
-- Controller `DeviceLoginController`. `/prihlasit-zarizenim` a jeho
+- Controller `DeviceLoginController`. `/device_login` a jeho
   stavový/potvrzovací endpoint anonymní s kontrolou cookie;
-  `/prihlasit-zarizeni` jen přihlášený. Práva v `app/models/ability.rb`.
+  `/device_login/approve` jen přihlášený. Práva v `app/models/ability.rb`.
 - Odkaz pod formulářem v `app/views/devise/sessions/new.html.erb`.
 - Položka v menu pod uživatelem v `app/views/layouts/application.html.erb`:
   dnes je rozbalovací jen pro admin/morg (`view_as_allowed?`), ostatním je
@@ -214,8 +214,10 @@ Tyto body mají přednost před starším textem výše.
      id z `kod`) a po `done` ukáže „Hotovo, zařízení je přihlášené“, po
      `cancelled`/vypršení odpovídající hlášku.
 3. **Odkaz a QR na přihlášené straně.** Stránka „Přihlásit na jiném
-   zařízení“ ukáže absolutní URL `/prihlasit-zarizenim` a QR kód téhož
+   zařízení“ ukáže absolutní URL `/device_login` a QR kód téhož
    odkazu (bez tajemství). QR kreslí v prohlížeči knihovna
    qrcode-generator (MIT) uložená v `public/javascripts/` — ne gem, protože
    `make release` na serveru nespouští `bundle install` a chybějící gem by
    shodil celý tep.
+
+Pozn.: cesty jsou `/device_login`, `/device_login/state|accept|decline` a `/device_login/approve`, `/device_login/approve/code|confirm|cancel|state`; stránka zadávání je dvousloupcová (klávesnice vlevo, návod pro druhé zařízení s odkazem a QR vpravo).

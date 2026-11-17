@@ -41,13 +41,13 @@ class ViewAsTest < ActionController::TestCase
     sign_in u
     get :show, params: { event_id: @event.id }
     assert_select 'li.dropdown .dropdown-toggle .hidden-xs', 'u@x.cz'
-    assert_select 'li.dropdown .dropdown-menu a[href="/prihlasit-zarizeni"]', /Přihlásit na jiném zařízení/
-    assert_select 'li.dropdown .dropdown-menu a[href="/prihlasit-zarizeni"] i.fa-mobile'
+    assert_select 'li.dropdown .dropdown-menu a[href="/device_login/approve"]', /Přihlásit na jiném zařízení/
+    assert_select 'li.dropdown .dropdown-menu a[href="/device_login/approve"] i.fa-mobile'
     assert_select 'form[action="/view_as/toggle"]', 0
     sign_out u
     sign_in @org
     get :show, params: { event_id: @event.id }
-    assert_select 'li.dropdown .dropdown-menu a[href="/prihlasit-zarizeni"]'
+    assert_select 'li.dropdown .dropdown-menu a[href="/device_login/approve"]'
     assert_select 'form[action="/view_as/toggle"]', 0
     sign_out @org
     sign_in @morg
@@ -55,7 +55,7 @@ class ViewAsTest < ActionController::TestCase
     session[:view_as] = 'user'
     get :show, params: { event_id: @event.id }
     assert_select 'li.dropdown .dropdown-toggle .hidden-xs', 'morg@x.cz'
-    assert_select 'li.dropdown .dropdown-menu a[href="/prihlasit-zarizeni"]'
+    assert_select 'li.dropdown .dropdown-menu a[href="/device_login/approve"]'
     assert_select 'li.dropdown .dropdown-menu form[action="/view_as/toggle"]'
   end
 

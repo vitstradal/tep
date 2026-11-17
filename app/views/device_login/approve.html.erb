@@ -1,16 +1,13 @@
 <h2>Přihlásit na jiném zařízení</h2>
 
 <div id="device-login-keyboard"
-     data-code-url="<%= device_login_kod_path %>"
-     data-confirm-url="<%= device_login_potvrdit_path %>"
-     data-cancel-url="<%= device_login_zrusit_path %>"
-     data-state-url="<%= device_login_stav_moje_path %>">
-  <div class="device-login-link">
-    <p>Na novém zařízení otevři:<br><%= link_to device_login_novy_url, device_login_novy_url %></p>
-    <div class="device-login-qr" data-url="<%= device_login_novy_url %>"></div>
-  </div>
-
-  <p class="device-login-help">Na novém zařízení dej na přihlašovací stránce „Přihlásit pomocí jiného zařízení“ a sem zadej 4 obrázky, které se ti tam ukážou.</p>
+     data-code-url="<%= device_login_approve_code_path %>"
+     data-confirm-url="<%= device_login_approve_confirm_path %>"
+     data-cancel-url="<%= device_login_approve_cancel_path %>"
+     data-state-url="<%= device_login_approve_state_path %>">
+  <div class="row">
+  <div class="col-sm-8">
+  <h4 class="device-login-heading">Zadej kód z druhého zařízení</h4>
 
   <div class="device-login-slots">
     <% 4.times do %>
@@ -51,6 +48,15 @@
 
   <a class="btn btn-primary device-login-home hide" href="<%= root_path %>">Zpět na hlavní stránku</a>
   <button type="button" class="btn btn-default device-login-again hide">Zkusit znovu</button>
+  </div>
+
+  <div class="col-sm-4 device-login-side">
+    <p>Na druhém zařízení otevři tuto adresu, nebo naskenuj QR kód (vede na stejné místo):</p>
+    <p><%= link_to device_login_url, device_login_url %></p>
+    <div class="device-login-qr" data-url="<%= device_login_url %>"></div>
+    <p>Ukážou se ti tam 4 obrázky – zadej je sem.</p>
+  </div>
+  </div>
 </div>
 
 <%= javascript_include_tag '/javascripts/qrcode.js?v=1.4.4' %>

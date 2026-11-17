@@ -100,7 +100,7 @@
               </a>
               <ul class="dropdown-menu dropdown-menu-right">
                 <li>
-                  <a href="<%= device_login_klavesnice_path %>"><i class="ace-icon fa fa-mobile"></i> Přihlásit na jiném zařízení</a>
+                  <a href="<%= device_login_approve_path %>"><i class="ace-icon fa fa-mobile"></i> Přihlásit na jiném zařízení</a>
                 </li>
                 <% if view_as_allowed? %>
                   <li>
@@ -527,7 +527,7 @@
 <% end %>
 <%= javascript_include_tag '/javascripts/act.js?v=2.3' %>
 <%= javascript_include_tag '/ace/js/uncompressed/ace.js' %>
-<%= javascript_include_tag '/javascripts/tep.js?v=2.19' %>
+<%= javascript_include_tag '/javascripts/tep.js?v=2.20' %>
 <% if @special_page %>
   <%= javascript_include_tag "/javascripts/special.js"  %>
 <% end %>

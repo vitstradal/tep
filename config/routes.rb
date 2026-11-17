@@ -188,16 +188,16 @@ Tep::Application.routes.draw do
 
   get  '/csrf'                               => 'tep#csrf',                     :as => :csrf
 
-  get  '/prihlasit-zarizenim'                => 'device_login#novy',            :as => :device_login_novy
-  post '/prihlasit-zarizenim'                => 'device_login#vytvor',          :as => :device_login_vytvor
-  get  '/prihlasit-zarizenim/stav'           => 'device_login#stav',            :as => :device_login_stav
-  post '/prihlasit-zarizenim/ano'            => 'device_login#ano',             :as => :device_login_ano
-  post '/prihlasit-zarizenim/ne'             => 'device_login#ne',              :as => :device_login_ne
-  get  '/prihlasit-zarizeni'                 => 'device_login#klavesnice',      :as => :device_login_klavesnice
-  get  '/prihlasit-zarizeni/stav'            => 'device_login#stav_moje',       :as => :device_login_stav_moje
-  post '/prihlasit-zarizeni/kod'             => 'device_login#kod',             :as => :device_login_kod
-  post '/prihlasit-zarizeni/potvrdit'        => 'device_login#potvrdit',        :as => :device_login_potvrdit
-  post '/prihlasit-zarizeni/zrusit'          => 'device_login#zrusit',          :as => :device_login_zrusit
+  get  '/device_login'                         => 'device_login#show',           :as => :device_login
+  post '/device_login'                         => 'device_login#create',         :as => :device_login_create
+  get  '/device_login/state'                   => 'device_login#state',          :as => :device_login_state
+  post '/device_login/accept'                  => 'device_login#accept',         :as => :device_login_accept
+  post '/device_login/decline'                 => 'device_login#decline',        :as => :device_login_decline
+  get  '/device_login/approve'                 => 'device_login#approve',        :as => :device_login_approve
+  post '/device_login/approve/code'            => 'device_login#enter_code',     :as => :device_login_approve_code
+  post '/device_login/approve/confirm'         => 'device_login#confirm',        :as => :device_login_approve_confirm
+  post '/device_login/approve/cancel'          => 'device_login#cancel',         :as => :device_login_approve_cancel
+  get  '/device_login/approve/state'           => 'device_login#approve_state',  :as => :device_login_approve_state
 
   # friend + quiz (kvízy, adventomat — viz navrh-kvizy-a-pratele.md)
   post '/friend/hello'          => 'friend#hello',         :as => :friend_hello

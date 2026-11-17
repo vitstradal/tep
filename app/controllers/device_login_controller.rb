@@ -1,20 +1,20 @@
 # Přihlášení pomocí jiného zařízení, strana nového zařízení.
 class DeviceLoginController < ApplicationController
-  SIGNED_IN = %i[klavesnice kod potvrdit zrusit stav_moje].freeze
+  SIGNED_IN = %i[approve enter_code confirm cancel approve_state].freeze
   ENTERED_MAX = 5
 
   authorize_resource class: false, except: SIGNED_IN
   protect_from_forgery with: :exception
 
-  before_action :_no_store, except: %i[novy klavesnice]
+  before_action :_no_store, except: %i[show approve]
   before_action :_require_real_user, only: SIGNED_IN
 
-  def novy
+  def show
     session[:device_login_return_to] =
       safe_return_path(params[:next]) || safe_return_path(session['user_return_to'])
   end
 
-  def vytvor
+  def create
     old = _record
     return_to = session.key?(:device_login_return_to) ? session[:device_login_return_to] : old&.return_to
     token = SecureRandom.urlsafe_base64(32)
@@ -28,7 +28,7 @@ class DeviceLoginController < ApplicationController
     render json: { error: 'Teď to nejde, zkus to za chvíli.' }, status: 429
   end
 
-  def stav
+  def state
     record = _record
     return render(json: { state: 'none' }) unless record
 
@@ -45,7 +45,7 @@ class DeviceLoginController < ApplicationController
     end
   end
 
-  def ano
+  def accept
     record = _record
     return render(json: { ok: false, error: 'Potvrzení vypršelo, začni znovu.' }) unless record && record.user
 
@@ -72,14 +72,14 @@ class DeviceLoginController < ApplicationController
     render json: { ok: true, url: url }
   end
 
-  def ne
+  def decline
     _record&.cancel!(from: %w[approved])
     render json: { ok: true }
   end
 
-  def klavesnice; end
+  def approve; end
 
-  def kod
+  def enter_code
     attempt = DeviceLoginAttempt.begin!(real_user)
     return render(json: { ok: false, error: 'Moc pokusů, zkus to za chvíli.' }, status: 429) unless attempt
 
@@ -96,19 +96,19 @@ class DeviceLoginController < ApplicationController
     render json: reply
   end
 
-  def potvrdit
+  def confirm
     record = _entered_record
     render json: { ok: !!record&.approve!(real_user) }
   end
 
-  def zrusit
+  def cancel
     record = _entered_record
     ok = !!record&.cancel!(from: %w[pending approved], by: real_user)
     _forget(record.id) if ok
     render json: { ok: ok }
   end
 
-  def stav_moje
+  def approve_state
     id = _entered_id
     record = id && DeviceLogin.find_by(id: id)
     state = record ? _my_state(record) : 'none'
@@ -120,7 +120,7 @@ class DeviceLoginController < ApplicationController
 
   def _require_real_user
     unless real_user
-      return redirect_to(new_user_session_path(next: request.path)) if action_name == 'klavesnice'
+      return redirect_to(new_user_session_path(next: request.path)) if action_name == 'approve'
 
       return render(json: { ok: false }, status: 401)
     end
@@ -131,7 +131,7 @@ class DeviceLoginController < ApplicationController
     Array(session[:device_login_kod_ids])
   end
 
-  # jen id záznamu, jehož kód tahle session zadala přes `kod`
+  # jen id záznamu, jehož kód tahle session zadala přes `enter_code`
   def _entered_id
     _entered_ids.find { |id| id.to_s == params[:id].to_s }
   end

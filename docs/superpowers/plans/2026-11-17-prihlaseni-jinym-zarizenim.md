@@ -41,7 +41,7 @@
 - `app/models/device_login.rb` — pool ikon, kódy, limity, atomické přechody, popis zařízení.
 - `app/models/device_login_attempt.rb` — limit neúspěšných zadání.
 - `app/controllers/device_login_controller.rb` — obě strany.
-- `app/views/device_login/novy.html.erb`, `app/views/device_login/klavesnice.html.erb`.
+- `app/views/device_login/show.html.erb`, `app/views/device_login/approve.html.erb`.
 - `app/mailers/tep/mailer.rb`, `app/views/tep/mailer/device_login_email.html.erb`.
 - `config/routes.rb`, `app/models/ability.rb`.
 - `app/views/layouts/application.html.erb` (dropdown pro všechny), `app/views/devise/sessions/new.html.erb` (odkaz).
@@ -119,18 +119,18 @@ Tabulky:
 ### Task 3: Strana nového zařízení (stránka, vytvoření, stav, Ano/Ne, mail)
 
 **Files:**
-- Create: `app/controllers/device_login_controller.rb`, `app/views/device_login/novy.html.erb`, `app/views/tep/mailer/device_login_email.html.erb`
+- Create: `app/controllers/device_login_controller.rb`, `app/views/device_login/show.html.erb`, `app/views/tep/mailer/device_login_email.html.erb`
 - Modify: `config/routes.rb`, `app/models/ability.rb`, `app/mailers/tep/mailer.rb`, `app/views/devise/sessions/new.html.erb`
 - Test: `test/functional/device_login_controller_test.rb`
 
 **Routes** (`as:` v závorce):
-- `GET  /prihlasit-zarizenim` → `device_login#novy` (`device_login_novy`)
-- `POST /prihlasit-zarizenim` → `#vytvor` (`device_login_vytvor`)
-- `GET  /prihlasit-zarizenim/stav` → `#stav` (`device_login_stav`)
-- `POST /prihlasit-zarizenim/ano` → `#ano` (`device_login_ano`)
-- `POST /prihlasit-zarizenim/ne` → `#ne` (`device_login_ne`)
+- `GET  /device_login` → `device_login#show` (`device_login`)
+- `POST /device_login` → `#create` (`device_login_create`)
+- `GET  /device_login/state` → `#state` (`device_login_state`)
+- `POST /device_login/accept` → `#accept` (`device_login_accept`)
+- `POST /device_login/decline` → `#decline` (`device_login_decline`)
 
-**Ability:** `can %i[novy vytvor stav ano ne], :device_login` pro všechny.
+**Ability:** `can %i[show create state accept decline], :device_login` pro všechny.
 
 **Interfaces:**
 - Consumes: `DeviceLogin.create_for!`, `.for_device`, `#icons`, `#finish!`, `#cancel!`, `#expires_in`, `#device_label`, `#return_to`, `DeviceLogin::Busy`; `safe_return_path` (Task 1).
@@ -143,7 +143,7 @@ Tabulky:
   - `ne`: `cancel!(from: %w[approved])`, `{ok: true}`.
   - `Tep::Mailer#device_login_email(user, device_label, at)` — `mail(to: user.email, from: 'tep@pikomat.mff.cuni.cz', subject: 'PIKOMAT: přihlášení na jiném zařízení')`; text: „Přihlásil ses na <device_label> <at d. m. H:MM>. Pokud jsi to nebyl ty, změň si heslo.“
 - `vytvor` ukládá `return_to` ze `session.delete(:device_login_return_to)`.
-- Odkaz pod formulářem v `devise/sessions/new.html.erb`: „Přihlásit pomocí jiného zařízení“ na `device_login_novy_path(next: params[:next])`.
+- Odkaz pod formulářem v `devise/sessions/new.html.erb`: „Přihlásit pomocí jiného zařízení“ na `device_login_path(next: params[:next])`.
 
 - [ ] **Step 1: Write failing functional tests** (`ActionController::TestCase`, `Devise::Test::ControllerHelpers`, `include ActiveJob::TestHelper`):
   - `novy` vrací 200 anonymně.
@@ -167,16 +167,16 @@ Tabulky:
 
 **Files:**
 - Modify: `app/controllers/device_login_controller.rb`, `config/routes.rb`, `app/models/ability.rb`, `app/views/layouts/application.html.erb:97-114`
-- Create: `app/views/device_login/klavesnice.html.erb`
+- Create: `app/views/device_login/approve.html.erb`
 - Test: `test/functional/device_login_controller_test.rb`
 
 **Routes:**
-- `GET  /prihlasit-zarizeni` → `#klavesnice` (`device_login_klavesnice`)
-- `POST /prihlasit-zarizeni/kod` → `#kod` (`device_login_kod`)
-- `POST /prihlasit-zarizeni/potvrdit` → `#potvrdit` (`device_login_potvrdit`)
-- `POST /prihlasit-zarizeni/zrusit` → `#zrusit` (`device_login_zrusit`)
+- `GET  /device_login/approve` → `#approve` (`device_login_approve`)
+- `POST /device_login/approve/code` → `#enter_code` (`device_login_approve_code`)
+- `POST /device_login/approve/confirm` → `#confirm` (`device_login_approve_confirm`)
+- `POST /device_login/approve/cancel` → `#cancel` (`device_login_approve_cancel`)
 
-**Ability:** `can %i[klavesnice kod potvrdit zrusit], :device_login` pro přihlášené. Pozor na „Jak to vidí: anon“ (`current_user` nil): akce na této straně navíc vyžadují `real_user` (`before_action`, jinak redirect na přihlášení) a autorizaci proti `Ability.new(real_user)`.
+**Ability:** `can %i[approve enter_code confirm cancel approve_state], :device_login` pro přihlášené. Pozor na „Jak to vidí: anon“ (`current_user` nil): akce na této straně navíc vyžadují `real_user` (`before_action`, jinak redirect na přihlášení) a autorizaci proti `Ability.new(real_user)`.
 
 **Interfaces:**
 - Consumes: `DeviceLogin.find_pending`, `#approve!`, `#cancel!`, `#device_label`, `#same_network?`, `#created_at`; `DeviceLoginAttempt.begin!`, `#succeed!`.
@@ -185,7 +185,7 @@ Tabulky:
   - `kod` (param `code[]` = 4 indexy) JSON: `begin!` nil → 429 `{ok:false, error:'Moc pokusů, zkus to za chvíli.'}`; nenalezen → `{ok:false, error:'Kód neplatí nebo vypršel.'}`; nalezen → `succeed!`, `{ok:true, id:, device: label, same_network: bool, age: sekund}`.
   - `potvrdit` (param `id`) JSON: `DeviceLogin.find_by(id:)&.approve!(real_user)` → `{ok: bool}`.
   - `zrusit` (param `id`): `cancel!(from: %w[pending])` → `{ok: true}`.
-- Layout: místo dvou větví (dropdown jen pro `view_as_allowed?` / prostý štítek) jeden dropdown pro každého přihlášeného s `real_user.email` (`hidden-xs`): položka „Přihlásit na jiném zařízení“ (`device_login_klavesnice_path`, ikona `fa-mobile`) a pod ní přepínač „Jak to vidí“ jen pro `view_as_allowed?`.
+- Layout: místo dvou větví (dropdown jen pro `view_as_allowed?` / prostý štítek) jeden dropdown pro každého přihlášeného s `real_user.email` (`hidden-xs`): položka „Přihlásit na jiném zařízení“ (`device_login_approve_path`, ikona `fa-mobile`) a pod ní přepínač „Jak to vidí“ jen pro `view_as_allowed?`.
 
 - [ ] **Step 1: Write failing tests:**
   - `klavesnice` anonymně → redirect na přihlášení; přihlášený → 200 a 24 tlačítek (`assert_select '#device-login-keyboard [data-i]', 24`).
@@ -195,7 +195,7 @@ Tabulky:
   - `potvrdit` → záznam `approved`, `user_id == u.id`; podruhé `ok false`.
   - `potvrdit` v „Jak to vidí“: morg s `session[:view_as_switch] = true, session[:view_as] = 'anon'` → `approved` s `user_id == morg.id`.
   - `zrusit` → `cancelled`.
-  - layout: přihlášený obyčejný uživatel má v hlavičce odkaz na `device_login_klavesnice_path`.
+  - layout: přihlášený obyčejný uživatel má v hlavičce odkaz na `device_login_approve_path`.
 - [ ] **Step 2: Run, expect FAIL.**
 - [ ] **Step 3: Implement.**
 - [ ] **Step 4: Run tests + suite, PASS** (včetně `test/functional/view_as_test.rb` kvůli úpravě layoutu).
@@ -230,7 +230,7 @@ Chování:
 
 ### Task 7: Písmenkové obrázky
 
-**Files:** `app/models/device_login.rb`, `test/models/device_login_test.rb`, `test/functional/device_login_controller_test.rb`, `app/views/device_login/klavesnice.html.erb`, `app/views/device_login/novy.html.erb`, `public/javascripts/tep.js`, layout `tep.js?v=` +1.
+**Files:** `app/models/device_login.rb`, `test/models/device_login_test.rb`, `test/functional/device_login_controller_test.rb`, `app/views/device_login/approve.html.erb`, `app/views/device_login/show.html.erb`, `public/javascripts/tep.js`, layout `tep.js?v=` +1.
 
 **Interfaces:**
 - `DeviceLogin::ICONS` = 22 trojic `[písmeno, emoji, název]` v pořadí ze specu (A 🚗 auto … Z 🦓 zebra). `ICONS.size` nahrazuje všechna místa, kde je dnes natvrdo 24 (náhodný kód, validace indexů v modelu i `_code_param` v controlleru).
@@ -245,13 +245,13 @@ Chování:
 
 ### Task 8: Okamžité schválení ve stejné síti a čekání na potvrzení
 
-**Files:** `app/controllers/device_login_controller.rb`, `config/routes.rb`, `app/models/ability.rb`, `test/functional/device_login_controller_test.rb`, `app/views/device_login/klavesnice.html.erb`, `public/javascripts/tep.js`, layout `tep.js?v=` +1.
+**Files:** `app/controllers/device_login_controller.rb`, `config/routes.rb`, `app/models/ability.rb`, `test/functional/device_login_controller_test.rb`, `app/views/device_login/approve.html.erb`, `public/javascripts/tep.js`, layout `tep.js?v=` +1.
 
 **Interfaces:**
 - `kod` úspěch: `session[:device_login_kod_id] = record.id`; když `record.same_network?(request.remote_ip)` → hned `record.approve!(real_user)` a JSON `{ok:true, id:, device:, same_network:true, approved:true}`; jinak `{ok:true, id:, device:, same_network:false, age:, approved:false}` (beze změny stavu).
 - `potvrdit` (jen jiná síť): beze změny chování, ale **nemaže** session klíč (potřebuje ho stav a Zrušit); `{ok:}`.
 - `zrusit`: zruší záznam ze session ve stavu `pending` **nebo** `approved` (`cancel!(from: %w[pending approved])`), pak smaže session klíč; `{ok: bool}`.
-- Nový `GET /prihlasit-zarizeni/stav` → `#stav_moje` (`device_login_stav_moje`), jen přihlášený (`real_user`), záznam jen ze session klíče: `{state:}` kde state ∈ `pending|approved|done|cancelled|expired|none`; `Cache-Control: no-store`. Klíč se maže, když je stav koncový.
+- Nový `GET /device_login/approve/state` → `#approve_state` (`device_login_approve_state`), jen přihlášený (`real_user`), záznam jen ze session klíče: `{state:}` kde state ∈ `pending|approved|done|cancelled|expired|none`; `Cache-Control: no-store`. Klíč se maže, když je stav koncový.
 - JS přihlášené strany: po úspěšném `kod` klávesnice zmizí. `approved:true` → „Potvrďte přihlášení na novém zařízení (<device>)“ + Zrušit, dotaz `stav_moje` po 2 s. `approved:false` → stávající panel s varováním a Potvrdit / Zrušit; po Potvrdit totéž „Potvrďte přihlášení…“. `done` → „Hotovo, zařízení je přihlášené.“; `cancelled` → „Přihlášení bylo zrušeno.“; `expired`/`none` → „Kód vypršel.“ U koncových stavů odkaz „Zpět na hlavní stránku“; mimo `done` navíc „Zkusit znovu“ (obnoví klávesnici).
 
 - [ ] Testy: stejná síť → záznam `approved`, `user_id == real_user.id`, JSON `approved:true`; jiná síť → zůstává `pending`, `approved:false`; zrusit po okamžitém schválení → `cancelled` a nové zařízení pak `ano` → `ok:false`; `stav_moje` vrací správné stavy včetně `done` po `ano` a `none` bez session; cizí uživatel bez session klíče → `none`; anonym → 401; kod pro záznam A a pak potvrdit s id B → `ok:false` (zůstává).
@@ -260,12 +260,14 @@ Chování:
 
 ### Task 9: Odkaz a QR na přihlášené straně
 
-**Files:** `public/javascripts/qrcode.js` (vendored qrcode-generator, MIT, s hlavičkou licence), `app/views/device_login/klavesnice.html.erb`, `public/javascripts/tep.js`, layout (načtení `qrcode.js` jen na této stránce nebo globálně s verzí), testy controlleru.
+**Files:** `public/javascripts/qrcode.js` (vendored qrcode-generator, MIT, s hlavičkou licence), `app/views/device_login/approve.html.erb`, `public/javascripts/tep.js`, layout (načtení `qrcode.js` jen na této stránce nebo globálně s verzí), testy controlleru.
 
 **Interfaces:**
-- Na stránce klávesnice nad návodem: „Na novém zařízení otevři:“ + absolutní odkaz `device_login_novy_url` (klikatelný, kopírovatelný) a QR kód téhož odkazu (bez tajemství), velikost ~160 px, vykreslený JS z `data-url`.
+- Na stránce klávesnice nad návodem: „Na novém zařízení otevři:“ + absolutní odkaz `device_login_url` (klikatelný, kopírovatelný) a QR kód téhož odkazu (bez tajemství), velikost ~160 px, vykreslený JS z `data-url`.
 - Knihovna: stáhnout `qrcode-generator` (npm, poslední 1.x) z `https://cdn.jsdelivr.net/npm/qrcode-generator@1.4.4/qrcode.js` do scratchpadu, zkontrolovat obsah, uložit do `public/javascripts/qrcode.js` beze změn.
 
-- [ ] Test: stránka klávesnice obsahuje `device_login_novy_url` (absolutní) v `data-url` i jako text odkazu.
+- [ ] Test: stránka klávesnice obsahuje `device_login_url` (absolutní) v `data-url` i jako text odkazu.
 - [ ] Vizuální kontrola: QR je čitelný (ověřit dekódováním, pokud je k dispozici `zbarimg`; jinak aspoň vizuálně) a odkaz je vidět na 380 px.
 - [ ] Commit `přihlášení jiným zařízením: odkaz a QR na stránku přihlášení na přihlášené straně`.
+
+Pozn.: URL, akce a názvy tras byly přejmenovány na `/device_login…` s anglickými akcemi (show, create, state, accept, decline, approve, enter_code, confirm, cancel, approve_state); starší názvy výše jsou historické.
