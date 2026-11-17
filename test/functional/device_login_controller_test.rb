@@ -522,6 +522,17 @@ class DeviceLoginControllerTest < ActionController::TestCase
     assert_match 'Na novém zařízení dej na přihlašovací stránce „Přihlásit pomocí jiného zařízení“ a sem zadej 4 obrázky, které se ti tam ukážou.', response.body
   end
 
+  test "klavesnice shows the absolute login page url as data-url, link text and loads qrcode.js" do
+    sign_in user('u@example.com')
+    get :klavesnice
+    assert_response :success
+    url = 'http://test.host/prihlasit-zarizenim'
+    assert_select '#device-login-keyboard .device-login-link [data-url]', 1
+    assert_equal url, css_select('#device-login-keyboard .device-login-qr').first['data-url']
+    assert_select '#device-login-keyboard .device-login-link a[href=?]', url, text: url
+    assert_select 'script[src^=?]', '/javascripts/qrcode.js?v='
+  end
+
   test "klavesnice works for an org-only account" do
     sign_in user('o@example.com', roles: [:org])
     get :klavesnice

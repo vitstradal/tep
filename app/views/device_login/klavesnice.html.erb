@@ -5,6 +5,11 @@
      data-confirm-url="<%= device_login_potvrdit_path %>"
      data-cancel-url="<%= device_login_zrusit_path %>"
      data-state-url="<%= device_login_stav_moje_path %>">
+  <div class="device-login-link">
+    <p>Na novém zařízení otevři:<br><%= link_to device_login_novy_url, device_login_novy_url %></p>
+    <div class="device-login-qr" data-url="<%= device_login_novy_url %>"></div>
+  </div>
+
   <p class="device-login-help">Na novém zařízení dej na přihlašovací stránce „Přihlásit pomocí jiného zařízení“ a sem zadej 4 obrázky, které se ti tam ukážou.</p>
 
   <div class="device-login-slots">
@@ -46,6 +51,8 @@
 
   <button type="button" class="btn btn-default device-login-again hide">Přihlásit další zařízení</button>
 </div>
+
+<%= javascript_include_tag '/javascripts/qrcode.js?v=1.4.4' %>
 
 <noscript>
   <div class="alert alert-warning">Přihlášení na jiném zařízení potřebuje zapnutý JavaScript.</div>

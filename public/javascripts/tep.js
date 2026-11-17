@@ -910,8 +910,17 @@ function init_device_login_keyboard($el) {
     var urls = { code: $el.data('code-url'), confirm: $el.data('confirm-url'), cancel: $el.data('cancel-url'), state: $el.data('state-url') }
     var $slots = $el.find('.device-login-slot'), $msg = $el.find('.device-login-message'), $confirm = $el.find('.device-login-confirm')
     var $wait = $el.find('.device-login-wait'), $again = $el.find('.device-login-again')
-    var $input = $el.find('.device-login-help, .device-login-slots, .device-login-grid')
+    var $input = $el.find('.device-login-link, .device-login-help, .device-login-slots, .device-login-grid')
     var code = [], busy = false, id = null, device = '', gen = 0, poll_timer = null
+
+    $el.find('.device-login-qr').each(function () {
+        if (typeof qrcode !== 'function') return
+        var qr = qrcode(0, 'M')
+        qr.addData(String($(this).data('url')))
+        qr.make()
+        $(this).html(qr.createSvgTag({ cellSize: 4, margin: 2 }))
+        $(this).find('svg').css({ width: 160, height: 160 })
+    })
 
     function key(i) { return $el.find('.device-login-key[data-i="' + i + '"]') }
 
