@@ -1,0 +1,71 @@
+<style>
+  .adv-review-day { border-top: 1px solid #ddd; padding: 12px 0; }
+  .adv-review-day:target { background: #fffbe6; }
+  .adv-review-day h3 a { color: inherit; }
+  .adv-review-day img { max-width: 100%; height: auto; }
+  .adv-spoiler { display: inline-block; padding: 2px 8px; border-radius: 3px; background: #444; color: transparent; cursor: help; user-select: none; }
+  .adv-spoiler:hover, .adv-spoiler:focus { background: #f5f5f5; color: #222; user-select: auto; outline: none; }
+</style>
+
+<h1>Review: <%= @game.title %></h1>
+
+<div class="alert alert-warning">
+  <h4><i class="fa fa-exclamation-triangle"></i> Tahle stránka je jen pro ty, kdo dělají review příkladů.</h4>
+  <p>Jsou tu všechna zadání i s výsledky. Pokud jsi sem zavítal omylem a adventomat chceš v prosinci řešit,
+    zavři ji: jinak se okrádáš o adventovost.</p>
+  <p id="adv-review-gate"><button type="button" class="btn btn-warning" id="adv-review-go">Dělám review, ukaž příklady</button></p>
+</div>
+
+<div id="adv-review-body" style="display:none">
+  <p>
+    Výsledek a poznámka k řešení se ukážou po najetí myší na tmavé pole (nebo po kliknutí).
+    Nadpis dne je trvalý odkaz. Připomínky pište do
+    <%= link_to 'zadání v piki', "/piki/adventomat/#{@game.year}" %>;
+    technické chyby hlídá <%= link_to 'kontrola dnů', adventomat_kontrola_path(name: @game.quiz_name) %>.
+  </p>
+  <p>
+    <% (1..Adventomat::BONUS).each do |n| %>
+      <% next unless (day = @game.days[n]) %>
+      <a class="btn btn-xs btn-default" href="#den-<%= day.label %>"><%= day.label %></a>
+    <% end %>
+  </p>
+
+  <% (1..Adventomat::BONUS).each do |n| %>
+    <% next unless (day = @game.days[n]) %>
+    <div class="adv-review-day" id="den-<%= day.label %>">
+      <h3><a href="#den-<%= day.label %>"><%= n == Adventomat::BONUS ? 'Bonus' : "#{n}. 12." %></a></h3>
+      <%= raw preview_html(@game.day_html(n)) %>
+      <p>
+        <b>Výsledek:</b> <span class="adv-spoiler" tabindex="0"><%= day.result_raw.presence || 'chybí' %></span>
+        <% if day.note.present? %>
+          &nbsp; <b>Poznámka:</b> <span class="adv-spoiler" tabindex="0"><%= day.note %></span>
+        <% end %>
+      </p>
+    </div>
+  <% end %>
+
+  <% if @game.reward %>
+    <div class="adv-review-day" id="odmena">
+      <h3><a href="#odmena">Odměna</a></h3>
+      <%= raw preview_html(@game.reward_html) %>
+    </div>
+  <% end %>
+</div>
+
+<script>
+  (function () {
+    var key = 'adventomat-review-<%= @game.year %>';
+    var body = document.getElementById('adv-review-body');
+    var gate = document.getElementById('adv-review-gate');
+    function show() {
+      body.style.display = '';
+      gate.style.display = 'none';
+      try { sessionStorage.setItem(key, '1'); } catch (e) {}
+      if (location.hash) { var el = document.getElementById(location.hash.slice(1)); if (el) el.scrollIntoView(); }
+    }
+    var seen = false;
+    try { seen = sessionStorage.getItem(key) === '1'; } catch (e) {}
+    if (seen) show();
+    document.getElementById('adv-review-go').addEventListener('click', show);
+  })();
+</script>

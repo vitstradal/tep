@@ -96,7 +96,7 @@ class Ability
     if user.org?
       # kvízy: surové odpovědi pro kontrolu (vysledky řeší quiz#vysledky sám)
       can :answers, :quiz
-      can %i[debug kontrola], :adventomat
+      can %i[debug kontrola review], :adventomat
 
       can :index, Inform
       can :pokusy, :tep

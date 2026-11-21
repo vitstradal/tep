@@ -218,4 +218,29 @@ class AdventomatControllerTest < ActionController::TestCase
     assert response.body.index('výsledek není celé číslo') < response.body.index('Otevře se')
     assert_match 'den chybí', response.body
   end
+
+  test "review is for orgs: tasks, results, permalinks and images before opening" do
+    travel_to(PRAGUE.local(2026, 11, 20, 12)) do
+      sign_in user('kid@x.cz')
+      get :review, params: { name: 'advent-2026' }
+      assert_no_match 'Kolik je', response.body
+      get :obrazek, params: { name: 'advent-2026', soubor: '5.png', nahled: 1 }
+      assert_response :forbidden
+      sign_out :user
+      sign_in user('org@x.cz', org: true)
+      get :review, params: { name: 'advent-2026' }
+      assert_response :success
+      assert_match 'id="den-5"', response.body
+      assert_match 'id="den-bonus"', response.body
+      assert_match 'Kolik je 5 + 12?', response.body
+      assert_match 'obrazek/5.png?nahled=1', response.body
+      assert_match(/adv-spoiler[^>]*>\s*17/, response.body)
+      get :obrazek, params: { name: 'advent-2026', soubor: '5.png', nahled: 1 }
+      assert_response :success
+      get :obrazek, params: { name: 'advent-2026', soubor: '5.png' }
+      assert_response :forbidden
+      get :obrazek, params: { name: 'advent-2026', soubor: 'index.wiki', nahled: 1 }
+      assert_response :forbidden
+    end
+  end
 end

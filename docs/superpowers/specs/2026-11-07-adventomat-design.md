@@ -132,6 +132,7 @@ API v tepu (před `GET /quiz/:name`, `name` = `advent-<rok>`):
 | `GET /quiz/advent-<rok>/moje` | všichni | JSON `{solved: [1, 5, …], nick:}` pro aktuálního přítele (přihlášený přes session, host přes `uuid`) |
 | `POST /quiz/advent-<rok>/answer` | všichni | existující endpoint; u adventu kontroluje proti výsledku z piki |
 | `GET /quiz/advent-<rok>/kontrola` | org | kontrola dnů (HTML stránka tepu) |
+| `GET /quiz/advent-<rok>/review` | org | všechna zadání s výsledkem a poznámkou (schované, ukážou se po najetí myší), kotvy `#den-N`, `#den-bonus`, `#odmena`; obrázky přes `obrazek/…?nahled=1` i před otevřením dne |
 | `POST /quiz/advent-<rok>/debug` | org | zapnutí/vypnutí debug módu a nastavení času |
 
 - Zadání se renderuje wiki parserem piki, odkazy na obrázky se přepíšou na

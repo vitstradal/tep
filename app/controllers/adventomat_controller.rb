@@ -10,7 +10,7 @@ class AdventomatController < ApplicationController
   THROTTLE_PER_MINUTE = 30
 
   before_action :_load_game
-  before_action :_no_store, except: %i[obrazek kontrola]
+  before_action :_no_store, except: %i[obrazek kontrola review]
 
   # GET /quiz/advent-<rok>/kalendar
   def kalendar
@@ -40,7 +40,7 @@ class AdventomatController < ApplicationController
     name = params[:soubor].to_s
     now = _now
     open_days = @game.days.keys.select { |n| @game.open?(n, now) }
-    return head :forbidden unless @game.image_allowed?(name, open_days, reward: _all_solved?(_solved_days))
+    return head :forbidden unless _org_preview?(name) || @game.image_allowed?(name, open_days, reward: _all_solved?(_solved_days))
     data = @game.image(name)
     return head :not_found if data.nil?
     send_data data, type: Rack::Mime.mime_type(File.extname(name), 'application/octet-stream'), disposition: 'inline'
@@ -109,6 +109,17 @@ class AdventomatController < ApplicationController
     @breadcrumb = [[{ name: "Kontrola: #{@game.title}", url: request.path }]]
   end
 
+  # GET /quiz/advent-<rok>/review
+  def review
+    @breadcrumb = [[{ name: "Review: #{@game.title}", url: request.path }]]
+  end
+
+  # zadání s obrázky dostupnými orgovi i před otevřením dne
+  def preview_html(html)
+    html.to_s.gsub(%r{(/quiz/#{@game.quiz_name}/obrazek/[^"']+)}, '\\1?nahled=1')
+  end
+  helper_method :preview_html
+
   private
 
   def _load_game
@@ -118,6 +129,11 @@ class AdventomatController < ApplicationController
       format.html { head :not_found }
       format.any { render json: { ok: false, error: 'Adventomat neexistuje.' }, status: :not_found }
     end
+  end
+
+  def _org_preview?(name)
+    params[:nahled].present? && current_user&.org? && !name.include?('..') &&
+      (@game.days.values.flat_map(&:images) + @game.reward_images).include?(name)
   end
 
   def _no_store

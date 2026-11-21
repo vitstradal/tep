@@ -2,6 +2,7 @@
 
 <p>
   <%= link_to "/piki/adventomat/#{@game.year}" do %><i class="fa fa-pencil"></i> zadání v piki<% end %> ·
+  <%= link_to adventomat_review_path(name: @game.quiz_name) do %><i class="fa fa-eye"></i> review příkladů<% end %> ·
   <%= link_to "/adventomat/#{@game.year}" do %><i class="fa fa-calendar"></i> kalendář na webu<% end %>
   (debug mód zapneš v liště pod kalendářem)
 </p>
@@ -28,7 +29,7 @@
       <th><%= n == Adventomat::BONUS ? 'bonus' : n %></th>
       <td style="white-space:nowrap"><%= l(@game.open_at(n), format: '%-d. %-m. %Y %H:%M') rescue @game.open_at(n).strftime('%-d. %-m. %Y %H:%M') %></td>
       <% if day %>
-        <td><%= raw @game.day_html(n) %></td>
+        <td><%= raw preview_html(@game.day_html(n)) %></td>
         <td class="<%= 'red' if day.result.nil? %>"><%= day.result_raw %></td>
         <td><%= day.note %></td>
       <% else %>
@@ -38,6 +39,6 @@
   <% end %>
   <tr>
     <th>odměna</th><td></td>
-    <td colspan="3"><%= @game.reward ? raw(@game.reward_html) : content_tag(:i, 'bez odměny') %></td>
+    <td colspan="3"><%= @game.reward ? raw(preview_html(@game.reward_html)) : content_tag(:i, 'bez odměny') %></td>
   </tr>
 </table>

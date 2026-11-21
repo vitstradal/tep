@@ -217,6 +217,7 @@ Tep::Application.routes.draw do
     post 'answer'            => 'adventomat#answer',   :as => :answer
     post 'debug'             => 'adventomat#debug',    :as => :debug
     get  'kontrola'          => 'adventomat#kontrola', :as => :kontrola
+    get  'review'            => 'adventomat#review',   :as => :review
   end
   post '/quiz/:name/answer'     => 'quiz#answer',          :as => :quiz_answer
   get  '/quiz/:name/vysledky'   => 'quiz#vysledky',        :as => :quiz_vysledky
