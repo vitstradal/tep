@@ -1,3 +1,8 @@
+<style>
+  .adv-kontrola-day img { max-width: 100%; height: auto; }
+  .adv-kontrola-day hr { margin: 6px 0; }
+</style>
+
 <h1>Kontrola: <%= @game.title %></h1>
 
 <p>
@@ -22,23 +27,29 @@
 <% end %>
 
 <table class="table table-condensed table-bordered">
-  <tr><th>Den</th><th>Otevře se</th><th>Zadání</th><th>Výsledek</th><th>Poznámka</th></tr>
+  <tr><th>Den</th><th>Otevře se</th><th>Zadání / výsledek / poznámka</th></tr>
   <% (1..Adventomat::BONUS).each do |n| %>
     <% day = @game.days[n] %>
     <tr class="<%= 'danger' if day.nil? && n < Adventomat::BONUS %>">
       <th><%= n == Adventomat::BONUS ? 'bonus' : n %></th>
       <td style="white-space:nowrap"><%= l(@game.open_at(n), format: '%-d. %-m. %Y %H:%M') rescue @game.open_at(n).strftime('%-d. %-m. %Y %H:%M') %></td>
       <% if day %>
-        <td><%= raw preview_html(@game.day_html(n)) %></td>
-        <td class="<%= 'red' if day.result.nil? %>"><%= day.result_raw %></td>
-        <td><%= day.note %></td>
+        <td class="adv-kontrola-day">
+          <%= raw preview_html(@game.day_html(n)) %>
+          <hr/>
+          <span class="<%= 'red' if day.result.nil? %>"><%= day.result_raw.presence || 'chybí výsledek' %></span>
+          <% if day.note.present? %>
+            <hr/>
+            <%= day.note %>
+          <% end %>
+        </td>
       <% else %>
-        <td colspan="3"><i><%= n == Adventomat::BONUS ? 'bez bonusu' : 'chybí' %></i></td>
+        <td><i><%= n == Adventomat::BONUS ? 'bez bonusu' : 'chybí' %></i></td>
       <% end %>
     </tr>
   <% end %>
   <tr>
     <th>odměna</th><td></td>
-    <td colspan="3"><%= @game.reward ? raw(preview_html(@game.reward_html)) : content_tag(:i, 'bez odměny') %></td>
+    <td class="adv-kontrola-day"><%= @game.reward ? raw(preview_html(@game.reward_html)) : content_tag(:i, 'bez odměny') %></td>
   </tr>
 </table>
