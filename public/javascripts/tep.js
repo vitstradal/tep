@@ -392,15 +392,16 @@ function adv_digit(n) {
     return h + '</g></svg>'
 }
 
-function adv_clock(dd, hh, mi, ss) {
+function adv_clock(dd, hh, mi, ss, caption) {
     function grp(v, lbl) {
         var t = ('0' + v).slice(-2)
         return '<div class="adv-grp"><div>' + adv_digit(+t[0]) + adv_digit(+t[1]) + '</div><span>' + lbl + '</span></div>'
     }
     var colon = '<div class="adv-colon on"><i></i><i></i></div>'
     return '<div class="adv-clock" role="timer" aria-label="' + (dd ? dd + ' d ' : '') + hh + ' h ' + mi + ' min ' + ss + ' s">' +
+           (caption ? '<div class="adv-cap">' + caption + '</div>' : '') + '<div class="adv-row">' +
            (dd ? grp(dd, 'dny') + '<div class="adv-gap"></div>' : '') +
-           grp(hh, 'hodiny') + colon + grp(mi, 'minuty') + colon + grp(ss, 'sekundy') + '</div>'
+           grp(hh, 'hodiny') + colon + grp(mi, 'minuty') + colon + grp(ss, 'sekundy') + '</div></div>'
 }
 
 function adv_reduced_motion() {
@@ -428,14 +429,15 @@ function adv_css() {
       '.adventomat-countdown{text-align:center}' +
       '.adv-title{margin:0 0 14px;text-align:center;color:#2f373d;font-size:clamp(18px,3.2vw,26px);font-weight:bold;letter-spacing:.22em;' +
       'text-transform:uppercase;text-shadow:0 1px 0 rgba(255,255,255,.85),0 -1px 0 rgba(0,0,0,.25)}' +
-      '.adv-label{margin:0 0 6px;color:#3b444b;font-size:11px;letter-spacing:.2em;text-transform:uppercase;text-shadow:0 1px 0 rgba(255,255,255,.8)}' +
       '.adv-panel .adventomat-grid{padding:12px 8px 8px;border-radius:16px;text-align:center;background:linear-gradient(#1d2327,#30383e);' +
       'box-shadow:inset 0 2px 8px rgba(0,0,0,.75),0 1px 0 rgba(255,255,255,.75)}' +
       '.adv-panel .adventomat-day{margin:4px;border-radius:10px}' +
       '.adv-who{text-align:center}' +
       '#adventomat-debug .adventomat-debug{padding:10px}#adventomat-debug .form-control,#adventomat-debug .btn{margin:3px 0}' +
-      '.adv-clock{display:inline-flex;align-items:flex-start;gap:6px;max-width:100%;margin:0 0 16px;padding:14px 18px 8px;' +
+      '.adv-clock{display:inline-block;max-width:100%;margin:0 0 16px;padding:8px 18px 8px;' +
       'background:#120b0b;border:3px solid #2b2b2b;border-radius:10px;box-shadow:inset 0 0 18px #000,0 2px 6px rgba(0,0,0,.4)}' +
+      '.adv-row{display:flex;align-items:flex-start;gap:6px}' +
+      '.adv-cap{margin:0 0 8px;text-align:center;color:#8a5a55;font-size:11px;letter-spacing:.15em;text-transform:uppercase}' +
       '.adv-grp{text-align:center}.adv-grp>div{display:flex;gap:4px}' +
       '.adv-grp span{display:block;margin-top:4px;color:#8a5a55;font-size:11px;letter-spacing:.15em;text-transform:uppercase}' +
       '.adv-digit{width:clamp(22px,7vw,52px);height:auto;overflow:visible}' +
@@ -645,7 +647,7 @@ function init_adventomat_app($app) {
         var dd = Math.floor(left / 86400), hh = Math.floor(left % 86400 / 3600)
         var mi = Math.floor(left % 3600 / 60), ss = left % 60
         adv_css()
-        $c.html('<p class="adv-label">další letové okno za</p>' + adv_clock(dd, hh, mi, ss))
+        $c.html(adv_clock(dd, hh, mi, ss, 'další letové okno za'))
         $c.find('.adv-clock').attr('title', 'Další okénko se otevře ' + adv_time(d.next_open_at))
         state.timer = setTimeout(tick, 1000)
     }
