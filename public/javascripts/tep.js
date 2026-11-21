@@ -370,7 +370,8 @@ function adv_esc(s) {
 function adv_time(iso) {
     var d = new Date(iso)
     var mm = ('0' + d.getMinutes()).slice(-2)
-    return d.getDate() + '. ' + (d.getMonth() + 1) + '. v ' + d.getHours() + ':' + mm
+    var ss = d.getSeconds() ? ':' + ('0' + d.getSeconds()).slice(-2) : ''
+    return d.getDate() + '. ' + (d.getMonth() + 1) + '. v ' + d.getHours() + ':' + mm + ss
 }
 
 var ADV_BTN = { locked: 'btn-default', open: 'btn-warning', solved: 'btn-success', missing: 'btn-default' }
@@ -416,7 +417,22 @@ function adv_css() {
       '@keyframes adv-lock-fly{25%{transform:translateY(-12px) rotate(-12deg)}100%{transform:translate(-50px,-220px) rotate(-260deg) scale(.4);opacity:0}}' +
       '.adv-spark{position:absolute;z-index:1061;pointer-events:none;font-weight:bold;line-height:1;text-shadow:0 0 4px currentColor}' +
       '.adventomat-day.adv-pop{animation:adv-pop .5s}@keyframes adv-pop{50%{transform:scale(1.2)}}' +
-      '.adv-clock{display:inline-flex;align-items:flex-start;gap:6px;max-width:100%;margin:0 0 18px;padding:14px 18px 8px;' +
+      '.adv-panel{position:relative;margin:0 0 14px;padding:22px 18px 18px;border-radius:26px;border:1px solid #6f7880;' +
+      'background:linear-gradient(160deg,#f7f9fa 0%,#c3cad0 18%,#eef1f3 36%,#9aa4ac 58%,#dfe4e7 78%,#aeb7be 100%);' +
+      'box-shadow:inset 0 2px 1px rgba(255,255,255,.9),inset 0 -3px 6px rgba(0,0,0,.25),0 6px 16px rgba(0,0,0,.3)}' +
+      '.adv-panel:before{content:"";position:absolute;top:9px;right:9px;bottom:9px;left:9px;pointer-events:none;' +
+      'background:radial-gradient(circle,#59626a 0,#59626a 3px,transparent 4px) left top/12px 12px no-repeat,' +
+      'radial-gradient(circle,#59626a 0,#59626a 3px,transparent 4px) right top/12px 12px no-repeat,' +
+      'radial-gradient(circle,#59626a 0,#59626a 3px,transparent 4px) left bottom/12px 12px no-repeat,' +
+      'radial-gradient(circle,#59626a 0,#59626a 3px,transparent 4px) right bottom/12px 12px no-repeat}' +
+      '.adventomat-countdown{text-align:center}' +
+      '.adv-label{margin:0 0 10px;color:#3b444b;font-size:12px;letter-spacing:.14em;text-transform:uppercase;text-shadow:0 1px 0 rgba(255,255,255,.8)}' +
+      '.adv-panel .adventomat-grid{padding:12px 8px 8px;border-radius:16px;text-align:center;background:linear-gradient(#1d2327,#30383e);' +
+      'box-shadow:inset 0 2px 8px rgba(0,0,0,.75),0 1px 0 rgba(255,255,255,.75)}' +
+      '.adv-panel .adventomat-day{margin:4px;border-radius:10px}' +
+      '.adv-who{text-align:center}' +
+      '#adventomat-debug .adventomat-debug{padding:10px}#adventomat-debug .form-control,#adventomat-debug .btn{margin:3px 0}' +
+      '.adv-clock{display:inline-flex;align-items:flex-start;gap:6px;max-width:100%;margin:0 0 16px;padding:14px 18px 8px;' +
       'background:#120b0b;border:3px solid #2b2b2b;border-radius:10px;box-shadow:inset 0 0 18px #000,0 2px 6px rgba(0,0,0,.4)}' +
       '.adv-grp{text-align:center}.adv-grp>div{display:flex;gap:4px}' +
       '.adv-grp span{display:block;margin-top:4px;color:#8a5a55;font-size:11px;letter-spacing:.15em;text-transform:uppercase}' +
@@ -556,11 +572,8 @@ function init_adventomat_app($app) {
     function render() {
         var d = state.data
         var plan = plan_animations(d)
-        var html = ''
-        if (d.org) html += debug_bar(d)
-        if (d.friend) html += '<p class="grey"><i class="fa fa-user"></i> Hraješ jako <b>' + adv_esc(d.friend.nick) + '</b>' +
-                              (window.tep_signed_in ? '' : ' – přihlas se, ať máš vyřešená okénka i na jiném počítači') + '.</p>'
-        html += '<div class="adventomat-countdown"></div><div class="adventomat-grid">'
+        adv_css()
+        var html = '<div class="adv-panel"><div class="adventomat-countdown"></div><div class="adventomat-grid">'
         d.days.forEach(function (day) {
             var st = plan.shown[day.no] || day.state
             var cls = ADV_BTN[st]
@@ -568,10 +581,11 @@ function init_adventomat_app($app) {
             html += '<button type="button" class="adventomat-day btn btn-app ' + cls + '" data-no="' + day.no + '">' +
                     '<i class="ace-icon fa fa-' + ico + ' bigger-230"></i> ' + adv_esc(day.label) + '</button> '
         })
-        html += '</div>'
+        html += '</div></div>' + who(d)
         if (d.reward) html += '<div class="adventomat-reward well"></div>'
         html += table(d)
         $app.html(html)
+        place_debug(d)
         if (d.reward) {
             $.ajax({ url: base + '/odmena', data: { uuid: friend_get().uuid || '' }, cache: false })
              .done(function (j) { $app.find('.adventomat-reward').html(j.html); typeset($app.find('.adventomat-reward')) })
@@ -586,6 +600,25 @@ function init_adventomat_app($app) {
         var queue = $.Deferred().resolve().promise()
         plan.unlock.forEach(function (no) { queue = queue.then(function () { return adv_unlock(btn(no)) }) })
         plan.star.forEach(function (no) { queue = queue.then(function () { return adv_burst(btn(no)) }) })
+    }
+
+    function who(d) {
+        var login = '<a href="/users/sign_in">Přihlas se</a>, ať máš vyřešená okénka i na jiném počítači a mobilu. ' +
+                    'Ještě nejsi řešitel Pikomatu? <a href="/prihlaska">Přihláška</a>.'
+        var h = '<p class="grey adv-who"><i class="fa fa-user"></i> '
+        if (d.friend) h += 'Hraješ jako <b>' + adv_esc(d.friend.nick) + '</b>' + (window.tep_signed_in ? '.' : ' bez přihlášení. ' + login)
+        else h += 'Hraješ bez přihlášení, při první odpovědi zadáš přezdívku. ' + login
+        return h + '</p>'
+    }
+
+    /* debug lišta patří nahoru do vedlejšího sloupce stránky; bez něj nad kalendář */
+    function place_debug(d) {
+        $('#adventomat-debug').remove()
+        if (!d.org) return
+        var $box = $('<div id="adventomat-debug"></div>').html(debug_bar(d))
+        var $col = $app.closest('[class*="col-"]').next('[class*="col-"]')
+        if ($col.length) $col.prepend($box)
+        else $app.prepend($box)
     }
 
     function table(d) {
@@ -609,7 +642,7 @@ function init_adventomat_app($app) {
         var dd = Math.floor(left / 86400), hh = Math.floor(left % 86400 / 3600)
         var mi = Math.floor(left % 3600 / 60), ss = left % 60
         adv_css()
-        $c.html('<p><i class="fa fa-clock-o"></i> Další okénko se otevře ' + adv_time(d.next_open_at) + '</p>' +
+        $c.html('<p class="adv-label"><i class="fa fa-clock-o"></i> Další okénko se otevře ' + adv_time(d.next_open_at) + '</p>' +
                 adv_clock(dd, hh, mi, ss))
         state.timer = setTimeout(tick, 1000)
     }
@@ -700,7 +733,7 @@ function init_adventomat_app($app) {
     function debug_bar(d) {
         var on = !!d.debug
         var val = on ? d.debug.now.slice(0, 16) : (year + '-12-01T03:14')
-        return '<div class="alert ' + (on ? 'alert-danger' : 'alert-info') + ' adventomat-debug form-inline">' +
+        return '<div class="alert ' + (on ? 'alert-danger' : 'alert-info') + ' adventomat-debug">' +
                '<b><i class="fa fa-wrench"></i> ' + (on ? 'DEBUG – čas ' + adv_time(d.debug.now) + ', odpovědi se neukládají' : 'Debug pro orgy') + '</b> ' +
                '<input type="datetime-local" class="form-control input-sm adventomat-debug-now" value="' + val + '"> ' +
                '<button type="button" class="btn btn-sm btn-danger adventomat-debug-set">Nastavit čas</button> ' +
@@ -710,15 +743,16 @@ function init_adventomat_app($app) {
     }
 
     function bind_debug() {
-        $app.find('.adventomat-debug-set').click(function () {
-            $.post(base + '/debug', { now: $app.find('.adventomat-debug-now').val(), authenticity_token: friend_csrf() }).always(load)
+        var $dbg = $('#adventomat-debug')
+        $dbg.find('.adventomat-debug-set').click(function () {
+            $.post(base + '/debug', { now: $dbg.find('.adventomat-debug-now').val(), authenticity_token: friend_csrf() }).always(load)
         })
-        $app.find('.adventomat-debug-next').click(function () {
+        $dbg.find('.adventomat-debug-next').click(function () {
             $.post(base + '/debug', { next: 1, authenticity_token: friend_csrf() })
              .fail(function (x) { alert((x.responseJSON || {}).error || 'Nepovedlo se.') })
              .always(load)
         })
-        $app.find('.adventomat-debug-off').click(function () {
+        $dbg.find('.adventomat-debug-off').click(function () {
             $.post(base + '/debug', { off: 1, authenticity_token: friend_csrf() }).always(load)
         })
     }

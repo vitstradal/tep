@@ -72,8 +72,8 @@ class Adventomat
   end
 
   def open_at(no)
-    h, m = _opening
-    ZONE.local(@year, 12, no == BONUS ? 24 : no, h, m)
+    h, m, s = _opening
+    ZONE.local(@year, 12, no == BONUS ? 24 : no, h, m, s)
   end
 
   def open?(no, now = Time.current)
@@ -222,10 +222,10 @@ class Adventomat
 
   def _opening
     raw = @header[:opening].presence || '3:14'
-    m = raw.match(/\A(\d{1,2}):(\d{2})\z/)
-    return [m[1].to_i, m[2].to_i] if m
-    _header_error("otevírání „#{raw}“ není čas (např. 3:14)")
-    [3, 14]
+    m = raw.match(/\A(\d{1,2}):(\d{2})(?::(\d{2}))?\z/)
+    return [m[1].to_i, m[2].to_i, m[3].to_i] if m
+    _header_error("otevírání „#{raw}“ není čas (např. 3:14 nebo 3:14:15)")
+    [3, 14, 0]
   end
 
   def _closing

@@ -41,6 +41,14 @@ class AdventomatTest < ActiveSupport::TestCase
     assert_equal a.order, Adventomat.parse(2026, page).order
   end
 
+  test "opening time may have seconds" do
+    a = Adventomat.parse(2026, "otevírání: 3:14:15\n\n== 1 ==\nA\nvýsledek: 1\n")
+    assert_empty a.header_errors
+    assert_equal PRAGUE.local(2026, 12, 1, 3, 14, 15), a.open_at(1)
+    assert_not a.open?(1, PRAGUE.local(2026, 12, 1, 3, 14, 14))
+    assert a.open?(1, PRAGUE.local(2026, 12, 1, 3, 14, 15))
+  end
+
   test "opening at 3:14 Prague, bonus with day 24" do
     a = Adventomat.parse(2026, page)
     refute a.open?(1, PRAGUE.local(2026, 12, 1, 3, 13, 59))

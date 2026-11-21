@@ -98,7 +98,7 @@ Ukáže se hráči, který má vyřešená všechna okénka (Šrek, Marvin…).
 ```
 
 - Hlavička (řádky `klíč: hodnota` před první sekcí; jiný text před první sekcí je poznámka pro orgy a ignoruje se) je nepovinná; chybějící
-  klíč = výchozí hodnota. `otevírání` je čas v Europe/Prague, `uzávěrka` datum
+  klíč = výchozí hodnota. `otevírání` je čas v Europe/Prague (smí mít i sekundy, např. `3:14:15`), `uzávěrka` datum
   a čas uzavření tabulky v daném roce, `v tabulce od` minimální počet
   vyřešených, aby byl hráč v tabulce.
 - Den je sekce `== N ==` (1–24) nebo `== bonus ==`. Řádek `výsledek: N` je
