@@ -653,10 +653,10 @@ function init_adventomat_app($app) {
         $m = $('<div id="adventomat-app-modal" class="modal fade" tabindex="-1" role="dialog"><div class="modal-dialog"><div class="modal-content">' +
                '<div class="modal-header"><button type="button" class="close" data-dismiss="modal">&times;</button><h4 class="modal-title"></h4></div>' +
                '<div class="modal-body"><div class="adventomat-text"></div><div class="adventomat-form form-inline" style="margin-top:1em">' +
-               '<p class="adventomat-who"></p>' +
-               '<input type="text" maxlength="40" class="form-control adventomat-nick" placeholder="tvoje jméno nebo přezdívka"> ' +
+               '<label>Posíláš jako <input type="text" maxlength="40" class="form-control adventomat-nick" placeholder="jméno nebo přezdívka"></label> ' +
                '<input type="text" inputmode="numeric" class="form-control adventomat-answer" placeholder="výsledek – jen číslo"> ' +
-               '<button type="button" class="btn btn-primary adventomat-send">Odeslat</button></div>' +
+               '<button type="button" class="btn btn-primary adventomat-send">Odeslat</button>' +
+               '<p class="grey adventomat-who" style="margin-top:.6em"></p></div>' +
                '<div class="adventomat-msg" style="margin-top:1em"></div></div>' +
                '<div class="modal-footer"><button type="button" class="btn btn-default" data-dismiss="modal">Zavřít</button></div>' +
                '</div></div></div>').appendTo('body')
@@ -673,10 +673,9 @@ function init_adventomat_app($app) {
         $m.find('.adventomat-msg').html('')
         $m.find('.adventomat-answer').val('')
         var f = friend_get()
-        var known = window.tep_signed_in || f.uuid
-        $m.find('.adventomat-nick').toggle(!known).val(f.nick || '')
-        $m.find('.adventomat-who').html(known ? 'Odpovídáš jako <b>' + adv_esc(f.nick || 'ty') + '</b>.' :
-                                        'Napiš své jméno nebo přezdívku – ukáže se v tabulce řešitelů.')
+        $m.find('.adventomat-nick').val(f.nick || (state.data.friend || {}).nick || '')
+        $m.find('.adventomat-who').html('Jméno se ukáže v tabulce řešitelů, můžeš si ho kdykoli změnit.' +
+            (window.tep_signed_in ? '' : ' Vyřešená okénka si pamatuje tenhle prohlížeč; <a href="/users/sign_in">přihlas se</a>, ať je máš všude.'))
         if (day.state === 'locked' || day.state === 'missing') {
             $m.find('.adventomat-text').html(day.state === 'missing' ? '<p>Tohle okénko ještě připravujeme.</p>' :
                                              '<p><i class="fa fa-lock"></i> Okénko se otevře ' + adv_time(day.opens_at) + '.</p>')
@@ -695,35 +694,47 @@ function init_adventomat_app($app) {
 
     function send() {
         var $m = modal()
+        var msg = function (cls, text) { $m.find('.adventomat-msg').html('<p class="' + cls + '">' + text + '</p>') }
+        var failed = function (x) {
+            var j = x.responseJSON || {}
+            msg('red', adv_esc(j.error || (j.errors || []).join(' ') || 'Chyba, zkus to znovu.'))
+        }
         var answer = $m.find('.adventomat-answer').val()
         var no = state.day.no
-        var nick = $.trim($m.find('.adventomat-nick:visible').val() || '')
-        if ($m.find('.adventomat-nick').is(':visible') && !nick) {
-            $m.find('.adventomat-msg').html('<p class="red">Napiš své jméno nebo přezdívku, ať si vyřešené okénko zapamatujeme.</p>')
+        var nick = $.trim($m.find('.adventomat-nick').val() || '')
+        if (!nick) {
+            msg('red', 'Napiš jméno nebo přezdívku, pod kterou odpověď posíláš.')
             $m.find('.adventomat-nick').focus()
             return
         }
-        if (nick) friend_set({ nick: nick })
-        friend_ensure(function (f) {
-            if (!f) {
-                $m.find('.adventomat-msg').html('<p class="red">Bez přezdívky si vyřešené okénko nezapamatujeme.</p>')
-                return
-            }
-            $m.find('.adventomat-nick').hide()
-            $m.find('.adventomat-who').html('Odpovídáš jako <b>' + adv_esc(f.nick) + '</b>.')
+        var post = function (f) {
             $.post(base + '/answer', { uuid: f.uuid, question_no: no, answer: answer, authenticity_token: friend_csrf() })
              .done(function (j) {
                  if (j.correct) {
-                     $m.find('.adventomat-msg').html('<p class="green bigger-120"><i class="fa fa-star"></i> To je správně!' + (j.debug ? ' (debug, neukládá se)' : '') + '</p>')
+                     msg('green bigger-120', '<i class="fa fa-star"></i> To je správně!' + (j.debug ? ' (debug, neukládá se)' : ''))
                      if (state.day.state !== 'solved') state.star = no
                      $m.one('hidden.bs.modal', load)
                      setTimeout(function () { $m.modal('hide') }, 1200)
                  } else {
-                     $m.find('.adventomat-msg').html('<p class="red">To je bohužel špatně.' + (j.solved ? ' Okénko ale máš vyřešené z dřívějška.' : '') + '</p>')
+                     msg('red', 'To je bohužel špatně.' + (j.solved ? ' Okénko ale máš vyřešené z dřívějška.' : ''))
                  }
              })
-             .fail(function (x) { $m.find('.adventomat-msg').html('<p class="red">' + adv_esc((x.responseJSON || {}).error || 'Chyba, zkus to znovu.') + '</p>') })
-        })
+             .fail(failed)
+        }
+        /* jméno z formuláře se uloží k příteli (nový host se tím založí), pak teprve odpověď */
+        var named = function (f) {
+            if (f.uuid && f.nick === nick) return post(f)
+            $.post('/friend/hello', { uuid: f.uuid || '', nick: nick, authenticity_token: friend_csrf() })
+             .done(function (j) {
+                 friend_set(j)
+                 $app.find('.adv-who b').text(j.nick)
+                 post(j)
+             })
+             .fail(failed)
+        }
+        var f = friend_get()
+        if (f.uuid || !window.tep_signed_in) return named(f)
+        $.get('/friend/status').done(function (j) { friend_set(j); named(j) }).fail(failed)
     }
 
     function typeset($el) {
