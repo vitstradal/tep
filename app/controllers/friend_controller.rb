@@ -5,7 +5,12 @@
 # JSON API pro hlavičkový widget a kvízový JS. Anonymní identita se
 # prokazuje uuid (drží ho prohlížeč v localStorage); přihlášený uživatel
 # má vždy přednost — dostává svého kanonického frienda.
+require 'friend_captcha'
+
 class FriendController < ApplicationController
+  MAILS_PER_DAY = 200
+  MAIL_PAUSE = 1.day
+
   authorize_resource :class => false
 
   ##
@@ -75,23 +80,38 @@ class FriendController < ApplicationController
   # GET /pritel — registrační formulář přítele Pikomatu
   def register_form
     @nick = params[:nick]
+    @captcha = FriendCaptcha.new
+    session[:friend_captcha] = @captcha.state
   end
 
   ##
   # POST /friend/register — zaregistruj přítele (jen email)
   #
   # Neprozrazuje, zda email existuje (anti-enumeration): odpověď je
-  # vždy stejná, jen se pošle jiný mail.
+  # vždy stejná, jen se pošle jiný mail. Proti botům: honeypot `website`,
+  # sčítací captcha, nejvýš jeden mail na adresu za den a denní strop mailů.
   #
   # *Params*
   # uuid:: friend z localStorage (volitelný, jinak se založí z nick)
   # nick:: přezdívka pro lazy založení
   # email:: adresa pro registraci
+  # captcha:: součet z formuláře
+  # website:: honeypot
   def register
-    # KILL SWITCH: endpoint zneužívali boti k mail-bombingu cizích adres
-    # (7/2026) — registrace přátel je vypnutá, vrací 500. Pro opětovné
-    # zapnutí smaž následující řádek (a zvaž honeypot + rack-attack).
-    return head :internal_server_error
+    done = lambda do
+      add_success 'Koukni do mailu a dokonči registraci (link platí 7 dní).'
+      redirect_to root_path
+    end
+    captcha = session.delete(:friend_captcha)
+    return done.call if params[:website].present?
+    unless FriendCaptcha.valid?(captcha, params[:captcha])
+      add_alert 'Součet nesedí (nebo formulář ležel moc dlouho). Zkus to prosím znovu.'
+      return redirect_to friend_register_form_path(nick: params[:nick])
+    end
+    if _mails_today >= MAILS_PER_DAY
+      add_alert 'Registrací je dnes moc, zkus to prosím zítra.'
+      return redirect_to root_path
+    end
 
     friend = Friend.find_by(uuid: params[:uuid].to_s)
     email = params[:email].to_s.downcase.strip
@@ -110,7 +130,7 @@ class FriendController < ApplicationController
     existing = User.find_by_email(email)
     if existing
       # účet už je — pošli návod na přihlášení/reset, web mlčí
-      existing.send_reset_password_instructions
+      existing.send_reset_password_instructions unless _mailed_recently?(existing)
     else
       user = User.new(email: email, password: SecureRandom.hex(16))
       user.skip_confirmation_notification!
@@ -118,8 +138,7 @@ class FriendController < ApplicationController
       friend.update!(user: user) if friend.user_id.nil?
       user.send_confirmation_instructions
     end
-    add_success 'Koukni do mailu a dokonči registraci (link platí 7 dní).'
-    redirect_to root_path
+    done.call
   end
 
   ##
@@ -166,7 +185,7 @@ class FriendController < ApplicationController
   def resend
     friend = Friend.find_by(uuid: params[:uuid].to_s)
     user = friend && friend.user
-    if user && user.confirmed_at.nil?
+    if user && user.confirmed_at.nil? && !(user.confirmation_sent_at && user.confirmation_sent_at > 1.hour.ago)
       user.send_confirmation_instructions
       add_success 'Dokončovací mail poslán znovu.'
     end
@@ -174,6 +193,14 @@ class FriendController < ApplicationController
   end
 
   private
+
+  def _mailed_recently?(user)
+    [user.reset_password_sent_at, user.confirmation_sent_at].compact.any? { |t| t > MAIL_PAUSE.ago }
+  end
+
+  def _mails_today
+    User.where('confirmation_sent_at > :t OR reset_password_sent_at > :t', t: 1.day.ago).count
+  end
 
   ##
   # Kanonický friend přihlášeného; založí ho, pokud chybí.

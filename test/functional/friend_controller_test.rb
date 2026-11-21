@@ -127,8 +127,7 @@ class FriendControllerTest < ActionController::TestCase
     assert_response :redirect
   end
 
-  # založí neověřeného přítele stejně, jako to dělávala akce register
-  # (ta je vypnutá — kill switch proti mail-bombingu)
+  # založí neověřeného přítele stejně jako akce register
   def make_unverified_friend(nick, email)
     u = User.new(email: email, password: SecureRandom.hex(16))
     u.skip_confirmation_notification!
@@ -138,13 +137,54 @@ class FriendControllerTest < ActionController::TestCase
     [f, u]
   end
 
-  test "register is killed and sends nothing" do
+  def captcha_sum
+    get :register_form
+    assert_response :success
+    assert_no_match(/\d+\s*\+\s*\d+/, response.body.gsub(/<[^>]+>/, ''))
+    session[:friend_captcha]['sum']
+  end
+
+  test "register needs the captcha sum and a human pause" do
     f = Friend.create!(nick: 'Petr')
+    sum = captcha_sum
     assert_no_difference ['User.count', 'ActionMailer::Base.deliveries.size'] do
       post :register, params: { uuid: f.uuid, email: 'obet@x.cz' }
+      post :register, params: { uuid: f.uuid, email: 'obet@x.cz', captcha: sum }
     end
-    assert_response :internal_server_error
+    sum = captcha_sum
+    travel 5.seconds do
+      assert_no_difference 'ActionMailer::Base.deliveries.size' do
+        post :register, params: { uuid: f.uuid, email: 'obet@x.cz', captcha: sum + 1 }
+        post :register, params: { uuid: f.uuid, email: 'obet@x.cz', captcha: sum }
+      end
+    end
+    sum = captcha_sum
+    travel 5.seconds do
+      assert_no_difference 'ActionMailer::Base.deliveries.size' do
+        post :register, params: { uuid: f.uuid, email: 'obet@x.cz', captcha: sum, website: 'http://spam' }
+      end
+    end
     assert_nil f.reload.user_id
+  end
+
+  test "register with captcha sends one mail per address a day" do
+    f = Friend.create!(nick: 'Petr')
+    sum = captcha_sum
+    travel 5.seconds do
+      assert_difference ['User.count', 'ActionMailer::Base.deliveries.size'], 1 do
+        post :register, params: { uuid: f.uuid, email: 'novy@x.cz', captcha: sum }
+      end
+    end
+    assert_equal 'novy@x.cz', f.reload.user.email
+    sum = captcha_sum
+    travel 10.seconds do
+      assert_no_difference 'ActionMailer::Base.deliveries.size' do
+        post :register, params: { email: 'novy@x.cz', nick: 'Jiný', captcha: sum }
+      end
+    end
+    assert_no_difference 'ActionMailer::Base.deliveries.size' do
+      post :resend, params: { uuid: f.uuid }
+    end
   end
 
   test "finish sets password confirms and signs in" do
@@ -167,8 +207,10 @@ class FriendControllerTest < ActionController::TestCase
 
   test "resend sends confirmation again" do
     f, _u = make_unverified_friend('Petr', 're@x.cz')
-    assert_difference 'ActionMailer::Base.deliveries.size', 1 do
-      post :resend, params: { uuid: f.uuid }
+    travel 2.hours do
+      assert_difference 'ActionMailer::Base.deliveries.size', 1 do
+        post :resend, params: { uuid: f.uuid }
+      end
     end
   end
 end

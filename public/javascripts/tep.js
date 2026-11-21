@@ -607,7 +607,7 @@ function init_adventomat_app($app) {
 
     function who(d) {
         var login = '<a href="/users/sign_in">Přihlas se</a>, ať máš vyřešená okénka i na jiném počítači a mobilu. ' +
-                    'Ještě nejsi řešitel Pikomatu? <a href="/prihlaska">Přihláška</a>.'
+                    'Účet nemáš? <a href="/pritel">Potvrď si přezdívku e-mailem</a> nebo se <a href="/prihlaska">staň řešitelem Pikomatu</a>.'
         var h = '<p class="grey adv-who"><i class="fa fa-user"></i> '
         if (d.friend) h += 'Hraješ jako <b>' + adv_esc(d.friend.nick) + '</b>' + (window.tep_signed_in ? '.' : ' bez přihlášení. ' + login)
         else h += 'Hraješ bez přihlášení, při první odpovědi zadáš přezdívku. ' + login
@@ -678,7 +678,7 @@ function init_adventomat_app($app) {
         var f = friend_get()
         $m.find('.adventomat-nick').val(f.nick || (state.data.friend || {}).nick || '')
         $m.find('.adventomat-who').html('Jméno se ukáže v tabulce řešitelů, můžeš si ho kdykoli změnit.' +
-            (window.tep_signed_in ? '' : ' Vyřešená okénka si pamatuje tenhle prohlížeč; <a href="/users/sign_in">přihlas se</a>, ať je máš všude.'))
+            (window.tep_signed_in ? '' : ' Vyřešená okénka si pamatuje tenhle prohlížeč; <a href="/users/sign_in">přihlas se</a> nebo si <a href="/pritel">potvrď přezdívku e-mailem</a>, ať je máš všude.'))
         if (day.state === 'locked' || day.state === 'missing') {
             $m.find('.adventomat-text').html(day.state === 'missing' ? '<p>Tohle okénko ještě připravujeme.</p>' :
                                              '<p><i class="fa fa-lock"></i> Okénko se otevře ' + adv_time(day.opens_at) + '.</p>')
