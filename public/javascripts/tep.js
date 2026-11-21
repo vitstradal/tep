@@ -426,7 +426,9 @@ function adv_css() {
       'radial-gradient(circle,#59626a 0,#59626a 3px,transparent 4px) left bottom/12px 12px no-repeat,' +
       'radial-gradient(circle,#59626a 0,#59626a 3px,transparent 4px) right bottom/12px 12px no-repeat}' +
       '.adventomat-countdown{text-align:center}' +
-      '.adv-label{margin:0 0 10px;color:#3b444b;font-size:12px;letter-spacing:.14em;text-transform:uppercase;text-shadow:0 1px 0 rgba(255,255,255,.8)}' +
+      '.adv-title{margin:0 0 14px;text-align:center;color:#2f373d;font-size:clamp(18px,3.2vw,26px);font-weight:bold;letter-spacing:.22em;' +
+      'text-transform:uppercase;text-shadow:0 1px 0 rgba(255,255,255,.85),0 -1px 0 rgba(0,0,0,.25)}' +
+      '.adv-label{margin:0 0 6px;color:#3b444b;font-size:11px;letter-spacing:.2em;text-transform:uppercase;text-shadow:0 1px 0 rgba(255,255,255,.8)}' +
       '.adv-panel .adventomat-grid{padding:12px 8px 8px;border-radius:16px;text-align:center;background:linear-gradient(#1d2327,#30383e);' +
       'box-shadow:inset 0 2px 8px rgba(0,0,0,.75),0 1px 0 rgba(255,255,255,.75)}' +
       '.adv-panel .adventomat-day{margin:4px;border-radius:10px}' +
@@ -573,7 +575,8 @@ function init_adventomat_app($app) {
         var d = state.data
         var plan = plan_animations(d)
         adv_css()
-        var html = '<div class="adv-panel"><div class="adventomat-countdown"></div><div class="adventomat-grid">'
+        var html = '<div class="adv-panel"><div class="adv-title">' + adv_esc(d.title) + '</div>' +
+                   '<div class="adventomat-countdown"></div><div class="adventomat-grid">'
         d.days.forEach(function (day) {
             var st = plan.shown[day.no] || day.state
             var cls = ADV_BTN[st]
@@ -642,8 +645,8 @@ function init_adventomat_app($app) {
         var dd = Math.floor(left / 86400), hh = Math.floor(left % 86400 / 3600)
         var mi = Math.floor(left % 3600 / 60), ss = left % 60
         adv_css()
-        $c.html('<p class="adv-label"><i class="fa fa-clock-o"></i> Další okénko se otevře ' + adv_time(d.next_open_at) + '</p>' +
-                adv_clock(dd, hh, mi, ss))
+        $c.html('<p class="adv-label">další letové okno za</p>' + adv_clock(dd, hh, mi, ss))
+        $c.find('.adv-clock').attr('title', 'Další okénko se otevře ' + adv_time(d.next_open_at))
         state.timer = setTimeout(tick, 1000)
     }
 
